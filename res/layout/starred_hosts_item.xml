@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/txtStarredHostFullname"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Full name"
+        android:textSize="7pt" />
+	
+    <TextView
+	    android:id="@+id/txtStarredHostComments"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Comments"
+	    android:layout_weight="1" />
+
+</LinearLayout>
