@@ -12,7 +12,7 @@
         android:label="@string/app_name" >
         
         <activity
-            android:name=".activity.StarredHostsActivity"
+            android:name=".activity.MainActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
             <intent-filter>
