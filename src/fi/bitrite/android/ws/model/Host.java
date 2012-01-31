@@ -1,52 +1,33 @@
 package fi.bitrite.android.ws.model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.os.Parcel;
-import android.os.Parcelable;
 
-public class Host implements Parcelable {
+import com.yelp.parcelgen.JsonParser.DualCreator;
 
-    public static final Parcelable.Creator<Host> CREATOR = new Parcelable.Creator<Host>() {
-        public Host createFromParcel(Parcel in) {
-            return new Host(in);
-        }
 
-        public Host[] newArray(int size) {
-            return new Host[size];
-        }
-    };
-	
-	private String fullname;
-	private String comments;
+public class Host extends _Host {
 
-	public Host(String fullname, String comments) {
-		this.fullname = fullname;
-		this.comments = comments;
-	}
-	
-	public Host(Parcel in) {
-		this.fullname = in.readString();
-		this.comments = in.readString();
-	}
-	
-	public String getFullname() {
-		return fullname;
-	}
-	public void setFullname(String fullname) {
-		this.fullname = fullname;
-	}
-	public String getComments() {
-		return comments;
-	}
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
-	
-	public int describeContents() {
-		return 0;
-	}
-	
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(fullname);
-		dest.writeString(comments);
-	}
+	public static final DualCreator<Host> CREATOR = new DualCreator<Host>() {
+
+		public Host[] newArray(int size) {
+			return new Host[size];
+		}
+
+		public Host createFromParcel(Parcel source) {
+			Host object = new Host();
+			object.readFromParcel(source);
+			return object;
+		}
+
+		@Override
+		public Host parse(JSONObject obj) throws JSONException {
+			Host newInstance = new Host();
+			newInstance.readFromJson(obj);
+			return newInstance;
+		}
+	};
+
 }

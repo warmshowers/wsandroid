@@ -6,5 +6,6 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="lib" path="lib/guice-2.0-no_aop.jar"/>
 	<classpathentry kind="lib" path="lib/roboguice-1.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/parcelgen.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

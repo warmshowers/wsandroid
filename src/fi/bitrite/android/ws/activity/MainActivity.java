@@ -44,7 +44,7 @@ public class MainActivity extends RoboTabActivity {
 	}
 
 	private void setupStarredHostsList() {
-        List<Host> starredHosts = starredHostDao.getStarredHosts();
+        List<Host> starredHosts = starredHostDao.getAll();
         starredHostsList.setAdapter(new StarredHostsAdapter(this, R.layout.starred_hosts_item, starredHosts));
 
         // starredHostsList.setTextFilterEnabled(true);   // adapter needs to implement filterable for this
@@ -52,7 +52,7 @@ public class MainActivity extends RoboTabActivity {
         starredHostsList.setOnItemClickListener(new OnItemClickListener() {
           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         	  Intent i = new Intent(MainActivity.this, HostInformationActivity.class);
-        	  i.putExtra("host", starredHostDao.getStarredHost());
+        	  i.putExtra("host", starredHostDao.get());
         	  startActivity(i);
           }
         });

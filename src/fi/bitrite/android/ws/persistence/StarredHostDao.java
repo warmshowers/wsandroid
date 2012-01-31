@@ -6,7 +6,8 @@ import fi.bitrite.android.ws.model.Host;
 
 public interface StarredHostDao {
 
-	public List<Host> getStarredHosts();
+	public List<Host> getAll();
 
-	public Host getStarredHost();
+	public Host get();
+	
 }
