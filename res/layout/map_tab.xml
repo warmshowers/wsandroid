@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:id="@+id/mapTab" >
+    android:id="@+id/mapTab" 
+    android:paddingTop="10dp" >
 	<TextView 
 		android:id="@+id/txtMap"
 		android:layout_width="fill_parent"

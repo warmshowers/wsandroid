@@ -20,7 +20,6 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 
 public class MainActivity extends RoboTabActivity {
-	
 	@InjectView(R.id.starredHostsTab) LinearLayout starredHostsTab;
 	@InjectView(R.id.listTab) LinearLayout listTab;
 	@InjectView(R.id.mapTab) LinearLayout mapTab;
