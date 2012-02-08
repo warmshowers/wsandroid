@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    android:id="@+id/listTab">			
+	<EditText
+		android:id="@+id/editListSearch"
+		android:layout_height="fill_parent"
+		android:layout_width="fill_parent" 
+		android:hint="@string/list_search_hint"/>
+	<TextView 
+		android:id="@+id/txtList"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" 
+		android:text="list tab" />
+</LinearLayout>

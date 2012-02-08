@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
-import android.widget.TextView;
 
 import com.google.inject.Inject;
 
@@ -21,10 +21,12 @@ import fi.bitrite.android.ws.persistence.StarredHostDao;
 
 public class MainActivity extends RoboTabActivity {
 	
-	@InjectView(R.id.lstStarredHosts) ListView starredHostsList;
-	@InjectView(R.id.txtList) TextView listPlaceholder;
-	@InjectView(R.id.txtMap) TextView mapPlaceholder;
+	@InjectView(R.id.starredHostsTab) LinearLayout starredHostsTab;
+	@InjectView(R.id.listTab) LinearLayout listTab;
+	@InjectView(R.id.mapTab) LinearLayout mapTab;
 
+	@InjectView(R.id.lstStarredHosts) ListView starredHostsList;
+	
 	@Inject StarredHostDao starredHostDao;
 
 	@Override
@@ -38,9 +40,9 @@ public class MainActivity extends RoboTabActivity {
 	
 	private void setupTabs() {
 		TabHost tabHost = this.getTabHost();
-		addTab(tabHost, "tab_starred", "Starred", starredHostsList.getId());
-		addTab(tabHost, "tab_list", "List", listPlaceholder.getId());
-		addTab(tabHost, "tab_map", "Map", mapPlaceholder.getId());
+		addTab(tabHost, "tab_starred", "Starred", starredHostsTab.getId());
+		addTab(tabHost, "tab_list", "List", listTab.getId());
+		addTab(tabHost, "tab_map", "Map", mapTab.getId());
 	}
 
 	private void setupStarredHostsList() {

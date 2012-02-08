@@ -3,5 +3,6 @@
 
     <string name="hello">Hello, WarmShowers for Android!</string>
     <string name="app_name">WSAndroid</string>
+    <string name="list_search_hint">Name or city</string>
 
 </resources>

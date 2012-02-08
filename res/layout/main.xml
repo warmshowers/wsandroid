@@ -15,26 +15,10 @@
             android:id="@android:id/tabcontent"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
-			<LinearLayout 
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:orientation="vertical" 
-			    android:id="@+id/starredHostsTab">			
-			    <ListView
-			    	android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:id="@+id/lstStarredHosts" />
-			</LinearLayout>
-            <TextView 
-                android:id="@+id/txtList"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" 
-                android:text="list tab" />
-            <TextView 
-                android:id="@+id/txtMap"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" 
-                android:text="map tab" />
+
+            <include layout="@layout/starred_hosts_tab" />
+			<include layout="@layout/list_tab" />
+			<include layout="@layout/map_tab" />
         </FrameLayout>
     </LinearLayout>
 </TabHost>
