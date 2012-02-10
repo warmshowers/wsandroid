@@ -9,7 +9,6 @@ import java.util.List;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.util.Log;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.model.Host;
