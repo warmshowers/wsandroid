@@ -24,7 +24,7 @@ import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
-import fi.bitrite.android.ws.search.TextSearch;
+import fi.bitrite.android.ws.search.SearchFactory;
 
 public class MainActivity extends RoboTabActivity {
 	private static final int PROGRESS_DIALOG_TEXT_SEARCH = 0;
@@ -39,7 +39,7 @@ public class MainActivity extends RoboTabActivity {
 	
 	@Inject StarredHostDao starredHostDao;
 	
-	@Inject TextSearch textSearch;
+	@Inject SearchFactory searchFactory;
 	
 	SearchThread searchThread;
 	ProgressDialog progressDialog;
@@ -101,7 +101,8 @@ public class MainActivity extends RoboTabActivity {
 	protected void onPrepareDialog(int id, Dialog dialog) {
 		switch (id) {
 		case PROGRESS_DIALOG_TEXT_SEARCH:
-			searchThread = new SearchThread(handler, textSearch);
+			String text = listSearchEdit.getText().toString();
+			searchThread = new SearchThread(handler, searchFactory.createTextSearch(text));
 			searchThread.start();
 		}
 	}
