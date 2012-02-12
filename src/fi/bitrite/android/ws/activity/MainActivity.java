@@ -51,7 +51,7 @@ public class MainActivity extends RoboTabActivity {
 	@Inject CredentialsService credentialsService;
 	@Inject AuthenticationService authenticationService;
 
-	@Inject SearchDialog searchDialog;
+	SearchDialog searchDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

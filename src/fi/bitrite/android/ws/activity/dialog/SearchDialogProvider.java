@@ -21,9 +21,8 @@ public class SearchDialogProvider implements CredentialsReceiver, SearchDialog {
 	ProgressDialog progressDialog;
 	
 	// TODO: inject these as well
-	@Inject	CredentialsService credentialsService;
-	
-	@Inject	MainActivity mainActivity;
+	CredentialsService credentialsService;
+	MainActivity mainActivity;
 	
 	@Inject
 	public SearchDialogProvider(MainActivity parent, CredentialsService credentialsService) {
