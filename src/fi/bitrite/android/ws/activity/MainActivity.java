@@ -4,10 +4,7 @@ import java.util.List;
 
 import roboguice.activity.RoboTabActivity;
 import roboguice.inject.InjectView;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,13 +22,12 @@ import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.activity.dialog.SearchDialogHandler;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.search.SearchFactory;
 
 public class MainActivity extends RoboTabActivity {
-	private static final int PROGRESS_DIALOG_TEXT_SEARCH = 0;
-
 	// Starred hosts tab
 	@InjectView(R.id.starredHostsTab) LinearLayout starredHostsTab;
 	@InjectView(R.id.lstStarredHosts) ListView starredHostsList;
@@ -48,9 +44,8 @@ public class MainActivity extends RoboTabActivity {
 	// Utilities
 	@Inject StarredHostDao starredHostDao;
 	@Inject SearchFactory searchFactory;
-	
-	SearchThread searchThread;
-	ProgressDialog progressDialog;
+
+	SearchDialogHandler searchDialogHandler;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +56,8 @@ public class MainActivity extends RoboTabActivity {
 
 		setupStarredHostsList();
 		setupListSearch();
+		
+		searchDialogHandler = new SearchDialogHandler(this);
 	}
 
 	private void setupTabs() {
@@ -93,7 +90,7 @@ public class MainActivity extends RoboTabActivity {
 	private void setupListSearch() {
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				showDialog(PROGRESS_DIALOG_TEXT_SEARCH);
+				searchDialogHandler.showTextSearchDialog();
 			}
 		});
 
@@ -108,20 +105,13 @@ public class MainActivity extends RoboTabActivity {
 
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
-		progressDialog = new ProgressDialog(MainActivity.this);
-		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		progressDialog.setMessage("Performing search ...");
-		return progressDialog;
+		return searchDialogHandler.createDialog(id);
 	}
 
-	@Override
-	protected void onPrepareDialog(int id, Dialog dialog) {
-		switch (id) {
-		case PROGRESS_DIALOG_TEXT_SEARCH:
-			String text = listSearchEdit.getText().toString();
-			searchThread = new SearchThread(handler, searchFactory.createTextSearch(text));
-			searchThread.start();
-		}
+	public void doTextSearch() {
+		String searchText = listSearchEdit.getText().toString(); 
+		Thread searchThread = new SearchThread(handler, searchFactory.createTextSearch(searchText));
+		searchThread.start();
 	}
 
 	final Handler handler = new Handler() {
@@ -131,27 +121,14 @@ public class MainActivity extends RoboTabActivity {
 			// TODO:
 			// - error handling (msg contains error code?)
 			List<Host> hosts = (List<Host>) msg.obj;
-			dismissDialog(PROGRESS_DIALOG_TEXT_SEARCH);
+			searchDialogHandler.dismiss();
 
 			if (hosts.size() == 0) {
-				alertNoResults();
+				searchDialogHandler.alertNoResults();
 			}
 
 			listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
 					R.layout.host_list_item, hosts));
 		}
 	};
-
-	protected void alertNoResults() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Your search yielded no results.").setCancelable(false)
-				.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.dismiss();
-					}
-				});
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
-
 }

@@ -4,5 +4,10 @@
     <string name="hello">Hello, WarmShowers for Android!</string>
     <string name="app_name">WSAndroid</string>
     <string name="list_search_hint">Name or city</string>
-
+    <string name="credentials_title">Enter your WarmShowers username and password</string>
+    <string name="username">Username:</string>
+    <string name="password">Password:</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    
 </resources>
