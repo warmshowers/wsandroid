@@ -23,7 +23,7 @@ import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.activity.dialog.SearchDialog;
-import fi.bitrite.android.ws.activity.dialog.SearchDialogProvider;
+import fi.bitrite.android.ws.activity.dialog.SearchDialog;
 import fi.bitrite.android.ws.auth.AuthenticationService;
 import fi.bitrite.android.ws.auth.CredentialsService;
 import fi.bitrite.android.ws.model.Host;
@@ -63,7 +63,7 @@ public class MainActivity extends RoboTabActivity {
 		setupStarredHostsList();
 		setupListSearch();
 		
-		searchDialog = new SearchDialogProvider(this, credentialsService);
+		searchDialog = new SearchDialog(this, credentialsService);
 	}
 
 	private void setupTabs() {
@@ -96,7 +96,7 @@ public class MainActivity extends RoboTabActivity {
 	private void setupListSearch() {
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				searchDialog.showTextSearchDialog();
+				searchDialog.showDialog(SearchDialog.PROGRESS_DIALOG_TEXT_SEARCH);
 			}
 		});
 

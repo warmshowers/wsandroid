@@ -1,8 +1,6 @@
 package fi.bitrite.android.ws;
 
 import roboguice.config.AbstractAndroidModule;
-import fi.bitrite.android.ws.activity.dialog.SearchDialog;
-import fi.bitrite.android.ws.activity.dialog.SearchDialogProvider;
 import fi.bitrite.android.ws.auth.AuthenticationService;
 import fi.bitrite.android.ws.auth.CredentialsService;
 import fi.bitrite.android.ws.auth.impl.HttpAuthenticationService;
@@ -20,7 +18,5 @@ public class WSAndroidModule extends AbstractAndroidModule {
 	    bind(SearchFactory.class).to(HttpSearchFactory.class);
 	    bind(CredentialsService.class).to(PromptingCredentialsService.class);
 	    bind(AuthenticationService.class).to(HttpAuthenticationService.class);
-	    
-	    bind(SearchDialog.class).to(SearchDialogProvider.class);
 	}
 }
