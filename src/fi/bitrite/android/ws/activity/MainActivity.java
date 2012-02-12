@@ -22,9 +22,13 @@ import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.activity.dialog.SearchDialogHandler;
+import fi.bitrite.android.ws.activity.dialog.SearchDialog;
+import fi.bitrite.android.ws.activity.dialog.SearchDialogProvider;
+import fi.bitrite.android.ws.auth.AuthenticationService;
+import fi.bitrite.android.ws.auth.CredentialsService;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
+import fi.bitrite.android.ws.search.Search;
 import fi.bitrite.android.ws.search.SearchFactory;
 
 public class MainActivity extends RoboTabActivity {
@@ -44,8 +48,10 @@ public class MainActivity extends RoboTabActivity {
 	// Utilities
 	@Inject StarredHostDao starredHostDao;
 	@Inject SearchFactory searchFactory;
+	@Inject CredentialsService credentialsService;
+	@Inject AuthenticationService authenticationService;
 
-	SearchDialogHandler searchDialogHandler;
+	@Inject SearchDialog searchDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +63,7 @@ public class MainActivity extends RoboTabActivity {
 		setupStarredHostsList();
 		setupListSearch();
 		
-		searchDialogHandler = new SearchDialogHandler(this);
+		searchDialog = new SearchDialogProvider(this, credentialsService);
 	}
 
 	private void setupTabs() {
@@ -90,7 +96,7 @@ public class MainActivity extends RoboTabActivity {
 	private void setupListSearch() {
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				searchDialogHandler.showTextSearchDialog();
+				searchDialog.showTextSearchDialog();
 			}
 		});
 
@@ -105,12 +111,14 @@ public class MainActivity extends RoboTabActivity {
 
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
-		return searchDialogHandler.createDialog(id);
+		return searchDialog.createDialog(id);
 	}
 
 	public void doTextSearch() {
 		String searchText = listSearchEdit.getText().toString(); 
-		Thread searchThread = new SearchThread(handler, searchFactory.createTextSearch(searchText));
+		Search search = searchFactory.createTextSearch(searchText);
+		
+		Thread searchThread = new SearchThread(handler, search);
 		searchThread.start();
 	}
 
@@ -118,13 +126,20 @@ public class MainActivity extends RoboTabActivity {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
-			// TODO:
-			// - error handling (msg contains error code?)
-			List<Host> hosts = (List<Host>) msg.obj;
-			searchDialogHandler.dismiss();
+			searchDialog.dismiss();
 
-			if (hosts.size() == 0) {
-				searchDialogHandler.alertNoResults();
+			Object obj = msg.obj;
+			
+			if (obj instanceof Exception) {
+				searchDialog.alertError();
+				return;
+			}
+			
+			List<Host> hosts = (List<Host>) obj;
+			
+			if (hosts.isEmpty()) {
+				searchDialog.alertNoResults();
+				return;
 			}
 
 			listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),

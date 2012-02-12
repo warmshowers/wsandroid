@@ -8,15 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.CredentialsProvider;
 import fi.bitrite.android.ws.auth.CredentialsReceiver;
 
 public class CredentialsDialog implements CredentialsProvider {
 
 	Context context;
-
-	Dialog dialog;
 
 	String username;
 
@@ -27,13 +24,12 @@ public class CredentialsDialog implements CredentialsProvider {
 	public CredentialsDialog(Context context, CredentialsReceiver receiver) {
 		this.context = context;
 		this.receiver = receiver;
-		setupDialog();
 	}
 
-	private void setupDialog() {
-		LayoutInflater factory = LayoutInflater.from(WSAndroidApplication.getAppContext());
+	public void show() {
+		LayoutInflater factory = LayoutInflater.from(context);
 		final View credentialsView = factory.inflate(R.layout.credentials, null);
-		dialog = new AlertDialog.Builder(context).setTitle(R.string.credentials_title).setView(credentialsView)
+		Dialog dialog = new AlertDialog.Builder(context).setTitle(R.string.credentials_title).setView(credentialsView)
 				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						EditText usernameView = (EditText) credentialsView.findViewById(R.id.editUsername);
@@ -49,9 +45,6 @@ public class CredentialsDialog implements CredentialsProvider {
 						dialog.dismiss();
 					}
 				}).create();
-	}
-
-	public void show() {
 		dialog.show();
 	}
 
@@ -70,5 +63,4 @@ public class CredentialsDialog implements CredentialsProvider {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
 }

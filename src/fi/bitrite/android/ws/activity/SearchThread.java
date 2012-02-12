@@ -24,7 +24,16 @@ public class SearchThread extends Thread {
 		}
 		
 		Message msg = handler.obtainMessage();
-		msg.obj = search.doSearch();
+		
+		try {
+			msg.obj = search.doSearch();
+		}
+		
+		catch (Exception e) {
+			Log.e("SearchThread", e.toString());
+			msg.obj = e;
+		}
+		
 		handler.sendMessage(msg);
 	}
 

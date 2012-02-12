@@ -1,21 +1,36 @@
 package fi.bitrite.android.ws.search.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import fi.bitrite.android.ws.auth.AuthenticationService;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.search.Search;
 
 public class HttpTextSearch implements Search {
 
-	private String text;
+	AuthenticationService authenticationService;
 	
-	public HttpTextSearch(String text) {
+	String text;
+	
+	public HttpTextSearch(String text, AuthenticationService authenticationService) {
 		this.text = text;
+		this.authenticationService = authenticationService;
 	}
 
+	/*
+	 * Scrapes the standard WarmShowers list search page.
+	 */
 	public List<Host> doSearch() {
-		// TODO Auto-generated method stub
-		return null;
+		authenticateUserIfNeeded();
+		
+		return new ArrayList<Host>();
+	}
+
+	private void authenticateUserIfNeeded() {
+		if (!authenticationService.isAuthenticated()) {
+			authenticationService.authenticate();
+		}
 	}
 
 }

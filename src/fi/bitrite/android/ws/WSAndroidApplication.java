@@ -11,9 +11,11 @@ public class WSAndroidApplication extends RoboApplication {
 
     private static Context context;
 
-    public void onCreate(){
+    public void onCreate() {
         super.onCreate();
+
         WSAndroidApplication.context = getApplicationContext();
+       
     }
 
     public static Context getAppContext() {
