@@ -4,18 +4,19 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/txtStarredHostFullname"
+        android:id="@+id/txtHostFullname"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Full name"
         android:textSize="7pt" />
 	
     <TextView
-	    android:id="@+id/txtStarredHostComments"
+	    android:id="@+id/txtHostComments"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:text="Comments"
-	    android:layout_weight="1" />
+	    android:layout_weight="1" 
+	    android:ellipsize="end"
+        android:singleLine="true"
+        android:paddingBottom="5dp" />
 
 </LinearLayout>

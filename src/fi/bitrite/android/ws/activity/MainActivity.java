@@ -4,8 +4,10 @@ import java.util.List;
 
 import roboguice.activity.RoboTabActivity;
 import roboguice.inject.InjectView;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,23 +24,29 @@ import android.widget.TabHost;
 import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.search.SearchFactory;
 
 public class MainActivity extends RoboTabActivity {
 	private static final int PROGRESS_DIALOG_TEXT_SEARCH = 0;
-	
-	@InjectView(R.id.starredHostsTab) LinearLayout starredHostsTab;
-	@InjectView(R.id.listTab) LinearLayout listTab;
-	@InjectView(R.id.mapTab) LinearLayout mapTab;
 
+	// Starred hosts tab
+	@InjectView(R.id.starredHostsTab) LinearLayout starredHostsTab;
 	@InjectView(R.id.lstStarredHosts) ListView starredHostsList;
+	
+	// List search tab
+	@InjectView(R.id.listTab) LinearLayout listTab;
 	@InjectView(R.id.editListSearch) EditText listSearchEdit;
 	@InjectView(R.id.btnListSearch) ImageView listSearchButton;
+	@InjectView(R.id.lstSearchResult) ListView listSearchResult;
+
+	// Map tab
+	@InjectView(R.id.mapTab) LinearLayout mapTab;
 	
+	// Utilities
 	@Inject StarredHostDao starredHostDao;
-	
 	@Inject SearchFactory searchFactory;
 	
 	SearchThread searchThread;
@@ -68,7 +76,7 @@ public class MainActivity extends RoboTabActivity {
 	
 	private void setupStarredHostsList() {
         List<Host> starredHosts = starredHostDao.getAll();
-        starredHostsList.setAdapter(new StarredHostsAdapter(this, R.layout.starred_hosts_item, starredHosts));
+        starredHostsList.setAdapter(new HostListAdapter(this, R.layout.host_list_item, starredHosts));
 
         // starredHostsList.setTextFilterEnabled(true);   // adapter needs to implement filterable for this
 
@@ -87,6 +95,14 @@ public class MainActivity extends RoboTabActivity {
 				showDialog(PROGRESS_DIALOG_TEXT_SEARCH);
 			}
 		});
+		
+		listSearchResult.setOnItemClickListener(new OnItemClickListener() {
+	          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	        	  Intent i = new Intent(MainActivity.this, HostInformationActivity.class);
+	        	  i.putExtra("host", starredHostDao.get());
+	        	  startActivity(i);
+	          }
+	        });
 	}
 
 	@Override
@@ -108,13 +124,35 @@ public class MainActivity extends RoboTabActivity {
 	}
 
 	final Handler handler = new Handler() {
+		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
 			// TODO: 
 			// - error handling (msg contains error code?)
-			// - display results
+			List<Host> hosts = (List<Host>) msg.obj;
 			dismissDialog(PROGRESS_DIALOG_TEXT_SEARCH);
+			
+			if (hosts.size() == 0) {
+				alertNoResults();
+			} 
+			
+			listSearchResult.setAdapter(new HostListAdapter(
+					WSAndroidApplication.getAppContext(),
+					R.layout.host_list_item, hosts));
 		}
 	};
+
+	protected void alertNoResults() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Your search yielded no results.")
+		       .setCancelable(false)
+		       .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.dismiss();
+		           }
+		       });
+		AlertDialog alert = builder.create();		
+		alert.show();
+	}
 
 }

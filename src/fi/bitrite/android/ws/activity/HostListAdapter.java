@@ -12,28 +12,28 @@ import android.widget.TextView;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
 
-public class StarredHostsAdapter extends ArrayAdapter<Host> {
+public class HostListAdapter extends ArrayAdapter<Host> {
 
 	private int resource;
 	
-	public StarredHostsAdapter(Context context, int resource, List<Host> starredHosts) {
-		super(context, resource, starredHosts);
+	public HostListAdapter(Context context, int resource, List<Host> hosts) {
+		super(context, resource, hosts);
 		this.resource = resource;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		LinearLayout starredHostView = inflateView(convertView);
+		LinearLayout hostListItem = inflateView(convertView);
 
-		Host starredHost = getItem(position);
+		Host host = getItem(position);
 		
-		TextView fullnameView = (TextView) starredHostView.findViewById(R.id.txtStarredHostFullname);
-		TextView commentsView = (TextView) starredHostView.findViewById(R.id.txtStarredHostComments);
+		TextView fullname = (TextView) hostListItem.findViewById(R.id.txtHostFullname);
+		TextView comments = (TextView) hostListItem.findViewById(R.id.txtHostComments);
 		
-		fullnameView.setText(starredHost.getFullname());
-		commentsView.setText(starredHost.getComments());
+		fullname.setText(host.getFullname());
+		comments.setText(host.getComments());
 		
-		return starredHostView;
+		return hostListItem;
 	}		
 
 	private LinearLayout inflateView(View convertView) {

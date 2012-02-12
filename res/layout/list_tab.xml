@@ -23,9 +23,8 @@
 		    android:paddingLeft="8dp"
 		    android:src="@drawable/find" />
 	</LinearLayout>
-	<TextView 
-		android:id="@+id/txtList"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" 
-		android:text="list tab" />
+    <ListView
+    	android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/lstSearchResult" />
 </LinearLayout>
