@@ -58,11 +58,11 @@ public class MainActivity extends RoboTabActivity {
 		setContentView(R.layout.main);
 
 		setupTabs();
-		
+
 		setupStarredHostsList();
 		setupListSearch();
 	}
-	
+
 	private void setupTabs() {
 		TabHost tabHost = this.getTabHost();
 		addTab(tabHost, "tab_starred", "Starred", starredHostsTab.getId());
@@ -73,36 +73,37 @@ public class MainActivity extends RoboTabActivity {
 	private void addTab(TabHost tabHost, String tabSpec, String indicator, int content) {
 		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator(indicator).setContent(content));
 	}
-	
+
 	private void setupStarredHostsList() {
-        List<Host> starredHosts = starredHostDao.getAll();
-        starredHostsList.setAdapter(new HostListAdapter(this, R.layout.host_list_item, starredHosts));
+		List<Host> starredHosts = starredHostDao.getAll();
+		starredHostsList.setAdapter(new HostListAdapter(this, R.layout.host_list_item, starredHosts));
 
-        // starredHostsList.setTextFilterEnabled(true);   // adapter needs to implement filterable for this
+		// starredHostsList.setTextFilterEnabled(true); // adapter needs to
+		// implement filterable for this
 
-        starredHostsList.setOnItemClickListener(new OnItemClickListener() {
-          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        	  Intent i = new Intent(MainActivity.this, HostInformationActivity.class);
-        	  i.putExtra("host", starredHostDao.get());
-        	  startActivity(i);
-          }
-        });
+		starredHostsList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent i = new Intent(MainActivity.this, HostInformationActivity.class);
+				i.putExtra("host", starredHostDao.get());
+				startActivity(i);
+			}
+		});
 	}
-	
+
 	private void setupListSearch() {
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				showDialog(PROGRESS_DIALOG_TEXT_SEARCH);
 			}
 		});
-		
+
 		listSearchResult.setOnItemClickListener(new OnItemClickListener() {
-	          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-	        	  Intent i = new Intent(MainActivity.this, HostInformationActivity.class);
-	        	  i.putExtra("host", starredHostDao.get());
-	        	  startActivity(i);
-	          }
-	        });
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Intent i = new Intent(MainActivity.this, HostInformationActivity.class);
+				i.putExtra("host", starredHostDao.get());
+				startActivity(i);
+			}
+		});
 	}
 
 	@Override
@@ -112,7 +113,7 @@ public class MainActivity extends RoboTabActivity {
 		progressDialog.setMessage("Performing search ...");
 		return progressDialog;
 	}
-	
+
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
 		switch (id) {
@@ -127,31 +128,29 @@ public class MainActivity extends RoboTabActivity {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
-			// TODO: 
+			// TODO:
 			// - error handling (msg contains error code?)
 			List<Host> hosts = (List<Host>) msg.obj;
 			dismissDialog(PROGRESS_DIALOG_TEXT_SEARCH);
-			
+
 			if (hosts.size() == 0) {
 				alertNoResults();
-			} 
-			
-			listSearchResult.setAdapter(new HostListAdapter(
-					WSAndroidApplication.getAppContext(),
+			}
+
+			listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
 					R.layout.host_list_item, hosts));
 		}
 	};
 
 	protected void alertNoResults() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Your search yielded no results.")
-		       .setCancelable(false)
-		       .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.dismiss();
-		           }
-		       });
-		AlertDialog alert = builder.create();		
+		builder.setMessage("Your search yielded no results.").setCancelable(false)
+				.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.dismiss();
+					}
+				});
+		AlertDialog alert = builder.create();
 		alert.show();
 	}
 
