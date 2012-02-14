@@ -25,7 +25,7 @@ public class ExceptionalCredentialsService implements CredentialsService, Creden
 	}
 	
 	public boolean hasStoredCredentials() {
-		return Strings.isEmpty(username) || Strings.isEmpty(password);
+		return !(Strings.isEmpty(username) || Strings.isEmpty(password));
 	}
 
 
