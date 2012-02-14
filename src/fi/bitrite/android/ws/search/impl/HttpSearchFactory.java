@@ -9,13 +9,14 @@ import fi.bitrite.android.ws.search.SearchFactory;
 
 public class HttpSearchFactory implements SearchFactory {
 
-	@Inject HttpAuthenticationService authenticationService;
-	
-	@Inject HttpSessionContainer sessionContainer;
-	
+	@Inject
+	HttpAuthenticationService authenticationService;
+
+	@Inject
+	HttpSessionContainer sessionContainer;
+
 	public Search createTextSearch(String text) {
 		return new HttpTextSearch(text, authenticationService, sessionContainer);
 	}
 
 }
- 

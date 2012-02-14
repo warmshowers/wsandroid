@@ -53,21 +53,21 @@ public class HttpTextSearch implements Search {
 	protected String getSearchResultHtml() {
 		try {
 			HttpClient client = new DefaultHttpClient();
-	        HttpGet get = new HttpGet(WARMSHOWERS_LIST_SEARCH_URL + text);
-	        HttpContext context = sessionContainer.getSessionContext();
-	        
+			HttpGet get = new HttpGet(WARMSHOWERS_LIST_SEARCH_URL + text);
+			HttpContext context = sessionContainer.getSessionContext();
+
 			HttpResponse response = client.execute(get, context);
-	        HttpEntity entity = response.getEntity();
-	        
+			HttpEntity entity = response.getEntity();
+
 			Log.d("getSearchResultHtml", response.getStatusLine().toString());
-			
+
 			EntityUtils.toString(entity);
 		}
-		
+
 		catch (Exception e) {
 			throw new SearchFailedException(e);
 		}
-		
+
 		return null;
 	}
 

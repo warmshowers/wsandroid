@@ -11,8 +11,8 @@ import fi.bitrite.android.ws.search.Search;
 public class MockTextSearch implements Search {
 
 	private String text;
-	
-	private Host testHost = TestHostFactory.getHostFromJson(); 
+
+	private Host testHost = TestHostFactory.getHostFromJson();
 
 	public MockTextSearch(String text) {
 		this.text = text;
@@ -20,9 +20,8 @@ public class MockTextSearch implements Search {
 
 	public List<Host> doSearch() {
 		Log.d("doSearch", "Text search using argument: ''" + text + "''");
-		Host [] starredHosts = {  testHost, testHost };
+		Host[] starredHosts = { testHost, testHost };
 		return Arrays.asList(starredHosts);
 	}
 
 }
- 
