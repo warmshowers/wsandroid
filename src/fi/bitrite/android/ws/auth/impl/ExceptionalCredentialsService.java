@@ -10,21 +10,26 @@ import fi.bitrite.android.ws.auth.CredentialsService;
 import fi.bitrite.android.ws.auth.NoCredentialsException;
 
 @Singleton
-public class PromptingCredentialsService implements CredentialsService, CredentialsProvider {
+public class ExceptionalCredentialsService implements CredentialsService, CredentialsProvider {
 
 	String username;
 	
 	String password;
 	
-	public void applyStoredCredentials(CredentialsReceiver receiver) {
-		if (Strings.isEmpty(username) || Strings.isEmpty(password)) {
+	public void sendStoredCredentials(CredentialsReceiver receiver) {
+		if (!hasStoredCredentials()) {
 			throw new NoCredentialsException();
 		}
 		
 		receiver.applyCredentials(this);
 	}
+	
+	public boolean hasStoredCredentials() {
+		return Strings.isEmpty(username) || Strings.isEmpty(password);
+	}
 
-	public void storeCredentials(CredentialsProvider credentials) {
+
+	public void applyCredentials(CredentialsProvider credentials) {
 		username = credentials.getUsername();
 		password = credentials.getPassword();
 	}

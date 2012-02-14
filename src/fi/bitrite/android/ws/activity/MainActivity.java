@@ -22,16 +22,18 @@ import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.activity.dialog.SearchDialog;
-import fi.bitrite.android.ws.activity.dialog.SearchDialog;
+import fi.bitrite.android.ws.activity.dialog.CredentialsDialog;
+import fi.bitrite.android.ws.activity.dialog.SearchDialogHandler;
 import fi.bitrite.android.ws.auth.AuthenticationService;
+import fi.bitrite.android.ws.auth.CredentialsProvider;
+import fi.bitrite.android.ws.auth.CredentialsReceiver;
 import fi.bitrite.android.ws.auth.CredentialsService;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.search.Search;
 import fi.bitrite.android.ws.search.SearchFactory;
 
-public class MainActivity extends RoboTabActivity {
+public class MainActivity extends RoboTabActivity implements CredentialsReceiver {
 	// Starred hosts tab
 	@InjectView(R.id.starredHostsTab) LinearLayout starredHostsTab;
 	@InjectView(R.id.lstStarredHosts) ListView starredHostsList;
@@ -51,19 +53,27 @@ public class MainActivity extends RoboTabActivity {
 	@Inject CredentialsService credentialsService;
 	@Inject AuthenticationService authenticationService;
 
-	SearchDialog searchDialog;
+	SearchDialogHandler searchDialogHandler;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		setupCredentials();
+		
 		setupTabs();
 
 		setupStarredHostsList();
 		setupListSearch();
 		
-		searchDialog = new SearchDialog(this, credentialsService);
+		searchDialogHandler = new SearchDialogHandler(this, credentialsService);
+	}
+
+	private void setupCredentials() {
+		if (!credentialsService.hasStoredCredentials()) {
+			new CredentialsDialog(this, credentialsService).show();
+		}
 	}
 
 	private void setupTabs() {
@@ -96,7 +106,12 @@ public class MainActivity extends RoboTabActivity {
 	private void setupListSearch() {
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				searchDialog.showDialog(SearchDialog.PROGRESS_DIALOG_TEXT_SEARCH);
+				searchDialogHandler.prepareSearch(SearchDialogHandler.TEXT_SEARCH);
+				if (credentialsService.hasStoredCredentials()) {
+					searchDialogHandler.doSearch();
+				} else {
+					new CredentialsDialog(MainActivity.this, MainActivity.this).show();
+				}
 			}
 		});
 
@@ -109,9 +124,24 @@ public class MainActivity extends RoboTabActivity {
 		});
 	}
 
+	/**
+	 * Called when credentials are received from the credentials input dialog.
+	 */
+	public void applyCredentials(CredentialsProvider credentials) {
+		credentialsService.applyCredentials(credentials);
+		
+		if (credentialsService.hasStoredCredentials()) {
+			if (searchDialogHandler.isSearchInProgress()) {
+				searchDialogHandler.doSearch();
+			}
+		} else {
+			new CredentialsDialog(MainActivity.this, MainActivity.this).show();
+		}		
+	}
+	
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
-		return searchDialog.createDialog(id);
+		return searchDialogHandler.createDialog(id);
 	}
 
 	public void doTextSearch() {
@@ -126,19 +156,19 @@ public class MainActivity extends RoboTabActivity {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
-			searchDialog.dismiss();
+			searchDialogHandler.dismiss();
 
 			Object obj = msg.obj;
 			
 			if (obj instanceof Exception) {
-				searchDialog.alertError();
+				searchDialogHandler.alertError();
 				return;
 			}
 			
 			List<Host> hosts = (List<Host>) obj;
 			
 			if (hosts.isEmpty()) {
-				searchDialog.alertNoResults();
+				searchDialogHandler.alertNoResults();
 				return;
 			}
 
@@ -146,4 +176,6 @@ public class MainActivity extends RoboTabActivity {
 					R.layout.host_list_item, hosts));
 		}
 	};
+
+	
 }

@@ -1,19 +1,16 @@
 package fi.bitrite.android.ws.activity.dialog;
 
-import roboguice.util.Strings;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import fi.bitrite.android.ws.activity.MainActivity;
-import fi.bitrite.android.ws.auth.CredentialsProvider;
-import fi.bitrite.android.ws.auth.CredentialsReceiver;
 import fi.bitrite.android.ws.auth.CredentialsService;
-import fi.bitrite.android.ws.auth.NoCredentialsException;
 
-public class SearchDialog implements CredentialsReceiver {
+public class SearchDialogHandler {
 
-	public static final int PROGRESS_DIALOG_TEXT_SEARCH = 1;
+	public static final int NO_SEARCH 	= 0;
+	public static final int TEXT_SEARCH = 1;
 
 	int currentDialogId;
 	
@@ -23,42 +20,29 @@ public class SearchDialog implements CredentialsReceiver {
 	CredentialsService credentialsService;
 	MainActivity mainActivity;
 	
-	public SearchDialog(MainActivity parent, CredentialsService credentialsService) {
+	public SearchDialogHandler(MainActivity parent, CredentialsService credentialsService) {
 		this.mainActivity = parent;
 		this.credentialsService = credentialsService;
 	}
-	
-	public void showDialog(int id) {
-		currentDialogId = id;
-		
-		try {
-			credentialsService.applyStoredCredentials(this);
-		}
-		
-		catch (NoCredentialsException e) {
-			new CredentialsDialog(mainActivity, this).show();
-		}
-	}
 
-	public void applyCredentials(CredentialsProvider provider) {
-		String username = provider.getUsername();
-		String password = provider.getPassword();
-		
-		if (Strings.isEmpty(username) || Strings.isEmpty(password)) {
-			return;
+	public void prepareSearch(int searchId) {
+		currentDialogId = searchId;
+	}
+	
+	public void doSearch() {
+		if (currentDialogId == NO_SEARCH) {
+			throw new NoPreparedSearchException();
 		}
-		
-		credentialsService.storeCredentials(provider);
 		
 		mainActivity.showDialog(currentDialogId);	
 		
 		switch (currentDialogId) {
-			case PROGRESS_DIALOG_TEXT_SEARCH:
+			case TEXT_SEARCH:
 				mainActivity.doTextSearch();
 				break;
 		}
-	}
-	
+	}	
+
 	public Dialog createDialog(int id) {
 		progressDialog = new ProgressDialog(mainActivity);
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -88,5 +72,11 @@ public class SearchDialog implements CredentialsReceiver {
 	
 	public void dismiss() {
 		mainActivity.dismissDialog(currentDialogId);
+		currentDialogId = NO_SEARCH;
 	}
+
+	public boolean isSearchInProgress() {
+		return currentDialogId != NO_SEARCH;
+	}
+
 }

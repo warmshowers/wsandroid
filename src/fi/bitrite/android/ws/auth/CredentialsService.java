@@ -1,9 +1,11 @@
 package fi.bitrite.android.ws.auth;
 
-public interface CredentialsService extends CredentialsProvider {
+public interface CredentialsService extends CredentialsProvider, CredentialsReceiver {
 
-	void applyStoredCredentials(CredentialsReceiver receiver);
+	boolean hasStoredCredentials();
+	
+	void sendStoredCredentials(CredentialsReceiver receiver);
 
-	void storeCredentials(CredentialsProvider provider);
+	void applyCredentials(CredentialsProvider provider);
 
 }
