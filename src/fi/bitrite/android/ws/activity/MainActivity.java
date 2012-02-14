@@ -27,7 +27,6 @@ import fi.bitrite.android.ws.activity.dialog.SearchDialogHandler;
 import fi.bitrite.android.ws.auth.CredentialsProvider;
 import fi.bitrite.android.ws.auth.CredentialsReceiver;
 import fi.bitrite.android.ws.auth.CredentialsService;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.search.Search;
@@ -51,7 +50,6 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 	@Inject StarredHostDao starredHostDao;
 	@Inject SearchFactory searchFactory;
 	@Inject CredentialsService credentialsService;
-	@Inject HttpAuthenticationService authenticationService;
 
 	SearchDialogHandler searchDialogHandler;
 	
@@ -65,7 +63,7 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 		setupStarredHostsList();
 		setupListSearch();
 		
-		searchDialogHandler = new SearchDialogHandler(this, credentialsService);
+		searchDialogHandler = new SearchDialogHandler(this);
 	}
 
 	private void setupTabs() {

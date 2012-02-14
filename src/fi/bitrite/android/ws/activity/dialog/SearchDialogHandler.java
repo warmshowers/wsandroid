@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import fi.bitrite.android.ws.activity.MainActivity;
-import fi.bitrite.android.ws.auth.CredentialsService;
 
 public class SearchDialogHandler {
 
@@ -16,13 +15,10 @@ public class SearchDialogHandler {
 	
 	ProgressDialog progressDialog;
 	
-	// TODO: inject these as well from constructor?
-	CredentialsService credentialsService;
 	MainActivity mainActivity;
 	
-	public SearchDialogHandler(MainActivity parent, CredentialsService credentialsService) {
+	public SearchDialogHandler(MainActivity parent) {
 		this.mainActivity = parent;
-		this.credentialsService = credentialsService;
 	}
 
 	public void prepareSearch(int searchId) {
