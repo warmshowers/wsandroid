@@ -22,7 +22,6 @@ import fi.bitrite.android.ws.auth.CredentialsService;
 
 /**
  * Responsible for authenticating the user against the WarmShowers web service.
- * Authentication is done using a session cookie which is stored here in the service.
  */
 @Singleton
 public class HttpAuthenticationServiceProvider implements HttpAuthenticationService {
@@ -31,55 +30,53 @@ public class HttpAuthenticationServiceProvider implements HttpAuthenticationServ
 
 	@Inject
 	CredentialsService credentialsService;
-	
+
 	@Inject
 	HttpSessionContainer sessionContainer;
-	
+
 	boolean authenticated = false;
 
 	public boolean isAuthenticated() {
-		// todo: do a HTTP GET to see if we are authenticated?
+		// TODO: do a HTTP GET to see if we are authenticated?
 		return authenticated;
 	}
 
 	public void authenticate() {
-		// Log.d("authenticate", "Username: " + credentialsService.getUsername() + ", Password: " + credentialsService.getPassword());
-		
 		authenticated = false;
 
 		int responseCode;
-		
+
 		HttpClient client = new DefaultHttpClient();
-		
+
 		try {
 			HttpContext httpContext = sessionContainer.getSessionContext();
 
 			List<NameValuePair> credentials = getCredentialsForPost();
-			
+
 			HttpPost post = new HttpPost(WARMSHOWERS_USER_AUTHENTICATION_URL);
 			post.setEntity(new UrlEncodedFormEntity(credentials));
 			HttpResponse response = client.execute(post, httpContext);
-			
+
 			HttpEntity entity = response.getEntity();
-			
+
 			responseCode = response.getStatusLine().getStatusCode();
-            
-            // Consume response content
-            EntityUtils.toString(entity);
+
+			// Consume response content
+			EntityUtils.toString(entity);
 		}
-		
+
 		catch (Exception e) {
 			throw new HttpAuthenticationFailedException(e);
 		}
-		
+
 		finally {
 			client.getConnectionManager().shutdown();
 		}
-		
+
 		if (responseCode != HttpStatus.SC_OK) {
 			throw new HttpAuthenticationFailedException("Invalid credentials");
 		}
-		
+
 		authenticated = true;
 	}
 
