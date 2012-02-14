@@ -51,8 +51,9 @@ public class HttpTextSearch implements Search {
 	}
 
 	protected String getSearchResultHtml() {
+		HttpClient client = new DefaultHttpClient();
+		
 		try {
-			HttpClient client = new DefaultHttpClient();
 			HttpGet get = new HttpGet(WARMSHOWERS_LIST_SEARCH_URL + text);
 			HttpContext context = sessionContainer.getSessionContext();
 
@@ -66,6 +67,10 @@ public class HttpTextSearch implements Search {
 
 		catch (Exception e) {
 			throw new SearchFailedException(e);
+		}
+		
+		finally {
+			client.getConnectionManager().shutdown();
 		}
 
 		return null;
