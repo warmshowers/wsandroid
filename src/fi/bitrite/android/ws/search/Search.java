@@ -2,10 +2,10 @@ package fi.bitrite.android.ws.search;
 
 import java.util.List;
 
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.HostBriefInfo;
 
 public interface Search {
 	
-	public List<Host> doSearch();
+	public List<HostBriefInfo> doSearch();
 
 }

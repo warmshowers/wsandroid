@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws.search.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -14,7 +13,7 @@ import org.apache.http.util.EntityUtils;
 import android.util.Log;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.search.Search;
 
 public class HttpTextSearch implements Search {
@@ -37,10 +36,11 @@ public class HttpTextSearch implements Search {
 	/*
 	 * Scrapes the standard WarmShowers list search page.
 	 */
-	public List<Host> doSearch() {
+	public List<HostBriefInfo> doSearch() {
 		authenticateUserIfNeeded();
 		String html = getSearchResultHtml();
-		List<Host> hosts = scrapeHostDetails(html);
+		HttpTextSearchResultScraper scraper = new HttpTextSearchResultScraper(html);
+		List<HostBriefInfo> hosts = scraper.getHosts();
 		return hosts;
 	}
 
@@ -74,10 +74,6 @@ public class HttpTextSearch implements Search {
 		}
 
 		return null;
-	}
-
-	protected List<Host> scrapeHostDetails(String html) {
-		return new ArrayList<Host>();
 	}
 
 }

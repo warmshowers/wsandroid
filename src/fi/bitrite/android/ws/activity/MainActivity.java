@@ -27,7 +27,7 @@ import fi.bitrite.android.ws.activity.dialog.SearchDialogHandler;
 import fi.bitrite.android.ws.auth.CredentialsProvider;
 import fi.bitrite.android.ws.auth.CredentialsReceiver;
 import fi.bitrite.android.ws.auth.CredentialsService;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.search.Search;
 import fi.bitrite.android.ws.search.SearchFactory;
@@ -78,7 +78,7 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 	}
 
 	private void setupStarredHostsList() {
-		List<Host> starredHosts = starredHostDao.getAll();
+		List<HostBriefInfo> starredHosts = starredHostDao.getAllBrief();
 		starredHostsList.setAdapter(new HostListAdapter(this, R.layout.host_list_item, starredHosts));
 
 		// starredHostsList.setTextFilterEnabled(true); // adapter needs to
@@ -155,7 +155,7 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 				return;
 			}
 			
-			List<Host> hosts = (List<Host>) obj;
+			List<HostBriefInfo> hosts = (List<HostBriefInfo>) obj;
 			
 			if (hosts.isEmpty()) {
 				searchDialogHandler.alertNoResults();

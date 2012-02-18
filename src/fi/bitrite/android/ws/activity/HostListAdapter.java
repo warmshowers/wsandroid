@@ -10,13 +10,13 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.HostBriefInfo;
 
-public class HostListAdapter extends ArrayAdapter<Host> {
+public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
 	private int resource;
 
-	public HostListAdapter(Context context, int resource, List<Host> hosts) {
+	public HostListAdapter(Context context, int resource, List<HostBriefInfo> hosts) {
 		super(context, resource, hosts);
 		this.resource = resource;
 	}
@@ -25,7 +25,7 @@ public class HostListAdapter extends ArrayAdapter<Host> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LinearLayout hostListItem = inflateView(convertView);
 
-		Host host = getItem(position);
+		HostBriefInfo host = getItem(position);
 
 		TextView fullname = (TextView) hostListItem.findViewById(R.id.txtHostFullname);
 		TextView comments = (TextView) hostListItem.findViewById(R.id.txtHostComments);
