@@ -10,8 +10,9 @@ import fi.bitrite.android.ws.R;
 
 public class MapTabActivity extends RoboMapActivity {
 
-	@InjectView(R.id.mapView) MapView mapView;
-	
+	@InjectView(R.id.mapView)
+	MapView mapView;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

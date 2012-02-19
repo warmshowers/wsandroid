@@ -53,7 +53,7 @@ public class HttpTextSearch implements Search {
 	protected String getSearchResultHtml() {
 		HttpClient client = new DefaultHttpClient();
 		String html = null;
-		
+
 		try {
 			String searchUrl = HttpUtils.encodeUrl(WARMSHOWERS_LIST_SEARCH_URL + text);
 			HttpGet get = new HttpGet(searchUrl);
@@ -68,11 +68,11 @@ public class HttpTextSearch implements Search {
 		catch (Exception e) {
 			throw new SearchFailedException(e);
 		}
-		
+
 		finally {
 			client.getConnectionManager().shutdown();
 		}
-		
+
 		return html;
 	}
 
