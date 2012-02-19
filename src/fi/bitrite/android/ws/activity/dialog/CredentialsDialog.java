@@ -32,20 +32,28 @@ public class CredentialsDialog implements CredentialsProvider {
 		Dialog dialog = new AlertDialog.Builder(context).setTitle(R.string.credentials_title).setView(credentialsView)
 				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						EditText usernameView = (EditText) credentialsView.findViewById(R.id.editUsername);
-						username = usernameView.getText().toString();
-						EditText passwordView = (EditText) credentialsView.findViewById(R.id.editPassword);
-						password = passwordView.getText().toString();
-						dialog.dismiss();
-						receiver.applyCredentials(CredentialsDialog.this);
-						
+						applyCredentialsAndDismiss(credentialsView, dialog);
 					}
+
+					
 				}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						dialog.dismiss();
+						applyCredentialsAndDismiss(credentialsView, dialog);
 					}
 				}).create();
 		dialog.show();
+	}
+	
+	private void applyCredentialsAndDismiss(final View credentialsView, DialogInterface dialog) {
+		EditText usernameView = (EditText) credentialsView.findViewById(R.id.editUsername);
+		EditText passwordView = (EditText) credentialsView.findViewById(R.id.editPassword);
+
+		username = usernameView.getText().toString();
+		password = passwordView.getText().toString();
+		
+		receiver.applyCredentials(CredentialsDialog.this);
+
+		dialog.dismiss();
 	}
 
 	public String getUsername() {

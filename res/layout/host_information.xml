@@ -4,12 +4,37 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
     
+    <LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal">
+		<TextView
+        	android:id="@+id/txtHostFullname"
+			android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+			android:layout_weight="1" 
+			android:layout_gravity="center_vertical"
+        	android:textAppearance="?android:attr/textAppearanceMedium" />
+		<ImageView
+		    android:id="@+id/btnHostContact"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:paddingLeft="8dp"
+		    android:paddingTop="2dp"
+		    android:layout_gravity="center_vertical"
+		    android:src="@android:drawable/ic_menu_send" />
+    </LinearLayout>
+
     <TextView
-        android:id="@+id/txtHostFullname"
+        android:id="@+id/lblHostDescription"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Full name"
-        android:textSize="7pt" />
-        
+        android:text="@string/description" />
+    
+    <TextView
+        android:id="@+id/txtHostComments"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Comments" />
+    
 </LinearLayout>

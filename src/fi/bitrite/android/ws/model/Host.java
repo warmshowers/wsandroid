@@ -10,6 +10,14 @@ import com.yelp.parcelgen.JsonParser.DualCreator;
 
 public class Host extends _Host {
 
+	public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
+		Host host = new Host();
+		host.mName = briefInfo.getName();
+		host.mFullname = briefInfo.getFullname();
+		host.mComments = briefInfo.getComments();
+		return host;
+	}
+	
 	public static final DualCreator<Host> CREATOR = new DualCreator<Host>() {
 
 		public Host[] newArray(int size) {

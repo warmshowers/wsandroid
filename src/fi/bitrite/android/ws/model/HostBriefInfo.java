@@ -25,7 +25,7 @@ public class HostBriefInfo {
 		this.comments = host.getComments();
 	}
 
-	public Object getName() {
+	public String getName() {
 		return name;
 	}
 	

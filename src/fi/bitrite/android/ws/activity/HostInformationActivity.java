@@ -11,6 +11,7 @@ import fi.bitrite.android.ws.model.Host;
 public class HostInformationActivity extends RoboActivity {
 
 	@InjectView(R.id.txtHostFullname) TextView fullname;
+	@InjectView(R.id.txtHostComments) TextView comments;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +22,7 @@ public class HostInformationActivity extends RoboActivity {
 		Host host = (Host) i.getParcelableExtra("host");
 		
 		fullname.setText(host.getFullname());
+		comments.setText(host.getComments());
 	}
 
 }

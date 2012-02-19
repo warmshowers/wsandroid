@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 import com.google.inject.Inject;
 
@@ -27,6 +28,7 @@ import fi.bitrite.android.ws.activity.dialog.SearchDialogHandler;
 import fi.bitrite.android.ws.auth.CredentialsProvider;
 import fi.bitrite.android.ws.auth.CredentialsReceiver;
 import fi.bitrite.android.ws.auth.CredentialsService;
+import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.search.Search;
@@ -57,10 +59,16 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 
 		setupTabs();
 
+		setupCredentials();
+		
 		setupStarredHostsList();
 		setupListSearch();
 		
 		searchDialogHandler = new SearchDialogHandler(this);
+	}
+
+	private void setupCredentials() {
+		new CredentialsDialog(MainActivity.this, MainActivity.this).show();
 	}
 
 	private void setupTabs() {
@@ -82,9 +90,6 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 		List<HostBriefInfo> starredHosts = starredHostDao.getAllBrief();
 		starredHostsList.setAdapter(new HostListAdapter(this, R.layout.host_list_item, starredHosts));
 
-		// starredHostsList.setTextFilterEnabled(true); // adapter needs to
-		// implement filterable for this
-
 		starredHostsList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Intent i = new Intent(MainActivity.this, HostInformationActivity.class);
@@ -98,6 +103,7 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				searchDialogHandler.prepareSearch(SearchDialogHandler.TEXT_SEARCH);
+				
 				if (credentialsService.hasStoredCredentials()) {
 					searchDialogHandler.doSearch();
 				} else {
@@ -109,7 +115,9 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 		listSearchResult.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Intent i = new Intent(MainActivity.this, HostInformationActivity.class);
-				i.putExtra("host", starredHostDao.get());
+				HostBriefInfo briefInfo = (HostBriefInfo) listSearchResult.getItemAtPosition(position);
+				Host host = Host.createFromBriefInfo(briefInfo);
+				i.putExtra("host", host);
 				startActivity(i);
 			}
 		});
@@ -126,10 +134,23 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 				searchDialogHandler.doSearch();
 			}
 		} else {
-			new CredentialsDialog(MainActivity.this, MainActivity.this).show();
+			Toast.makeText(getApplicationContext(), "Cannot run without WarmShowers credentials", Toast.LENGTH_LONG).show();
+			finishWithDelay();
 		}		
 	}
 	
+	private void finishWithDelay() {
+		new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                }
+                catch (Exception e) { }
+                finish();
+            }
+        }).start();
+	}
+
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
 		return searchDialogHandler.createDialog(id);
