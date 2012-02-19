@@ -16,13 +16,6 @@ public class SearchThread extends Thread {
 	}
 	
 	public void run() {
-		try {
-			Thread.sleep(2000);
-		}
-		catch (InterruptedException e) {
-			Log.e("ERROR", "Search interrupted");
-		}
-		
 		Message msg = handler.obtainMessage();
 		
 		try {
