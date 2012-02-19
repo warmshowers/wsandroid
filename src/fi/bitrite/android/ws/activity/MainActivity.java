@@ -43,9 +43,6 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 	@InjectView(R.id.btnListSearch) ImageView listSearchButton;
 	@InjectView(R.id.lstSearchResult) ListView listSearchResult;
 
-	// Map tab
-	@InjectView(R.id.mapTab) LinearLayout mapTab;
-	
 	// Utilities
 	@Inject StarredHostDao starredHostDao;
 	@Inject SearchFactory searchFactory;
@@ -70,10 +67,14 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 		TabHost tabHost = this.getTabHost();
 		addTab(tabHost, "tab_starred", "Starred", starredHostsTab.getId());
 		addTab(tabHost, "tab_list", "List", listTab.getId());
-		addTab(tabHost, "tab_map", "Map", mapTab.getId());
+		addTab(tabHost, "tab_map", "Map", new Intent(getApplicationContext(), MapTabActivity.class));
 	}
 
 	private void addTab(TabHost tabHost, String tabSpec, String indicator, int content) {
+		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator(indicator).setContent(content));
+	}
+	
+	private void addTab(TabHost tabHost, String tabSpec, String indicator, Intent content) {
 		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator(indicator).setContent(content));
 	}
 

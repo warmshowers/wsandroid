@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mapTab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:id="@+id/mapTab" 
-    android:paddingTop="10dp" >
-	<TextView 
-		android:id="@+id/txtMap"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" 
-		android:text="map tab" />    
+    android:orientation="vertical" >
+
+    <com.google.android.maps.MapView
+        android:id="@+id/mapView"
+		android:enabled="true"
+		android:clickable="true"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:apiKey="0nk2Q1hiUZN7HmJt5jQMgznLyAIIkktfIReTYjg" />
+
 </LinearLayout>
