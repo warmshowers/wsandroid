@@ -30,7 +30,7 @@ public class SearchThread extends Thread {
 		}
 		
 		catch (Exception e) {
-			Log.e("SearchThread", e.toString());
+			Log.e("WSAndroid", e.getMessage(), e);
 			msg.obj = e;
 		}
 		

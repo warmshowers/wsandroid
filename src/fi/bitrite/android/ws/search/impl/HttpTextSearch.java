@@ -10,11 +10,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
-import android.util.Log;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.search.Search;
+import fi.bitrite.android.ws.util.http.HttpUtils;
 
 public class HttpTextSearch implements Search {
 
@@ -52,17 +52,17 @@ public class HttpTextSearch implements Search {
 
 	protected String getSearchResultHtml() {
 		HttpClient client = new DefaultHttpClient();
+		String html = null;
 		
 		try {
-			HttpGet get = new HttpGet(WARMSHOWERS_LIST_SEARCH_URL + text);
+			String searchUrl = HttpUtils.encodeUrl(WARMSHOWERS_LIST_SEARCH_URL + text);
+			HttpGet get = new HttpGet(searchUrl);
 			HttpContext context = sessionContainer.getSessionContext();
 
 			HttpResponse response = client.execute(get, context);
 			HttpEntity entity = response.getEntity();
 
-			Log.d("getSearchResultHtml", response.getStatusLine().toString());
-
-			EntityUtils.toString(entity);
+			html = EntityUtils.toString(entity);
 		}
 
 		catch (Exception e) {
@@ -72,8 +72,8 @@ public class HttpTextSearch implements Search {
 		finally {
 			client.getConnectionManager().shutdown();
 		}
-
-		return null;
+		
+		return html;
 	}
 
 }
