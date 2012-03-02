@@ -102,27 +102,4 @@ public class HttpAuthenticationServiceProvider implements HttpAuthenticationServ
 		args.add(new BasicNameValuePair("pass", authtoken));
 		return args;
 	}
-	
-	/*
-	private class OnTokenAcquired implements AccountManagerCallback<Bundle> {
-	    public void run(AccountManagerFuture<Bundle> result) {
-	        // Get the result of the operation from the AccountManagerFuture.
-			try {
-				Bundle bundle = result.getResult();
-		        username = bundle.getString(AccountManager.KEY_ACCOUNT_NAME);
-				authtoken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
-		        doAuthenticationPost();
-			} 
-			catch (Exception e) {
-				Log.e("WSAndroid", e.toString());
-			}
-	    }
-	}
-
-	private void doAuthenticationPost() {
-		// TODO Auto-generated method stub
-		
-	}
-	*/
-
 }
