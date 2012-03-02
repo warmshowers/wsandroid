@@ -4,13 +4,22 @@ import roboguice.activity.RoboAccountAuthenticatorActivity;
 import roboguice.util.Strings;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.SyncStateContract.Constants;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
+import com.google.inject.Inject;
+
 import fi.bitrite.android.ws.activity.dialog.CredentialsDialog;
+import fi.bitrite.android.ws.activity.dialog.DialogHandler;
+import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.AuthenticationService;
 import fi.bitrite.android.ws.auth.CredentialsProvider;
 import fi.bitrite.android.ws.auth.CredentialsReceiver;
+import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 
 /**
  * The activity responsible for getting WarmShowers credentials from the user
@@ -24,22 +33,26 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity impl
 
 	public static final String PARAM_USERNAME = "username";
 	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
+	public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
 
 	private AccountManager accountManager;
 
 	private String username;
-	private String authtokenType;
-	private String authtoken;
+	private String password;
 	private boolean requestNewAccount;
-
+	
+	private DialogHandler dialogHandler;
+	
+	@Inject HttpAuthenticationService authenticationService;
+	
 	@Override
 	protected void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		accountManager = AccountManager.get(this);
-
+		dialogHandler = new DialogHandler(this);
+		
 		Intent intent = getIntent();
 		username = intent.getStringExtra(PARAM_USERNAME);
-		authtokenType = intent.getStringExtra(PARAM_AUTHTOKEN_TYPE);
 		requestNewAccount = username == null;
 
 		new CredentialsDialog(AuthenticatorActivity.this, AuthenticatorActivity.this, username).show();
@@ -49,30 +62,69 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity impl
 		if (Strings.isEmpty(credentials.getUsername()) || Strings.isEmpty(credentials.getPassword())) {
 			setResult(RESULT_CANCELED);
 			finish();
-			return;
-		}
-
-		final Account account = new Account(credentials.getUsername(), AuthenticationService.ACCOUNT_TYPE);
-		String password = credentials.getPassword();
-
-		if (requestNewAccount) {
-			accountManager.addAccountExplicitly(account, password, null);
 		} else {
-			accountManager.setPassword(account, password);
+			username = credentials.getUsername();
+			password = credentials.getPassword();
+			dialogHandler.doOperation(DialogHandler.AUTHENTICATE);
 		}
+	}
+	
+	@Override
+	protected Dialog onCreateDialog(int id, Bundle args) {
+		return dialogHandler.createDialog(id, "Authenticating ...");
+	}
 
-		final Intent intent = new Intent();
-		authtoken = password;
+	public void doAuthentication() {
+		new AuthenticationThread(handler).start();
+	}
+	
+	final Handler handler = new Handler() {
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			dialogHandler.dismiss();
 
-		intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, username);
-		intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
-
-		if (authtokenType != null && authtokenType.equals(AuthenticationService.ACCOUNT_TYPE)) {
-			intent.putExtra(AccountManager.KEY_AUTHTOKEN, authtoken);
+			Object obj = msg.obj;
+			
+			if (obj instanceof Exception) {
+				setResult(RESULT_AUTHENTICATION_FAILED);
+			} else {
+				Account account = new Account(username, AuthenticationService.ACCOUNT_TYPE);
+				if (requestNewAccount) {
+					accountManager.addAccountExplicitly(account, password, null);
+				} else {
+					Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
+					accountManager.removeAccount(oldAccount, null, null);
+					accountManager.addAccountExplicitly(account, password, null);
+				}
+				setResult(RESULT_OK);
+			}
+			
+			finish();
 		}
+	};
 
-		setAccountAuthenticatorResult(intent.getExtras());
-		setResult(RESULT_OK, intent);
-		finish();
+	private class AuthenticationThread extends Thread {
+		Handler handler;
+
+		public AuthenticationThread(Handler handler) {
+			this.handler = handler;
+		}
+		
+		public void run() {
+			Message msg = handler.obtainMessage();
+			
+			try {
+				authenticationService.authenticate(username, password);
+				msg.obj = RESULT_OK;
+			}
+			
+			catch (Exception e) {
+				Log.e("WSAndroid", e.getMessage(), e);
+				msg.obj = e;
+			}
+			
+			handler.sendMessage(msg);
+		}
 	}
 }

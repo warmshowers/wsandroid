@@ -23,7 +23,7 @@ import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.activity.dialog.SearchDialogHandler;
+import fi.bitrite.android.ws.activity.dialog.DialogHandler;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.model.Host;
@@ -48,21 +48,20 @@ public class MainActivity extends RoboTabActivity  {
 	@Inject StarredHostDao starredHostDao;
 	@Inject SearchFactory searchFactory;
 
-	SearchDialogHandler searchDialogHandler;
+	DialogHandler dialogHandler;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		setupTabs();
-
 		setupCredentials();
-		
+
+		setupTabs();
 		setupStarredHostsList();
 		setupListSearch();
 		
-		searchDialogHandler = new SearchDialogHandler(this);
+		dialogHandler = new DialogHandler(this);
 	}
 
 	private void setupCredentials() {
@@ -80,6 +79,9 @@ public class MainActivity extends RoboTabActivity  {
 		if (resultCode == RESULT_CANCELED) {
 			Toast.makeText(getApplicationContext(), "Cannot run without WarmShowers credentials", Toast.LENGTH_LONG).show();
 			finishWithDelay();
+		} else if (resultCode == AuthenticatorActivity.RESULT_AUTHENTICATION_FAILED) {
+			Toast.makeText(getApplicationContext(), "Authentication failed. Check your credentials and internet connection", Toast.LENGTH_LONG).show();
+			reloadActivity();
 		}
 	}
 	
@@ -95,6 +97,16 @@ public class MainActivity extends RoboTabActivity  {
         }).start();
 	}	
 
+	private void reloadActivity() {
+		Intent i = getIntent();
+	    overridePendingTransition(0, 0);
+	    i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+	    finish();
+
+	    overridePendingTransition(0, 0);
+	    startActivity(i);
+	}
+	
 	private void setupTabs() {
 		TabHost tabHost = this.getTabHost();
 		addTab(tabHost, "tab_starred", "Starred", starredHostsTab.getId());
@@ -126,8 +138,7 @@ public class MainActivity extends RoboTabActivity  {
 	private void setupListSearch() {
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				searchDialogHandler.prepareSearch(SearchDialogHandler.TEXT_SEARCH);
-				searchDialogHandler.doSearch();
+				dialogHandler.doOperation(DialogHandler.TEXT_SEARCH);
 			}
 		});
 
@@ -144,34 +155,31 @@ public class MainActivity extends RoboTabActivity  {
 
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
-		return searchDialogHandler.createDialog(id);
+		return dialogHandler.createDialog(id, "Performing search ...");
 	}
 
 	public void doTextSearch() {
-		String searchText = listSearchEdit.getText().toString(); 
-		Search search = searchFactory.createTextSearch(searchText);
-		
-		Thread searchThread = new SearchThread(handler, search);
-		searchThread.start();
+		Search search = searchFactory.createTextSearch(listSearchEdit.getText().toString());
+		new SearchThread(handler, search).start();
 	}
 
 	final Handler handler = new Handler() {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
-			searchDialogHandler.dismiss();
+			dialogHandler.dismiss();
 
 			Object obj = msg.obj;
 			
 			if (obj instanceof Exception) {
-				searchDialogHandler.alertError();
+				dialogHandler.alertError("Search failed. Check your credentials and internet connection.");
 				return;
 			}
 			
 			List<HostBriefInfo> hosts = (List<HostBriefInfo>) obj;
 			
 			if (hosts.isEmpty()) {
-				searchDialogHandler.alertNoResults();
+				dialogHandler.alertError("Your search yielded no results.");
 				return;
 			}
 
