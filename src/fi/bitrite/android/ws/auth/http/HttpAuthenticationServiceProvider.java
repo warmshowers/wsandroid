@@ -40,6 +40,8 @@ public class HttpAuthenticationServiceProvider implements HttpAuthenticationServ
 
 	private static final String WARMSHOWERS_USER_AUTHENTICATION_URL = "http://www.warmshowers.org/user";
 
+	private static final String WARMSHOWERS_USER_AUTHENTICATION_TEST_URL = "http://www.warmshowers.org/search/wsuser";
+
 	@Inject
 	HttpSessionContainer sessionContainer;
 
@@ -53,7 +55,7 @@ public class HttpAuthenticationServiceProvider implements HttpAuthenticationServ
 		HttpClient client = new DefaultHttpClient();
 		int responseCode;
 		try {
-			String url = HttpUtils.encodeUrl("http://www.warmshowers.org/search/wsuser");
+			String url = HttpUtils.encodeUrl(WARMSHOWERS_USER_AUTHENTICATION_TEST_URL);
 			HttpGet get = new HttpGet(url);
 			HttpContext context = sessionContainer.getSessionContext();
 

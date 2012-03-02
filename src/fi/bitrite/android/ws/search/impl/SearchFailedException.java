@@ -8,4 +8,8 @@ public class SearchFailedException extends RuntimeException {
 		super(e);
 	}
 
+	public SearchFailedException(String msg) {
+		super(msg);
+	}
+
 }

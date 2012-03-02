@@ -23,7 +23,6 @@ import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.activity.dialog.DialogHandler;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.model.Host;
@@ -70,18 +69,24 @@ public class MainActivity extends RoboTabActivity  {
 		}
 		
 		catch (NoAccountException e) {
-			Intent i = new Intent(MainActivity.this, AuthenticatorActivity.class);
-			startActivityForResult(i, 0);
+			startAuthenticatorActivity();
 		}
 	}
 	
+	private void startAuthenticatorActivity() {
+		Intent i = new Intent(MainActivity.this, AuthenticatorActivity.class);
+	    i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+	    overridePendingTransition(0, 0);
+		startActivityForResult(i, 0);
+	}
+
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		if (resultCode == RESULT_CANCELED) {
 			Toast.makeText(getApplicationContext(), "Cannot run without WarmShowers credentials", Toast.LENGTH_LONG).show();
 			finishWithDelay();
 		} else if (resultCode == AuthenticatorActivity.RESULT_AUTHENTICATION_FAILED) {
 			Toast.makeText(getApplicationContext(), "Authentication failed. Check your credentials and internet connection", Toast.LENGTH_LONG).show();
-			reloadActivity();
+			startAuthenticatorActivity();
 		}
 	}
 	
@@ -97,16 +102,6 @@ public class MainActivity extends RoboTabActivity  {
         }).start();
 	}	
 
-	private void reloadActivity() {
-		Intent i = getIntent();
-	    overridePendingTransition(0, 0);
-	    i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-	    finish();
-
-	    overridePendingTransition(0, 0);
-	    startActivity(i);
-	}
-	
 	private void setupTabs() {
 		TabHost tabHost = this.getTabHost();
 		addTab(tabHost, "tab_starred", "Starred", starredHostsTab.getId());
@@ -138,7 +133,8 @@ public class MainActivity extends RoboTabActivity  {
 	private void setupListSearch() {
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				dialogHandler.doOperation(DialogHandler.TEXT_SEARCH);
+				dialogHandler.showDialog(DialogHandler.TEXT_SEARCH);
+				doTextSearch();
 			}
 		});
 

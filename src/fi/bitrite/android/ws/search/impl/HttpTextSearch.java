@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -26,6 +27,8 @@ public class HttpTextSearch implements Search {
 
 	String text;
 
+	boolean authenticationPerformed;
+
 	public HttpTextSearch(String text, HttpAuthenticationService authenticationService,
 			HttpSessionContainer sessionContainer) {
 		this.text = text;
@@ -37,22 +40,17 @@ public class HttpTextSearch implements Search {
 	 * Scrapes the standard WarmShowers list search page.
 	 */
 	public List<HostBriefInfo> doSearch() {
-		authenticateUserIfNeeded();
+		authenticationPerformed = false;
 		String html = getSearchResultHtml();
 		HttpTextSearchResultScraper scraper = new HttpTextSearchResultScraper(html);
 		List<HostBriefInfo> hosts = scraper.getHosts();
 		return hosts;
 	}
 
-	protected void authenticateUserIfNeeded() {
-		if (!authenticationService.isAuthenticated()) {
-			authenticationService.authenticate();
-		}
-	}
-
 	protected String getSearchResultHtml() {
 		HttpClient client = new DefaultHttpClient();
 		String html = null;
+		int responseCode;
 
 		try {
 			String searchUrl = HttpUtils.encodeUrl(WARMSHOWERS_LIST_SEARCH_URL + text);
@@ -61,6 +59,7 @@ public class HttpTextSearch implements Search {
 
 			HttpResponse response = client.execute(get, context);
 			HttpEntity entity = response.getEntity();
+			responseCode = response.getStatusLine().getStatusCode();
 
 			html = EntityUtils.toString(entity);
 		}
@@ -71,6 +70,16 @@ public class HttpTextSearch implements Search {
 
 		finally {
 			client.getConnectionManager().shutdown();
+		}
+
+		if (responseCode == HttpStatus.SC_FORBIDDEN) {
+			if (!authenticationPerformed) {
+				authenticationService.authenticate();
+				authenticationPerformed = true;
+				html = getSearchResultHtml();
+			} else {
+				throw new SearchFailedException("Couldn't authenticate user");
+			}
 		}
 
 		return html;

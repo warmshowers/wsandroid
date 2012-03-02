@@ -9,6 +9,8 @@ import com.google.inject.Module;
 
 public class WSAndroidApplication extends RoboApplication {
 
+	public static final String TAG = "WSAndroid";
+	
     private static Context context;
 
     public void onCreate() {
