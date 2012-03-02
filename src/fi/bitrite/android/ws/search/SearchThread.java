@@ -1,9 +1,8 @@
-package fi.bitrite.android.ws.activity;
+package fi.bitrite.android.ws.search;
 
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import fi.bitrite.android.ws.search.Search;
 
 public class SearchThread extends Thread {
 	

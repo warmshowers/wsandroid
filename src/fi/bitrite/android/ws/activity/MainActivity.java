@@ -23,18 +23,17 @@ import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.activity.dialog.CredentialsDialog;
 import fi.bitrite.android.ws.activity.dialog.SearchDialogHandler;
-import fi.bitrite.android.ws.auth.CredentialsProvider;
-import fi.bitrite.android.ws.auth.CredentialsReceiver;
-import fi.bitrite.android.ws.auth.CredentialsService;
+import fi.bitrite.android.ws.auth.AuthenticationHelper;
+import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.search.Search;
 import fi.bitrite.android.ws.search.SearchFactory;
+import fi.bitrite.android.ws.search.SearchThread;
 
-public class MainActivity extends RoboTabActivity implements CredentialsReceiver {
+public class MainActivity extends RoboTabActivity  {
 	// Starred hosts tab
 	@InjectView(R.id.starredHostsTab) LinearLayout starredHostsTab;
 	@InjectView(R.id.lstStarredHosts) ListView starredHostsList;
@@ -48,7 +47,6 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 	// Utilities
 	@Inject StarredHostDao starredHostDao;
 	@Inject SearchFactory searchFactory;
-	@Inject CredentialsService credentialsService;
 
 	SearchDialogHandler searchDialogHandler;
 	
@@ -68,8 +66,34 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 	}
 
 	private void setupCredentials() {
-		new CredentialsDialog(MainActivity.this, MainActivity.this).show();
+		try {
+			AuthenticationHelper.getWarmshowersAccount();
+		}
+		
+		catch (NoAccountException e) {
+			Intent i = new Intent(MainActivity.this, AuthenticatorActivity.class);
+			startActivityForResult(i, 0);
+		}
 	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		if (resultCode == RESULT_CANCELED) {
+			Toast.makeText(getApplicationContext(), "Cannot run without WarmShowers credentials", Toast.LENGTH_LONG).show();
+			finishWithDelay();
+		}
+	}
+	
+	private void finishWithDelay() {
+		new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                }
+                catch (Exception e) { }
+                finish();
+            }
+        }).start();
+	}	
 
 	private void setupTabs() {
 		TabHost tabHost = this.getTabHost();
@@ -103,12 +127,7 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				searchDialogHandler.prepareSearch(SearchDialogHandler.TEXT_SEARCH);
-				
-				if (credentialsService.hasStoredCredentials()) {
-					searchDialogHandler.doSearch();
-				} else {
-					new CredentialsDialog(MainActivity.this, MainActivity.this).show();
-				}
+				searchDialogHandler.doSearch();
 			}
 		});
 
@@ -121,34 +140,6 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 				startActivity(i);
 			}
 		});
-	}
-
-	/**
-	 * Called when credentials are received from the credentials input dialog.
-	 */
-	public void applyCredentials(CredentialsProvider credentials) {
-		credentialsService.applyCredentials(credentials);
-		
-		if (credentialsService.hasStoredCredentials()) {
-			if (searchDialogHandler.isSearchInProgress()) {
-				searchDialogHandler.doSearch();
-			}
-		} else {
-			Toast.makeText(getApplicationContext(), "Cannot run without WarmShowers credentials", Toast.LENGTH_LONG).show();
-			finishWithDelay();
-		}		
-	}
-	
-	private void finishWithDelay() {
-		new Thread(new Runnable() {
-            public void run() {
-                try {
-                    Thread.sleep(3000);
-                }
-                catch (Exception e) { }
-                finish();
-            }
-        }).start();
 	}
 
 	@Override
@@ -189,5 +180,4 @@ public class MainActivity extends RoboTabActivity implements CredentialsReceiver
 		}
 	};
 
-	
 }

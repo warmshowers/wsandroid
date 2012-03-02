@@ -6,7 +6,11 @@
 
     <uses-sdk android:minSdkVersion="10" />
 
-    <uses-permission android:name="android.permission.INTERNET" />
+ 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    	<uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
@@ -17,6 +21,19 @@
         android:label="@string/app_name" >
         <uses-library android:name="com.google.android.maps" />
 
+        <!-- The authenticator service -->
+        <service
+            android:name=".auth.AuthenticationService"
+            android:exported="true">
+            <intent-filter>
+                <action
+                    android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+        
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name"
@@ -26,6 +43,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.AuthenticatorActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name=".activity.MapTabActivity"

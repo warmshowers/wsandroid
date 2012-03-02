@@ -21,14 +21,17 @@ public class CredentialsDialog implements CredentialsProvider {
 
 	private CredentialsReceiver receiver;
 
-	public CredentialsDialog(Context context, CredentialsReceiver receiver) {
+	public CredentialsDialog(Context context, CredentialsReceiver receiver, String username) {
 		this.context = context;
 		this.receiver = receiver;
+		this.username = username;
 	}
 
 	public void show() {
 		LayoutInflater factory = LayoutInflater.from(context);
 		final View credentialsView = factory.inflate(R.layout.credentials, null);
+		EditText usernameView = (EditText) credentialsView.findViewById(R.id.editUsername);
+		usernameView.setText(username);
 		Dialog dialog = new AlertDialog.Builder(context).setTitle(R.string.credentials_title).setView(credentialsView)
 				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
