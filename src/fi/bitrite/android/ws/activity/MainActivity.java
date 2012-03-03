@@ -75,8 +75,8 @@ public class MainActivity extends RoboTabActivity  {
 	
 	private void startAuthenticatorActivity() {
 		Intent i = new Intent(MainActivity.this, AuthenticatorActivity.class);
-	    i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-	    overridePendingTransition(0, 0);
+		i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+		overridePendingTransition(0, 0);
 		startActivityForResult(i, 0);
 	}
 
@@ -92,15 +92,15 @@ public class MainActivity extends RoboTabActivity  {
 	
 	private void finishWithDelay() {
 		new Thread(new Runnable() {
-            public void run() {
-                try {
-                    Thread.sleep(3000);
-                }
-                catch (Exception e) { }
-                finish();
-            }
-        }).start();
-	}	
+			public void run() {
+				try {
+					Thread.sleep(3000);
+				} catch (Exception e) {
+				}
+				finish();
+			}
+		}).start();
+	}
 
 	private void setupTabs() {
 		TabHost tabHost = this.getTabHost();
@@ -112,7 +112,7 @@ public class MainActivity extends RoboTabActivity  {
 	private void addTab(TabHost tabHost, String tabSpec, String indicator, int content) {
 		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator(indicator).setContent(content));
 	}
-	
+
 	private void addTab(TabHost tabHost, String tabSpec, String indicator, Intent content) {
 		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator(indicator).setContent(content));
 	}
@@ -166,14 +166,14 @@ public class MainActivity extends RoboTabActivity  {
 			dialogHandler.dismiss();
 
 			Object obj = msg.obj;
-			
+
 			if (obj instanceof Exception) {
 				dialogHandler.alertError("Search failed. Check your credentials and internet connection.");
 				return;
 			}
-			
+
 			List<HostBriefInfo> hosts = (List<HostBriefInfo>) obj;
-			
+
 			if (hosts.isEmpty()) {
 				dialogHandler.alertError("Your search yielded no results.");
 				return;

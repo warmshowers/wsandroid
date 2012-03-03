@@ -3,14 +3,49 @@
     android:id="@+id/mapTab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:background="#ffffff"
+    android:orientation="vertical"
+    android:paddingBottom="2dp" >
 
-    <com.google.android.maps.MapView
-        android:id="@+id/mapView"
-		android:enabled="true"
-		android:clickable="true"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:apiKey="0nk2Q1hiUZN7HmJt5jQMgznLyAIIkktfIReTYjg" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <com.google.android.maps.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:apiKey="0nk2Q1hiUZN7HmJt5jQMgznLyAIIkktfIReTYjg"
+            android:clickable="true"
+            android:enabled="true" />
+
+        <TextView
+            android:id="@+id/lblBigNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginBottom="20dip"
+            android:background="#AAFFAAAA"
+            android:padding="12dip"
+            android:textColor="#ffffffff" 
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:visibility="gone"  />
+        
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="2dp" >
+
+        <TextView
+            android:id="@+id/lblStatusMessage"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            android:text="" />
+    </LinearLayout>
 
 </LinearLayout>

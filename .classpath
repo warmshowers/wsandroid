@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/guice-2.0-no_aop.jar"/>
 	<classpathentry kind="lib" path="lib/roboguice-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/parcelgen.jar"/>
+	<classpathentry kind="lib" path="lib/overlaymanager-1.0.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
