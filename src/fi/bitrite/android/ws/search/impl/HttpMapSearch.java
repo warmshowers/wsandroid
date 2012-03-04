@@ -13,6 +13,7 @@ import org.apache.http.util.EntityUtils;
 import com.google.android.maps.GeoPoint;
 
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
+import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.search.Search;
@@ -25,15 +26,24 @@ public class HttpMapSearch implements Search {
 	private int numHostsCutoff;
 	private MapSearchArea searchArea;
 
+	private HttpAuthenticationService authenticationService;
 	private HttpSessionContainer sessionContainer;
 	
-	public HttpMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff, HttpSessionContainer sessionContainer) {
+	public HttpMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff, HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
 		this.searchArea = MapSearchArea.fromGeoPoints(topLeft, bottomRight);
 		this.numHostsCutoff = numHostsCutoff; 
+		this.authenticationService = authenticationService;
 		this.sessionContainer = sessionContainer;
 	}
 
 	public List<HostBriefInfo> doSearch() {
+		// The map search works even if we're not authenticated,
+		// but it returns less data. Easier to check first using
+		// a simple GET
+		if (!authenticationService.isAuthenticated()) {
+			authenticationService.authenticate();
+		}
+
 		String xml = getSearchResultXml();
 		return new HttpMapSearchXmlParser(xml, numHostsCutoff).getHosts();
 	}
@@ -45,9 +55,11 @@ public class HttpMapSearch implements Search {
 			String url = HttpUtils.encodeUrl(generateUrlWithSearchParams());
 			HttpGet get = new HttpGet(url);
 			HttpContext context = sessionContainer.getSessionContext();
+			
 			HttpResponse response = client.execute(get, context);
+
 			HttpEntity entity = response.getEntity();
-			xml = EntityUtils.toString(entity);
+			xml = EntityUtils.toString(entity, "UTF-8");
 		}
 
 		catch (Exception e) {

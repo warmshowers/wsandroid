@@ -22,8 +22,8 @@ public class HostBriefInfo {
 		this.comments = comments;
 	}
 
-	public HostBriefInfo(Host host) {
-		this.id = host.getId();
+	public HostBriefInfo(int id, Host host) {
+		this.id = id;
 		this.name = host.getName();
 		this.fullname = host.getFullname();
 		this.location = host.getCity() + ", " + host.getProvince() + ", " + host.getCountry().toUpperCase();
@@ -64,6 +64,11 @@ public class HostBriefInfo {
 
 	public void setLatitude(String latitude) {
 		this.latitude = latitude;
+	}
+
+	public String getJson() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

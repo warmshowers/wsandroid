@@ -3,7 +3,7 @@
     "package": "fi.bitrite.android.ws.model",
     "props": {
         "String": [
-        "name", "fullname", "street", "city", "province","postalCode","country", "mobilePhone",
+        "name", "fullname", "street", "city", "province","postalCode","country", "mobilePhone", "homePhone", "workPhone",
         "comments", "preferredNotice", "maxCyclists", "notCurrentlyAvailable", "bed", "bikeshop", "campground",            
         "food", "kitchenUse", "laundry", "lawnspace", "motel", "sag", "shower", "storage", "latitude", "longitude"
         ]
@@ -11,6 +11,8 @@
     "json_map": {
         "postalCode": "postal_code",
         "mobilePhone": "mobilephone",
+        "homePhone": "homephone",
+        "workPhone": "workphone",
         "preferredNotice": "preferred_notice",
         "maxCyclists": "maxcyclists",
         "notCurrentlyAvailable": "notcurrentlyavailable",

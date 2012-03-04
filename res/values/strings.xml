@@ -10,6 +10,16 @@
     <string name="password">Password:</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="description">Description:</string>
+    <string name="description"><u>About this host:</u></string>
+    <string name="location"><u>Location:</u></string>
+    <string name="mobile_phone"><u>Mobile phone:</u></string>
+    <string name="preferred_notice"><u>Preferred notice:</u></string>
+    <string name="max_guests"><u>Max guests:</u></string>
+    <string name="nearest_accomodation"><u>Accomodation:</u></string>
+    <string name="campground"><u>Campground:</u></string>
+    <string name="bike_shop"><u>Bike shop:</u></string>
+    <string name="services"><u>Can provide:</u></string>
+    <string name="home_phone"><u>Home phone:</u></string>
+    <string name="work_phone"><u>Work phone:</u></string>
     
 </resources>

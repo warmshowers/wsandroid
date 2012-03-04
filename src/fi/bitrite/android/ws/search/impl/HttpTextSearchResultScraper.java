@@ -63,7 +63,7 @@ public class HttpTextSearchResultScraper {
 		}
 
 		catch (Exception e) {
-			throw new SearchFailedException(e);
+			throw new HttpException(e);
 		}
 	}
 }

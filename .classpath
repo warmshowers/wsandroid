@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/roboguice-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/parcelgen.jar"/>
 	<classpathentry kind="lib" path="lib/overlaymanager-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/gson-2.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

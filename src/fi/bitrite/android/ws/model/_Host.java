@@ -1,9 +1,10 @@
 package fi.bitrite.android.ws.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /** Automatically generated Parcelable implementation for _Host.
  *    DO NOT MODIFY THIS FILE MANUALLY! IT WILL BE OVERWRITTEN THE NEXT TIME
@@ -14,11 +15,14 @@ import org.json.JSONObject;
 	protected String mName;
 	protected String mFullname;
 	protected String mStreet;
+	protected String mAdditional;
 	protected String mCity;
 	protected String mProvince;
 	protected String mPostalCode;
 	protected String mCountry;
 	protected String mMobilePhone;
+	protected String mHomePhone;
+	protected String mWorkPhone;
 	protected String mComments;
 	protected String mPreferredNotice;
 	protected String mMaxCyclists;
@@ -37,16 +41,19 @@ import org.json.JSONObject;
 	protected String mLatitude;
 	protected String mLongitude;
 
-	protected _Host(String name, String fullname, String street, String city, String province, String postalCode, String country, String mobilePhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude) {
+	protected _Host(String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude) {
 		this();
 		mName = name;
 		mFullname = fullname;
 		mStreet = street;
+		mAdditional = additional;
 		mCity = city;
 		mProvince = province;
 		mPostalCode = postalCode;
 		mCountry = country;
 		mMobilePhone = mobilePhone;
+		mHomePhone = homePhone;
+		mWorkPhone = workPhone;
 		mComments = comments;
 		mPreferredNotice = preferredNotice;
 		mMaxCyclists = maxCyclists;
@@ -79,6 +86,9 @@ import org.json.JSONObject;
 	public String getStreet() {
 		 return mStreet;
 	}
+	public String getAdditional() {
+		return mAdditional;
+	}
 	public String getCity() {
 		 return mCity;
 	}
@@ -93,6 +103,12 @@ import org.json.JSONObject;
 	}
 	public String getMobilePhone() {
 		 return mMobilePhone;
+	}
+	public String getHomePhone() {
+		 return mHomePhone;
+	}
+	public String getWorkPhone() {
+		 return mWorkPhone;
 	}
 	public String getComments() {
 		 return mComments;
@@ -155,11 +171,14 @@ import org.json.JSONObject;
 		parcel.writeString(mName);
 		parcel.writeString(mFullname);
 		parcel.writeString(mStreet);
+		parcel.writeString(mAdditional);
 		parcel.writeString(mCity);
 		parcel.writeString(mProvince);
 		parcel.writeString(mPostalCode);
 		parcel.writeString(mCountry);
 		parcel.writeString(mMobilePhone);
+		parcel.writeString(mHomePhone);
+		parcel.writeString(mWorkPhone);
 		parcel.writeString(mComments);
 		parcel.writeString(mPreferredNotice);
 		parcel.writeString(mMaxCyclists);
@@ -183,11 +202,14 @@ import org.json.JSONObject;
 		mName = source.readString();
 		mFullname = source.readString();
 		mStreet = source.readString();
+		mAdditional = source.readString();
 		mCity = source.readString();
 		mProvince = source.readString();
 		mPostalCode = source.readString();
 		mCountry = source.readString();
 		mMobilePhone = source.readString();
+		mHomePhone = source.readString();
+		mWorkPhone = source.readString();
 		mComments = source.readString();
 		mPreferredNotice = source.readString();
 		mMaxCyclists = source.readString();
@@ -217,6 +239,9 @@ import org.json.JSONObject;
 		if (!json.isNull("street")) {
 			mStreet = json.optString("street");
 		}
+		if (!json.isNull("additional")) {
+			mAdditional = json.optString("additional");
+		}
 		if (!json.isNull("city")) {
 			mCity = json.optString("city");
 		}
@@ -231,6 +256,12 @@ import org.json.JSONObject;
 		}
 		if (!json.isNull("mobilephone")) {
 			mMobilePhone = json.optString("mobilephone");
+		}
+		if (!json.isNull("homephone")) {
+			mHomePhone = json.optString("homephone");
+		}
+		if (!json.isNull("workphone")) {
+			mWorkPhone = json.optString("workphone");
 		}
 		if (!json.isNull("comments")) {
 			mComments = json.optString("comments");

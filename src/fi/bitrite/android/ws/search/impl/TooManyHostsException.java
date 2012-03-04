@@ -1,6 +1,6 @@
 package fi.bitrite.android.ws.search.impl;
 
-public class TooManyHostsException extends SearchFailedException {
+public class TooManyHostsException extends HttpException {
 
 	private int numHosts;
 	

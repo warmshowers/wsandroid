@@ -1,7 +1,5 @@
 package fi.bitrite.android.ws.search.impl;
 
-import java.util.List;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -10,50 +8,56 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
-import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.search.Search;
+import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 
-public class HttpTextSearch implements Search {
+public class HttpHostInformation {
 
-	private static final String WARMSHOWERS_LIST_SEARCH_URL = "http://www.warmshowers.org/search/wsuser/";
-
+	private int id;
 	private HttpAuthenticationService authenticationService;
-
 	private HttpSessionContainer sessionContainer;
-
-	private String text;
 
 	private boolean authenticationPerformed;
 
-	public HttpTextSearch(String text, HttpAuthenticationService authenticationService,
+	public HttpHostInformation(int id, HttpAuthenticationService authenticationService,
 			HttpSessionContainer sessionContainer) {
-		this.text = text;
+		this.id = id;
 		this.authenticationService = authenticationService;
 		this.sessionContainer = sessionContainer;
 	}
 
-	/*
-	 * Scrapes the standard WarmShowers list search page.
-	 */
-	public List<HostBriefInfo> doSearch() {
+	public Host getHostInformation() {
 		authenticationPerformed = false;
-		String html = getSearchResultHtml();
-		HttpTextSearchResultScraper scraper = new HttpTextSearchResultScraper(html);
-		List<HostBriefInfo> hosts = scraper.getHosts();
-		return hosts;
+		String json = getHostJson();
+		try {
+			JSONArray hostJsonArray = new JSONObject(json).getJSONArray("users");
+			JSONObject hostJson = hostJsonArray.getJSONObject(0);
+			Host host = Host.CREATOR.parse(hostJson.getJSONObject("user"));
+			
+			if (host.getFullname().isEmpty()) {
+				throw new HttpException("Could not parse JSON");
+			}
+			
+			return host;
+		} catch (JSONException e) {
+			throw new HttpException(e);
+		}
 	}
 
-	protected String getSearchResultHtml() {
+	public String getHostJson() {
 		HttpClient client = new DefaultHttpClient();
-		String html = null;
+		String json;
 		int responseCode;
 
 		try {
-			String searchUrl = HttpUtils.encodeUrl(WARMSHOWERS_LIST_SEARCH_URL + text);
+			String searchUrl = HttpUtils.encodeUrl(new StringBuilder().append("http://www.warmshowers.org/user/")
+					.append(id).append("/json").toString());
 			HttpGet get = new HttpGet(searchUrl);
 			HttpContext context = sessionContainer.getSessionContext();
 
@@ -61,10 +65,8 @@ public class HttpTextSearch implements Search {
 			HttpEntity entity = response.getEntity();
 			responseCode = response.getStatusLine().getStatusCode();
 
-			html = EntityUtils.toString(entity, "UTF-8");
-		}
-
-		catch (Exception e) {
+			json = EntityUtils.toString(entity, "UTF-8");
+		} catch (Exception e) {
 			throw new HttpException(e);
 		}
 
@@ -76,13 +78,13 @@ public class HttpTextSearch implements Search {
 			if (!authenticationPerformed) {
 				authenticationService.authenticate();
 				authenticationPerformed = true;
-				html = getSearchResultHtml();
+				json = getHostJson();
 			} else {
 				throw new HttpException("Couldn't authenticate user");
 			}
 		}
 
-		return html;
+		return json;
 	}
 
 }

@@ -14,7 +14,7 @@ import fi.bitrite.android.ws.model.HostBriefInfo;
 
 public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
-	private int[] colors = new int[] { 0xFF000000, 0xFF111111 };
+	private int[] colors = new int[] { 0xFF000000, 0xFF222222 };
 	
 	private int resource;
 

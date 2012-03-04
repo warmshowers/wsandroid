@@ -16,6 +16,8 @@ public class DialogHandler {
 
 	public static final int AUTHENTICATE = 2;
 
+	public static final int HOST_INFORMATION = 3;
+
 	int currentDialogId;
 	
 	ProgressDialog progressDialog;

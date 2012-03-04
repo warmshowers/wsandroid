@@ -13,7 +13,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
 	private Host testHost = TestHostFactory.getHostFromJson();
 	
 	public List<HostBriefInfo> getAllBrief() {
-		HostBriefInfo [] starredHosts = {  new HostBriefInfo(testHost), new HostBriefInfo(testHost) };
+		HostBriefInfo [] starredHosts = {  new HostBriefInfo(123, testHost), new HostBriefInfo(123, testHost) };
 		return Arrays.asList(starredHosts);
 	}
 

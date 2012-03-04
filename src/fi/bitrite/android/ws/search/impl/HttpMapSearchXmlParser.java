@@ -45,12 +45,12 @@ public class HttpMapSearchXmlParser {
 			return parseHostNodes(doc);
 		}
 
-		catch (SearchFailedException e) {
+		catch (HttpException e) {
 			throw e;
 		}
 		
 		catch (Exception e) {
-			throw new SearchFailedException(e);
+			throw new HttpException(e);
 		}
 	}
 
@@ -89,16 +89,23 @@ public class HttpMapSearchXmlParser {
 			Node fullnameNode = attributes.getNamedItem("n");
 			String fullname = (fullnameNode == null) ? "(Unknown host)" : fullnameNode.getTextContent();
 			
-			String location = new StringBuilder()
-				.append(attributes.getNamedItem("c").getTextContent()).append(", ")
-				.append(attributes.getNamedItem("p").getTextContent()).append(", ")
-				.append(attributes.getNamedItem("cnt").getTextContent().toUpperCase())
-				.toString();
-	
+			Node streetNode = attributes.getNamedItem("s");
+			StringBuilder location = new StringBuilder();
+			if (streetNode != null) {
+				location.append(attributes.getNamedItem("s").getTextContent());
+			}
+			
+			if (location.length() == 0) {
+				location.append(attributes.getNamedItem("c").getTextContent()).append(", ")
+					.append(attributes.getNamedItem("p").getTextContent()).append(", ")
+					.append(attributes.getNamedItem("cnt").getTextContent().toUpperCase())
+					.toString();				
+			}
+
 			String latitude = attributes.getNamedItem("la").getTextContent();
 			String longitude = attributes.getNamedItem("ln").getTextContent();
 			
-			HostBriefInfo host = new HostBriefInfo(id, null, fullname, location, null);
+			HostBriefInfo host = new HostBriefInfo(id, null, fullname, location.toString(), null);
 			host.setLatitude(latitude);
 			host.setLongitude(longitude);
 			hostList.add(host);

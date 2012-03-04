@@ -21,7 +21,7 @@ public class HttpSearchFactory implements SearchFactory {
 	}
 
 	public Search createMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff) {
-		return new HttpMapSearch(topLeft, bottomRight, numHostsCutoff, sessionContainer);
+		return new HttpMapSearch(topLeft, bottomRight, numHostsCutoff, authenticationService, sessionContainer);
 	}
 
 }
