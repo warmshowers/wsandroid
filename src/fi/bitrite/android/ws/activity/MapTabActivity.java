@@ -74,11 +74,11 @@ public class MapTabActivity extends RoboMapActivity {
 		hostPopup.setCancelable(true);
 
 		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-	    lp.copyFrom(hostPopup.getWindow().getAttributes());
-	    lp.width = WindowManager.LayoutParams.FILL_PARENT;
-	    hostPopup.getWindow().setAttributes(lp);
+		lp.copyFrom(hostPopup.getWindow().getAttributes());
+		lp.width = WindowManager.LayoutParams.FILL_PARENT;
+		hostPopup.getWindow().setAttributes(lp);
 
-	    TextView close = (TextView) hostPopup.findViewById(R.id.lblMapPopupClose);
+		TextView close = (TextView) hostPopup.findViewById(R.id.lblMapPopupClose);
 		close.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				hostPopup.dismiss();
@@ -105,7 +105,7 @@ public class MapTabActivity extends RoboMapActivity {
 		ManagedOverlay managedOverlay = overlayManager.createOverlay(HOST_OVERLAY, marker);
 		managedOverlay.setLazyLoadCallback(createLazyLoadCallback());
 		managedOverlay.setOnOverlayGestureListener(createOnOverlayGestureListener());
-		
+
 		// registers the ManagedOverlayer to the MapView
 		overlayManager.populate();
 
@@ -153,8 +153,7 @@ public class MapTabActivity extends RoboMapActivity {
 			}
 
 			private GeoPoint getGeoPointFromHost(HostBriefInfo host) {
-				return new GeoPoint(
-						(int) Math.round(new Float(host.getLatitude()).floatValue() * 1e6),
+				return new GeoPoint((int) Math.round(new Float(host.getLatitude()).floatValue() * 1e6),
 						(int) Math.round(new Float(host.getLongitude()).floatValue() * 1e6));
 			}
 
@@ -209,9 +208,12 @@ public class MapTabActivity extends RoboMapActivity {
 				return false;
 			}
 
-			public void onLongPress(MotionEvent e, ManagedOverlay overlay) { }
+			public void onLongPress(MotionEvent e, ManagedOverlay overlay) {
+			}
 
-			public void onLongPressFinished(MotionEvent e, ManagedOverlay overlay, GeoPoint point, ManagedOverlayItem item) { }
+			public void onLongPressFinished(MotionEvent e, ManagedOverlay overlay, GeoPoint point,
+					ManagedOverlayItem item) {
+			}
 		};
 	}
 
@@ -222,7 +224,7 @@ public class MapTabActivity extends RoboMapActivity {
 		location.setText(host.getLocation());
 		hostPopup.show();
 	}
-	
+
 	private void updateStatusMessage(String message, boolean error) {
 		if (error) {
 			lblStatusMessage.setTextColor(0xFFFF0000);
@@ -241,7 +243,7 @@ public class MapTabActivity extends RoboMapActivity {
 	private void hideBigNumberOfHosts() {
 		lblBigNumber.setVisibility(View.GONE);
 	}
-	
+
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
