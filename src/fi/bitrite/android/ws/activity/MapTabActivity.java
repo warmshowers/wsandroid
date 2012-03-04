@@ -39,7 +39,7 @@ public class MapTabActivity extends RoboMapActivity {
 	@InjectView(R.id.lblStatusMessage) TextView lblStatusMessage;
 
 	@Inject SearchFactory searchFactory;
-	
+
 	OverlayManager overlayManager;
 
 	@Override
@@ -62,19 +62,21 @@ public class MapTabActivity extends RoboMapActivity {
 					throws LazyLoadException {
 				List<ManagedOverlayItem> overlayItems = new ArrayList<ManagedOverlayItem>();
 				try {
-					
+
 					hideBigNumber();
 					sendMessage("Loading hosts ...", false);
 
 					Search search = searchFactory.createMapSearch(topLeft, bottomRight, NUM_HOSTS_CUTOFF);
-					
+
 					try {
 						List<HostBriefInfo> hosts = search.doSearch();
 						sendMessage(hosts.size() + " hosts in area", false);
 						ListIterator<HostBriefInfo> hostIter = hosts.listIterator();
 						while (hostIter.hasNext()) {
 							HostBriefInfo host = hostIter.next();
-							GeoPoint point = new GeoPoint((int) Math.round(new Float(host.getLatitude()).floatValue() * 1e6), (int) Math.round(new Float(host.getLongitude()).floatValue() * 1e6));
+							GeoPoint point = new GeoPoint(
+									(int) Math.round(new Float(host.getLatitude()).floatValue() * 1e6), (int) Math
+											.round(new Float(host.getLongitude()).floatValue() * 1e6));
 							overlayItems.add(new ManagedOverlayItem(point, "title", "snippet"));
 						}
 					}
@@ -84,7 +86,7 @@ public class MapTabActivity extends RoboMapActivity {
 						showBigNumber((n > 1000) ? "1000+" : new Integer(n).toString());
 						sendMessage("Too many hosts in area. Try zooming.", true);
 					}
-					
+
 					catch (SearchFailedException e) {
 						Log.e("WSAndroid", e.getMessage(), e);
 						sendMessage(e.getMessage(), true);
@@ -125,10 +127,10 @@ public class MapTabActivity extends RoboMapActivity {
 
 		// registers the ManagedOverlayer to the MapView
 		overlayManager.populate();
-		
+
 		managedOverlay.invokeLazyLoad(500);
 	}
-	
+
 	private void updateStatusMessage(String message, boolean error) {
 		if (error) {
 			lblStatusMessage.setTextColor(0xFFFF0000);
