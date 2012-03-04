@@ -56,7 +56,7 @@ public class HttpTextSearchResultScraper {
 				String location = locationExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
 				String comments = commentsExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
 
-				hostList.add(new HostBriefInfo(name, fullname, location, comments));
+				hostList.add(new HostBriefInfo(0, name, fullname, location, comments));
 			}
 
 			return hostList;

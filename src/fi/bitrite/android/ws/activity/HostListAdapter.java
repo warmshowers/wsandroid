@@ -14,6 +14,8 @@ import fi.bitrite.android.ws.model.HostBriefInfo;
 
 public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
+	private int[] colors = new int[] { 0xFF000000, 0xFF111111 };
+	
 	private int resource;
 
 	public HostListAdapter(Context context, int resource, List<HostBriefInfo> hosts) {
@@ -25,12 +27,17 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		LinearLayout hostListItem = inflateView(convertView);
 
+		int colorPos = position % colors.length;
+		hostListItem.setBackgroundColor(colors[colorPos]);
+		
 		HostBriefInfo host = getItem(position);
 
 		TextView fullname = (TextView) hostListItem.findViewById(R.id.txtHostFullname);
+		TextView location = (TextView) hostListItem.findViewById(R.id.txtHostLocation);
 		TextView comments = (TextView) hostListItem.findViewById(R.id.txtHostComments);
 
 		fullname.setText(host.getFullname());
+		location.setText(host.getLocation());
 		comments.setText(host.getComments());
 
 		return hostListItem;

@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.search.impl;
 
+import com.google.android.maps.GeoPoint;
 import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
@@ -17,6 +18,10 @@ public class HttpSearchFactory implements SearchFactory {
 
 	public Search createTextSearch(String text) {
 		return new HttpTextSearch(text, authenticationService, sessionContainer);
+	}
+
+	public Search createMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff) {
+		return new HttpMapSearch(topLeft, bottomRight, numHostsCutoff, sessionContainer);
 	}
 
 }

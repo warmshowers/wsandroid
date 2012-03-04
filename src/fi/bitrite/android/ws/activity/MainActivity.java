@@ -104,17 +104,17 @@ public class MainActivity extends RoboTabActivity  {
 
 	private void setupTabs() {
 		TabHost tabHost = this.getTabHost();
-		addTab(tabHost, "tab_starred", "Starred", starredHostsTab.getId());
-		addTab(tabHost, "tab_list", "List", listTab.getId());
-		addTab(tabHost, "tab_map", "Map", new Intent(getApplicationContext(), MapTabActivity.class));
+		addTab(tabHost, "tab_starred", R.drawable.tab_icon_starred, starredHostsTab.getId());
+		addTab(tabHost, "tab_list", R.drawable.tab_icon_list, listTab.getId());
+		addTab(tabHost, "tab_map", R.drawable.tab_icon_map, new Intent(getApplicationContext(), MapTabActivity.class));
 	}
 
-	private void addTab(TabHost tabHost, String tabSpec, String indicator, int content) {
-		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator(indicator).setContent(content));
+	private void addTab(TabHost tabHost, String tabSpec, int icon, int content) {
+		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator("", getResources().getDrawable(icon)).setContent(content));
 	}
 
-	private void addTab(TabHost tabHost, String tabSpec, String indicator, Intent content) {
-		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator(indicator).setContent(content));
+	private void addTab(TabHost tabHost, String tabSpec, int icon, Intent content) {
+		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator("", getResources().getDrawable(icon)).setContent(content));
 	}
 
 	private void setupStarredHostsList() {

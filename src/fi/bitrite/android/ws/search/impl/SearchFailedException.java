@@ -12,4 +12,8 @@ public class SearchFailedException extends RuntimeException {
 		super(msg);
 	}
 
+	public SearchFailedException() {
+		super();
+	}
+
 }

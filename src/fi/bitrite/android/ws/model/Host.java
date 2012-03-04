@@ -10,11 +10,16 @@ import com.yelp.parcelgen.JsonParser.DualCreator;
 
 public class Host extends _Host {
 
+	private int mId;
+	
 	public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
 		Host host = new Host();
+		host.mId = briefInfo.getId();
 		host.mName = briefInfo.getName();
 		host.mFullname = briefInfo.getFullname();
 		host.mComments = briefInfo.getComments();
+		host.mLongitude = briefInfo.getLongitude();
+		host.mLatitude = briefInfo.getLatitude();
 		return host;
 	}
 	
@@ -37,5 +42,11 @@ public class Host extends _Host {
 			return newInstance;
 		}
 	};
+
+	public int getId() {
+		return mId;
+	}
+	
+	
 
 }

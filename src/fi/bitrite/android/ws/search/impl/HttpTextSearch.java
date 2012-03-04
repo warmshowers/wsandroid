@@ -21,13 +21,13 @@ public class HttpTextSearch implements Search {
 
 	private static final String WARMSHOWERS_LIST_SEARCH_URL = "http://www.warmshowers.org/search/wsuser/";
 
-	HttpAuthenticationService authenticationService;
+	private HttpAuthenticationService authenticationService;
 
-	HttpSessionContainer sessionContainer;
+	private HttpSessionContainer sessionContainer;
 
-	String text;
+	private String text;
 
-	boolean authenticationPerformed;
+	private boolean authenticationPerformed;
 
 	public HttpTextSearch(String text, HttpAuthenticationService authenticationService,
 			HttpSessionContainer sessionContainer) {
