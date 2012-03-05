@@ -20,5 +20,9 @@ public class StarredHostDaoImpl implements StarredHostDao {
 	public Host get() {
 		return testHost;
 	}
+
+	public boolean isHostStarred(int id, String name) {
+		return false;
+	}
 	
 }

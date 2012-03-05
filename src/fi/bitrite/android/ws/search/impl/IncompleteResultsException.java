@@ -1,5 +1,7 @@
 package fi.bitrite.android.ws.search.impl;
 
+import fi.bitrite.android.ws.util.http.HttpException;
+
 public class IncompleteResultsException extends HttpException {
 
 	private static final long serialVersionUID = -5196011773520934900L;

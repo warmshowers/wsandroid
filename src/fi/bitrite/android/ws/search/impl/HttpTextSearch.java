@@ -7,7 +7,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
@@ -15,6 +14,7 @@ import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.search.Search;
+import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 
 public class HttpTextSearch implements Search {
@@ -48,7 +48,7 @@ public class HttpTextSearch implements Search {
 	}
 
 	protected String getSearchResultHtml() {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpUtils.getDefaultClient();
 		String html = null;
 		int responseCode;
 

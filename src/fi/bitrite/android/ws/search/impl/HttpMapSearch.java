@@ -6,7 +6,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
@@ -49,7 +48,7 @@ public class HttpMapSearch implements Search {
 	}
 
 	private String getSearchResultXml() {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpUtils.getDefaultClient();
 		String xml;
 		try {
 			String url = HttpUtils.encodeUrl(generateUrlWithSearchParams());

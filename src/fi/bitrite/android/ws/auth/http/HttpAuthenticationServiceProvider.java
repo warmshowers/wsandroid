@@ -14,7 +14,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -52,7 +51,7 @@ public class HttpAuthenticationServiceProvider implements HttpAuthenticationServ
 	 * Load a page in order to see if we are authenticated
 	 */
 	public boolean isAuthenticated() {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpUtils.getDefaultClient();
 		int responseCode;
 		try {
 			String url = HttpUtils.encodeUrl(WARMSHOWERS_USER_AUTHENTICATION_TEST_URL);
@@ -96,7 +95,7 @@ public class HttpAuthenticationServiceProvider implements HttpAuthenticationServ
 	}
 	
 	public void authenticate(String username, String password) {
-		HttpClient client = new DefaultHttpClient();
+		HttpClient client = HttpUtils.getDefaultClient();
 		HttpContext httpContext = sessionContainer.getSessionContext();
 		CookieStore cookieStore = (CookieStore) httpContext.getAttribute(ClientContext.COOKIE_STORE);
 		cookieStore.clear();

@@ -1,6 +1,8 @@
 package fi.bitrite.android.ws.auth.http;
 
-public class HttpAuthenticationFailedException extends RuntimeException {
+import fi.bitrite.android.ws.util.http.HttpException;
+
+public class HttpAuthenticationFailedException extends HttpException {
 
 	private static final long serialVersionUID = 1L;
 

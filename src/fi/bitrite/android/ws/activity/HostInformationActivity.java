@@ -2,13 +2,16 @@ package fi.bitrite.android.ws.activity;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,6 +21,7 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.search.impl.HttpHostInformation;
 
 public class HostInformationActivity extends RoboActivity {
@@ -27,6 +31,7 @@ public class HostInformationActivity extends RoboActivity {
 	@InjectView(R.id.layoutHostDetails)
 	LinearLayout hostDetails;
 
+	@InjectView(R.id.btnHostStar) ImageView star;
 	@InjectView(R.id.txtHostFullname) TextView fullname;
 	@InjectView(R.id.txtHostComments) TextView comments;
 	@InjectView(R.id.txtHostLocation) TextView location;
@@ -43,9 +48,12 @@ public class HostInformationActivity extends RoboActivity {
 	@Inject HttpAuthenticationService authenticationService;
 	@Inject HttpSessionContainer sessionContainer;
 
+	@Inject StarredHostDao starredHostDao;
+
 	DialogHandler dialogHandler;
-	int id;
 	Host host;
+	int id;
+	boolean starred;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,15 +66,44 @@ public class HostInformationActivity extends RoboActivity {
 
 		fullname.setText(host.getFullname());
 
+		starred = starredHostDao.isHostStarred(id, host.getName());
+		setupStar();
+
 		dialogHandler = new DialogHandler(this);
+		dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
+
+		// TODO: no need to download information if user is starred
+		getHostInformation();
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		// TODO: no need to download information if user is starred
-		dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
-		getHostInformation();
+	private void setupStar() {
+		int drawable = starred ? R.drawable.starred_on : R.drawable.starred_off;
+		star.setImageDrawable(getResources().getDrawable(drawable));
+		star.setVisibility(View.VISIBLE);
+	}
+
+	public void showStarHostDialog(View view) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(starred ? "Un-star this host?" : "Star this host?")
+		       .setCancelable(false)
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                HostInformationActivity.this.toggleHostStarred();
+		                dialog.dismiss();
+		           }
+		       })
+		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   dialog.cancel();
+		           }
+		       });
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
+
+	protected void toggleHostStarred() {
+		starred = !starred;
+		setupStar();
 	}
 
 	@Override
@@ -127,12 +164,13 @@ public class HostInformationActivity extends RoboActivity {
 			Message msg = handler.obtainMessage();
 
 			try {
+				HttpHostInformation hostInfo = new HttpHostInformation(authenticationService, sessionContainer);
+
 				if (id == NO_ID) {
-					// we only have the username, so get the id using that
+					id = hostInfo.getHostId(host.getName());
 				}
 
-				HttpHostInformation hostInfo = new HttpHostInformation(id, authenticationService, sessionContainer);
-				msg.obj = hostInfo.getHostInformation();
+				msg.obj = hostInfo.getHostInformation(id);
 			}
 
 			catch (Exception e) {

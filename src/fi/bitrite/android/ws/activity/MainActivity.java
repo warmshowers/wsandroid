@@ -5,11 +5,13 @@ import java.util.List;
 import roboguice.activity.RoboTabActivity;
 import roboguice.inject.InjectView;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
@@ -133,6 +135,8 @@ public class MainActivity extends RoboTabActivity  {
 	private void setupListSearch() {
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(listSearchEdit.getWindowToken(), 0);
 				dialogHandler.showDialog(DialogHandler.TEXT_SEARCH);
 				doTextSearch();
 			}

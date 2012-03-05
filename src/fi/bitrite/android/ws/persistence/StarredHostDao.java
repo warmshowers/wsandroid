@@ -10,5 +10,7 @@ public interface StarredHostDao {
 	public Host get();
 
 	public List<HostBriefInfo> getAllBrief();
+
+	public boolean isHostStarred(int id, String name);
 	
 }

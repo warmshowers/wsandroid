@@ -35,8 +35,8 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.search.Search;
 import fi.bitrite.android.ws.search.SearchFactory;
-import fi.bitrite.android.ws.search.impl.HttpException;
 import fi.bitrite.android.ws.search.impl.TooManyHostsException;
+import fi.bitrite.android.ws.util.http.HttpException;
 
 public class MapTabActivity extends RoboMapActivity {
 
@@ -141,7 +141,7 @@ public class MapTabActivity extends RoboMapActivity {
 
 					catch (HttpException e) {
 						Log.e("WSAndroid", e.getMessage(), e);
-						sendMessage(e.getMessage(), true);
+						sendMessage("Error loading hosts, check Internet connection", true);
 					}
 				}
 

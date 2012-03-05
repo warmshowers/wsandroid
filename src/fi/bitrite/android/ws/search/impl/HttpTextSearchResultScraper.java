@@ -16,6 +16,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.http.HttpException;
 
 public class HttpTextSearchResultScraper {
 

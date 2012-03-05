@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.search.impl;
+package fi.bitrite.android.ws.util.http;
 
 public class HttpException extends RuntimeException {
 
