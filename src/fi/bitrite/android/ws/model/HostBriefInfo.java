@@ -1,10 +1,15 @@
 package fi.bitrite.android.ws.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.yelp.parcelgen.JsonParser.DualCreator;
+
 
 /**
  * Used for passing search results. More in-depth information is handled by the Host object.
  */
-public class HostBriefInfo {
+public class HostBriefInfo implements Parcelable {
 
 	private int id;
 	private String name;
@@ -30,6 +35,9 @@ public class HostBriefInfo {
 		this.comments = host.getComments();
 	}
 	
+	public HostBriefInfo() {
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -66,10 +74,41 @@ public class HostBriefInfo {
 		this.latitude = latitude;
 	}
 
-	public String getJson() {
+	public int describeContents() {
 		// TODO Auto-generated method stub
-		return null;
+		return 0;
+	}
+
+	public static final DualCreator<HostBriefInfo> CREATOR = new DualCreator<HostBriefInfo>() {
+
+		public HostBriefInfo[] newArray(int size) {
+			return new HostBriefInfo[size];
+		}
+
+		public HostBriefInfo createFromParcel(Parcel source) {
+			HostBriefInfo object = new HostBriefInfo();
+			object.readFromParcel(source);
+			return object;
+		}
+	};	
+	
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(id);
+		dest.writeString(name);
+		dest.writeString(fullname);
+		dest.writeString(location);
+		dest.writeString(comments);
+		dest.writeString(longitude);
+		dest.writeString(latitude);
 	}
 	
-	
+	public void readFromParcel(Parcel src) {
+		id = src.readInt();
+		name = src.readString();
+		fullname = src.readString();
+		location = src.readString();
+		comments = src.readString();
+		longitude = src.readString();
+		latitude = src.readString();
+	}	
 }

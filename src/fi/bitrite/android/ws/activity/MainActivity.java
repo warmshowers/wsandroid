@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import roboguice.activity.RoboTabActivity;
@@ -49,7 +50,9 @@ public class MainActivity extends RoboTabActivity  {
 	@Inject StarredHostDao starredHostDao;
 	@Inject SearchFactory searchFactory;
 
-	DialogHandler dialogHandler;
+	private ArrayList<HostBriefInfo> listSearchHosts;
+	
+	private DialogHandler dialogHandler;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,7 @@ public class MainActivity extends RoboTabActivity  {
 
 		setupTabs();
 		setupStarredHostsList();
-		setupListSearch();
+		setupListSearch(savedInstanceState);
 		
 		dialogHandler = new DialogHandler(this);
 	}
@@ -132,7 +135,7 @@ public class MainActivity extends RoboTabActivity  {
 		});
 	}
 
-	private void setupListSearch() {
+	private void setupListSearch(Bundle savedInstanceState) {
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -151,6 +154,14 @@ public class MainActivity extends RoboTabActivity  {
 				startActivity(i);
 			}
 		});
+		
+		if (savedInstanceState != null) {
+			listSearchHosts = savedInstanceState.getParcelableArrayList("list_search_hosts");
+			if (listSearchHosts != null) {
+				listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
+						R.layout.host_list_item, listSearchHosts));
+			}
+		}
 	}
 
 	@Override
@@ -176,16 +187,23 @@ public class MainActivity extends RoboTabActivity  {
 				return;
 			}
 
-			List<HostBriefInfo> hosts = (List<HostBriefInfo>) obj;
+			listSearchHosts = (ArrayList<HostBriefInfo>) obj;
 
-			if (hosts.isEmpty()) {
+			if (listSearchHosts.isEmpty()) {
 				dialogHandler.alertError("Your search yielded no results.");
 				return;
 			}
 
 			listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
-					R.layout.host_list_item, hosts));
+					R.layout.host_list_item, listSearchHosts));
 		}
 	};
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO: save dialog state?	
+		outState.putParcelableArrayList("list_search_hosts", listSearchHosts); 
+		super.onSaveInstanceState(outState);
+	}
 
 }

@@ -50,30 +50,50 @@ public class HostInformationActivity extends RoboActivity {
 
 	@Inject StarredHostDao starredHostDao;
 
-	DialogHandler dialogHandler;
-	Host host;
-	int id;
-	boolean starred;
+	private DialogHandler dialogHandler;
+	
+	private Host host;
+	private int id;
+	private boolean starred;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.host_information);
-
-		Intent i = getIntent();
-		host = (Host) i.getParcelableExtra("host");
-		id = i.getIntExtra("host_id", NO_ID);
-
-		fullname.setText(host.getFullname());
-
-		starred = starredHostDao.isHostStarred(id, host.getName());
-		setupStar();
-
 		dialogHandler = new DialogHandler(this);
-		dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
 
 		// TODO: no need to download information if user is starred
-		getHostInformation();
+		//  -> should check if host information is "complete" somehow. 
+		
+		if (savedInstanceState != null) {
+			host = savedInstanceState.getParcelable("host");
+			id = savedInstanceState.getInt("host_id");
+			
+			// TODO: we can only set the view content if host is complete!
+			// otherwise we have to download it again.
+			// this is a problem when changing screen rotation during
+			// loading of host.
+			setViewContentFromHost();
+		} else {
+			Intent i = getIntent();
+			host = (Host) i.getParcelableExtra("host");
+			id = i.getIntExtra("host_id", NO_ID);
+
+			dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
+			getHostInformationAsync();
+		}
+		
+		fullname.setText(host.getFullname());
+		starred = starredHostDao.isHostStarred(id, host.getName());
+		setupStar();
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO: save dialog state?
+		outState.putParcelable("host", host);
+		outState.putInt("host_id", id);
+		super.onSaveInstanceState(outState);
 	}
 
 	private void setupStar() {
@@ -111,7 +131,7 @@ public class HostInformationActivity extends RoboActivity {
 		return dialogHandler.createDialog(id, "Retrieving host information ...");
 	}
 
-	private void getHostInformation() {
+	private void getHostInformationAsync() {
 		new HostInformationThread(handler, id).start();
 	}
 
@@ -123,33 +143,39 @@ public class HostInformationActivity extends RoboActivity {
 			Object obj = msg.obj;
 
 			if (obj instanceof Exception) {
-				dialogHandler
-						.alertError("Could not retrieve host information. Check your credentials and internet connection.");
+				dialogHandler.alertError(
+						"Could not retrieve host information. Check your credentials and internet connection.");
 				return;
 			}
 
 			host = (Host) obj;
 
-			comments.setText(host.getComments());
-			location.setText(host.getLocation());
-			mobilePhone.setText(host.getMobilePhone());
-			homePhone.setText(host.getHomePhone());
-			workPhone.setText(host.getWorkPhone());
-			preferredNotice.setText(host.getPreferredNotice());
-			maxGuests.setText(host.getMaxCyclists());
-			nearestAccomodation.setText(host.getMotel());
-			campground.setText(host.getCampground());
-			bikeShop.setText(host.getBikeshop());
-			services.setText(host.getServices());
-
-			hostDetails.setVisibility(View.VISIBLE);
+			setViewContentFromHost();
 
 			if (host.isNotCurrentlyAvailable()) {
 				dialogHandler
-						.alertError("It is indicated that this host is currently not available. You may still contact the host, but you may not get a response.");
+						.alertError(
+								"It is indicated that this host is currently not available. You may still contact the host, but you may not get a response.");
 			}
 		}
+
 	};
+
+	private void setViewContentFromHost() {
+		comments.setText(host.getComments());
+		location.setText(host.getLocation());
+		mobilePhone.setText(host.getMobilePhone());
+		homePhone.setText(host.getHomePhone());
+		workPhone.setText(host.getWorkPhone());
+		preferredNotice.setText(host.getPreferredNotice());
+		maxGuests.setText(host.getMaxCyclists());
+		nearestAccomodation.setText(host.getMotel());
+		campground.setText(host.getCampground());
+		bikeShop.setText(host.getBikeshop());
+		services.setText(host.getServices());
+
+		hostDetails.setVisibility(View.VISIBLE);
+	}
 
 	private class HostInformationThread extends Thread {
 		Handler handler;

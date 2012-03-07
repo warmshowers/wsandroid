@@ -82,4 +82,8 @@ public class Host extends _Host {
 		return getNotCurrentlyAvailable().equals("1");
 	}
 
+	public boolean hasCompleteInformation() {
+		return !Strings.isEmpty(getName());
+	}
+
 }
