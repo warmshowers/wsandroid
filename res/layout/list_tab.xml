@@ -13,6 +13,7 @@
 			android:id="@+id/editListSearch"
 			android:layout_height="wrap_content"
 			android:layout_width="0dp"
+			android:layout_gravity="center_vertical"
 			android:layout_weight="1" 
 			android:hint="@string/list_search_hint"
 			android:imeOptions="actionSearch" />
@@ -20,7 +21,9 @@
 		    android:id="@+id/btnListSearch"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
+		    android:layout_gravity="center_vertical"
 		    android:paddingLeft="8dp"
+		    android:paddingRight="2dp"
 		    android:src="@drawable/find" />
 	</LinearLayout>
     <ListView
