@@ -18,6 +18,8 @@ public class DialogHandler {
 
 	public static final int HOST_INFORMATION = 3;
 
+	public static final int HOST_CONTACT = 4;
+
 	int currentDialogId;
 	
 	ProgressDialog progressDialog;
@@ -53,7 +55,7 @@ public class DialogHandler {
 		alert.show();		
 	}
 	
-	public void alertError(String message) {
+	public void alert(String message) {
 		showAlertDialog(message);
 	}
 	

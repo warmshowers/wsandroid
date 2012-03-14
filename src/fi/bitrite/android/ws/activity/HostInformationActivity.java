@@ -125,6 +125,13 @@ public class HostInformationActivity extends RoboActivity {
 		starred = !starred;
 		setupStar();
 	}
+	
+	public void contactHost(View view) {
+		Intent i = new Intent(HostInformationActivity.this, HostContactActivity.class);
+		i.putExtra("host", host);
+		i.putExtra("id", id);
+		startActivity(i);
+	}
 
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
@@ -142,19 +149,20 @@ public class HostInformationActivity extends RoboActivity {
 
 			Object obj = msg.obj;
 
-			if (obj instanceof Exception) {
-				dialogHandler.alertError(
+			if (obj instanceof Exception || msg.arg1 == NO_ID) {
+				dialogHandler.alert(
 						"Could not retrieve host information. Check your credentials and internet connection.");
 				return;
 			}
 
+			id = msg.arg1;
 			host = (Host) obj;
-
+			
 			setViewContentFromHost();
 
 			if (host.isNotCurrentlyAvailable()) {
 				dialogHandler
-						.alertError(
+						.alert(
 								"It is indicated that this host is currently not available. You may still contact the host, but you may not get a response.");
 			}
 		}
@@ -180,7 +188,7 @@ public class HostInformationActivity extends RoboActivity {
 	private class HostInformationThread extends Thread {
 		Handler handler;
 		int id;
-
+		
 		public HostInformationThread(Handler handler, int id) {
 			this.handler = handler;
 			this.id = id;
@@ -196,6 +204,7 @@ public class HostInformationActivity extends RoboActivity {
 					id = hostInfo.getHostId(host.getName());
 				}
 
+				msg.arg1 = id;
 				msg.obj = hostInfo.getHostInformation(id);
 			}
 

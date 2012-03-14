@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingTop="5dp" >
+
+        <TextView
+            android:id="@+id/txtContactHostTitle"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Message to "
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:id="@+id/btnHostContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"
+            android:onClick="sendMessageToHost"
+            android:paddingLeft="10dp"
+            android:paddingRight="2dp"
+            android:src="@drawable/send_message" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/editContactHostSubject"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter subject here" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/editContactHostMessage"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:hint="Enter message here"
+        android:inputType="textMultiLine" />
+
+    <CheckBox
+        android:id="@+id/checkboxContactHostSendCopy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:text="Send me a copy per e-mail" />
+
+</LinearLayout>

@@ -38,6 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingLeft="10dp"
+            android:clickable="true" 
+            android:onClick="contactHost"
             android:src="@drawable/message" />
     </LinearLayout>
 

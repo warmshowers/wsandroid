@@ -183,14 +183,14 @@ public class MainActivity extends RoboTabActivity  {
 			Object obj = msg.obj;
 
 			if (obj instanceof Exception) {
-				dialogHandler.alertError("Search failed. Check your credentials and internet connection.");
+				dialogHandler.alert("Search failed. Check your credentials and internet connection.");
 				return;
 			}
 
 			listSearchHosts = (ArrayList<HostBriefInfo>) obj;
 
 			if (listSearchHosts.isEmpty()) {
-				dialogHandler.alertError("Your search yielded no results.");
+				dialogHandler.alert("Your search yielded no results.");
 				return;
 			}
 

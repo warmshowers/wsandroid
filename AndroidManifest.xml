@@ -59,6 +59,11 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
+        <activity
+            android:name=".activity.HostContactActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+        </activity>
     </application>
 
 </manifest>
