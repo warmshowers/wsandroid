@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.inject.Inject;
 
@@ -22,6 +23,7 @@ public class StarredHostTabActivity extends RoboActivity {
 
 	@InjectView(R.id.starredHostsTab) LinearLayout starredHostsTab;
 	@InjectView(R.id.lstStarredHosts) ListView starredHostsList;
+	@InjectView(R.id.lblNoStarredHosts) TextView noStarredHostsLabel;
 	
 	@Inject StarredHostDao starredHostDao;
 	
@@ -33,16 +35,24 @@ public class StarredHostTabActivity extends RoboActivity {
 	}
 		
 	private void setupStarredHostsList() {
-		List<HostBriefInfo> starredHosts = starredHostDao.getAllBrief();
-		starredHostsList.setAdapter(new HostListAdapter(this, R.layout.host_list_item, starredHosts));
+		List<HostBriefInfo> starredHosts = starredHostDao.getAll();
 
-		starredHostsList.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Intent i = new Intent(StarredHostTabActivity.this, HostInformationActivity.class);
-				i.putExtra("host", starredHostDao.get());
-				startActivity(i);
-			}
-		});
-	}
+		if (starredHosts.size() == 0) {
+			noStarredHostsLabel.setVisibility(View.VISIBLE);
+			starredHostsList.setVisibility(View.GONE);
+		} else {
+			noStarredHostsLabel.setVisibility(View.GONE);
+			starredHostsList.setVisibility(View.VISIBLE);
+			
+			starredHostsList.setAdapter(new HostListAdapter(this, R.layout.host_list_item, starredHosts));
 	
+			starredHostsList.setOnItemClickListener(new OnItemClickListener() {
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					Intent i = new Intent(StarredHostTabActivity.this, HostInformationActivity.class);
+					i.putExtra("host", starredHostDao.get(1));
+					startActivity(i);
+				}
+			});
+		}
+	}
 }

@@ -7,9 +7,9 @@ import fi.bitrite.android.ws.model.HostBriefInfo;
 
 public interface StarredHostDao {
 
-	public Host get();
+	public Host get(int id);
 
-	public List<HostBriefInfo> getAllBrief();
+	public List<HostBriefInfo> getAll();
 
 	public boolean isHostStarred(int id, String name);
 	

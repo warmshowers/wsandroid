@@ -16,8 +16,17 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-            <include layout="@layout/starred_hosts_tab" />
-			<include layout="@layout/list_tab" />
+			<RelativeLayout 
+			    android:id="@+id/emptyStarredHostsLayout" 
+			    android:orientation="vertical"
+	            android:layout_width="fill_parent" 
+	            android:layout_height="fill_parent" />
+
+			<RelativeLayout 
+			    android:id="@+id/emptyListSearchLayout" 
+			    android:orientation="vertical"
+	            android:layout_width="fill_parent" 
+	            android:layout_height="fill_parent" />
 			
 			<RelativeLayout 
 			    android:id="@+id/emptyMapLayout" 
@@ -25,7 +34,6 @@
 	            android:layout_width="fill_parent" 
 	            android:layout_height="fill_parent" />
 			
-			<!--  <include layout="@layout/map_tab" /> -->
         </FrameLayout>
     </LinearLayout>
 </TabHost>
