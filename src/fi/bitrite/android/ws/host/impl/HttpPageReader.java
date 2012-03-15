@@ -1,6 +1,4 @@
-package fi.bitrite.android.ws.search.impl;
-
-import java.util.List;
+package fi.bitrite.android.ws.host.impl;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -12,49 +10,37 @@ import org.apache.http.util.EntityUtils;
 
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
-import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.search.Search;
 import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 
-public class HttpTextSearch implements Search {
+public class HttpPageReader {
 
-	private static final String WARMSHOWERS_LIST_SEARCH_URL = "http://www.warmshowers.org/search/wsuser/";
+	protected HttpAuthenticationService authenticationService;
+	protected HttpSessionContainer sessionContainer;
+	protected boolean authenticationPerformed;
 
-	private HttpAuthenticationService authenticationService;
-
-	private HttpSessionContainer sessionContainer;
-
-	private String text;
-
-	private boolean authenticationPerformed;
-
-	public HttpTextSearch(String text, HttpAuthenticationService authenticationService,
-			HttpSessionContainer sessionContainer) {
-		this.text = text;
+	public HttpPageReader(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
 		this.authenticationService = authenticationService;
 		this.sessionContainer = sessionContainer;
+		setAuthenticationPerformed(false);
 	}
 
-	/*
-	 * Scrapes the standard WarmShowers list search page.
-	 */
-	public List<HostBriefInfo> doSearch() {
-		authenticationPerformed = false;
-		String html = getSearchResultHtml();
-		HttpTextSearchResultScraper scraper = new HttpTextSearchResultScraper(html);
-		List<HostBriefInfo> hosts = scraper.getHosts();
-		return hosts;
+	public boolean isAuthenticationPerformed() {
+		return authenticationPerformed;
 	}
 
-	protected String getSearchResultHtml() {
+	public void setAuthenticationPerformed(boolean authenticationPerformed) {
+		this.authenticationPerformed = authenticationPerformed;
+	}
+
+	protected String getPage(String simpleUrl) {
 		HttpClient client = HttpUtils.getDefaultClient();
-		String html = null;
+		String html;
 		int responseCode;
 
 		try {
-			String searchUrl = HttpUtils.encodeUrl(WARMSHOWERS_LIST_SEARCH_URL + text);
-			HttpGet get = new HttpGet(searchUrl);
+			String url = HttpUtils.encodeUrl(simpleUrl);
+			HttpGet get = new HttpGet(url);
 			HttpContext context = sessionContainer.getSessionContext();
 
 			HttpResponse response = client.execute(get, context);
@@ -62,9 +48,7 @@ public class HttpTextSearch implements Search {
 			responseCode = response.getStatusLine().getStatusCode();
 
 			html = EntityUtils.toString(entity, "UTF-8");
-		}
-
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new HttpException(e);
 		}
 
@@ -75,8 +59,8 @@ public class HttpTextSearch implements Search {
 		if (responseCode == HttpStatus.SC_FORBIDDEN) {
 			if (!authenticationPerformed) {
 				authenticationService.authenticate();
-				authenticationPerformed = true;
-				html = getSearchResultHtml();
+				setAuthenticationPerformed(true);
+				html = getPage(simpleUrl);
 			} else {
 				throw new HttpException("Couldn't authenticate user");
 			}

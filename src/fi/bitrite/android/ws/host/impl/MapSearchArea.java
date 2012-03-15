@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.search.impl;
+package fi.bitrite.android.ws.host.impl;
 
 import com.google.android.maps.GeoPoint;
 

@@ -5,10 +5,10 @@ import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationServiceProvider;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainerProvider;
+import fi.bitrite.android.ws.host.SearchFactory;
+import fi.bitrite.android.ws.host.impl.HttpSearchFactory;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
-import fi.bitrite.android.ws.search.SearchFactory;
-import fi.bitrite.android.ws.search.impl.HttpSearchFactory;
 
 public class WSAndroidModule extends AbstractAndroidModule {
 

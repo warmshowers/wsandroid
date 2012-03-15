@@ -20,9 +20,9 @@ import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.host.impl.HttpHostInformation;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
-import fi.bitrite.android.ws.search.impl.HttpHostInformation;
 
 public class HostInformationActivity extends RoboActivity {
 
@@ -67,7 +67,7 @@ public class HostInformationActivity extends RoboActivity {
 		
 		if (savedInstanceState != null) {
 			host = savedInstanceState.getParcelable("host");
-			id = savedInstanceState.getInt("host_id");
+			id = savedInstanceState.getInt("id");
 			
 			// TODO: we can only set the view content if host is complete!
 			// otherwise we have to download it again.
@@ -77,7 +77,7 @@ public class HostInformationActivity extends RoboActivity {
 		} else {
 			Intent i = getIntent();
 			host = (Host) i.getParcelableExtra("host");
-			id = i.getIntExtra("host_id", NO_ID);
+			id = i.getIntExtra("id", NO_ID);
 
 			dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
 			getHostInformationAsync();
@@ -92,7 +92,7 @@ public class HostInformationActivity extends RoboActivity {
 	protected void onSaveInstanceState(Bundle outState) {
 		// TODO: save dialog state?
 		outState.putParcelable("host", host);
-		outState.putInt("host_id", id);
+		outState.putInt("id", id);
 		super.onSaveInstanceState(outState);
 	}
 

@@ -31,14 +31,14 @@ import de.android1.overlaymanager.ZoomEvent;
 import de.android1.overlaymanager.lazyload.LazyLoadCallback;
 import de.android1.overlaymanager.lazyload.LazyLoadException;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.host.Search;
+import fi.bitrite.android.ws.host.SearchFactory;
+import fi.bitrite.android.ws.host.impl.TooManyHostsException;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.search.Search;
-import fi.bitrite.android.ws.search.SearchFactory;
-import fi.bitrite.android.ws.search.impl.TooManyHostsException;
 import fi.bitrite.android.ws.util.http.HttpException;
 
-public class MapTabActivity extends RoboMapActivity {
+public class MapSearchTabActivity extends RoboMapActivity {
 
 	private static final String HOST_OVERLAY = "hostoverlay";
 
@@ -89,12 +89,24 @@ public class MapTabActivity extends RoboMapActivity {
 		details.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				hostPopup.dismiss();
-				Intent i = new Intent(MapTabActivity.this, HostInformationActivity.class);
+				Intent i = new Intent(MapSearchTabActivity.this, HostInformationActivity.class);
 				i.putExtra("host", Host.createFromBriefInfo(host));
-				i.putExtra("host_id", host.getId());
+				i.putExtra("id", host.getId());
 				startActivity(i);
 			}
 		});
+		
+		TextView contact = (TextView) hostPopup.findViewById(R.id.lblMapPopupContact);
+		contact.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				hostPopup.dismiss();
+				Intent i = new Intent(MapSearchTabActivity.this, HostContactActivity.class);
+				i.putExtra("host", Host.createFromBriefInfo(host));
+				i.putExtra("id", host.getId());
+				startActivity(i);
+			}
+		});
+		
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.search.impl;
+package fi.bitrite.android.ws.host.impl;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

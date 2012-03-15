@@ -49,8 +49,18 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
+         <activity
+            android:name=".activity.StarredHostTabActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+        </activity>
         <activity
-            android:name=".activity.MapTabActivity"
+            android:name=".activity.ListSearchTabActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+        </activity>
+         <activity
+            android:name=".activity.MapSearchTabActivity"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>

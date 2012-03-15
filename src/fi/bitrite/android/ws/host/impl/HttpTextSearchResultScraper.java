@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.search.impl;
+package fi.bitrite.android.ws.host.impl;
 
 import java.io.StringReader;
 import java.util.ArrayList;

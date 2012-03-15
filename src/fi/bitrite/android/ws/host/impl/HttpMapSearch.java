@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.search.impl;
+package fi.bitrite.android.ws.host.impl;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ import com.google.android.maps.GeoPoint;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.search.Search;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 
 public class HttpMapSearch implements Search {

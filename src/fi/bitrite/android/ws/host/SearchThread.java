@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.search;
+package fi.bitrite.android.ws.host;
 
 import android.os.Handler;
 import android.os.Message;

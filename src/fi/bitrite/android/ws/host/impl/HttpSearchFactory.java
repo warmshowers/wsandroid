@@ -1,12 +1,12 @@
-package fi.bitrite.android.ws.search.impl;
+package fi.bitrite.android.ws.host.impl;
 
 import com.google.android.maps.GeoPoint;
 import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
-import fi.bitrite.android.ws.search.Search;
-import fi.bitrite.android.ws.search.SearchFactory;
+import fi.bitrite.android.ws.host.Search;
+import fi.bitrite.android.ws.host.SearchFactory;
 
 public class HttpSearchFactory implements SearchFactory {
 
