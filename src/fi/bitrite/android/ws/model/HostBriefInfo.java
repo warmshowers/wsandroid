@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.maps.GeoPoint;
 import com.yelp.parcelgen.JsonParser.DualCreator;
 
 
@@ -74,11 +75,16 @@ public class HostBriefInfo implements Parcelable {
 		this.latitude = latitude;
 	}
 
+	public GeoPoint getGeoPoint() {
+		return new GeoPoint((int) Math.round(new Float(getLatitude()).floatValue() * 1e6),
+			(int) Math.round(new Float(getLongitude()).floatValue() * 1e6));
+	}
+	
 	public int describeContents() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
+	
 	public static final DualCreator<HostBriefInfo> CREATOR = new DualCreator<HostBriefInfo>() {
 
 		public HostBriefInfo[] newArray(int size) {

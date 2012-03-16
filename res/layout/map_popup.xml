@@ -11,11 +11,21 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:paddingBottom="10dp"
+        android:paddingBottom="5dp"
         android:singleLine="true"
         android:textColor="#FF000000"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
+    <TextView
+        android:id="@+id/lblMapPopupDistance"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:paddingBottom="10dp"
+        android:singleLine="true"
+        android:textColor="#FF000000"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
     <LinearLayout 
 	    android:layout_width="fill_parent"
     	android:layout_height="wrap_content"

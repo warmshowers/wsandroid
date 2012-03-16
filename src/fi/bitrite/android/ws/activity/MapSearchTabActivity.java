@@ -9,6 +9,7 @@ import roboguice.inject.InjectView;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -146,7 +147,7 @@ public class MapSearchTabActivity extends RoboMapActivity {
 						ListIterator<HostBriefInfo> hostIter = hosts.listIterator();
 						while (hostIter.hasNext()) {
 							HostBriefInfo host = hostIter.next();
-							GeoPoint point = getGeoPointFromHost(host);
+							GeoPoint point = host.getGeoPoint();
 							overlayItems.add(new ManagedOverlayItem(point, host.getFullname(), gson.toJson(host)));
 						}
 					}
@@ -168,11 +169,6 @@ public class MapSearchTabActivity extends RoboMapActivity {
 				}
 
 				return overlayItems;
-			}
-
-			private GeoPoint getGeoPointFromHost(HostBriefInfo host) {
-				return new GeoPoint((int) Math.round(new Float(host.getLatitude()).floatValue() * 1e6),
-						(int) Math.round(new Float(host.getLongitude()).floatValue() * 1e6));
 			}
 
 			private void hideBigNumber() {
@@ -240,6 +236,25 @@ public class MapSearchTabActivity extends RoboMapActivity {
 		hostPopup.setTitle(host.getFullname());
 		TextView location = (TextView) hostPopup.findViewById(R.id.lblMapPopupLocation);
 		location.setText(host.getLocation());
+		
+		TextView distance = (TextView) hostPopup.findViewById(R.id.lblMapPopupDistance);
+
+		Location loc1 = locationOverlay.getLastFix();
+
+		GeoPoint hostPoint = host.getGeoPoint();
+		Location loc2 = new Location("");
+		loc2.setLatitude((float) hostPoint.getLatitudeE6() / 1.0e6);
+		loc2.setLongitude((float) hostPoint.getLongitudeE6() / 1.0e6);
+		
+		if (loc1 == null) {
+			location.setVisibility(View.GONE);
+		} else {
+			float d = loc1.distanceTo(loc2) / 100;
+			float km = (Math.round(d)) / 10;
+			distance.setText(km + " km as the crow flies");
+			distance.setVisibility(View.VISIBLE);
+		}
+
 		hostPopup.show();
 	}
 
