@@ -39,7 +39,7 @@ public class DialogHandler {
 		progressDialog = new ProgressDialog(parentActivity);
 		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		progressDialog.setMessage(message);
-		progressDialog.setCancelable(false);
+		progressDialog.setCancelable(true);
 		return progressDialog;
 	}
 

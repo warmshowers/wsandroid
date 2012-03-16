@@ -85,5 +85,4 @@ public class Host extends _Host {
 	public boolean hasCompleteInformation() {
 		return !Strings.isEmpty(getName());
 	}
-
 }

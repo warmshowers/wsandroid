@@ -61,31 +61,30 @@ public class HostInformationActivity extends RoboActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.host_information);
 		dialogHandler = new DialogHandler(this);
+		starredHostDao.open();
 
-		// TODO: no need to download information if user is starred
-		//  -> should check if host information is "complete" somehow. 
-		
 		if (savedInstanceState != null) {
 			host = savedInstanceState.getParcelable("host");
 			id = savedInstanceState.getInt("id");
-			
-			// TODO: we can only set the view content if host is complete!
-			// otherwise we have to download it again.
-			// this is a problem when changing screen rotation during
-			// loading of host.
 			setViewContentFromHost();
 		} else {
 			Intent i = getIntent();
 			host = (Host) i.getParcelableExtra("host");
 			id = i.getIntExtra("id", NO_ID);
-
-			dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
-			getHostInformationAsync();
+		
+			starred = starredHostDao.isHostStarred(id, host.getName());
+			setupStar();
+			
+			if (starred) {
+				host = starredHostDao.get(id);
+				setViewContentFromHost();
+			} else {
+				dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
+				getHostInformationAsync();
+			}
 		}
 		
 		fullname.setText(host.getFullname());
-		starred = starredHostDao.isHostStarred(id, host.getName());
-		setupStar();
 	}
 	
 	@Override
@@ -122,6 +121,12 @@ public class HostInformationActivity extends RoboActivity {
 	}
 
 	protected void toggleHostStarred() {
+		if (starredHostDao.isHostStarred(id, host.getName())) {
+			starredHostDao.delete(id);
+		} else {
+			starredHostDao.insert(id, host.getName(), host);
+		}
+		
 		starred = !starred;
 		setupStar();
 	}
@@ -216,5 +221,17 @@ public class HostInformationActivity extends RoboActivity {
 			handler.sendMessage(msg);
 		}
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		starredHostDao.open();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		starredHostDao.close();
+	}	
 
 }

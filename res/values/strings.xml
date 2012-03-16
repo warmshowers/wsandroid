@@ -21,5 +21,6 @@
     <string name="services"><u>Can provide:</u></string>
     <string name="home_phone"><u>Home phone:</u></string>
     <string name="work_phone"><u>Work phone:</u></string>
+    <string name="delete">Delete</string>
     
 </resources>
