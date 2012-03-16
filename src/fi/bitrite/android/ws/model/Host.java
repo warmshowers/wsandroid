@@ -51,8 +51,13 @@ public class Host extends _Host {
 			sb.append(getAdditional()).append("\n");
 		}
 
-		return sb.append(getPostalCode()).append(", ").append(getCity()).append(", ").append(getProvince())
+		sb.append(getPostalCode()).append(", ").append(getCity()).append(", ").append(getProvince())
 				.append(", ").append(getCountry().toUpperCase()).toString();
+		
+		sb.append("\nLat: ").append(getLatitude()).append("\n");
+		sb.append("Lon: ").append(getLongitude());
+		
+		return sb.toString();
 	}
 
 	public String getServices() {

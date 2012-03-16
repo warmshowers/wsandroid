@@ -42,7 +42,7 @@ public class MapSearchTabActivity extends RoboMapActivity {
 
 	private static final String HOST_OVERLAY = "hostoverlay";
 
-	// TODO: make this a user-definable setting
+	// TODO: make this a user-definable setting (GitHub issue #13)
 	protected static final int NUM_HOSTS_CUTOFF = 100;
 
 	@InjectView(R.id.mapView) MapView mapView;
@@ -92,7 +92,7 @@ public class MapSearchTabActivity extends RoboMapActivity {
 				Intent i = new Intent(MapSearchTabActivity.this, HostInformationActivity.class);
 				i.putExtra("host", Host.createFromBriefInfo(host));
 				i.putExtra("id", host.getId());
-				startActivity(i);
+				startActivityForResult(i, 0);
 			}
 		});
 		
@@ -257,8 +257,47 @@ public class MapSearchTabActivity extends RoboMapActivity {
 	}
 
 	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == HostInformationActivity.RESULT_SHOW_HOST_ON_MAP) {
+			int lat = data.getIntExtra("lat", mapView.getMapCenter().getLatitudeE6());
+			int lon = data.getIntExtra("lon", mapView.getMapCenter().getLongitudeE6());
+			GeoPoint point = new GeoPoint(lat, lon);
+			mapController.animateTo(point);
+			mapController.setZoom(16);
+			mapView.invalidate();
+      }
+	}
+
+	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
 
+	/**
+	 * Utility function used by starred host tab and list search tab to indicate
+	 * that we want to be zooming the map shortly.
+	 */
+	public static void prepareToZoomToHost(MainActivity mainActivity, Intent data) {
+		int lat = data.getIntExtra("lat", 0);
+		int lon = data.getIntExtra("lon", 0);
+		mainActivity.setMapTarget(new GeoPoint(lat, lon));
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		GeoPoint target = ((MainActivity) getParent()).getMapTarget();
+		if (target != null && target.getLatitudeE6() != 0 && target.getLongitudeE6() != 0) {
+			mapController.animateTo(target);
+			mapController.setZoom(16);
+			mapView.invalidate();
+		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		((MainActivity) getParent()).clearMapTarget();
+	}
 }

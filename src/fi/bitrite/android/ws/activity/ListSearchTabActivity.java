@@ -68,7 +68,7 @@ public class ListSearchTabActivity extends RoboActivity {
 				HostBriefInfo briefInfo = (HostBriefInfo) listSearchResult.getItemAtPosition(position);
 				Host host = Host.createFromBriefInfo(briefInfo);
 				i.putExtra("host", host);
-				startActivity(i);
+				startActivityForResult(i, 0);
 			}
 		});
 		
@@ -78,6 +78,16 @@ public class ListSearchTabActivity extends RoboActivity {
 				listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
 						R.layout.host_list_item, listSearchHosts));
 			}
+		}
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == HostInformationActivity.RESULT_SHOW_HOST_ON_MAP) {
+			MainActivity parent = (MainActivity) this.getParent();
+			MapSearchTabActivity.prepareToZoomToHost(parent, data);
+			parent.switchTab(2);
 		}
 	}
 

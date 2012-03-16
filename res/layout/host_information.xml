@@ -79,7 +79,10 @@
 
                     <TextView
                         android:id="@+id/lblHostLocation"
-                        android:text="@string/location" />
+                        android:text="@string/location"
+                        android:textColor="#FFAAAAFF"
+                        android:clickable="true"
+                        android:onClick="showHostOnMap" />
 
                     <TextView
                         android:id="@+id/txtHostLocation"

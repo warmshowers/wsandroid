@@ -2,6 +2,7 @@ package fi.bitrite.android.ws.activity;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
+import roboguice.util.Strings;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -26,6 +27,8 @@ import fi.bitrite.android.ws.persistence.StarredHostDao;
 
 public class HostInformationActivity extends RoboActivity {
 
+	public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
+	
 	private static final int NO_ID = 0;
 
 	@InjectView(R.id.layoutHostDetails)
@@ -136,6 +139,22 @@ public class HostInformationActivity extends RoboActivity {
 		i.putExtra("host", host);
 		i.putExtra("id", id);
 		startActivity(i);
+	}
+	
+	public void showHostOnMap(View view) {
+		// We need to finish the host info dialog, switch to the map tab and 
+		// zoom/scroll to the location of the host
+		Intent resultIntent = new Intent();
+		
+		if (!Strings.isEmpty(host.getLatitude()) && !Strings.isEmpty(host.getLongitude())) {
+			int lat = (int) Math.round(Float.parseFloat(host.getLatitude()) * 1.0e6);
+			int lon = (int) Math.round(Float.parseFloat(host.getLongitude()) * 1.0e6);
+			resultIntent.putExtra("lat", lat);
+			resultIntent.putExtra("lon", lon);
+		}
+		
+		setResult(RESULT_SHOW_HOST_ON_MAP, resultIntent);
+		finish();
 	}
 
 	@Override

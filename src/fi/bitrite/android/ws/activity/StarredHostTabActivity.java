@@ -58,7 +58,7 @@ public class StarredHostTabActivity extends RoboActivity {
 					HostBriefInfo selectedHost = starredHosts.get(position);
 					i.putExtra("id", selectedHost.getId());
 					i.putExtra("host", Host.createFromBriefInfo(selectedHost));
-					startActivity(i);
+					startActivityForResult(i, 0);
 				}
 			});
 		}
@@ -81,6 +81,16 @@ public class StarredHostTabActivity extends RoboActivity {
 		setupStarredHostsList();
 		return true;
 	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == HostInformationActivity.RESULT_SHOW_HOST_ON_MAP) {
+			MainActivity parent = (MainActivity) this.getParent();
+			MapSearchTabActivity.prepareToZoomToHost(parent, data);
+			parent.switchTab(2);
+      }
+	}	
 	
 	@Override
 	protected void onResume() {

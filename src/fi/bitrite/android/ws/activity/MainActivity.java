@@ -5,11 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TabHost;
 import android.widget.Toast;
+
+import com.google.android.maps.GeoPoint;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
 
 public class MainActivity extends RoboTabActivity  {
+	
+	private GeoPoint mapTarget;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +64,30 @@ public class MainActivity extends RoboTabActivity  {
 	}
 
 	private void setupTabs() {
-		TabHost tabHost = this.getTabHost();
-		addTab(tabHost, "tab_starred", R.drawable.tab_icon_starred, new Intent(getApplicationContext(), StarredHostTabActivity.class));
-		addTab(tabHost, "tab_list", R.drawable.tab_icon_list, new Intent(getApplicationContext(), ListSearchTabActivity.class));
-		addTab(tabHost, "tab_map", R.drawable.tab_icon_map, new Intent(getApplicationContext(), MapSearchTabActivity.class));
+		TabHost tabHost = getTabHost();
+		addTab(tabHost, "tab_starred", R.drawable.tab_icon_starred, new Intent(this, StarredHostTabActivity.class));
+		addTab(tabHost, "tab_list", R.drawable.tab_icon_list, new Intent(this, ListSearchTabActivity.class));
+		addTab(tabHost, "tab_map", R.drawable.tab_icon_map, new Intent(this, MapSearchTabActivity.class));
 	}
 
 	private void addTab(TabHost tabHost, String tabSpec, int icon, Intent content) {
 		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator("", getResources().getDrawable(icon)).setContent(content));
 	}
+	
+	public void switchTab(int tab) {
+        getTabHost().setCurrentTab(tab);
+	}
+	
+	public void clearMapTarget() {
+		mapTarget = null;
+	}
+	
+	public void setMapTarget(GeoPoint target) {
+		mapTarget = target;
+	}
+	
+	public GeoPoint getMapTarget() {
+		return mapTarget;
+	}
+
 }
