@@ -20,6 +20,16 @@
             android:clickable="true"
             android:enabled="true" />
 
+        <ImageView
+            android:id="@+id/btnLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_margin="5dip"
+            android:clickable="true" 
+            android:onClick="zoomToCurrentLocation"
+            android:src="@drawable/location" />
+        
         <TextView
             android:id="@+id/lblBigNumber"
             android:layout_width="wrap_content"

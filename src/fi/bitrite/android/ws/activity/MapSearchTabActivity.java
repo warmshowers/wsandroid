@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 
@@ -53,6 +54,7 @@ public class MapSearchTabActivity extends RoboMapActivity {
 
 	MapController mapController;
 	OverlayManager overlayManager;
+	MyLocationOverlay locationOverlay;
 	Gson gson;
 	HostBriefInfo host;
 	Dialog hostPopup;
@@ -120,8 +122,12 @@ public class MapSearchTabActivity extends RoboMapActivity {
 
 		// registers the ManagedOverlayer to the MapView
 		overlayManager.populate();
-
+		
 		managedOverlay.invokeLazyLoad(500);
+		
+		locationOverlay = new MyLocationOverlay(this, mapView);
+		locationOverlay.enableMyLocation();
+		mapView.getOverlays().add(locationOverlay);
 	}
 
 	private LazyLoadCallback createLazyLoadCallback() {
@@ -267,6 +273,13 @@ public class MapSearchTabActivity extends RoboMapActivity {
 			mapController.setZoom(16);
 			mapView.invalidate();
       }
+	}
+	
+	public void zoomToCurrentLocation(View view) {
+		if (locationOverlay.getMyLocation() != null) {
+			mapController.animateTo(locationOverlay.getMyLocation());
+			mapController.setZoom(16);
+		}
 	}
 
 	@Override
