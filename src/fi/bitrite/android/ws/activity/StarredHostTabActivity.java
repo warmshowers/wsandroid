@@ -39,7 +39,7 @@ public class StarredHostTabActivity extends RoboActivity {
 		setContentView(R.layout.starred_hosts_tab);
 		registerForContextMenu(starredHostsList);
 	}
-		
+
 	private void setupStarredHostsList() {
 		starredHosts = starredHostDao.getAllBrief();
 
@@ -49,9 +49,9 @@ public class StarredHostTabActivity extends RoboActivity {
 		} else {
 			noStarredHostsLabel.setVisibility(View.GONE);
 			starredHostsList.setVisibility(View.VISIBLE);
-			
+
 			starredHostsList.setAdapter(new HostListAdapter(this, R.layout.host_list_item, starredHosts));
-	
+
 			starredHostsList.setOnItemClickListener(new OnItemClickListener() {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Intent i = new Intent(StarredHostTabActivity.this, HostInformationActivity.class);
@@ -63,7 +63,7 @@ public class StarredHostTabActivity extends RoboActivity {
 			});
 		}
 	}
-	
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
 		if (view.getId() == starredHostsList.getId()) {
@@ -72,7 +72,7 @@ public class StarredHostTabActivity extends RoboActivity {
 			menu.add(Menu.NONE, 0, 0, R.string.delete);
 		}
 	}
-	
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		// We only have one context menu item, so we can keep it simple
@@ -82,7 +82,7 @@ public class StarredHostTabActivity extends RoboActivity {
 		setupStarredHostsList();
 		return true;
 	}
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -90,9 +90,9 @@ public class StarredHostTabActivity extends RoboActivity {
 			MainActivity parent = (MainActivity) this.getParent();
 			MapSearchTabActivity.prepareToZoomToHost(parent, data);
 			parent.switchTab(2);
-      }
-	}	
-	
+		}
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
