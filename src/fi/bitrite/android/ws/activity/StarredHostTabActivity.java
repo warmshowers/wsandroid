@@ -77,7 +77,8 @@ public class StarredHostTabActivity extends RoboActivity {
 	public boolean onContextItemSelected(MenuItem item) {
 		// We only have one context menu item, so we can keep it simple
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		starredHostDao.delete(starredHosts.get(info.position).getId());
+		HostBriefInfo host = starredHosts.get(info.position);
+		starredHostDao.delete(host.getId(), host.getName());
 		setupStarredHostsList();
 		return true;
 	}

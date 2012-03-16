@@ -43,19 +43,30 @@ public class StarredHostDaoImpl implements StarredHostDao {
 		database.insert(DbHelper.TABLE_HOSTS, null, values);
 	}
 
-	public Host get(int id) {
-		Cursor cursor = database.query(DbHelper.TABLE_HOSTS,
+	public Host get(int id, String name) {
+		Cursor cursor;
+		
+		if (id > 0) {
+			cursor = database.query(DbHelper.TABLE_HOSTS,
 				new String[] { DbHelper.COLUMN_ID, DbHelper.COLUMN_DETAILS }, DbHelper.COLUMN_ID + " = " + id, null,
 				null, null, null);
+		} else {
+			cursor = database.query(DbHelper.TABLE_HOSTS,
+					new String[] { DbHelper.COLUMN_NAME, DbHelper.COLUMN_DETAILS }, DbHelper.COLUMN_NAME + " = '" + name + "'", null,
+					null, null, null);
+		}
 
 		if (cursor.getCount() == 0) {
 			return null;
 		}
 
 		cursor.moveToFirst();
-		return cursorToHost(cursor);
+		Host host = cursorToHost(cursor);
+		
+		cursor.close();
+		return host;
 	}
-
+	
 	private Host cursorToHost(Cursor cursor) {
 		String json = cursor.getString(1);
 		Gson gson = new Gson();
@@ -84,15 +95,22 @@ public class StarredHostDaoImpl implements StarredHostDao {
 			hosts.add(new HostBriefInfo(cursor.getInt(0), host));
 		}
 
+		cursor.close();
+		
 		return hosts;
 	}
 
-	public void delete(int id) {
-		database.delete(DbHelper.TABLE_HOSTS, DbHelper.COLUMN_ID + " = " + id, null);
+	public void delete(int id, String name) {
+		if (id > 0) {
+			database.delete(DbHelper.TABLE_HOSTS, DbHelper.COLUMN_ID + " = " + id, null);
+		} else {
+			database.delete(DbHelper.TABLE_HOSTS, DbHelper.COLUMN_NAME + " = '" + name + "'", null);
+		}
 	}
 
 	public boolean isHostStarred(int id, String name) {
-		return (get(id) != null);
+		return (get(id, name) != null);
 	}
+
 
 }

@@ -9,11 +9,11 @@ public interface StarredHostDao {
 
 	public void insert(int id, String name, Host host);
 
-	public Host get(int id);
+	public Host get(int id, String name);
 
 	public List<HostBriefInfo> getAllBrief();
 
-	public void delete(int id);
+	public void delete(int id, String name);
 
 	public boolean isHostStarred(int id, String name);
 

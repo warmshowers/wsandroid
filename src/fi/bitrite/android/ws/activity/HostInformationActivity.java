@@ -79,7 +79,7 @@ public class HostInformationActivity extends RoboActivity {
 			setupStar();
 			
 			if (starred) {
-				host = starredHostDao.get(id);
+				host = starredHostDao.get(id, host.getName());
 				setViewContentFromHost();
 			} else {
 				dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
@@ -125,7 +125,7 @@ public class HostInformationActivity extends RoboActivity {
 
 	protected void toggleHostStarred() {
 		if (starredHostDao.isHostStarred(id, host.getName())) {
-			starredHostDao.delete(id);
+			starredHostDao.delete(id, host.getName());
 		} else {
 			starredHostDao.insert(id, host.getName(), host);
 		}
