@@ -33,5 +33,5 @@
     <string name="host_not_available">It is indicated that this host is currently not available. You may still contact the host, but you may not get a response.</string>
     <string name="about_1">"Developed by Johannes Staffans\njohannes\u0040bitrite.fi, WS: jstaffans"</string>
     <string name="about_2">"Thanks to Randy Fay and Chris Meyer for support during development.</string>
-    <string name="about_3">"This application is open source!\nYou can help out at\nhttps://github.com/jstaffans/wsandroid</string>
+    <string name="about_3">"This application is open source under the Apache 2.0 license. You can help out at:\nhttps://github.com/jstaffans/wsandroid</string>
 </resources>
