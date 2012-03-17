@@ -3,6 +3,8 @@ package fi.bitrite.android.ws.activity;
 import roboguice.activity.RoboTabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -73,6 +75,13 @@ public class MainActivity extends RoboTabActivity  {
 	private void addTab(TabHost tabHost, String tabSpec, int icon, Intent content) {
 		tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator("", getResources().getDrawable(icon)).setContent(content));
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu, menu);
+	    return true;
+	}	
 	
 	public void switchTab(int tab) {
         getTabHost().setCurrentTab(tab);

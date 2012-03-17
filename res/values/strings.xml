@@ -22,5 +22,8 @@
     <string name="home_phone"><u>Home phone:</u></string>
     <string name="work_phone"><u>Work phone:</u></string>
     <string name="delete">Delete</string>
+    <string name="account">Account</string>
+    <string name="settings">Settings</string>
+    <string name="about">About</string>
     
 </resources>
