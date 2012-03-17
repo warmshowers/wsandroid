@@ -26,6 +26,7 @@ import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
 import fi.bitrite.android.ws.host.SearchThread;
+import fi.bitrite.android.ws.host.impl.MapAnimator;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 
@@ -37,6 +38,8 @@ public class ListSearchTabActivity extends RoboActivity {
 	@InjectView(R.id.lstSearchResult) ListView listSearchResult;
 
 	@Inject SearchFactory searchFactory;
+	
+	@Inject MapAnimator mapAnimator;
 
 	private ArrayList<HostBriefInfo> listSearchHosts;
 	
@@ -86,7 +89,7 @@ public class ListSearchTabActivity extends RoboActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == HostInformationActivity.RESULT_SHOW_HOST_ON_MAP) {
 			MainActivity parent = (MainActivity) this.getParent();
-			MapSearchTabActivity.prepareToZoomToHost(parent, data);
+			mapAnimator.prepareToAnimateToHost(data);
 			parent.switchTab(2);
 		}
 	}

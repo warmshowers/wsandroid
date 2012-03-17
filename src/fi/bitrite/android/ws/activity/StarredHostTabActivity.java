@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.host.impl.MapAnimator;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
@@ -32,6 +33,8 @@ public class StarredHostTabActivity extends RoboActivity {
 	
 	@Inject StarredHostDao starredHostDao;
 	private List<HostBriefInfo> starredHosts;
+
+	@Inject MapAnimator mapAnimator;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +91,7 @@ public class StarredHostTabActivity extends RoboActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == HostInformationActivity.RESULT_SHOW_HOST_ON_MAP) {
 			MainActivity parent = (MainActivity) this.getParent();
-			MapSearchTabActivity.prepareToZoomToHost(parent, data);
+			mapAnimator.prepareToAnimateToHost(data);
 			parent.switchTab(2);
 		}
 	}

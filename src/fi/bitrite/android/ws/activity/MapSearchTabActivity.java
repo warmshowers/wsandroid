@@ -35,6 +35,7 @@ import de.android1.overlaymanager.lazyload.LazyLoadException;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
+import fi.bitrite.android.ws.host.impl.MapAnimator;
 import fi.bitrite.android.ws.host.impl.TooManyHostsException;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
@@ -53,6 +54,8 @@ public class MapSearchTabActivity extends RoboMapActivity {
 
 	@Inject SearchFactory searchFactory;
 
+	@Inject MapAnimator mapAnimator;
+	
 	MapController mapController;
 	OverlayManager overlayManager;
 	MyLocationOverlay locationOverlay;
@@ -302,20 +305,10 @@ public class MapSearchTabActivity extends RoboMapActivity {
 		return false;
 	}
 
-	/**
-	 * Utility function used by starred host tab and list search tab to indicate
-	 * that we want to be zooming the map shortly.
-	 */
-	public static void prepareToZoomToHost(MainActivity mainActivity, Intent data) {
-		int lat = data.getIntExtra("lat", 0);
-		int lon = data.getIntExtra("lon", 0);
-		mainActivity.setMapTarget(new GeoPoint(lat, lon));
-	}
-	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		GeoPoint target = ((MainActivity) getParent()).getMapTarget();
+		GeoPoint target = mapAnimator.getTarget();
 		if (target != null && target.getLatitudeE6() != 0 && target.getLongitudeE6() != 0) {
 			mapController.animateTo(target);
 			mapController.setZoom(16);
@@ -326,6 +319,6 @@ public class MapSearchTabActivity extends RoboMapActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		((MainActivity) getParent()).clearMapTarget();
+		mapAnimator.clearTarget();
 	}
 }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello, WarmShowers for Android!</string>
     <string name="app_name">WSAndroid</string>
     <string name="label">WarmShowers for Android</string>
+    <string name="need_account">Cannot run without WarmShowers credentials</string>
+    <string name="authentication_failed">Authentication failed. Check your credentials and internet connection</string>
     <string name="list_search_hint">Name or city</string>
     <string name="credentials_title">Enter your WarmShowers username and password</string>
     <string name="username">Username:</string>

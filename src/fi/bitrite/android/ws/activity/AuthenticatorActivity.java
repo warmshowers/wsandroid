@@ -19,21 +19,21 @@ import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.AuthenticationService;
+import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 
 /**
  * The activity responsible for getting WarmShowers credentials from the user
  * and storing them on the device using Android's custom account facilities.
- * 
- * TODO: Make accounts editable (launch this activity with username in Intent)
- * 
  */
 public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
 	public static final String PARAM_USERNAME = "username";
 	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
-	public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
+	public static final String PARAM_INITIAL_AUTHENTICATION = "initialAuthentication";
 
+	public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
+	
 	private AccountManager accountManager;
 
 	@InjectView(R.id.editUsername) EditText editUsername;
@@ -41,7 +41,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
 	private String username;
 	private String password;
-	private boolean requestNewAccount;
+	private boolean initialAuthentication;
 
 	private DialogHandler dialogHandler;
 
@@ -58,12 +58,20 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
 		Intent intent = getIntent();
 		username = intent.getStringExtra(PARAM_USERNAME);
-		requestNewAccount = username == null;
+		initialAuthentication = username == null;
+		editUsername.setText(username);
 	}
 
 	public void cancel(View view) {
-		setResult(RESULT_CANCELED);
+		Intent resultIntent = new Intent();
+		resultIntent.putExtra(PARAM_INITIAL_AUTHENTICATION, initialAuthentication);
+		setResult(RESULT_CANCELED, resultIntent);
 		finish();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		cancel(null);
 	}
 
 	public void applyCredentials(View view) {
@@ -90,19 +98,24 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 			dialogHandler.dismiss();
 
 			Object obj = msg.obj;
+			Intent resultIntent = new Intent();
+			resultIntent.putExtra(PARAM_INITIAL_AUTHENTICATION, initialAuthentication);
 
 			if (obj instanceof Exception) {
-				setResult(RESULT_AUTHENTICATION_FAILED);
+				setResult(RESULT_AUTHENTICATION_FAILED, resultIntent);
 			} else {
-				Account account = new Account(username, AuthenticationService.ACCOUNT_TYPE);
-				if (requestNewAccount) {
-					accountManager.addAccountExplicitly(account, password, null);
-				} else {
+				try {
 					Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
 					accountManager.removeAccount(oldAccount, null, null);
-					accountManager.addAccountExplicitly(account, password, null);
 				}
-				setResult(RESULT_OK);
+				
+				catch (NoAccountException e) { 
+					// this is OK - we're adding the inital account
+				}
+				
+				Account account = new Account(username, AuthenticationService.ACCOUNT_TYPE);
+				accountManager.addAccountExplicitly(account, password, null);
+				setResult(RESULT_OK, resultIntent);
 			}
 
 			finish();

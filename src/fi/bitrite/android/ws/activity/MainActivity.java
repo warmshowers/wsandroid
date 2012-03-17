@@ -1,29 +1,26 @@
 package fi.bitrite.android.ws.activity;
 
 import roboguice.activity.RoboTabActivity;
+import android.accounts.Account;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TabHost;
 import android.widget.Toast;
-
-import com.google.android.maps.GeoPoint;
-
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
 
 public class MainActivity extends RoboTabActivity  {
 	
-	private GeoPoint mapTarget;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		setupCredentials();
 		setupTabs();
+		setupCredentials();
 	}
 
 	private void setupCredentials() {
@@ -32,27 +29,37 @@ public class MainActivity extends RoboTabActivity  {
 		}
 		
 		catch (NoAccountException e) {
-			startAuthenticatorActivity();
+			startAuthenticatorActivity(new Intent(MainActivity.this, AuthenticatorActivity.class));
 		}
 	}
 	
-	private void startAuthenticatorActivity() {
-		Intent i = new Intent(MainActivity.this, AuthenticatorActivity.class);
+	private void startAuthenticatorActivity(Intent i) {
 		i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 		overridePendingTransition(0, 0);
 		startActivityForResult(i, 0);
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		if (resultCode == RESULT_CANCELED) {
-			Toast.makeText(getApplicationContext(), "Cannot run without WarmShowers credentials", Toast.LENGTH_LONG).show();
-			finishWithDelay();
-		} else if (resultCode == AuthenticatorActivity.RESULT_AUTHENTICATION_FAILED) {
-			Toast.makeText(getApplicationContext(), "Authentication failed. Check your credentials and internet connection", Toast.LENGTH_LONG).show();
-			startAuthenticatorActivity();
+		if (initialAccountCreation(intent)) {
+			if (resultCode == RESULT_CANCELED) {
+				Toast.makeText(getApplicationContext(), R.string.need_account, Toast.LENGTH_LONG).show();
+				finishWithDelay();
+			} else if (resultCode == AuthenticatorActivity.RESULT_AUTHENTICATION_FAILED) {
+				Toast.makeText(getApplicationContext(), R.string.authentication_failed, Toast.LENGTH_LONG).show();
+				startAuthenticatorActivity(new Intent(MainActivity.this, AuthenticatorActivity.class));
+			}
+		} else {
+			if (resultCode == AuthenticatorActivity.RESULT_AUTHENTICATION_FAILED) {
+				Toast.makeText(getApplicationContext(), R.string.authentication_failed, Toast.LENGTH_LONG).show();
+				startAuthenticationActivityForExistingAccount();
+			}
 		}
 	}
-	
+		
+	private boolean initialAccountCreation(Intent intent) {
+		return intent.getBooleanExtra(AuthenticatorActivity.PARAM_INITIAL_AUTHENTICATION, true);
+	}
+
 	private void finishWithDelay() {
 		new Thread(new Runnable() {
 			public void run() {
@@ -83,20 +90,25 @@ public class MainActivity extends RoboTabActivity  {
 	    return true;
 	}	
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menuAccount:
+			startAuthenticationActivityForExistingAccount();
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private void startAuthenticationActivityForExistingAccount() {
+		Intent i = new Intent(MainActivity.this, AuthenticatorActivity.class);
+		Account account = AuthenticationHelper.getWarmshowersAccount();
+		i.putExtra(AuthenticatorActivity.PARAM_USERNAME, account.name);
+		startAuthenticatorActivity(i);
+	}
+
 	public void switchTab(int tab) {
         getTabHost().setCurrentTab(tab);
 	}
-	
-	public void clearMapTarget() {
-		mapTarget = null;
-	}
-	
-	public void setMapTarget(GeoPoint target) {
-		mapTarget = target;
-	}
-	
-	public GeoPoint getMapTarget() {
-		return mapTarget;
-	}
-
 }
