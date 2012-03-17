@@ -9,6 +9,8 @@ import android.os.Parcel;
 import com.yelp.parcelgen.JsonParser.DualCreator;
 
 public class Host extends _Host {
+	
+	private String mUpdated;
 
 	public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
 		Host host = new Host();
@@ -87,7 +89,11 @@ public class Host extends _Host {
 		return getNotCurrentlyAvailable().equals("1");
 	}
 
-	public boolean hasCompleteInformation() {
-		return !Strings.isEmpty(getName());
+	public String getUpdated() {
+		return mUpdated;
+	}
+
+	public void setUpdated(String updated) {
+		mUpdated = updated;
 	}
 }

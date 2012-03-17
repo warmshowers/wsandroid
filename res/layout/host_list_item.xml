@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" android:layout_height="fill_parent"
     android:orientation="vertical" 
-    android:padding="2dp">
+    android:padding="2dp" >
 
     <TextView
         android:id="@+id/txtHostFullname"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textSize="7pt" />
+        android:textSize="20dp" />
     
     <TextView
 	    android:id="@+id/txtHostLocation"
@@ -25,7 +25,18 @@
 	    android:layout_height="wrap_content"
 	    android:layout_weight="1" 
 	    android:ellipsize="end"
-        android:singleLine="true"
-        android:paddingBottom="5dp" />
+        android:singleLine="true" />
+    
+    <TextView 
+	    android:id="@+id/txtHostUpdated"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1" 
+	    android:ellipsize="end"
+        android:singleLine="true" />
+    
+    <View 
+        android:layout_width="fill_parent" 
+        android:layout_height="5dp" />
 
 </LinearLayout>

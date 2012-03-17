@@ -35,10 +35,19 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 		TextView fullname = (TextView) hostListItem.findViewById(R.id.txtHostFullname);
 		TextView location = (TextView) hostListItem.findViewById(R.id.txtHostLocation);
 		TextView comments = (TextView) hostListItem.findViewById(R.id.txtHostComments);
+		TextView updated =  (TextView) hostListItem.findViewById(R.id.txtHostUpdated);
 
 		fullname.setText(host.getFullname());
 		location.setText(host.getLocation());
 		comments.setText(host.getComments());
+		
+		if (host.getUpdated() != null) {
+			updated.setText(getContext().getResources().getString(R.string.last_updated) + " " + host.getUpdated());
+			updated.setVisibility(View.VISIBLE);
+		} else {
+			updated.setVisibility(View.GONE);
+			
+		}
 
 		return hostListItem;
 	}

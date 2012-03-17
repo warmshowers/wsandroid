@@ -1,7 +1,9 @@
 package fi.bitrite.android.ws.persistence.impl;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -35,6 +37,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
 		ContentValues values = new ContentValues();
 		values.put(DbHelper.COLUMN_ID, id);
 		values.put(DbHelper.COLUMN_NAME, name);
+		values.put(DbHelper.COLUMN_UPDATED, DateFormat.getDateInstance().format(new Date()));
 
 		Gson gson = new Gson();
 		String details = gson.toJson(host);
@@ -47,13 +50,11 @@ public class StarredHostDaoImpl implements StarredHostDao {
 		Cursor cursor;
 		
 		if (id > 0) {
-			cursor = database.query(DbHelper.TABLE_HOSTS,
-				new String[] { DbHelper.COLUMN_ID, DbHelper.COLUMN_DETAILS }, DbHelper.COLUMN_ID + " = " + id, null,
-				null, null, null);
+			cursor = database.query(DbHelper.TABLE_HOSTS, new String[] { DbHelper.COLUMN_ID, DbHelper.COLUMN_DETAILS,
+					DbHelper.COLUMN_UPDATED }, DbHelper.COLUMN_ID + " = " + id, null, null, null, null);
 		} else {
-			cursor = database.query(DbHelper.TABLE_HOSTS,
-					new String[] { DbHelper.COLUMN_NAME, DbHelper.COLUMN_DETAILS }, DbHelper.COLUMN_NAME + " = '" + name + "'", null,
-					null, null, null);
+			cursor = database.query(DbHelper.TABLE_HOSTS, new String[] { DbHelper.COLUMN_NAME, DbHelper.COLUMN_DETAILS,
+					DbHelper.COLUMN_UPDATED }, DbHelper.COLUMN_NAME + " = '" + name + "'", null, null, null, null);
 		}
 
 		if (cursor.getCount() == 0) {
@@ -71,7 +72,9 @@ public class StarredHostDaoImpl implements StarredHostDao {
 		String json = cursor.getString(1);
 		Gson gson = new Gson();
 		try {
-			return gson.fromJson(json, Host.class);
+			Host host = gson.fromJson(json, Host.class);
+			host.setUpdated(cursor.getString(2));
+			return host;
 		}
 
 		catch (Exception e) {
@@ -80,8 +83,8 @@ public class StarredHostDaoImpl implements StarredHostDao {
 	}
 
 	public List<HostBriefInfo> getAllBrief() {
-		Cursor cursor = database.query(DbHelper.TABLE_HOSTS,
-				new String[] { DbHelper.COLUMN_ID, DbHelper.COLUMN_DETAILS }, null, null, null, null, null);
+		Cursor cursor = database.query(DbHelper.TABLE_HOSTS, new String[] { DbHelper.COLUMN_ID,
+				DbHelper.COLUMN_DETAILS, DbHelper.COLUMN_UPDATED }, null, null, null, null, null);
 
 		if (cursor.getCount() == 0) {
 			return Collections.emptyList();

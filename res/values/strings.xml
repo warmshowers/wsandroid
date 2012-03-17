@@ -26,5 +26,6 @@
     <string name="account">Account</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
+    <string name="last_updated">Last updated: </string>
     
 </resources>

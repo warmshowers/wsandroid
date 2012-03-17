@@ -20,6 +20,8 @@ public class HostBriefInfo implements Parcelable {
 	private String longitude;
 	private String latitude;
 	
+	private String updated;
+	
 	public HostBriefInfo(int id, String name, String fullname, String location, String comments) {
 		this.id = id;
 		this.name = name;
@@ -34,6 +36,7 @@ public class HostBriefInfo implements Parcelable {
 		this.fullname = host.getFullname();
 		this.location = host.getCity() + ", " + host.getProvince() + ", " + host.getCountry().toUpperCase();
 		this.comments = host.getComments();
+		this.updated = host.getUpdated();
 	}
 	
 	public HostBriefInfo() {
@@ -73,6 +76,10 @@ public class HostBriefInfo implements Parcelable {
 
 	public void setLatitude(String latitude) {
 		this.latitude = latitude;
+	}
+
+	public String getUpdated() {
+		return updated;
 	}
 
 	public GeoPoint getGeoPoint() {
