@@ -27,6 +27,9 @@ import fi.bitrite.android.ws.persistence.StarredHostDao;
 
 public class StarredHostTabActivity extends RoboActivity {
 
+	private static final int CONTEXT_MENU_UPDATE = 0;
+	private static final int CONTEXT_MENU_DELETE = 1;
+
 	@InjectView(R.id.starredHostsTab) LinearLayout starredHostsTab;
 	@InjectView(R.id.lstStarredHosts) ListView starredHostsList;
 	@InjectView(R.id.lblNoStarredHosts) TextView noStarredHostsLabel;
@@ -72,17 +75,33 @@ public class StarredHostTabActivity extends RoboActivity {
 		if (view.getId() == starredHostsList.getId()) {
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			menu.setHeaderTitle(starredHosts.get(info.position).getFullname());
-			menu.add(Menu.NONE, 0, 0, R.string.delete);
+			menu.add(Menu.NONE, CONTEXT_MENU_UPDATE, 0, R.string.update);
+			menu.add(Menu.NONE, CONTEXT_MENU_DELETE, 1, R.string.delete);
 		}
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		// We only have one context menu item, so we can keep it simple
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		HostBriefInfo host = starredHosts.get(info.position);
-		starredHostDao.delete(host.getId(), host.getName());
-		setupStarredHostsList();
+		int index = item.getItemId();
+		switch (index) {
+		case CONTEXT_MENU_UPDATE:
+			Intent i = new Intent(StarredHostTabActivity.this, HostInformationActivity.class);
+			HostBriefInfo selectedHost = starredHosts.get(info.position);
+			i.putExtra("id", selectedHost.getId());
+			i.putExtra("host", Host.createFromBriefInfo(selectedHost));
+			i.putExtra("update", true);
+			startActivityForResult(i, 0);
+			break;
+		case CONTEXT_MENU_DELETE:
+			HostBriefInfo host = starredHosts.get(info.position);
+			starredHostDao.delete(host.getId(), host.getName());
+			setupStarredHostsList();
+			break;
+		default:
+			break;
+		}
+		
 		return true;
 	}
 

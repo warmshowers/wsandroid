@@ -111,9 +111,12 @@ public class StarredHostDaoImpl implements StarredHostDao {
 		}
 	}
 
+	public void update(int id, String name, Host host) {
+		delete(id, name);
+		insert(id, name, host);
+	}
+	
 	public boolean isHostStarred(int id, String name) {
 		return (get(id, name) != null);
 	}
-
-
 }

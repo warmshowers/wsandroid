@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -58,6 +61,7 @@ public class HostInformationActivity extends RoboActivity {
 	private Host host;
 	private int id;
 	private boolean starred;
+	private boolean forceUpdate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,16 +78,17 @@ public class HostInformationActivity extends RoboActivity {
 			Intent i = getIntent();
 			host = (Host) i.getParcelableExtra("host");
 			id = i.getIntExtra("id", NO_ID);
-		
+			forceUpdate = i.getBooleanExtra("update", false);
+			
 			starred = starredHostDao.isHostStarred(id, host.getName());
 			setupStar();
 			
-			if (starred) {
-				host = starredHostDao.get(id, host.getName());
-				setViewContentFromHost();
-			} else {
+			if (!starred || forceUpdate) {
 				dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
 				getHostInformationAsync();
+			} else {
+				host = starredHostDao.get(id, host.getName());
+				setViewContentFromHost();
 			}
 		}
 		
@@ -183,11 +188,14 @@ public class HostInformationActivity extends RoboActivity {
 			host = (Host) obj;
 			
 			setViewContentFromHost();
+			
+			if (starred && forceUpdate) {
+				starredHostDao.update(id, host.getName(), host);
+				dialogHandler.alert(getResources().getString(R.string.host_updated));
+			}
 
 			if (host.isNotCurrentlyAvailable()) {
-				dialogHandler
-						.alert(
-								"It is indicated that this host is currently not available. You may still contact the host, but you may not get a response.");
+				dialogHandler.alert(getResources().getString(R.string.host_not_available));
 			}
 		}
 
@@ -240,6 +248,25 @@ public class HostInformationActivity extends RoboActivity {
 			handler.sendMessage(msg);
 		}
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.host_information_menu, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// we only have one option so keep it simple
+		Intent i = new Intent();
+		i.putExtra("host", host);
+		i.putExtra("id", "id");
+		i.putExtra("update", true);
+		setIntent(i);
+		onCreate(null);
+		return true;
+	}	
 	
 	@Override
 	protected void onResume() {

@@ -15,6 +15,8 @@ public interface StarredHostDao {
 
 	public void delete(int id, String name);
 
+	public void update(int id, String name, Host host);
+	
 	public boolean isHostStarred(int id, String name);
 
 	public void open();
