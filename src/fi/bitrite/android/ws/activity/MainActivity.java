@@ -2,6 +2,7 @@ package fi.bitrite.android.ws.activity;
 
 import roboguice.activity.RoboTabActivity;
 import android.accounts.Account;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,6 +16,8 @@ import fi.bitrite.android.ws.auth.NoAccountException;
 
 public class MainActivity extends RoboTabActivity  {
 	
+	private Dialog splashDialog;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -96,6 +99,9 @@ public class MainActivity extends RoboTabActivity  {
 		case R.id.menuAccount:
 			startAuthenticationActivityForExistingAccount();
 			return true;
+		case R.id.menuAbout:
+			showAboutDialog();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -106,6 +112,23 @@ public class MainActivity extends RoboTabActivity  {
 		Account account = AuthenticationHelper.getWarmshowersAccount();
 		i.putExtra(AuthenticatorActivity.PARAM_USERNAME, account.name);
 		startAuthenticatorActivity(i);
+	}
+
+	private void showAboutDialog() {
+	    splashDialog = new Dialog(this, R.style.about_dialog);
+	    splashDialog.setContentView(R.layout.about);
+	    splashDialog.show();
+	}
+
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		// just dismiss the dialog on orientation change. It's not that important anyway.
+	    if (splashDialog != null) {
+	        splashDialog.dismiss();
+	        splashDialog = null;
+	    }
+	    
+	    return null;
 	}
 
 	public void switchTab(int tab) {

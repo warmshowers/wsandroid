@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.AuthenticationService;
-import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 
 /**
@@ -104,13 +103,9 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 			if (obj instanceof Exception) {
 				setResult(RESULT_AUTHENTICATION_FAILED, resultIntent);
 			} else {
-				try {
+				if (!initialAuthentication) {
 					Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
 					accountManager.removeAccount(oldAccount, null, null);
-				}
-				
-				catch (NoAccountException e) { 
-					// this is OK - we're adding the inital account
 				}
 				
 				Account account = new Account(username, AuthenticationService.ACCOUNT_TYPE);

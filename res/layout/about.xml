@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="10dp"
+        android:src="@drawable/wslogo" />
+    
+	<TextView
+	    android:id="@+id/lblAbout"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginBottom="10dp"
+	    android:gravity="center_horizontal"
+	    android:paddingTop="15dp"
+	    android:text="@string/app_title"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
+	
+	<TextView 
+	    android:id="@+id/txtAboutDetails1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/about_1"
+        android:autoLink="email" 
+        android:paddingBottom="10dp"/>	    
+	
+	<TextView
+	    android:id="@+id/txtAboutDetails2"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:autoLink="web"
+	    android:gravity="center_horizontal"
+	    android:text="@string/about_2" 
+	    android:paddingBottom="10dp"/>
+	
+	<TextView
+	    android:id="@+id/txtAboutDetails2"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:autoLink="web"
+	    android:gravity="center_horizontal"
+	    android:text="@string/about_3" />
+		
+</LinearLayout>
