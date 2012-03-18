@@ -111,7 +111,6 @@ public class HostContactActivity extends RoboActivity {
 			return retObj;
 		}
 		
-		@SuppressWarnings("unchecked")
 		@Override
 		protected void onPostExecute(Object result) {
 			dialogHandler.dismiss();
