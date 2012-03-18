@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.util.Log;
-import fi.bitrite.android.ws.WSAndroidApplication;
 
 /** 
  * Helper class for dialogs
@@ -36,7 +34,6 @@ public class DialogHandler {
 	}
 
 	public void showDialog(int id) {
-		Log.d(WSAndroidApplication.TAG, "showDialog: id = " + id + ", current = " + currentDialogId);
 		if (currentDialogId != id) {
 			currentDialogId = id;
 			inProgress = true;

@@ -7,6 +7,10 @@
     <string name="authentication_failed">Authentication failed. Check your credentials and internet connection</string>
     <string name="list_search_hint">Name or city</string>
     <string name="credentials_title">Enter your WarmShowers username and password</string>
+    <string name="enter_credentials">Please enter your username and password:</string>
+    <string name="about_credentials">These will be stored in an account on your device. You can delete the account at any time using the Android Settings / Account menu.</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
     <string name="username">Username:</string>
     <string name="password">Password:</string>
     <string name="ok">OK</string>
