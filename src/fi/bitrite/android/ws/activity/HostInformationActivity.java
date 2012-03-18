@@ -270,13 +270,20 @@ public class HostInformationActivity extends RoboActivity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// we only have one option so keep it simple
-		Intent i = new Intent();
-		i.putExtra("host", host);
-		i.putExtra("id", id);
-		i.putExtra("update", true);
-		setIntent(i);
-		onCreate(null);
-		return true;
+		switch (item.getItemId()) {
+		case R.id.menuStar:
+			showStarHostDialog(null);
+			return true;
+		case R.id.menuUpdate:
+			Intent i = new Intent();
+			i.putExtra("host", host);
+			i.putExtra("id", id);
+			i.putExtra("update", true);
+			setIntent(i);
+			onCreate(null);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }

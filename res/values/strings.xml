@@ -5,11 +5,15 @@
     <string name="label">WarmShowers for Android</string>
     <string name="need_account">Cannot run without WarmShowers credentials</string>
     <string name="authentication_failed">Authentication failed. Check your credentials and internet connection</string>
+    <string name="no_starred_hosts">"You currently have no starred hosts (hosts whose profiles are available offline). You can star hosts on the host information page by clicking the star icon."</string>
     <string name="list_search_hint">Name or city</string>
     <string name="no_results">Your search yielded no results.</string>
     <string name="credentials_title">Enter your WarmShowers username and password</string>
     <string name="enter_credentials">Please enter your username and password:</string>
     <string name="about_credentials">These will be stored in an account on your device. You can delete the account at any time using the Android Settings / Account menu.</string>
+    <string name="view_details">View details</string>
+    <string name="contact">Contact</string>
+    <string name="star">Star</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
     <string name="username">Username:</string>

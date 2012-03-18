@@ -2,6 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/menuStar"
+        android:icon="@drawable/star"
+        android:title="@string/star" />
+
+    <item
         android:id="@+id/menuUpdate"
         android:icon="@drawable/update"
         android:title="@string/update" />

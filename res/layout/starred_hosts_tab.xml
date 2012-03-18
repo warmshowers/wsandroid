@@ -9,7 +9,7 @@
         android:id="@+id/lblNoStarredHosts"
     	android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:text="You currently have no starred hosts."
+	    android:text="@string/no_starred_hosts"
 	    android:visibility="gone"
         />	
     <ListView

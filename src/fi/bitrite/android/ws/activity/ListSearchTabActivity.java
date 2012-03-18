@@ -100,9 +100,13 @@ public class ListSearchTabActivity extends RoboActivity {
 	}
 	
 	protected void startSearchUsingEditFieldInput() {
+		hideKeyboard();
+		doTextSearch(listSearchEdit.getText().toString());
+	}
+
+	private void hideKeyboard() {
 		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(listSearchEdit.getWindowToken(), 0);
-		doTextSearch(listSearchEdit.getText().toString());
 	}
 
 	@Override
@@ -176,5 +180,10 @@ public class ListSearchTabActivity extends RoboActivity {
 		}
 		super.onSaveInstanceState(outState);
 	}
-	
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		hideKeyboard();
+	}
 }
