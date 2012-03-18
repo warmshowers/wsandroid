@@ -16,6 +16,7 @@
 			android:layout_gravity="center_vertical"
 			android:layout_weight="1" 
 			android:hint="@string/list_search_hint"
+			android:inputType="text"
 			android:imeOptions="actionSearch" />
 		<ImageView
 		    android:id="@+id/btnListSearch"

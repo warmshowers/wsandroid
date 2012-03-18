@@ -3,15 +3,15 @@
 
     <item
         android:id="@+id/menuAccount"
-        android:icon="@drawable/login"
+        android:icon="@drawable/account"
         android:title="@string/account" />
     <item
         android:id="@+id/menuSettings"
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@drawable/settings"
         android:title="@string/settings" />
     <item
         android:id="@+id/menuAbout"
-        android:icon="@android:drawable/ic_menu_info_details"
+        android:icon="@drawable/about"
         android:title="@string/about" />
 
 </menu>
