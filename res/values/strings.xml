@@ -3,6 +3,7 @@
     <string name="app_name">WSAndroid</string>
     <string name="app_title">"WarmShowers for Android\nVersion: 1.0"</string>
     <string name="label">WarmShowers for Android</string>
+    <string name="authenticating">Authenticating …</string>
     <string name="need_account">Cannot run without WarmShowers credentials</string>
     <string name="authentication_failed">Authentication failed. Check your credentials and internet connection</string>
     <string name="no_starred_hosts">"You currently have no starred hosts (hosts whose profiles are available offline). You can star hosts on the host information page by clicking the star icon."</string>
@@ -14,6 +15,7 @@
     <string name="view_details">View details</string>
     <string name="contact">Contact</string>
     <string name="star">Star</string>
+    <string name="close">Close</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
     <string name="username">Username:</string>
@@ -40,8 +42,18 @@
     <string name="host_updated">Host information updated.</string>
     <string name="host_not_available">It is indicated that this host is currently not available. You may still contact the host, but you may not get a response.</string>
     <string name="host_info_in_progress">Retrieving host information …</string>
+    <string name="star_host">Star this host?</string>
+    <string name="unstar_host">Un-star this host?</string>
     <string name="performing_search">Performing search …</string>
+    <string name="too_many_hosts">Too many hosts in area. Try zooming.</string>
+    <string name="error_loading_hosts">Error loading hosts, check Internet connection.</string>
+    <string name="mi_distance">miles as the crow flies</string>
+    <string name="km_distance">km as the crow flies</string>
     <string name="error_retrieving_host_information">Could not retrieve host information. Check your credentials and internet connection.</string>
+    <string name="subject_hint">Enter subject here</string>
+    <string name="message_hint">Enter message here</string>
+    <string name="message_validation_error">Both subject and message are obligatory.</string>
+    <string name="sending_message">Sending message …</string>
     <string name="error_sending_message">Could not send message. Check your credentials and internet connection.</string>
     <string name="message_sent">Message sent successfully.</string>
     <string name="about_1">"Developed by Johannes Staffans (WS: jstaffans)\njohannes.staffans\u0040gmail.com"</string>

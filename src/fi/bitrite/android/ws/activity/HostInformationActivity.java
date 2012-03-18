@@ -128,19 +128,18 @@ public class HostInformationActivity extends RoboActivity {
 	
 	public void showStarHostDialog(View view) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(starred ? "Un-star this host?" : "Star this host?")
-		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                HostInformationActivity.this.toggleHostStarred();
-		                dialog.dismiss();
-		           }
-		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		        	   dialog.cancel();
-		           }
-		       });
+		builder.setMessage(
+				starred ? getResources().getString(R.string.unstar_host) : getResources().getString(R.string.star_host))
+				.setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						HostInformationActivity.this.toggleHostStarred();
+						dialog.dismiss();
+					}
+				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}

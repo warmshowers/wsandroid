@@ -69,10 +69,10 @@ public class HostContactActivity extends RoboActivity {
 	public void sendMessageToHost(View view) {
 		String subject = editSubject.getText().toString();
 		String message = editMessage.getText().toString();
-		String copy = checkboxCopy.isChecked() ? "1" : "0";
+		String copy = checkboxCopy.isChecked() ? "1" : null;
 
 		if (Strings.isEmpty(subject) || Strings.isEmpty(message)) {
-			dialogHandler.alert("Both subject and message are obligatory.");
+			dialogHandler.alert(getResources().getString(R.string.message_validation_error));
 		}
 
 		dialogHandler.showDialog(DialogHandler.HOST_CONTACT);
@@ -83,7 +83,7 @@ public class HostContactActivity extends RoboActivity {
 
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
-		return dialogHandler.createDialog(id, "Sending message ...");
+		return dialogHandler.createDialog(id, getResources().getString(R.string.sending_message));
 	}
 
 	private class HostContactTask extends AsyncTask<String, Void, Object> {
@@ -92,7 +92,7 @@ public class HostContactActivity extends RoboActivity {
 		protected Object doInBackground(String... params) {
 			String subject = params[0];
 			String message = params[1];
-			boolean copy = params[2].equals("1");
+			boolean copy = params[2] != null;
 			Object retObj = null;
 			try {
 				HttpHostContact contact = new HttpHostContact(authenticationService, sessionContainer);
@@ -126,14 +126,14 @@ public class HostContactActivity extends RoboActivity {
 
 	protected void showSuccessDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(HostContactActivity.this);
-		builder.setMessage(getResources().getString(R.string.message_sent))
-		       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                finish();
-		           }
-		       });
+		builder.setMessage(getResources().getString(R.string.message_sent)).setPositiveButton(
+				getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						finish();
+					}
+				});
 		AlertDialog dialog = builder.create();
 		dialog.show();
-	}	
+	}
 	
 }

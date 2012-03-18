@@ -84,7 +84,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
-		return dialogHandler.createDialog(id, "Authenticating ...");
+		return dialogHandler.createDialog(id, getResources().getString(R.string.authenticating));
 	}
 
 	public void doAuthentication() {

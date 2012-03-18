@@ -160,12 +160,12 @@ public class MapSearchTabActivity extends RoboMapActivity {
 					catch (TooManyHostsException e) {
 						int n = e.getNumHosts();
 						showBigNumber((n > 1000) ? "1000+" : new Integer(n).toString());
-						sendMessage("Too many hosts in area. Try zooming.", true);
+						sendMessage(getResources().getString(R.string.too_many_hosts), true);
 					}
 
 					catch (HttpException e) {
 						Log.e("WSAndroid", e.getMessage(), e);
-						sendMessage("Error loading hosts, check Internet connection", true);
+						sendMessage(getResources().getString(R.string.error_loading_hosts), true);
 					}
 				}
 
@@ -267,10 +267,10 @@ public class MapSearchTabActivity extends RoboMapActivity {
 		String unit = prefs.getString("distance_unit", "km");
 		if (unit.equals("mi")) {
 			float temp = d / 160.9344f;
-			return (Math.round(temp)) / 10.0f + " miles as the crow flies";
+			return (Math.round(temp)) / 10.0f + " " + getResources().getString(R.string.mi_distance);
 		} else {
 			float temp = d / 100.0f;
-			return (Math.round(temp)) / 10.0f + " km as the crow flies";
+			return (Math.round(temp)) / 10.0f + " " + getResources().getString(R.string.km_distance);
 		}
 	}
 

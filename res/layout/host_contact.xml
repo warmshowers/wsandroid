@@ -36,7 +36,8 @@
         android:id="@+id/editContactHostSubject"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter subject here" >
+        android:hint="@string/subject_hint"
+        android:inputType="text" >
 
         <requestFocus />
     </EditText>
@@ -47,7 +48,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="top"
-        android:hint="Enter message here"
+        android:hint="@string/message_hint"
         android:inputType="textMultiLine" />
 
     <CheckBox
