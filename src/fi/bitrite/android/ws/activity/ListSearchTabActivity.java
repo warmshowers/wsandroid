@@ -10,7 +10,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -18,6 +20,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.google.inject.Inject;
 
@@ -54,11 +58,19 @@ public class ListSearchTabActivity extends RoboActivity {
 	}
 
 	private void setupListSearch(Bundle savedInstanceState) {
+		listSearchEdit.setOnEditorActionListener(new OnEditorActionListener() {
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+					startSearchUsingEditFieldInput();
+				}
+				
+				return true;
+			}
+		});
+		
 		listSearchButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(listSearchEdit.getWindowToken(), 0);
-				doTextSearch(listSearchEdit.getText().toString());
+				startSearchUsingEditFieldInput();
 			}
 		});
 
@@ -87,6 +99,12 @@ public class ListSearchTabActivity extends RoboActivity {
 		}
 	}
 	
+	protected void startSearchUsingEditFieldInput() {
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(listSearchEdit.getWindowToken(), 0);
+		doTextSearch(listSearchEdit.getText().toString());
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
