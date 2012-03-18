@@ -157,15 +157,12 @@ public class ListSearchTabActivity extends RoboActivity {
 			}
 			
 			listSearchHosts = (ArrayList<HostBriefInfo>) result;
-
-			if (listSearchHosts.isEmpty()) {
-				dialogHandler.alert("Your search yielded no results.");
-				return;
-			}
-
 			listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
 					R.layout.host_list_item, listSearchHosts));
-			
+
+			if (listSearchHosts.isEmpty()) {
+				dialogHandler.alert(getResources().getString(R.string.no_results));
+			}
 		}
 
 	}	
