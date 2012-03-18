@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory 
+        android:title="Map"
+        android:key="map">
+        
+        <ListPreference 
+            android:key="distance_unit"
+            android:title="Unit of distance"
+            android:summary="Determines in which unit distances should be shown"
+            android:defaultValue="km" 
+            android:entries="@array/distanceUnits"
+            android:entryValues="@array/distanceUnitValues" />    
+            
+    </PreferenceCategory>
+    
+</PreferenceScreen>

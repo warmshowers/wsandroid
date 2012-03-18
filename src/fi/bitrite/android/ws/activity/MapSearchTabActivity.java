@@ -8,9 +8,11 @@ import roboguice.activity.RoboMapActivity;
 import roboguice.inject.InjectView;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -252,13 +254,24 @@ public class MapSearchTabActivity extends RoboMapActivity {
 		if (loc1 == null) {
 			location.setVisibility(View.GONE);
 		} else {
-			float d = loc1.distanceTo(loc2) / 100;
-			float km = (Math.round(d)) / 10;
-			distance.setText(km + " km as the crow flies");
+			String text = getDistanceText(loc1.distanceTo(loc2));
+			distance.setText(text);
 			distance.setVisibility(View.VISIBLE);
 		}
 
 		hostPopup.show();
+	}
+
+	private String getDistanceText(float d) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		String unit = prefs.getString("distance_unit", "km");
+		if (unit.equals("mi")) {
+			float temp = d / 160.9344f;
+			return (Math.round(temp)) / 10.0f + " miles as the crow flies";
+		} else {
+			float temp = d / 100.0f;
+			return (Math.round(temp)) / 10.0f + " km as the crow flies";
+		}
 	}
 
 	private void updateStatusMessage(String message, boolean error) {

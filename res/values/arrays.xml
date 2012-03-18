@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string-array name="distanceUnits">
+        <item name="km">Kilometers</item>
+        <item name="mi">Miles</item>
+    </string-array>
+    
+    <string-array name="distanceUnitValues">
+        <item name="km">km</item>
+        <item name="mi">mi</item>
+    </string-array>
+
+</resources>

@@ -106,6 +106,9 @@ public class MainActivity extends RoboTabActivity  {
 		case R.id.menuAccount:
 			startAuthenticationActivityForExistingAccount();
 			return true;
+		case R.id.menuSettings:
+			startSettingsActivity();
+			return true;
 		case R.id.menuAbout:
 			showAboutDialog();
 			return true;
@@ -119,6 +122,11 @@ public class MainActivity extends RoboTabActivity  {
 		Account account = AuthenticationHelper.getWarmshowersAccount();
 		i.putExtra(AuthenticatorActivity.PARAM_USERNAME, account.name);
 		startAuthenticatorActivity(i);
+	}
+
+	private void startSettingsActivity() {
+		Intent i = new Intent(MainActivity.this, SettingsActivity.class);
+		startActivity(i);
 	}
 
 	private void showAboutDialog() {
