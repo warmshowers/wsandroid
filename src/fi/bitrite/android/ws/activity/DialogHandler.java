@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.util.Log;
+import fi.bitrite.android.ws.WSAndroidApplication;
 
 /** 
  * Helper class for dialogs
@@ -12,6 +14,8 @@ import android.content.DialogInterface;
  */
 public class DialogHandler {
 
+	public static final int NO_DIALOG = 0;
+	
 	public static final int TEXT_SEARCH = 1;
 
 	public static final int AUTHENTICATE = 2;
@@ -19,8 +23,9 @@ public class DialogHandler {
 	public static final int HOST_INFORMATION = 3;
 
 	public static final int HOST_CONTACT = 4;
-
-	int currentDialogId;
+	
+	private static boolean inProgress = false;
+	private static int  currentDialogId = NO_DIALOG;
 	
 	ProgressDialog progressDialog;
 	
@@ -31,8 +36,12 @@ public class DialogHandler {
 	}
 
 	public void showDialog(int id) {
-		parentActivity.showDialog(id);	
-		currentDialogId = id;
+		Log.d(WSAndroidApplication.TAG, "showDialog: id = " + id + ", current = " + currentDialogId);
+		if (currentDialogId != id) {
+			currentDialogId = id;
+			inProgress = true;
+			parentActivity.showDialog(id);
+		}
 	}
 
 	public Dialog createDialog(int id, String message) {
@@ -60,7 +69,20 @@ public class DialogHandler {
 	}
 	
 	public void dismiss() {
-		parentActivity.dismissDialog(currentDialogId);
-	}
+		inProgress = false;
 
+		try {
+			parentActivity.dismissDialog(currentDialogId);
+		} 
+		
+		catch (IllegalArgumentException e) {
+			// OK - we assume it has been closed earlier
+		}
+		
+		currentDialogId = NO_DIALOG;		
+	}
+	
+	public static boolean inProgress() {
+		return inProgress;
+	}
 }

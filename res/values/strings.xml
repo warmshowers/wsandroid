@@ -30,6 +30,11 @@
     <string name="last_updated">Last updated: </string>
     <string name="host_updated">Host information updated.</string>
     <string name="host_not_available">It is indicated that this host is currently not available. You may still contact the host, but you may not get a response.</string>
+    <string name="host_info_in_progress">Retrieving host information …</string>
+    <string name="performing_search">Performing search …</string>
+    <string name="error_retrieving_host_information">Could not retrieve host information. Check your credentials and internet connection.</string>
+    <string name="error_sending_message">Could not send message. Check your credentials and internet connection.</string>
+    <string name="message_sent">Message sent successfully.</string>
     <string name="about_1">"Developed by Johannes Staffans\njohannes\u0040bitrite.fi, WS: jstaffans"</string>
     <string name="about_2">"Thanks to Randy Fay and Chris Meyer for support during development.</string>
     <string name="about_3">"This application is open source under the Apache 2.0 license. You can help out at:\nhttps://github.com/jstaffans/wsandroid</string>

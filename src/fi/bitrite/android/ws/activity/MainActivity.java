@@ -24,6 +24,13 @@ public class MainActivity extends RoboTabActivity  {
 		setContentView(R.layout.main);
 		setupTabs();
 		setupCredentials();
+		
+		if (savedInstanceState != null) {
+			boolean splash = savedInstanceState.getBoolean("splash", false);
+			if (splash) {
+				showAboutDialog();
+			}
+		}
 	}
 
 	private void setupCredentials() {
@@ -121,14 +128,11 @@ public class MainActivity extends RoboTabActivity  {
 	}
 
 	@Override
-	public Object onRetainNonConfigurationInstance() {
-		// just dismiss the dialog on orientation change. It's not that important anyway.
-	    if (splashDialog != null) {
-	        splashDialog.dismiss();
-	        splashDialog = null;
-	    }
-	    
-	    return null;
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (splashDialog != null && splashDialog.isShowing()) {
+			outState.putBoolean("splash", true);
+		}
 	}
 
 	public void switchTab(int tab) {

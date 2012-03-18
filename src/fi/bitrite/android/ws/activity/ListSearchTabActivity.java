@@ -7,9 +7,9 @@ import roboguice.inject.InjectView;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -25,7 +25,6 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
-import fi.bitrite.android.ws.host.SearchThread;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.MapAnimator;
@@ -44,15 +43,14 @@ public class ListSearchTabActivity extends RoboActivity {
 	private ArrayList<HostBriefInfo> listSearchHosts;
 	
 	private DialogHandler dialogHandler;
+	private TextSearchTask textSearchTask;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_tab);
-
-		setupListSearch(savedInstanceState);
-		
 		dialogHandler = new DialogHandler(this);
+		setupListSearch(savedInstanceState);
 	}
 
 	private void setupListSearch(Bundle savedInstanceState) {
@@ -60,8 +58,7 @@ public class ListSearchTabActivity extends RoboActivity {
 			public void onClick(View v) {
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(listSearchEdit.getWindowToken(), 0);
-				dialogHandler.showDialog(DialogHandler.TEXT_SEARCH);
-				doTextSearch();
+				doTextSearch(listSearchEdit.getText().toString());
 			}
 		});
 
@@ -77,9 +74,15 @@ public class ListSearchTabActivity extends RoboActivity {
 		
 		if (savedInstanceState != null) {
 			listSearchHosts = savedInstanceState.getParcelableArrayList("list_search_hosts");
+			boolean inProgress = DialogHandler.inProgress();
 			if (listSearchHosts != null) {
 				listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
 						R.layout.host_list_item, listSearchHosts));
+			}
+			
+			if (inProgress) {
+				dialogHandler.dismiss();
+				doTextSearch(savedInstanceState.getString("search_text"));
 			}
 		}
 	}
@@ -96,28 +99,46 @@ public class ListSearchTabActivity extends RoboActivity {
 
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
-		return dialogHandler.createDialog(id, "Performing search ...");
+		return dialogHandler.createDialog(id, getResources().getString(R.string.performing_search));
 	}
 
-	public void doTextSearch() {
-		Search search = searchFactory.createTextSearch(listSearchEdit.getText().toString());
-		new SearchThread(handler, search).start();
+	public void doTextSearch(String text) {
+		dialogHandler.showDialog(DialogHandler.TEXT_SEARCH);		
+		Search search = searchFactory.createTextSearch(text);
+		textSearchTask = new TextSearchTask();
+		textSearchTask.execute(search);
 	}
 
-	final Handler handler = new Handler() {
+	private class TextSearchTask extends AsyncTask<Search, Void, Object> {
+		
+		@Override
+		protected Object doInBackground(Search... params) {
+			Search search = params[0];
+			Object retObj = null;
+			
+			try {
+				retObj = search.doSearch();
+			}
+				
+			catch (Exception e) {
+				Log.e("WSAndroid", e.getMessage(), e);
+				retObj = e;
+			}
+			
+			return retObj;
+		}
+		
 		@SuppressWarnings("unchecked")
 		@Override
-		public void handleMessage(Message msg) {
+		protected void onPostExecute(Object result) {
 			dialogHandler.dismiss();
-
-			Object obj = msg.obj;
-
-			if (obj instanceof Exception) {
-				dialogHandler.alert("Search failed. Check your credentials and internet connection.");
+			
+			if (result instanceof Exception) {
+				dialogHandler.alert(getResources().getString(R.string.error_retrieving_host_information));
 				return;
 			}
-
-			listSearchHosts = (ArrayList<HostBriefInfo>) obj;
+			
+			listSearchHosts = (ArrayList<HostBriefInfo>) result;
 
 			if (listSearchHosts.isEmpty()) {
 				dialogHandler.alert("Your search yielded no results.");
@@ -126,13 +147,18 @@ public class ListSearchTabActivity extends RoboActivity {
 
 			listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
 					R.layout.host_list_item, listSearchHosts));
+			
 		}
-	};
+
+	}	
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		// TODO: save dialog state?	
-		outState.putParcelableArrayList("list_search_hosts", listSearchHosts); 
+		outState.putParcelableArrayList("list_search_hosts", listSearchHosts);
+		if (DialogHandler.inProgress()) {
+			outState.putString("search_text", listSearchEdit.getText().toString());
+			textSearchTask.cancel(true);
+		}
 		super.onSaveInstanceState(outState);
 	}
 	

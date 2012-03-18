@@ -7,9 +7,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -56,59 +55,77 @@ public class HostInformationActivity extends RoboActivity {
 
 	@Inject StarredHostDao starredHostDao;
 
-	private DialogHandler dialogHandler;
-	
 	private Host host;
 	private int id;
 	private boolean starred;
 	private boolean forceUpdate;
 
+	private HostInformationTask hostInfoTask;
+	
+	private DialogHandler dialogHandler;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.host_information);
-		dialogHandler = new DialogHandler(this);
 		starredHostDao.open();
 
+		dialogHandler = new DialogHandler(HostInformationActivity.this);
+		boolean inProgress = DialogHandler.inProgress();
+		boolean shouldDownloadHostInfo = true;
+		forceUpdate = false;
+		
 		if (savedInstanceState != null) {
 			host = savedInstanceState.getParcelable("host");
 			id = savedInstanceState.getInt("id");
-			setViewContentFromHost();
+			forceUpdate = savedInstanceState.getBoolean("force_update");
+			starred = starredHostDao.isHostStarred(id, host.getName());
+			shouldDownloadHostInfo = inProgress;
 		} else {
 			Intent i = getIntent();
 			host = (Host) i.getParcelableExtra("host");
 			id = i.getIntExtra("id", NO_ID);
-			forceUpdate = i.getBooleanExtra("update", false);
-			
 			starred = starredHostDao.isHostStarred(id, host.getName());
-			setupStar();
-			
-			if (!starred || forceUpdate) {
-				dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
-				getHostInformationAsync();
-			} else {
+			if (starred) {
 				host = starredHostDao.get(id, host.getName());
-				setViewContentFromHost();
+				forceUpdate = i.getBooleanExtra("update", false);
+				shouldDownloadHostInfo = forceUpdate;
+			} else {
+				shouldDownloadHostInfo = true;
 			}
 		}
+
+		if (shouldDownloadHostInfo) {
+			getHostInformationAsync();
+		} else {
+			setViewContentFromHost();
+		}
 		
+		setupStar();
 		fullname.setText(host.getFullname());
+		
+		starredHostDao.close();
 	}
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		// TODO: save dialog state?
 		outState.putParcelable("host", host);
 		outState.putInt("id", id);
+		outState.putBoolean("force_update", forceUpdate);
+		
+		if (hostInfoTask != null) {
+			hostInfoTask.cancel(false);
+		}
+		
 		super.onSaveInstanceState(outState);
 	}
-
+	
 	private void setupStar() {
 		int drawable = starred ? R.drawable.starred_on : R.drawable.starred_off;
 		star.setImageDrawable(getResources().getDrawable(drawable));
 		star.setVisibility(View.VISIBLE);
 	}
-
+	
 	public void showStarHostDialog(View view) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(starred ? "Un-star this host?" : "Star this host?")
@@ -129,6 +146,7 @@ public class HostInformationActivity extends RoboActivity {
 	}
 
 	protected void toggleHostStarred() {
+		starredHostDao.open();
 		if (starredHostDao.isHostStarred(id, host.getName())) {
 			starredHostDao.delete(id, host.getName());
 		} else {
@@ -137,6 +155,7 @@ public class HostInformationActivity extends RoboActivity {
 		
 		starred = !starred;
 		setupStar();
+		starredHostDao.close();
 	}
 	
 	public void contactHost(View view) {
@@ -164,42 +183,18 @@ public class HostInformationActivity extends RoboActivity {
 
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
-		return dialogHandler.createDialog(id, "Retrieving host information ...");
+		if (DialogHandler.inProgress()) {
+			return dialogHandler.createDialog(id, getResources().getString(R.string.host_info_in_progress));
+		} else {
+			return null;
+		}
 	}
 
 	private void getHostInformationAsync() {
-		new HostInformationThread(handler, id).start();
+		dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
+		hostInfoTask = new HostInformationTask();
+		hostInfoTask.execute();
 	}
-
-	final Handler handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			dialogHandler.dismiss();
-
-			Object obj = msg.obj;
-
-			if (obj instanceof Exception || msg.arg1 == NO_ID) {
-				dialogHandler.alert(
-						"Could not retrieve host information. Check your credentials and internet connection.");
-				return;
-			}
-
-			id = msg.arg1;
-			host = (Host) obj;
-			
-			setViewContentFromHost();
-			
-			if (starred && forceUpdate) {
-				starredHostDao.update(id, host.getName(), host);
-				dialogHandler.alert(getResources().getString(R.string.host_updated));
-			}
-
-			if (host.isNotCurrentlyAvailable()) {
-				dialogHandler.alert(getResources().getString(R.string.host_not_available));
-			}
-		}
-
-	};
 
 	private void setViewContentFromHost() {
 		comments.setText(host.getComments());
@@ -217,36 +212,53 @@ public class HostInformationActivity extends RoboActivity {
 		hostDetails.setVisibility(View.VISIBLE);
 	}
 
-	private class HostInformationThread extends Thread {
-		Handler handler;
-		int id;
+	private class HostInformationTask extends AsyncTask<Void, Void, Object> {
 		
-		public HostInformationThread(Handler handler, int id) {
-			this.handler = handler;
-			this.id = id;
-		}
-
-		public void run() {
-			Message msg = handler.obtainMessage();
-
+		@Override
+		protected Object doInBackground(Void... params) {
+			Object retObj = null;
+			
 			try {
 				HttpHostInformation hostInfo = new HttpHostInformation(authenticationService, sessionContainer);
-
+				
 				if (id == NO_ID) {
 					id = hostInfo.getHostId(host.getName());
 				}
-
-				msg.arg1 = id;
-				msg.obj = hostInfo.getHostInformation(id);
+				
+				host = hostInfo.getHostInformation(id);
 			}
-
+			
 			catch (Exception e) {
 				Log.e("WSAndroid", e.getMessage(), e);
-				msg.obj = e;
+				retObj = e;
+			}
+			
+			return retObj;
+		}
+		
+		@Override
+		protected void onPostExecute(Object result) {
+			dialogHandler.dismiss();
+			
+			if (result instanceof Exception) {
+				dialogHandler.alert(getResources().getString(R.string.error_retrieving_host_information));
+				return;
+			}
+			
+			setViewContentFromHost();
+			
+			if (starred && forceUpdate) {
+				starredHostDao.open();
+				starredHostDao.update(id, host.getName(), host);
+				starredHostDao.close();
+				dialogHandler.alert(getResources().getString(R.string.host_updated));
 			}
 
-			handler.sendMessage(msg);
+			if (host.isNotCurrentlyAvailable()) {
+				dialogHandler.alert(getResources().getString(R.string.host_not_available));
+			}
 		}
+
 	}
 	
 	@Override
@@ -261,23 +273,10 @@ public class HostInformationActivity extends RoboActivity {
 		// we only have one option so keep it simple
 		Intent i = new Intent();
 		i.putExtra("host", host);
-		i.putExtra("id", "id");
+		i.putExtra("id", id);
 		i.putExtra("update", true);
 		setIntent(i);
 		onCreate(null);
 		return true;
-	}	
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		starredHostDao.open();
 	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		starredHostDao.close();
-	}	
-
 }

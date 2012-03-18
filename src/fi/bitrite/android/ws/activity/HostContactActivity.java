@@ -7,9 +7,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
@@ -38,6 +37,8 @@ public class HostContactActivity extends RoboActivity {
 	private int id;
 
 	private DialogHandler dialogHandler;
+	
+	private HostContactTask hostContactTask;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,6 @@ public class HostContactActivity extends RoboActivity {
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		// TODO: save dialog state?
 		outState.putParcelable("host", host);
 		outState.putInt("id", id);
 		super.onSaveInstanceState(outState);
@@ -69,14 +69,16 @@ public class HostContactActivity extends RoboActivity {
 	public void sendMessageToHost(View view) {
 		String subject = editSubject.getText().toString();
 		String message = editMessage.getText().toString();
-		boolean copy = checkboxCopy.isChecked();
+		String copy = checkboxCopy.isChecked() ? "1" : "0";
 
 		if (Strings.isEmpty(subject) || Strings.isEmpty(message)) {
 			dialogHandler.alert("Both subject and message are obligatory.");
 		}
 
 		dialogHandler.showDialog(DialogHandler.HOST_CONTACT);
-		new HostContactThread(handler, id, host.getName(), subject, message, copy).start();
+		
+		hostContactTask = new HostContactTask();
+		hostContactTask.execute(subject, message, copy);
 	}
 
 	@Override
@@ -84,26 +86,48 @@ public class HostContactActivity extends RoboActivity {
 		return dialogHandler.createDialog(id, "Sending message ...");
 	}
 
-	final Handler handler = new Handler() {
+	private class HostContactTask extends AsyncTask<String, Void, Object> {
+
 		@Override
-		public void handleMessage(Message msg) {
-			dialogHandler.dismiss();
-
-			Object obj = msg.obj;
-
-			if (obj instanceof Exception) {
-				dialogHandler.alert("Could not send message. Check your credentials and internet connection.");
-				return;
+		protected Object doInBackground(String... params) {
+			String subject = params[0];
+			String message = params[1];
+			boolean copy = params[2].equals("1");
+			Object retObj = null;
+			try {
+				HttpHostContact contact = new HttpHostContact(authenticationService, sessionContainer);
+				if (!Strings.isEmpty(host.getName())) {
+					contact.send(host.getName(), subject, message, copy);
+				} else {
+					contact.send(id, subject, message, copy);
+				}
 			}
 
+			catch (Exception e) {
+				Log.e("WSAndroid", e.getMessage(), e);
+				retObj = e;
+			}
+			
+			return retObj;
+		}
+		
+		@SuppressWarnings("unchecked")
+		@Override
+		protected void onPostExecute(Object result) {
+			dialogHandler.dismiss();
+			
+			if (result instanceof Exception) {
+				dialogHandler.alert(getResources().getString(R.string.error_sending_message));
+				return;
+			}		
+			
 			showSuccessDialog();
 		}
-	};
-	
+	}
+
 	protected void showSuccessDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(HostContactActivity.this);
-		builder.setMessage("Message sent successfully")
-		       .setCancelable(false)
+		builder.setMessage(getResources().getString(R.string.message_sent))
 		       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		                finish();
@@ -112,42 +136,5 @@ public class HostContactActivity extends RoboActivity {
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}	
-
-	private class HostContactThread extends Thread {
-		Handler handler;
-		int id;
-		String name;
-		String subject;
-		String message;
-		boolean copy;
-
-		public HostContactThread(Handler handler, int id, String name, String subject, String message, boolean copy) {
-			this.handler = handler;
-			this.id = id;
-			this.name = name;
-			this.subject = subject;
-			this.message = message;
-			this.copy = copy;
-		}
-
-		public void run() {
-			Message msg = handler.obtainMessage();
-
-			try {
-				HttpHostContact contact = new HttpHostContact(authenticationService, sessionContainer);
-				if (!Strings.isEmpty(name)) {
-					contact.send(name, subject, message, copy);
-				} else {
-					contact.send(id, subject, message, copy);
-				}
-			}
-
-			catch (Exception e) {
-				Log.e("WSAndroid", e.getMessage(), e);
-				msg.obj = e;
-			}
-
-			handler.sendMessage(msg);
-		}
-	}
+	
 }

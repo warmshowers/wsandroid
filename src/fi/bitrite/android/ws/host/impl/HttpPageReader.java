@@ -48,7 +48,9 @@ public class HttpPageReader {
 			responseCode = response.getStatusLine().getStatusCode();
 
 			html = EntityUtils.toString(entity, "UTF-8");
-		} catch (Exception e) {
+		} 
+		
+		catch (Exception e) {
 			throw new HttpException(e);
 		}
 

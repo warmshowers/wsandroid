@@ -8,6 +8,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.CircularRedirectException;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -63,7 +65,7 @@ public class HttpAuthenticationService {
 			responseCode = response.getStatusLine().getStatusCode();
 			EntityUtils.toString(entity);
 		}
-
+		
 		catch (Exception e) {
 			throw new HttpAuthenticationFailedException(e);
 		}
@@ -111,7 +113,15 @@ public class HttpAuthenticationService {
 			// Consume response content
 			EntityUtils.toString(entity);
 		}
-
+		
+		catch (ClientProtocolException e) {
+			if (e.getCause() instanceof CircularRedirectException) {
+				// If we get this authentication has still been successful, so ignore it
+			} else {
+				throw new HttpAuthenticationFailedException(e);
+			}
+		}		
+		
 		catch (Exception e) {
 			throw new HttpAuthenticationFailedException(e);
 		}
