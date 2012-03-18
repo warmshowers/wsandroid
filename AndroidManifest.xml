@@ -24,7 +24,7 @@
         <!-- The authenticator service -->
         <service
             android:name=".auth.AuthenticationService"
-            android:exported="true" >
+            android:exported="true" android:permission="android.permission.GET_ACCOUNTS">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>

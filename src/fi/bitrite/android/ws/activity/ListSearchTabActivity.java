@@ -26,9 +26,9 @@ import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
 import fi.bitrite.android.ws.host.SearchThread;
-import fi.bitrite.android.ws.host.impl.MapAnimator;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.MapAnimator;
 
 public class ListSearchTabActivity extends RoboActivity {
 

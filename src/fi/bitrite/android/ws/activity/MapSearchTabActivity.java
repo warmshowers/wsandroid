@@ -35,10 +35,10 @@ import de.android1.overlaymanager.lazyload.LazyLoadException;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
-import fi.bitrite.android.ws.host.impl.MapAnimator;
 import fi.bitrite.android.ws.host.impl.TooManyHostsException;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.MapAnimator;
 import fi.bitrite.android.ws.util.http.HttpException;
 
 public class MapSearchTabActivity extends RoboMapActivity {

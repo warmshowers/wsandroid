@@ -20,10 +20,10 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.host.impl.MapAnimator;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
+import fi.bitrite.android.ws.util.MapAnimator;
 
 public class StarredHostTabActivity extends RoboActivity {
 

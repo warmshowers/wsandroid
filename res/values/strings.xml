@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">WSAndroid</string>
     <string name="app_title">"WarmShowers for Android\nVersion: 1.0"</string>
     <string name="label">WarmShowers for Android</string>
