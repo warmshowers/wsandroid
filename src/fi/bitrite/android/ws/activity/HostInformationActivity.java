@@ -270,6 +270,9 @@ public class HostInformationActivity extends RoboActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.menuMap:
+			showHostOnMap(null);
+			return true;
 		case R.id.menuStar:
 			showStarHostDialog(null);
 			return true;

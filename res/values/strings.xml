@@ -14,6 +14,7 @@
     <string name="about_credentials">These will be stored in an account on your device. You can delete the account at any time using the Android Settings / Account menu.</string>
     <string name="view_details">View details</string>
     <string name="contact">Contact</string>
+    <string name="show_on_map">Show on map</string>
     <string name="star">Star</string>
     <string name="close">Close</string>
     <string name="username_hint">Username</string>
