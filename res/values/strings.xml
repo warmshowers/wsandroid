@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WSAndroid</string>
-    <string name="app_title">"WarmShowers for Android\nVersion: 1.0"</string>
+    <string name="app_title">"WarmShowers for Android\nVersion: 1.0.2"</string>
     <string name="label">WarmShowers for Android</string>
     <string name="authenticating">Authenticating …</string>
     <string name="need_account">Cannot run without WarmShowers credentials</string>
@@ -43,10 +43,13 @@
     <string name="host_updated">Host information updated.</string>
     <string name="host_not_available">It is indicated that this host is currently not available. You may still contact the host, but you may not get a response.</string>
     <string name="host_info_in_progress">Retrieving host information …</string>
-    <string name="star_host">Star this host?</string>
     <string name="unstar_host">Un-star this host?</string>
+    <string name="host_starred">Host starred. You can now access this information off-line.</string>
+    <string name="host_unstarred">Host information deleted from device.</string>
     <string name="performing_search">Performing search …</string>
-    <string name="too_many_hosts">Too many hosts in area. Try zooming.</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="zoom_in_error">Search are too large - zoom in!</string>
+    <string name="too_many_hosts">Too many hosts in area - zoom in!</string>
     <string name="error_loading_hosts">Error loading hosts, check Internet connection.</string>
     <string name="mi_distance">miles as the crow flies</string>
     <string name="km_distance">km as the crow flies</string>
