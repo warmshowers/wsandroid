@@ -3,9 +3,7 @@ package fi.bitrite.android.ws.activity;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import roboguice.util.Strings;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.inject.Inject;
 
@@ -127,21 +126,9 @@ public class HostInformationActivity extends RoboActivity {
 	}
 	
 	public void showStarHostDialog(View view) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(
-				starred ? getResources().getString(R.string.unstar_host) : getResources().getString(R.string.star_host))
-				.setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						HostInformationActivity.this.toggleHostStarred();
-						dialog.dismiss();
-					}
-				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-					}
-				});
-		AlertDialog dialog = builder.create();
-		dialog.show();
+		toggleHostStarred();
+		int msgId = (starred ? R.string.host_starred : R.string.host_unstarred);
+		Toast.makeText(this, getResources().getString(msgId), Toast.LENGTH_LONG).show();
 	}
 
 	protected void toggleHostStarred() {
