@@ -58,6 +58,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
 		}
 
 		if (cursor.getCount() == 0) {
+			cursor.close();
 			return null;
 		}
 
@@ -87,6 +88,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
 				DbHelper.COLUMN_DETAILS, DbHelper.COLUMN_UPDATED }, null, null, null, null, null);
 
 		if (cursor.getCount() == 0) {
+			cursor.close();
 			return Collections.emptyList();
 		}
 
