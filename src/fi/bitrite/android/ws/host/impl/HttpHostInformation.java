@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import roboguice.util.Strings;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.model.Host;
@@ -32,7 +33,7 @@ public class HttpHostInformation extends HttpPageReader {
 			JSONObject hostJson = hostJsonArray.getJSONObject(0);
 			Host host = Host.CREATOR.parse(hostJson.getJSONObject("user"));
 
-			if (host.getFullname().isEmpty()) {
+			if (Strings.isEmpty(host.getFullname())) {
 				throw new HttpException("Could not parse JSON");
 			}
 
