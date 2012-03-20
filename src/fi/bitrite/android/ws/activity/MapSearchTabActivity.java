@@ -261,7 +261,7 @@ public class MapSearchTabActivity extends RoboMapActivity {
 		loc2.setLongitude((float) hostPoint.getLongitudeE6() / 1.0e6);
 		
 		if (loc1 == null) {
-			location.setVisibility(View.GONE);
+			distance.setVisibility(View.GONE);
 		} else {
 			String text = getDistanceText(loc1.distanceTo(loc2));
 			distance.setText(text);
