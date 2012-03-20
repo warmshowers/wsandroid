@@ -48,7 +48,9 @@ public class MapSearchTabActivity extends RoboMapActivity {
 	private static final String HOST_OVERLAY = "hostoverlay";
 
 	// TODO: make this a user-definable setting (GitHub issue #13)
-	protected static final int NUM_HOSTS_CUTOFF = 100;
+	protected static final int NUM_HOSTS_CUTOFF = 150;
+	
+	protected static final int MIN_ZOOM_LEVEL = 8;
 
 	@InjectView(R.id.mapView) MapView mapView;
 	@InjectView(R.id.lblBigNumber) TextView lblBigNumber;
@@ -143,6 +145,13 @@ public class MapSearchTabActivity extends RoboMapActivity {
 				List<ManagedOverlayItem> overlayItems = new ArrayList<ManagedOverlayItem>();
 				try {
 					hideBigNumber();
+
+                    if (overlay.getZoomlevel() < MIN_ZOOM_LEVEL) {
+                    	sendMessage(getResources().getString(R.string.zoom_in_error), true);
+                    	showBigNumber(getResources().getString(R.string.zoom_in));
+                    	return overlayItems;
+                    }
+
 					sendMessage("Loading hosts ...", false);
 
 					Search search = searchFactory.createMapSearch(topLeft, bottomRight, NUM_HOSTS_CUTOFF);
