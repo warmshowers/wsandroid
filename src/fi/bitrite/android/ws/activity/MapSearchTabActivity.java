@@ -67,6 +67,10 @@ public class MapSearchTabActivity extends RoboMapActivity {
 	HostBriefInfo host;
 	Dialog hostPopup;
 	
+	boolean cameFromHostInfo;
+	Host savedHost;
+	int savedHostId;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -76,6 +80,7 @@ public class MapSearchTabActivity extends RoboMapActivity {
 		mapController = mapView.getController();
 		gson = new Gson();
 		setupHostPopup();
+		cameFromHostInfo = false;
 	}
 
 	private void setupHostPopup() {
@@ -306,15 +311,29 @@ public class MapSearchTabActivity extends RoboMapActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == HostInformationActivity.RESULT_SHOW_HOST_ON_MAP) {
+			MainActivity parent = (MainActivity) getParent();
+			parent.stashHost(data, 2);
 			int lat = data.getIntExtra("lat", mapView.getMapCenter().getLatitudeE6());
 			int lon = data.getIntExtra("lon", mapView.getMapCenter().getLongitudeE6());
 			GeoPoint point = new GeoPoint(lat, lon);
 			mapController.animateTo(point);
 			mapController.setZoom(16);
 			mapView.invalidate();
-      }
+		}
 	}
 	
+	@Override
+	public void onBackPressed() {
+		MainActivity parent = (MainActivity) getParent();
+		if (parent.hasStashedHost()) {
+			Intent i = new Intent(MapSearchTabActivity.this, HostInformationActivity.class);
+			i = parent.popStashedHost(i);
+			startActivityForResult(i, 0);
+		} else {
+			super.onBackPressed();
+		}
+	}
+
 	public void zoomToCurrentLocation(View view) {
 		if (locationOverlay.getMyLocation() != null) {
 			mapController.animateTo(locationOverlay.getMyLocation());
@@ -330,6 +349,11 @@ public class MapSearchTabActivity extends RoboMapActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		locationOverlay.enableMyLocation();
+		animateToMapTargetIfNeeded();
+	}
+
+	private void animateToMapTargetIfNeeded() {
 		GeoPoint target = mapAnimator.getTarget();
 		if (target != null && target.getLatitudeE6() != 0 && target.getLongitudeE6() != 0) {
 			mapController.animateTo(target);
@@ -342,5 +366,7 @@ public class MapSearchTabActivity extends RoboMapActivity {
 	protected void onPause() {
 		super.onPause();
 		mapAnimator.clearTarget();
+		locationOverlay.disableMyLocation();
 	}
+
 }
