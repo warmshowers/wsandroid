@@ -5,6 +5,7 @@ import android.accounts.Account;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +18,9 @@ import fi.bitrite.android.ws.auth.NoAccountException;
 public class MainActivity extends RoboTabActivity  {
 	
 	private Dialog splashDialog;
+	private Parcelable savedHost;
+	private int savedHostId;
+	private int stashedFromTab;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -145,5 +149,28 @@ public class MainActivity extends RoboTabActivity  {
 
 	public void switchTab(int tab) {
         getTabHost().setCurrentTab(tab);
+	}
+	
+	public void stashHost(Intent data, int stashedFrom) {
+		savedHost = data.getParcelableExtra("host");
+		savedHostId = data.getIntExtra("id", 0);
+		stashedFromTab = stashedFrom;
+	}
+
+	public boolean hasStashedHost() {
+		return savedHost != null;
+	}
+	
+	public Intent popStashedHost(Intent i) {
+		i.putExtra("host", savedHost);
+		i.putExtra("id", savedHostId);
+		i.putExtra("full_info", true);
+		savedHost = null;
+		savedHostId = 0;
+		return i;
+	}
+	
+	public int getStashedFromTab() {
+		return stashedFromTab;
 	}
 }

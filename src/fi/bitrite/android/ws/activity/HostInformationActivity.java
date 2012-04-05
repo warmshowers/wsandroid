@@ -85,12 +85,17 @@ public class HostInformationActivity extends RoboActivity {
 			host = (Host) i.getParcelableExtra("host");
 			id = i.getIntExtra("id", NO_ID);
 			starred = starredHostDao.isHostStarred(id, host.getName());
-			if (starred) {
-				host = starredHostDao.get(id, host.getName());
-				forceUpdate = i.getBooleanExtra("update", false);
-				shouldDownloadHostInfo = forceUpdate;
+			
+			if (intentProvidesFullHostInfo(i)) {
+				shouldDownloadHostInfo = false;
 			} else {
-				shouldDownloadHostInfo = true;
+				if (starred) {
+					host = starredHostDao.get(id, host.getName());
+					forceUpdate = i.getBooleanExtra("update", false);
+					shouldDownloadHostInfo = forceUpdate;
+				} else {
+					shouldDownloadHostInfo = true;
+				}
 			}
 		}
 
@@ -104,6 +109,10 @@ public class HostInformationActivity extends RoboActivity {
 		fullname.setText(host.getFullname());
 		
 		starredHostDao.close();
+	}
+	
+	private boolean intentProvidesFullHostInfo(Intent i) {
+		return i.getBooleanExtra("full_info", false);
 	}
 	
 	@Override
@@ -154,6 +163,7 @@ public class HostInformationActivity extends RoboActivity {
 	public void showHostOnMap(View view) {
 		// We need to finish the host info dialog, switch to the map tab and 
 		// zoom/scroll to the location of the host
+		
 		Intent resultIntent = new Intent();
 		
 		if (!Strings.isEmpty(host.getLatitude()) && !Strings.isEmpty(host.getLongitude())) {
@@ -162,6 +172,10 @@ public class HostInformationActivity extends RoboActivity {
 			resultIntent.putExtra("lat", lat);
 			resultIntent.putExtra("lon", lon);
 		}
+		
+		// #31: when going back from the map, we should end up on the host info page
+		resultIntent.putExtra("host", host);
+		resultIntent.putExtra("id", id);
 		
 		setResult(RESULT_SHOW_HOST_ON_MAP, resultIntent);
 		finish();

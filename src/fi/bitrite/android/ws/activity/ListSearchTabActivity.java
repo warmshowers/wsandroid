@@ -114,6 +114,7 @@ public class ListSearchTabActivity extends RoboActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == HostInformationActivity.RESULT_SHOW_HOST_ON_MAP) {
 			MainActivity parent = (MainActivity) this.getParent();
+			parent.stashHost(data, 1);
 			mapAnimator.prepareToAnimateToHost(data);
 			parent.switchTab(2);
 		}
