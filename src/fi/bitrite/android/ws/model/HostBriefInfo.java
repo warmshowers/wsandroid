@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.model;
 
+import roboguice.util.Strings;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -34,11 +35,21 @@ public class HostBriefInfo implements Parcelable {
 		this.id = id;
 		this.name = host.getName();
 		this.fullname = host.getFullname();
-		this.location = host.getCity() + ", " + host.getProvince() + ", " + host.getCountry().toUpperCase();
+		
+		this.location = getBriefLocation(host);
 		this.comments = host.getComments();
 		this.updated = host.getUpdated();
 	}
 	
+	private String getBriefLocation(Host host) {
+		String location = host.getCity() + ", " + host.getProvince();
+		String country = host.getCountry();
+		if (!Strings.isEmpty(country)) {
+			location += ", " + country.toUpperCase();
+		}
+		return location;
+	}
+
 	public HostBriefInfo() {
 	}
 

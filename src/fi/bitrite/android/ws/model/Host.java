@@ -53,8 +53,11 @@ public class Host extends _Host {
 			sb.append(getAdditional()).append("\n");
 		}
 
-		sb.append(getPostalCode()).append(", ").append(getCity()).append(", ").append(getProvince())
-				.append(", ").append(getCountry().toUpperCase()).toString();
+		sb.append(getPostalCode()).append(", ").append(getCity()).append(", ").append(getProvince());
+		
+		if (!Strings.isEmpty(getCountry())) {
+			sb.append(", ").append(getCountry().toUpperCase());
+		}
 		
 		sb.append("\nLat: ").append(getLatitude()).append("\n");
 		sb.append("Lon: ").append(getLongitude());
