@@ -14,7 +14,7 @@ public class HttpHostIdScraper {
 	}
 
 	public int getId() {
-		Pattern p = Pattern.compile("Email:.*?(\\d+)");
+		Pattern p = Pattern.compile("http://www.warmshowers.org/user/(\\d+)");
 		Matcher m = p.matcher(html);
 		if (m.find()) {
 			return new Integer(m.group(1)).intValue();

@@ -13,7 +13,7 @@ import org.apache.http.params.HttpParams;
 
 public class HttpUtils {
 
-	private static final int TIMEOUT_MS = 15000;
+	private static final int TIMEOUT_MS = 20000;
 
 	public static String encodeUrl(String urlString) throws MalformedURLException, URISyntaxException {
 		URL url = new URL(urlString);

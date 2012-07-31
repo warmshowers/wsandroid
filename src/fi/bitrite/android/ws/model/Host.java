@@ -68,24 +68,28 @@ public class Host extends _Host {
 	public String getServices() {
 		StringBuilder sb = new StringBuilder();
 
-		if (getShower().equals("1"))
+		if (hasService(getShower()))
 			sb.append("Shower\n");
-		if (getFood().equals("1"))
+		if (hasService(getFood()))
 			sb.append("Food\n");
-		if (getBed().equals("1"))
+		if (hasService(getBed()))
 			sb.append("Bed\n");
-		if (getLaundry().equals("1"))
+		if (hasService(getLaundry()))
 			sb.append("Laundry\n");
-		if (getStorage().equals("1"))
+		if (hasService(getStorage()))
 			sb.append("Storage\n");
-		if (getKitchenUse().equals("1"))
+		if (hasService(getKitchenUse()))
 			sb.append("Use of kitchen\n");
-		if (getLawnspace().equals("1"))
+		if (hasService(getLawnspace()))
 			sb.append("Lawn space (for camping)\n");
-		if (getSag().equals("1"))
+		if (hasService(getSag()))
 			sb.append("SAG (vehicle support)\n");
 
 		return sb.toString();
+	}
+
+	private boolean hasService(String service) {
+		return !Strings.isEmpty(service) && service.equals("1");
 	}
 
 	public boolean isNotCurrentlyAvailable() {
