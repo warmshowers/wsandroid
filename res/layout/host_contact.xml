@@ -37,7 +37,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="@string/subject_hint"
-        android:inputType="text" >
+        android:inputType="text|textCapSentences" >
 
         <requestFocus />
     </EditText>
@@ -49,7 +49,7 @@
         android:layout_weight="1"
         android:gravity="top"
         android:hint="@string/message_hint"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine|textCapSentences" />
 
     <CheckBox
         android:id="@+id/checkboxContactHostSendCopy"
