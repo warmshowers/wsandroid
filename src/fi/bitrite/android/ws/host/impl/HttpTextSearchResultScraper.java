@@ -15,8 +15,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import android.util.Log;
-import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 
@@ -56,7 +54,6 @@ public class HttpTextSearchResultScraper {
 
 				String hostUrl = nameExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
 				String name = getNameFromHostUrl(hostUrl);
-				Log.e(WSAndroidApplication.TAG, name);
 				
 				String fullname = fullnameExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
 				String location = locationExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
