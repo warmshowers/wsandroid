@@ -40,8 +40,10 @@ import android.os.Parcelable;
 	protected String mStorage;
 	protected String mLatitude;
 	protected String mLongitude;
+	protected String mLogin;
+	protected String mCreated;
 
-	protected _Host(String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude) {
+	protected _Host(String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude, String login, String created) {
 		this();
 		mName = name;
 		mFullname = fullname;
@@ -71,6 +73,8 @@ import android.os.Parcelable;
 		mStorage = storage;
 		mLatitude = latitude;
 		mLongitude = longitude;
+		mLogin = login;
+		mCreated = created;
 	}
 
 	protected _Host() {
@@ -161,7 +165,12 @@ import android.os.Parcelable;
 	public String getLongitude() {
 		 return mLongitude;
 	}
-
+	public String getLogin() {
+		return mLogin;
+	}
+	public String getCreated() {
+		return mCreated;
+	}
 
 	public int describeContents() {
 		return 0;
@@ -196,6 +205,8 @@ import android.os.Parcelable;
 		parcel.writeString(mStorage);
 		parcel.writeString(mLatitude);
 		parcel.writeString(mLongitude);
+		parcel.writeString(mLogin);
+		parcel.writeString(mCreated);
 	}
 
 	public void readFromParcel(Parcel source) {
@@ -227,6 +238,8 @@ import android.os.Parcelable;
 		mStorage = source.readString();
 		mLatitude = source.readString();
 		mLongitude = source.readString();
+		mLogin = source.readString();
+		mCreated = source.readString();
 	}
 
 	public void readFromJson(JSONObject json) throws JSONException {
@@ -313,6 +326,12 @@ import android.os.Parcelable;
 		}
 		if (!json.isNull("longitude")) {
 			mLongitude = json.optString("longitude");
+		}
+		if (!json.isNull("login")) {
+			mLogin = json.optString("login");
+		}
+		if (!json.isNull("created")) {
+			mCreated = json.optString("created");
 		}
 	}
 
