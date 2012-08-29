@@ -45,14 +45,21 @@ public class HttpHostContact extends HttpPageReader {
 	}
 
 	public void send(String name, String subject, String message, boolean copy) {
-		contactFormUrl = new StringBuilder().append("http://www.warmshowers.org/users/").append(name)
+		contactFormUrl = new StringBuilder().append("http://www.warmshowers.org/users/").append(cleanNameForContactUrl(name))
 				.append("/contact").toString();
 		send(subject, message, copy);
+	}
+
+	private String cleanNameForContactUrl(String name) {
+		return name.replaceAll("@", "");
 	}
 
 	private void sendMessageForm(List<NameValuePair> formDetails) {
 		HttpClient client = HttpUtils.getDefaultClient();
 		try {
+			// redundant authentication - seems to lose the logged in status sometimes
+			authenticate();
+			
 			String url = HttpUtils.encodeUrl(contactFormUrl);
 
 			HttpPost post = new HttpPost(url);
