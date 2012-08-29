@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WSAndroid</string>
-    <string name="app_title">"WarmShowers for Android\nVersion: 1.1.0"</string>
+    <string name="app_title">"WarmShowers for Android\nVersion: 1.1.1"</string>
     <string name="label">WarmShowers for Android</string>
     <string name="authenticating">Authenticating …</string>
     <string name="need_account">Cannot run without WarmShowers credentials</string>
@@ -24,6 +24,8 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="description"><u>About this host:</u></string>
+    <string name="last_login">Last login:</string>
+    <string name="member_since">Member since:</string>
     <string name="location"><u>Location:</u></string>
     <string name="mobile_phone"><u>Mobile phone:</u></string>
     <string name="preferred_notice"><u>Preferred notice:</u></string>

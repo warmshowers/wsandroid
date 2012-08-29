@@ -38,6 +38,8 @@ public class HostInformationActivity extends RoboActivity {
 	@InjectView(R.id.btnHostStar) ImageView star;
 	@InjectView(R.id.txtHostFullname) TextView fullname;
 	@InjectView(R.id.txtHostComments) TextView comments;
+	@InjectView(R.id.txtMemberSince) TextView memberSince;
+	@InjectView(R.id.txtLastLogin) TextView lastLogin;
 	@InjectView(R.id.txtHostLocation) TextView location;
 	@InjectView(R.id.txtHostMobilePhone) TextView mobilePhone;
 	@InjectView(R.id.txtHostHomePhone) TextView homePhone;
@@ -199,6 +201,8 @@ public class HostInformationActivity extends RoboActivity {
 	private void setViewContentFromHost() {
 		comments.setText(host.getComments());
 		location.setText(host.getLocation());
+		memberSince.setText(host.getMemberSince());
+		lastLogin.setText(host.getLastLogin());
 		mobilePhone.setText(host.getMobilePhone());
 		homePhone.setText(host.getHomePhone());
 		workPhone.setText(host.getWorkPhone());

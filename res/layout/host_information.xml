@@ -78,6 +78,32 @@
                     android:paddingTop="2dp" >
 
                     <TextView
+                        android:id="@+id/lblMemberSince"
+                        android:text="@string/member_since" />
+
+                    <TextView
+                        android:id="@+id/txtMemberSince"
+                        android:paddingLeft="10dp" />
+                </TableRow>
+                
+                <TableRow
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp" >
+
+                    <TextView
+                        android:id="@+id/lblLastLogin"
+                        android:text="@string/last_login" />
+
+                    <TextView
+                        android:id="@+id/txtLastLogin"
+                        android:paddingLeft="10dp" />
+                </TableRow>
+                
+                <TableRow
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp" >
+
+                    <TextView
                         android:id="@+id/lblHostLocation"
                         android:text="@string/location"
                         android:textColor="#FFAAAAFF"

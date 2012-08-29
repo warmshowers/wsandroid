@@ -1,5 +1,9 @@
 package fi.bitrite.android.ws.model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -102,5 +106,23 @@ public class Host extends _Host {
 
 	public void setUpdated(String updated) {
 		mUpdated = updated;
+	}
+	
+	public String getMemberSince() {
+		return formatDate(getCreated());
+	}
+
+	public String getLastLogin() {
+		return formatDate(getLogin());
+	}
+
+	private String formatDate(String timestamp) {
+		if (Strings.isEmpty(timestamp)) {
+			return "";
+		}
+		
+		Date date = new Date(Long.valueOf(timestamp) * 1000);
+		DateFormat dateFormat = SimpleDateFormat.getDateInstance();
+		return dateFormat.format(date);
 	}
 }

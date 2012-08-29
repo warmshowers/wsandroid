@@ -60,8 +60,7 @@ public class HttpPageReader {
 
 		if (responseCode == HttpStatus.SC_FORBIDDEN) {
 			if (!authenticationPerformed) {
-				authenticationService.authenticate();
-				setAuthenticationPerformed(true);
+				authenticate();
 				html = getPage(simpleUrl);
 			} else {
 				throw new HttpException("Couldn't authenticate user");
@@ -69,6 +68,11 @@ public class HttpPageReader {
 		}
 
 		return html;
+	}
+
+	protected void authenticate() {
+		authenticationService.authenticate();
+		setAuthenticationPerformed(true);
 	}
 
 }
