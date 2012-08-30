@@ -96,11 +96,7 @@ public class HostContactActivity extends RoboActivity {
 			Object retObj = null;
 			try {
 				HttpHostContact contact = new HttpHostContact(authenticationService, sessionContainer);
-				if (!Strings.isEmpty(host.getName())) {
-					contact.send(host.getName(), subject, message, copy);
-				} else {
-					contact.send(id, subject, message, copy);
-				}
+				contact.send(id, subject, message, copy);
 			}
 
 			catch (Exception e) {

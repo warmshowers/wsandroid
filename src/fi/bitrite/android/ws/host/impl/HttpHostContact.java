@@ -21,19 +21,14 @@ import fi.bitrite.android.ws.util.http.HttpUtils;
 
 public class HttpHostContact extends HttpPageReader {
 
-	private String contactFormUrl;
-	
 	public HttpHostContact(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
 		super(authenticationService, sessionContainer);
 	}
 
 	public void send(int id, String subject, String message, boolean copy) {
-		contactFormUrl = new StringBuilder().append("http://www.warmshowers.org/user/").append(id)
+		String contactFormUrl = new StringBuilder().append("http://www.warmshowers.org/user/").append(id)
 				.append("/contact").toString();
-		send(subject, message, copy);
-	}
-	
-	private void send(String subject, String message, boolean copy) {
+
 		String html = getPage(contactFormUrl);
 		List<NameValuePair> formDetails = new HttpHostContactFormScraper(html).getFormDetails();
 		formDetails.add(new BasicNameValuePair("subject", subject));
@@ -41,20 +36,10 @@ public class HttpHostContact extends HttpPageReader {
 		if (copy) {
 			formDetails.add(new BasicNameValuePair("copy", "1"));
 		}
-		sendMessageForm(formDetails);
+		sendMessageForm(contactFormUrl, formDetails);
 	}
 
-	public void send(String name, String subject, String message, boolean copy) {
-		contactFormUrl = new StringBuilder().append("http://www.warmshowers.org/users/").append(cleanNameForContactUrl(name))
-				.append("/contact").toString();
-		send(subject, message, copy);
-	}
-
-	private String cleanNameForContactUrl(String name) {
-		return name.replaceAll("@", "");
-	}
-
-	private void sendMessageForm(List<NameValuePair> formDetails) {
+	private void sendMessageForm(String contactFormUrl, List<NameValuePair> formDetails) {
 		HttpClient client = HttpUtils.getDefaultClient();
 		try {
 			// redundant authentication - seems to lose the logged in status sometimes
