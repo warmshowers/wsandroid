@@ -14,6 +14,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import fi.bitrite.android.ws.activity.AuthenticatorActivity;
+import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
@@ -21,30 +25,30 @@ import fi.bitrite.android.ws.util.http.HttpUtils;
 
 public class HttpHostContact extends HttpPageReader {
 
-	public HttpHostContact(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
+	private AccountManager accountManager;
+	
+	public HttpHostContact(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer, AccountManager accountManager) {
 		super(authenticationService, sessionContainer);
+		this.accountManager = accountManager;
 	}
 
-	public void send(int id, String subject, String message, boolean copy) {
-		String contactFormUrl = new StringBuilder().append("http://www.warmshowers.org/user/").append(id)
-				.append("/contact").toString();
+	public void send(int id, String subject, String message) {
+		Account account = AuthenticationHelper.getWarmshowersAccount();
+		String accountUserId = accountManager.getUserData(account, AuthenticatorActivity.KEY_USERID);
+		
+		String contactFormUrl = new StringBuilder().append("http://www.warmshowers.org/user/").append(accountUserId)
+				.append("/messages/new/").append(id).toString();
 
 		String html = getPage(contactFormUrl);
 		List<NameValuePair> formDetails = new HttpHostContactFormScraper(html).getFormDetails();
 		formDetails.add(new BasicNameValuePair("subject", subject));
-		formDetails.add(new BasicNameValuePair("message", message));
-		if (copy) {
-			formDetails.add(new BasicNameValuePair("copy", "1"));
-		}
+		formDetails.add(new BasicNameValuePair("body", message));
 		sendMessageForm(contactFormUrl, formDetails);
 	}
 
 	private void sendMessageForm(String contactFormUrl, List<NameValuePair> formDetails) {
 		HttpClient client = HttpUtils.getDefaultClient();
 		try {
-			// redundant authentication - seems to lose the logged in status sometimes
-			authenticate();
-			
 			String url = HttpUtils.encodeUrl(contactFormUrl);
 
 			HttpPost post = new HttpPost(url);
@@ -54,7 +58,7 @@ public class HttpHostContact extends HttpPageReader {
 			HttpEntity entity = response.getEntity();
 
 			// Consume response content
-			EntityUtils.toString(entity);
+			EntityUtils.toString(entity, "UTF-8");
 		}
 
 		catch (ClientProtocolException e) {

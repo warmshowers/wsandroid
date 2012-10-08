@@ -2,6 +2,7 @@ package fi.bitrite.android.ws.activity;
 
 import roboguice.activity.RoboTabActivity;
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +26,9 @@ public class MainActivity extends RoboTabActivity  {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		handleFirstRun();
+		
 		setContentView(R.layout.main);
 		setupTabs();
 		setupCredentials();
@@ -35,6 +39,26 @@ public class MainActivity extends RoboTabActivity  {
 				showAboutDialog();
 			}
 		}
+	}
+	
+	/**
+	 * New for version code 10. We want to store some additional data with the 
+	 * account, so we need to remove the old one.
+	 */
+	private void handleFirstRun() {
+		boolean firstrun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("v10update", true);
+	    if (firstrun) {
+	    	try {
+	    		AccountManager accountManager = AccountManager.get(this);
+	    		Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
+	    		accountManager.removeAccount(oldAccount, null, null);
+	    	}
+	    	
+	    	catch (NoAccountException e) {
+	    		// OK, so there was no account - fine
+	    	}
+	    	getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("v10update", false).commit();	    	
+	    }
 	}
 
 	private void setupCredentials() {

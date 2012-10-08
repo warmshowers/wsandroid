@@ -28,6 +28,7 @@ import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
 	public static final String PARAM_USERNAME = "username";
+	public static final String KEY_USERID = "userid";
 	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
 	public static final String PARAM_INITIAL_AUTHENTICATION = "initialAuthentication";
 
@@ -110,6 +111,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 				
 				Account account = new Account(username, AuthenticationService.ACCOUNT_TYPE);
 				accountManager.addAccountExplicitly(account, password, null);
+				accountManager.setUserData(account, KEY_USERID, String.valueOf(msg.arg1));
 				setResult(RESULT_OK, resultIntent);
 			}
 
@@ -128,8 +130,9 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 			Message msg = handler.obtainMessage();
 
 			try {
-				authenticationService.authenticate(username, password);
+				int userId = authenticationService.authenticate(username, password);
 				msg.obj = RESULT_OK;
+				msg.arg1 = userId;
 			}
 
 			catch (Exception e) {

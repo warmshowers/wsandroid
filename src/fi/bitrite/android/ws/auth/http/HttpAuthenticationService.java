@@ -31,6 +31,7 @@ import com.google.inject.Singleton;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.AuthenticationService;
+import fi.bitrite.android.ws.host.impl.HttpHostIdScraper;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 
 /**
@@ -63,7 +64,7 @@ public class HttpAuthenticationService {
 			HttpResponse response = client.execute(get, context);
 			HttpEntity entity = response.getEntity();
 			responseCode = response.getStatusLine().getStatusCode();
-			EntityUtils.toString(entity);
+			EntityUtils.toString(entity, "UTF-8");
 		}
 		
 		catch (Exception e) {
@@ -96,11 +97,12 @@ public class HttpAuthenticationService {
 		username = account.name;
 	}
 	
-	public void authenticate(String username, String password) {
+	public int authenticate(String username, String password) {
 		HttpClient client = HttpUtils.getDefaultClient();
 		HttpContext httpContext = sessionContainer.getSessionContext();
 		CookieStore cookieStore = (CookieStore) httpContext.getAttribute(ClientContext.COOKIE_STORE);
 		cookieStore.clear();
+		int userId = 0;
 		
 		try {
 			List<NameValuePair> credentials = generateCredentialsForPost(username, password);
@@ -109,9 +111,9 @@ public class HttpAuthenticationService {
 			HttpResponse response = client.execute(post, httpContext);
 
 			HttpEntity entity = response.getEntity();
-
-			// Consume response content
-			EntityUtils.toString(entity);
+			String html = EntityUtils.toString(entity, "UTF-8");
+			HttpHostIdScraper userIdScraper = new HttpHostIdScraper(html);
+			userId = userIdScraper.getId();
 		}
 		
 		catch (ClientProtocolException e) {
@@ -133,6 +135,8 @@ public class HttpAuthenticationService {
 		if (!isAuthenticated()) {
 			throw new HttpAuthenticationFailedException("Invalid credentials");
 		}
+		
+		return userId;
 	}
 
 	private List<NameValuePair> generateCredentialsForPost(String username, String password) {

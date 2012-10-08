@@ -12,8 +12,8 @@
         android:layout_height="match_parent"
         android:layout_weight="1" >
 
-        <!-- Debug key:  android:apiKey="0nk2Q1hiUZN7HmJt5jQMgznLyAIIkktfIReTYjg"  -->
-        <!-- Release key: android:apiKey="0nk2Q1hiUZN6DRxGRuTQdDFujF0oR5N6yxAjAMA" -->
+        <!-- Debug key:   android:apiKey="0nk2Q1hiUZN7HmJt5jQMgznLyAIIkktfIReTYjg"  -->
+        <!-- Release key: android:apiKey="0nk2Q1hiUZN6DRxGRuTQdDFujF0oR5N6yxAjAMA"  -->
         <com.google.android.maps.MapView
             android:id="@+id/mapView"
             android:layout_width="match_parent"

@@ -49,19 +49,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
 		}
 
 		return null;
-		// the password was missing or incorrect, return an Intent to an
-		// Activity that will prompt the user for the password.
-		/*
-		 * final Intent intent = new Intent(mContext,
-		 * AuthenticatorActivity.class);
-		 * intent.putExtra(AuthenticatorActivity.PARAM_USERNAME, account.name);
-		 * intent.putExtra(AuthenticatorActivity.PARAM_AUTHTOKEN_TYPE,
-		 * authTokenType);
-		 * intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
-		 * response); final Bundle bundle = new Bundle();
-		 * bundle.putParcelable(AccountManager.KEY_INTENT, intent); return
-		 * bundle;
-		 */
 	}
 
 	@Override
