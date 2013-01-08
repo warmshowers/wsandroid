@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -40,7 +43,7 @@ import fi.bitrite.android.ws.util.http.HttpUtils;
 @Singleton
 public class HttpAuthenticationService {
 
-	private static final String WARMSHOWERS_USER_AUTHENTICATION_URL = "http://www.warmshowers.org/user";
+	private static final String WARMSHOWERS_USER_AUTHENTICATION_URL = "http://www.warmshowers.org/services/rest/user/login";
 
 	private static final String WARMSHOWERS_USER_AUTHENTICATION_TEST_URL = "http://www.warmshowers.org/search/wsuser";
 
@@ -111,9 +114,12 @@ public class HttpAuthenticationService {
 			HttpResponse response = client.execute(post, httpContext);
 
 			HttpEntity entity = response.getEntity();
-			String html = EntityUtils.toString(entity, "UTF-8");
-			HttpHostIdScraper userIdScraper = new HttpHostIdScraper(html);
-			userId = userIdScraper.getId();
+			String rawJson = EntityUtils.toString(entity, "UTF-8");
+
+            JsonParser parser = new JsonParser();
+            JsonObject o = (JsonObject) parser.parse(rawJson);
+            String s = o.get("user").getAsJsonObject().get("uid").getAsString();
+            userId = Integer.valueOf(s);
 		}
 		
 		catch (ClientProtocolException e) {
@@ -141,10 +147,8 @@ public class HttpAuthenticationService {
 
 	private List<NameValuePair> generateCredentialsForPost(String username, String password) {
 		List<NameValuePair> args = new ArrayList<NameValuePair>();
-		args.add(new BasicNameValuePair("op", "Log in"));
-		args.add(new BasicNameValuePair("form_id", "user_login"));
-		args.add(new BasicNameValuePair("name", username));
-		args.add(new BasicNameValuePair("pass", password));
+		args.add(new BasicNameValuePair("username", username));
+		args.add(new BasicNameValuePair("password", password));
 		return args;
 	}
 }

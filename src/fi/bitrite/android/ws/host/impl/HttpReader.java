@@ -13,13 +13,13 @@ import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 
-public class HttpPageReader {
+public class HttpReader {
 
 	protected HttpAuthenticationService authenticationService;
 	protected HttpSessionContainer sessionContainer;
 	protected boolean authenticationPerformed;
 
-	public HttpPageReader(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
+	public HttpReader(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
 		this.authenticationService = authenticationService;
 		this.sessionContainer = sessionContainer;
 		setAuthenticationPerformed(false);

@@ -1,11 +1,15 @@
 package fi.bitrite.android.ws.host.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
@@ -20,7 +24,7 @@ import fi.bitrite.android.ws.util.http.HttpUtils;
 
 public class HttpMapSearch implements Search {
 
-	private static final String WARMSHOWERS_MAP_SEARCH_URL = "http://www.warmshowers.org/wsmap_xml_hosts";
+	private static final String WARMSHOWERS_MAP_SEARCH_URL = "http://www.warmshowers.org/services/rest/hosts/by_location";
 
 	private int numHostsCutoff;
 	private MapSearchArea searchArea;
@@ -43,22 +47,24 @@ public class HttpMapSearch implements Search {
 			authenticationService.authenticate();
 		}
 
-		String xml = getSearchResultXml();
-		return new HttpMapSearchXmlParser(xml, numHostsCutoff).getHosts();
+		String xml = getHostsJson();
+		return new HttpMapSearchJsonParser(xml, numHostsCutoff).getHosts();
 	}
 
-	private String getSearchResultXml() {
+	private String getHostsJson() {
 		HttpClient client = HttpUtils.getDefaultClient();
-		String xml;
+
+		String json;
 		try {
-			String url = HttpUtils.encodeUrl(generateUrlWithSearchParams());
-			HttpGet get = new HttpGet(url);
-			HttpContext context = sessionContainer.getSessionContext();
-			
-			HttpResponse response = client.execute(get, context);
+            List<NameValuePair> searchParams = getSearchParameters();
+
+            HttpPost post = new HttpPost(WARMSHOWERS_MAP_SEARCH_URL);
+            post.setEntity(new UrlEncodedFormEntity(searchParams));
+            HttpContext httpContext = sessionContainer.getSessionContext();
+            HttpResponse response = client.execute(post, httpContext);
 
 			HttpEntity entity = response.getEntity();
-			xml = EntityUtils.toString(entity, "UTF-8");
+            json = EntityUtils.toString(entity, "UTF-8");
 		}
 
 		catch (Exception e) {
@@ -69,18 +75,19 @@ public class HttpMapSearch implements Search {
 			client.getConnectionManager().shutdown();
 		}
 		
-		return xml;
+		return json;
 	}
 
-	private String generateUrlWithSearchParams() {
-		return new StringBuilder().append(WARMSHOWERS_MAP_SEARCH_URL)
-				.append("?minlat=").append(searchArea.minLat)
-				.append("&maxlat=").append(searchArea.maxLat)
-				.append("&minlon=").append(searchArea.minLon)
-				.append("&maxlon=").append(searchArea.maxLon)
-				.append("&centerlat=").append(searchArea.centerLat)
-				.append("&centerlon=").append(searchArea.centerLon)
-				.append("&limitlow=0&maxresults=5000").toString();
-	}
+    private List<NameValuePair> getSearchParameters() {
+        List<NameValuePair> args = new ArrayList<NameValuePair>();
+        args.add(new BasicNameValuePair("minlat", String.valueOf(searchArea.minLat)));
+        args.add(new BasicNameValuePair("maxlat", String.valueOf(searchArea.maxLat)));
+        args.add(new BasicNameValuePair("minlon", String.valueOf(searchArea.minLon)));
+        args.add(new BasicNameValuePair("maxlon", String.valueOf(searchArea.maxLon)));
+        args.add(new BasicNameValuePair("centerlat", String.valueOf(searchArea.centerLat)));
+        args.add(new BasicNameValuePair("centerlon", String.valueOf(searchArea.centerLon)));
+        args.add(new BasicNameValuePair("limit", String.valueOf(this.numHostsCutoff)));
+        return args;
+    }
 
 }

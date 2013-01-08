@@ -23,7 +23,7 @@ import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 
-public class HttpHostContact extends HttpPageReader {
+public class HttpHostContact extends HttpReader {
 
 	private AccountManager accountManager;
 	

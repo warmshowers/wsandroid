@@ -7,7 +7,7 @@ import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 
-public class HttpTextSearch extends HttpPageReader implements Search {
+public class HttpTextSearch extends HttpReader implements Search {
 
 	private String text;
 

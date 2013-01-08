@@ -1,4 +1,7 @@
 bin/
 gen/
+out/
 AndroidManifest.out.xml
 .settings
+*.iml
+.idea/
