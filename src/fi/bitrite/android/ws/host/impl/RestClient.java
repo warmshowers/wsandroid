@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.host.impl;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -13,6 +14,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -25,21 +27,18 @@ public class RestClient extends HttpReader {
         super(authenticationService, sessionContainer);
     }
 
-    protected String getJson(String url, List<NameValuePair> params) {
+    protected HttpResponse post(String url, List<NameValuePair> params) {
         HttpClient client = HttpUtils.getDefaultClient();
-        String json;
+        HttpResponse response;
 
-		try {
+        try {
             HttpPost post = new HttpPost(url);
             post.setEntity(new UrlEncodedFormEntity(params));
             HttpContext httpContext = sessionContainer.getSessionContext();
-            HttpResponse response = client.execute(post, httpContext);
+            response = client.execute(post, httpContext);
+        }
 
-			HttpEntity entity = response.getEntity();
-            json = EntityUtils.toString(entity, "UTF-8");
-		}
-
-		catch (Exception e) {
+        catch (Exception e) {
 			throw new HttpAuthenticationFailedException(e);
 		}
 
@@ -47,6 +46,22 @@ public class RestClient extends HttpReader {
 			client.getConnectionManager().shutdown();
 		}
 
-		return json;
+        return response;
+    }
+
+    protected String getJson(String url, List<NameValuePair> params) {
+        String json;
+
+		try {
+            HttpResponse response = post(url, params);
+			HttpEntity entity = response.getEntity();
+            json = EntityUtils.toString(entity, "UTF-8");
+		}
+
+        catch (IOException e) {
+            throw new HttpException(e.getMessage());
+        }
+
+        return json;
     }
 }

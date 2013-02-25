@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
 import fi.bitrite.android.ws.host.HostContact;
+import fi.bitrite.android.ws.host.impl.RestHostContact;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import roboguice.util.Strings;
@@ -22,7 +23,6 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
-import fi.bitrite.android.ws.host.impl.HttpHostContact;
 import fi.bitrite.android.ws.model.Host;
 
 public class HostContactActivity extends RoboActivity {
@@ -35,7 +35,6 @@ public class HostContactActivity extends RoboActivity {
 	@Inject HttpSessionContainer sessionContainer;
 	
 	private Host host;
-	private int id;
 
 	private DialogHandler dialogHandler;
 	
@@ -50,11 +49,9 @@ public class HostContactActivity extends RoboActivity {
 
 		if (savedInstanceState != null) {
 			host = savedInstanceState.getParcelable("host");
-			id = savedInstanceState.getInt("id");
 		} else {
 			Intent i = getIntent();
 			host = (Host) i.getParcelableExtra("host");
-			id = i.getIntExtra("id", 0);
 		}
 
 		title.setText("Message to " + host.getFullname());
@@ -63,7 +60,6 @@ public class HostContactActivity extends RoboActivity {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		outState.putParcelable("host", host);
-		outState.putInt("id", id);
 		super.onSaveInstanceState(outState);
 	}
 
@@ -94,8 +90,8 @@ public class HostContactActivity extends RoboActivity {
 			String message = params[1];
 			Object retObj = null;
 			try {
-				HostContact contact = new HttpHostContact(authenticationService, sessionContainer, AccountManager.get(HostContactActivity.this));
-				contact.send(id, subject, message);
+				HostContact contact = new RestHostContact(authenticationService, sessionContainer);
+				contact.send(host.getName(), subject, message);
 			}
 
 			catch (Exception e) {
