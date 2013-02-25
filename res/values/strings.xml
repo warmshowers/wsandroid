@@ -23,7 +23,7 @@
     <string name="password">Password:</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="description"><u>About this host:</u></string>
+    <string name="description">About this host</string>
     <string name="last_login"><u>Last login:</u></string>
     <string name="member_since"><u>Member since:</u></string>
     <string name="location"><u>Location:</u></string>
