@@ -5,6 +5,9 @@ import java.util.regex.Pattern;
 
 import fi.bitrite.android.ws.util.http.HttpException;
 
+/**
+ * Scrapes a users ID number from a HTML string (normally the user information page).
+ */
 public class HttpHostIdScraper {
 
 	private String html;

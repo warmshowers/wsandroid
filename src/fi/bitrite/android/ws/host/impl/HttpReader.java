@@ -13,6 +13,10 @@ import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 
+/**
+ * Base class for classes that use GET to either scrape the WS website for information
+ * or interface with the REST API.
+ */
 public class HttpReader {
 
 	protected HttpAuthenticationService authenticationService;
@@ -29,7 +33,7 @@ public class HttpReader {
 		return authenticationPerformed;
 	}
 
-	public void setAuthenticationPerformed(boolean authenticationPerformed) {
+	private void setAuthenticationPerformed(boolean authenticationPerformed) {
 		this.authenticationPerformed = authenticationPerformed;
 	}
 

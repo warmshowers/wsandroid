@@ -2,6 +2,7 @@ package fi.bitrite.android.ws.host.impl;
 
 import java.util.List;
 
+import fi.bitrite.android.ws.host.HostContact;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -23,7 +24,7 @@ import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 
-public class HttpHostContact extends HttpReader {
+public class HttpHostContact extends HttpReader implements HostContact {
 
 	private AccountManager accountManager;
 	
@@ -32,7 +33,8 @@ public class HttpHostContact extends HttpReader {
 		this.accountManager = accountManager;
 	}
 
-	public void send(int id, String subject, String message) {
+	@Override
+    public void send(int id, String subject, String message) {
 		Account account = AuthenticationHelper.getWarmshowersAccount();
 		String accountUserId = accountManager.getUserData(account, AuthenticatorActivity.KEY_USERID);
 		

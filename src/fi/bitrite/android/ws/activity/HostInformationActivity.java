@@ -1,8 +1,5 @@
 package fi.bitrite.android.ws.activity;
 
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
-import roboguice.util.Strings;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,15 +13,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.inject.Inject;
-
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.host.impl.HttpHostId;
 import fi.bitrite.android.ws.host.impl.HttpHostInformation;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
+import roboguice.activity.RoboActivity;
+import roboguice.inject.InjectView;
+import roboguice.util.Strings;
 
 public class HostInformationActivity extends RoboActivity {
 
@@ -226,7 +225,8 @@ public class HostInformationActivity extends RoboActivity {
 				HttpHostInformation hostInfo = new HttpHostInformation(authenticationService, sessionContainer);
 				
 				if (id == NO_ID) {
-					id = hostInfo.getHostId(host.getName());
+                    HttpHostId hostId = new HttpHostId(host.getName(), authenticationService, sessionContainer);
+					id = hostId.getHostId(host.getName());
 				}
 				
 				host = hostInfo.getHostInformation(id);

@@ -10,22 +10,16 @@ import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.http.HttpException;
 
+/**
+ * Gets host information based on host ID.
+ */
 public class HttpHostInformation extends HttpReader {
 
-	public HttpHostInformation(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
-		super(authenticationService, sessionContainer);
-	}
+    public HttpHostInformation(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
+        super(authenticationService, sessionContainer);
+    }
 
-    // TODO: it does not seem to be possible to get the host ID from the host name
-    // over the REST API at the moment
-	public int getHostId(String hostName) {
-		String simpleUrl = new StringBuilder("http://www.warmshowers.org/users/").append(hostName).toString();
-		String html = getPage(simpleUrl);
-		HttpHostIdScraper scraper = new HttpHostIdScraper(html);
-		return scraper.getId();
-	}
-
-	public Host getHostInformation(int id) {
+    public Host getHostInformation(int id) {
 		String simpleUrl = new StringBuilder().append("http://www.warmshowers.org/user/")
 		.append(id).append("/json").toString();
 		String json = getPage(simpleUrl);

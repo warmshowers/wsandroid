@@ -8,7 +8,7 @@ import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
 
-public class HttpSearchFactory implements SearchFactory {
+public class WsSearchFactory implements SearchFactory {
 
 	@Inject
 	HttpAuthenticationService authenticationService;
@@ -21,7 +21,7 @@ public class HttpSearchFactory implements SearchFactory {
 	}
 
 	public Search createMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff) {
-		return new HttpMapSearch(topLeft, bottomRight, numHostsCutoff, authenticationService, sessionContainer);
+		return new RestMapSearch(topLeft, bottomRight, numHostsCutoff, authenticationService, sessionContainer);
 	}
 
 }

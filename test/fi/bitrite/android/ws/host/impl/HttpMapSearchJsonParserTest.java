@@ -37,20 +37,20 @@ public class HttpMapSearchJsonParserTest {
     @Test
     public void testIncomplete() throws Exception {
         exception.expect(IncompleteResultsException.class);
-        HttpMapSearchJsonParser parser = new HttpMapSearchJsonParser(incomplete.getContent(), 1);
+        RestMapSearchJsonParser parser = new RestMapSearchJsonParser(incomplete.getContent(), 1);
         List<HostBriefInfo> hosts = parser.getHosts();
     }
 
     @Test
     public void hostsCutoff() throws Exception {
         exception.expect(TooManyHostsException.class);
-        HttpMapSearchJsonParser parser = new HttpMapSearchJsonParser(sixHosts.getContent(), 5);
+        RestMapSearchJsonParser parser = new RestMapSearchJsonParser(sixHosts.getContent(), 5);
         List<HostBriefInfo> hosts = parser.getHosts();
     }
 
     @Test
     public void testSingleHost() throws Exception {
-        HttpMapSearchJsonParser parser = new HttpMapSearchJsonParser(singleHost.getContent(), 1);
+        RestMapSearchJsonParser parser = new RestMapSearchJsonParser(singleHost.getContent(), 1);
         List<HostBriefInfo> hosts = parser.getHosts();
 
         assertEquals(1, hosts.size());
@@ -64,7 +64,7 @@ public class HttpMapSearchJsonParserTest {
 
     @Test
     public void testUnknownHost() throws Exception {
-        HttpMapSearchJsonParser parser = new HttpMapSearchJsonParser(unknownHost.getContent(), 1);
+        RestMapSearchJsonParser parser = new RestMapSearchJsonParser(unknownHost.getContent(), 1);
         List<HostBriefInfo> hosts = parser.getHosts();
         HostBriefInfo host = hosts.get(0);
         assertEquals("(Unknown host)", host.getFullname());
@@ -73,7 +73,7 @@ public class HttpMapSearchJsonParserTest {
 
     @Test
     public void testStreet() throws Exception {
-        HttpMapSearchJsonParser parser = new HttpMapSearchJsonParser(hostWithStreet.getContent(), 1);
+        RestMapSearchJsonParser parser = new RestMapSearchJsonParser(hostWithStreet.getContent(), 1);
         List<HostBriefInfo> hosts = parser.getHosts();
         HostBriefInfo host = hosts.get(0);
         assertEquals("Street 1", host.getLocation());

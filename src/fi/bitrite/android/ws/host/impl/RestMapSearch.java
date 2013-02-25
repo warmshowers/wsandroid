@@ -22,60 +22,34 @@ import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 
-public class HttpMapSearch implements Search {
+public class RestMapSearch extends RestClient implements Search {
 
 	private static final String WARMSHOWERS_MAP_SEARCH_URL = "http://www.warmshowers.org/services/rest/hosts/by_location";
 
 	private int numHostsCutoff;
 	private MapSearchArea searchArea;
 
-	private HttpAuthenticationService authenticationService;
-	private HttpSessionContainer sessionContainer;
-	
-	public HttpMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff, HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
+
+	public RestMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff, HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
+        super(authenticationService, sessionContainer);
 		this.searchArea = MapSearchArea.fromGeoPoints(topLeft, bottomRight);
 		this.numHostsCutoff = numHostsCutoff; 
-		this.authenticationService = authenticationService;
-		this.sessionContainer = sessionContainer;
 	}
 
 	public List<HostBriefInfo> doSearch() {
 		// The map search works even if we're not authenticated,
 		// but it returns less data. Easier to check first using
 		// a simple GET
-		if (!authenticationService.isAuthenticated()) {
-			authenticationService.authenticate();
+		if (!isAuthenticationPerformed()) {
+			authenticate();
 		}
 
 		String xml = getHostsJson();
-		return new HttpMapSearchJsonParser(xml, numHostsCutoff).getHosts();
+		return new RestMapSearchJsonParser(xml, numHostsCutoff).getHosts();
 	}
 
-	private String getHostsJson() {
-		HttpClient client = HttpUtils.getDefaultClient();
-
-		String json;
-		try {
-            List<NameValuePair> searchParams = getSearchParameters();
-
-            HttpPost post = new HttpPost(WARMSHOWERS_MAP_SEARCH_URL);
-            post.setEntity(new UrlEncodedFormEntity(searchParams));
-            HttpContext httpContext = sessionContainer.getSessionContext();
-            HttpResponse response = client.execute(post, httpContext);
-
-			HttpEntity entity = response.getEntity();
-            json = EntityUtils.toString(entity, "UTF-8");
-		}
-
-		catch (Exception e) {
-			throw new HttpAuthenticationFailedException(e);
-		}
-
-		finally {
-			client.getConnectionManager().shutdown();
-		}
-		
-		return json;
+    private String getHostsJson() {
+        return getJson(WARMSHOWERS_MAP_SEARCH_URL, getSearchParameters());
 	}
 
     private List<NameValuePair> getSearchParameters() {

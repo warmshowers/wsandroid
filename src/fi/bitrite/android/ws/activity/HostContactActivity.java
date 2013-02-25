@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
+import fi.bitrite.android.ws.host.HostContact;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import roboguice.util.Strings;
@@ -93,7 +94,7 @@ public class HostContactActivity extends RoboActivity {
 			String message = params[1];
 			Object retObj = null;
 			try {
-				HttpHostContact contact = new HttpHostContact(authenticationService, sessionContainer, AccountManager.get(HostContactActivity.this));
+				HostContact contact = new HttpHostContact(authenticationService, sessionContainer, AccountManager.get(HostContactActivity.this));
 				contact.send(id, subject, message);
 			}
 
