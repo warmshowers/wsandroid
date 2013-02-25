@@ -39,7 +39,7 @@ public class RestClient extends HttpReader {
         }
 
         catch (Exception e) {
-			throw new HttpAuthenticationFailedException(e);
+			throw new HttpException(e);
 		}
 
 		finally {
@@ -50,16 +50,24 @@ public class RestClient extends HttpReader {
     }
 
     protected String getJson(String url, List<NameValuePair> params) {
+        HttpClient client = HttpUtils.getDefaultClient();
         String json;
 
 		try {
-            HttpResponse response = post(url, params);
+            HttpPost post = new HttpPost(url);
+            post.setEntity(new UrlEncodedFormEntity(params));
+            HttpContext httpContext = sessionContainer.getSessionContext();
+            HttpResponse response = client.execute(post, httpContext);
 			HttpEntity entity = response.getEntity();
             json = EntityUtils.toString(entity, "UTF-8");
 		}
 
         catch (IOException e) {
             throw new HttpException(e.getMessage());
+        }
+
+        finally {
+            client.getConnectionManager().shutdown();
         }
 
         return json;
