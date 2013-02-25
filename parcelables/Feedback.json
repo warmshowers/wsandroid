@@ -1,0 +1,18 @@
+{
+    "do_json": true,
+    "package": "fi.bitrite.android.ws.model",
+    "props": {
+        "String": [
+        "id", "uid", "fullname", "name", "body", "guestOrHost"
+        ],
+        "int": [
+            "hostingDate"
+        ]
+    },
+    "json_map": {
+        "id" : "nid",
+        "uid" : "uid_1",
+        "guestOrHost": "field_guest_or_host_value",
+        "hostingDate": "field_hosting_date_value"
+    }
+}

@@ -9,21 +9,26 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.host.impl.HttpHostId;
 import fi.bitrite.android.ws.host.impl.HttpHostInformation;
+import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
+import fi.bitrite.android.ws.util.http.HttpException;
+import fi.bitrite.android.ws.view.FeedbackTable;
+import org.json.JSONException;
+import org.json.JSONObject;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import roboguice.util.Strings;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HostInformationActivity extends RoboActivity {
 
@@ -33,6 +38,15 @@ public class HostInformationActivity extends RoboActivity {
 
 	@InjectView(R.id.layoutHostDetails)
 	LinearLayout hostDetails;
+
+    @InjectView(R.id.scrollHostInformation) ScrollView hostInformationScroller;
+
+    @InjectView(R.id.btnToggleBasicInformation) ImageView basicInformationExpander;
+    @InjectView(R.id.tableBasicInformation) TableLayout basicInformation;
+
+    @InjectView(R.id.btnToggleFeedback) ImageView feedbackExpander;
+    @InjectView(R.id.tblFeedback)
+    FeedbackTable feedbackTable;
 
 	@InjectView(R.id.btnHostStar) ImageView star;
 	@InjectView(R.id.txtHostFullname) TextView fullname;
@@ -107,12 +121,31 @@ public class HostInformationActivity extends RoboActivity {
 		}
 		
 		setupStar();
-		fullname.setText(host.getFullname());
-		
+		setupFeedback();
+
+        fullname.setText(host.getFullname());
+
 		starredHostDao.close();
 	}
-	
-	private boolean intentProvidesFullHostInfo(Intent i) {
+
+    private void setupFeedback() {
+        String tempJson = "{'fullname' : 'Reviewer 1', 'body' : 'This is the review.'}";
+        List<Feedback> feedback = new ArrayList<Feedback>();
+
+        try {
+            JSONObject jsonObj = new JSONObject(tempJson);
+            feedback.add(Feedback.CREATOR.parse(jsonObj));
+            feedback.add(Feedback.CREATOR.parse(jsonObj));
+        }
+
+        catch (JSONException exception) {
+            throw new HttpException(exception);
+        }
+
+        feedbackTable.addRows(feedback);
+    }
+
+    private boolean intentProvidesFullHostInfo(Intent i) {
 		return i.getBooleanExtra("full_info", false);
 	}
 	
@@ -153,8 +186,33 @@ public class HostInformationActivity extends RoboActivity {
 		setupStar();
 		starredHostDao.close();
 	}
-	
-	public void contactHost(View view) {
+
+    public void toggleBasicInformation(View view) {
+        if (basicInformation.getVisibility() == View.GONE) {
+            basicInformation.setVisibility(View.VISIBLE);
+            basicInformationExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_max));
+        } else {
+            basicInformation.setVisibility(View.GONE);
+            basicInformationExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_min));
+        }
+    }
+
+    public void toggleFeedback(View view) {
+        if (feedbackTable.getVisibility() == View.GONE) {
+            feedbackTable.setVisibility(View.VISIBLE);
+            feedbackExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_max));
+            hostInformationScroller.post(new Runnable() {
+                public void run() {
+                    hostInformationScroller.scrollTo(0, hostInformationScroller.getBottom());
+                }
+            });
+        } else {
+            feedbackTable.setVisibility(View.GONE);
+            feedbackExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_min));
+        }
+    }
+
+    public void contactHost(View view) {
 		Intent i = new Intent(HostInformationActivity.this, HostContactActivity.class);
 		i.putExtra("host", host);
 		i.putExtra("id", id);
@@ -294,3 +352,4 @@ public class HostInformationActivity extends RoboActivity {
 		}
 	}
 }
+
