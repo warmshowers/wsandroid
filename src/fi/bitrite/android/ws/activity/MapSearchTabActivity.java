@@ -1,11 +1,5 @@
 package fi.bitrite.android.ws.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
-import roboguice.activity.RoboMapActivity;
-import roboguice.inject.InjectView;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,24 +8,13 @@ import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.TextView;
-
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
-import com.google.android.maps.MyLocationOverlay;
+import android.view.*;
+import android.widget.*;
+import com.google.android.maps.*;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
-
-import de.android1.overlaymanager.ManagedOverlay;
-import de.android1.overlaymanager.ManagedOverlayGestureDetector;
+import de.android1.overlaymanager.*;
 import de.android1.overlaymanager.ManagedOverlayGestureDetector.OnOverlayGestureListener;
-import de.android1.overlaymanager.ManagedOverlayItem;
-import de.android1.overlaymanager.OverlayManager;
-import de.android1.overlaymanager.ZoomEvent;
 import de.android1.overlaymanager.lazyload.LazyLoadCallback;
 import de.android1.overlaymanager.lazyload.LazyLoadException;
 import fi.bitrite.android.ws.R;
@@ -42,6 +25,13 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.MapAnimator;
 import fi.bitrite.android.ws.util.http.HttpException;
+import fi.bitrite.android.ws.view.ScaleBarOverlay;
+import roboguice.activity.RoboMapActivity;
+import roboguice.inject.InjectView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 public class MapSearchTabActivity extends RoboMapActivity {
 
@@ -54,6 +44,8 @@ public class MapSearchTabActivity extends RoboMapActivity {
 
     @InjectView(R.id.mapView)
     MapView mapView;
+    @InjectView(R.id.layoutZoom)
+    LinearLayout zoomControls;
     @InjectView(R.id.lblBigNumber)
     TextView lblBigNumber;
     @InjectView(R.id.lblStatusMessage)
@@ -68,6 +60,7 @@ public class MapSearchTabActivity extends RoboMapActivity {
     MapController mapController;
     OverlayManager overlayManager;
     MyLocationOverlay locationOverlay;
+    ScaleBarOverlay scaleBarOverlay;
     Gson gson;
     HostBriefInfo host;
     Dialog hostPopup;
@@ -77,12 +70,18 @@ public class MapSearchTabActivity extends RoboMapActivity {
     int savedHostId;
 
     @Override
+    @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_tab);
         mapView.setBuiltInZoomControls(true);
         overlayManager = new OverlayManager(this, mapView);
         mapController = mapView.getController();
+
+        View zoomView = mapView.getZoomControls();
+        zoomControls.addView(zoomView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        mapView.setBuiltInZoomControls(false);
+
         gson = new Gson();
         setupHostPopup();
         cameFromHostInfo = false;
@@ -146,6 +145,15 @@ public class MapSearchTabActivity extends RoboMapActivity {
         locationOverlay = new MyLocationOverlay(this, mapView);
         locationOverlay.enableMyLocation();
         mapView.getOverlays().add(locationOverlay);
+
+        // TODO: the scale bar currently lags one zoom level behind.
+        // Try using a polling solution like this:
+        // http://stackoverflow.com/questions/2013443/on-zoom-event-for-google-maps-on-android
+
+        scaleBarOverlay = new ScaleBarOverlay(this, this, mapView);
+        List<Overlay> overlays = mapView.getOverlays();
+        scaleBarOverlay.setMetric();
+        overlays.add(scaleBarOverlay);
     }
 
     private LazyLoadCallback createLazyLoadCallback() {
