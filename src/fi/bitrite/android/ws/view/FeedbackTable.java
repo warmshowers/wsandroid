@@ -1,12 +1,16 @@
 package fi.bitrite.android.ws.view;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import fi.bitrite.android.ws.model.Feedback;
+import org.hamcrest.generator.qdox.tools.QDoxTester;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,7 +28,9 @@ public class FeedbackTable extends TableLayout {
             int bgColor = (i++ % 2 == 0) ? 0 : 0xFF222222;
 
             TableRow tr = getFeedbackRow(bgColor);
-            TextView meta = getFeedbackText(f.getFullname());
+
+            TextView meta = getFeedbackText(getMetaString(f));
+            meta.setTypeface(null, Typeface.ITALIC);
             meta.setPadding(0, 5, 0, 0);
             tr.addView(meta);
             addView(tr);
@@ -36,6 +42,25 @@ public class FeedbackTable extends TableLayout {
 
             addView(tr);
         }
+    }
+
+    private String getMetaString(Feedback f) {
+        StringBuilder sb = new StringBuilder();
+        String name = f.getFullname();
+        if (name == null || name.length() == 0) {
+            name = "Unknown";
+        }
+
+        sb.append(name.trim());
+
+        sb.append(" (");
+        sb.append(f.getGuestOrHost());
+        sb.append(", ");
+        Date d = new Date(f.getHostingDate()*1000L);
+        String hostedOn = DateFormat.getDateInstance().format(d);
+        sb.append(hostedOn);
+        sb.append(")");
+        return sb.toString();
     }
 
     private TextView getFeedbackText(String text) {

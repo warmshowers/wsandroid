@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import com.yelp.parcelgen.JsonParser.DualCreator;
 
 
-public class Feedback extends _Feedback {
+public class Feedback extends _Feedback implements Comparable<Feedback> {
 
 	public static final DualCreator<Feedback> CREATOR = new DualCreator<Feedback>() {
 
@@ -28,4 +28,8 @@ public class Feedback extends _Feedback {
 		}
 	};
 
+    @Override
+    public int compareTo(Feedback other) {
+        return (int) ((other.getHostingDate() - this.getHostingDate()));
+    }
 }

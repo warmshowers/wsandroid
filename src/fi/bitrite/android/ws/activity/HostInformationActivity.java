@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,20 +15,18 @@ import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.host.impl.HttpHostFeedback;
 import fi.bitrite.android.ws.host.impl.HttpHostId;
 import fi.bitrite.android.ws.host.impl.HttpHostInformation;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
-import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.view.FeedbackTable;
-import org.json.JSONException;
-import org.json.JSONObject;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import roboguice.util.Strings;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class HostInformationActivity extends RoboActivity {
@@ -47,6 +46,8 @@ public class HostInformationActivity extends RoboActivity {
     @InjectView(R.id.tableBasicInformation)
     TableLayout basicInformation;
 
+    @InjectView(R.id.lblFeedback)
+    TextView feedbackLabel;
     @InjectView(R.id.btnToggleFeedback)
     ImageView feedbackExpander;
     @InjectView(R.id.tblFeedback)
@@ -92,6 +93,8 @@ public class HostInformationActivity extends RoboActivity {
     StarredHostDao starredHostDao;
 
     private Host host;
+    private List<Feedback> feedback;
+
     private int id;
     private boolean starred;
     private boolean forceUpdate;
@@ -139,30 +142,14 @@ public class HostInformationActivity extends RoboActivity {
         if (shouldDownloadHostInfo) {
             getHostInformationAsync();
         } else {
-            setViewContentFromHost();
+            updateViewContent();
         }
 
         setupStar();
-        setupFeedback();
 
         fullname.setText(host.getFullname());
 
         starredHostDao.close();
-    }
-
-    private void setupFeedback() {
-        String tempJson = "{'fullname' : 'Reviewer 1', 'body' : 'This is the review.'}";
-        List<Feedback> feedback = new ArrayList<Feedback>();
-
-        try {
-            JSONObject jsonObj = new JSONObject(tempJson);
-            feedback.add(Feedback.CREATOR.parse(jsonObj));
-            feedback.add(Feedback.CREATOR.parse(jsonObj));
-        } catch (JSONException exception) {
-            throw new HttpException(exception);
-        }
-
-        feedbackTable.addRows(feedback);
     }
 
     private boolean intentProvidesFullHostInfo(Intent i) {
@@ -275,7 +262,7 @@ public class HostInformationActivity extends RoboActivity {
         hostInfoTask.execute();
     }
 
-    private void setViewContentFromHost() {
+    private void updateViewContent() {
         comments.setText(host.getComments());
         location.setText(host.getLocation());
         memberSince.setText(host.getMemberSince());
@@ -290,6 +277,10 @@ public class HostInformationActivity extends RoboActivity {
         bikeShop.setText(host.getBikeshop());
         services.setText(host.getServices());
 
+        Collections.sort(feedback);
+        feedbackTable.addRows(feedback);
+        feedbackLabel.setText("Feedback (" + feedback.size() + ")");
+
         hostDetails.setVisibility(View.VISIBLE);
     }
 
@@ -301,6 +292,7 @@ public class HostInformationActivity extends RoboActivity {
 
             try {
                 HttpHostInformation hostInfo = new HttpHostInformation(authenticationService, sessionContainer);
+                HttpHostFeedback hostFeedback = new HttpHostFeedback(authenticationService, sessionContainer);
 
                 if (id == NO_ID) {
                     HttpHostId hostId = new HttpHostId(host.getName(), authenticationService, sessionContainer);
@@ -308,6 +300,8 @@ public class HostInformationActivity extends RoboActivity {
                 }
 
                 host = hostInfo.getHostInformation(id);
+                feedback = hostFeedback.getFeedback(id);
+
             } catch (Exception e) {
                 Log.e("WSAndroid", e.getMessage(), e);
                 retObj = e;
@@ -325,7 +319,7 @@ public class HostInformationActivity extends RoboActivity {
                 return;
             }
 
-            setViewContentFromHost();
+            updateViewContent();
 
             if (starred && forceUpdate) {
                 starredHostDao.open();

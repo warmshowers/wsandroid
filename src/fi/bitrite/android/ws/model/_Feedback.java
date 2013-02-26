@@ -17,9 +17,9 @@ import org.json.JSONObject;
 	protected String mName;
 	protected String mBody;
 	protected String mGuestOrHost;
-	protected int mHostingDate;
+	protected long mHostingDate;
 
-	protected _Feedback(String id, String uid, String fullname, String name, String body, String guestOrHost, int hostingDate) {
+	protected _Feedback(String id, String uid, String fullname, String name, String body, String guestOrHost, long hostingDate) {
 		this();
 		mId = id;
 		mUid = uid;
@@ -52,7 +52,7 @@ import org.json.JSONObject;
 	public String getGuestOrHost() {
 		 return mGuestOrHost;
 	}
-	public int getHostingDate() {
+	public long getHostingDate() {
 		 return mHostingDate;
 	}
 
@@ -68,7 +68,7 @@ import org.json.JSONObject;
 		parcel.writeString(mName);
 		parcel.writeString(mBody);
 		parcel.writeString(mGuestOrHost);
-		parcel.writeInt(mHostingDate);
+		parcel.writeLong(mHostingDate);
 	}
 
 	public void readFromParcel(Parcel source) {
@@ -78,7 +78,7 @@ import org.json.JSONObject;
 		mName = source.readString();
 		mBody = source.readString();
 		mGuestOrHost = source.readString();
-		mHostingDate = source.readInt();
+		mHostingDate = source.readLong();
 	}
 
 	public void readFromJson(JSONObject json) throws JSONException {
@@ -100,7 +100,7 @@ import org.json.JSONObject;
 		if (!json.isNull("field_guest_or_host_value")) {
 			mGuestOrHost = json.optString("field_guest_or_host_value");
 		}
-		mHostingDate = json.optInt("field_hosting_date_value");
+		mHostingDate = json.optLong("field_hosting_date_value");
 	}
 
 }

@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.util.http.HttpException;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User: johannes
- * Date: 25.02.2013
+ * Parses a JSON string containing zero or more recommendations for a host.
  */
 public class FeedbackJsonParser {
 
@@ -27,13 +27,17 @@ public class FeedbackJsonParser {
     public List<Feedback> getFeedback() {
         List<Feedback> feedback = new ArrayList<Feedback>();
 
-        JsonParser jsonParser = new JsonParser();
-        JsonObject jsonObj = jsonParser.parse(json).getAsJsonObject();
-        JsonArray recommendations = jsonObj.getAsJsonArray("recommendations");
-        for (JsonElement element : recommendations) {
-            JsonObject recommendation = element.getAsJsonObject().get("recommendation").getAsJsonObject();
-            System.out.println(recommendation.get("fullname"));
-            feedback.add(new Feedback());
+        try {
+            JSONObject jsonObj = new JSONObject(this.json);
+            JSONArray recommendations = jsonObj.getJSONArray("recommendations");
+            for (int i = 0; i < recommendations.length(); i++) {
+                JSONObject recommendation = recommendations.getJSONObject(i);
+                feedback.add(Feedback.CREATOR.parse(recommendation.getJSONObject("recommendation")));
+            }
+        }
+
+        catch (Exception e) {
+            throw new HttpException(e);
         }
 
         return feedback;

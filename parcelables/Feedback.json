@@ -5,7 +5,7 @@
         "String": [
         "id", "uid", "fullname", "name", "body", "guestOrHost"
         ],
-        "int": [
+        "long": [
             "hostingDate"
         ]
     },

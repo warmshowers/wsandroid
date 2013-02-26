@@ -309,7 +309,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:paddingTop="4dp"
-                    android:shrinkColumns="1"
+                    android:shrinkColumns="0"
                     android:visibility="gone">
 
             </fi.bitrite.android.ws.view.FeedbackTable>
