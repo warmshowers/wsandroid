@@ -11,12 +11,12 @@ import com.google.gson.JsonParser;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 
-public class RestMapSearchJsonParser {
+public class MapSearchJsonParser {
 
 	private String json;
 	private int numHostsCutoff;
 	
-	public RestMapSearchJsonParser(String json, int numHostsCutoff) {
+	public MapSearchJsonParser(String json, int numHostsCutoff) {
 		this.json = json;
 		this.numHostsCutoff = numHostsCutoff;
 	}

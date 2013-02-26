@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
  * User: johannes
  * Date: 08.01.2013
  */
-public class HttpMapSearchJsonParserTest {
+public class MapSearchJsonParserTest {
 
     @Rule
     public ResourceFile incomplete = new ResourceFile("map_search_incomplete.json");
@@ -37,20 +37,20 @@ public class HttpMapSearchJsonParserTest {
     @Test
     public void testIncomplete() throws Exception {
         exception.expect(IncompleteResultsException.class);
-        RestMapSearchJsonParser parser = new RestMapSearchJsonParser(incomplete.getContent(), 1);
+        MapSearchJsonParser parser = new MapSearchJsonParser(incomplete.getContent(), 1);
         List<HostBriefInfo> hosts = parser.getHosts();
     }
 
     @Test
     public void hostsCutoff() throws Exception {
         exception.expect(TooManyHostsException.class);
-        RestMapSearchJsonParser parser = new RestMapSearchJsonParser(sixHosts.getContent(), 5);
+        MapSearchJsonParser parser = new MapSearchJsonParser(sixHosts.getContent(), 5);
         List<HostBriefInfo> hosts = parser.getHosts();
     }
 
     @Test
     public void testSingleHost() throws Exception {
-        RestMapSearchJsonParser parser = new RestMapSearchJsonParser(singleHost.getContent(), 1);
+        MapSearchJsonParser parser = new MapSearchJsonParser(singleHost.getContent(), 1);
         List<HostBriefInfo> hosts = parser.getHosts();
 
         assertEquals(1, hosts.size());
@@ -64,7 +64,7 @@ public class HttpMapSearchJsonParserTest {
 
     @Test
     public void testUnknownHost() throws Exception {
-        RestMapSearchJsonParser parser = new RestMapSearchJsonParser(unknownHost.getContent(), 1);
+        MapSearchJsonParser parser = new MapSearchJsonParser(unknownHost.getContent(), 1);
         List<HostBriefInfo> hosts = parser.getHosts();
         HostBriefInfo host = hosts.get(0);
         assertEquals("(Unknown host)", host.getFullname());
@@ -73,7 +73,7 @@ public class HttpMapSearchJsonParserTest {
 
     @Test
     public void testStreet() throws Exception {
-        RestMapSearchJsonParser parser = new RestMapSearchJsonParser(hostWithStreet.getContent(), 1);
+        MapSearchJsonParser parser = new MapSearchJsonParser(hostWithStreet.getContent(), 1);
         List<HostBriefInfo> hosts = parser.getHosts();
         HostBriefInfo host = hosts.get(0);
         assertEquals("Street 1", host.getLocation());
