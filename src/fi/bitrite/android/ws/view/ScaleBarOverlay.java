@@ -1,16 +1,11 @@
 package fi.bitrite.android.ws.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
+import android.graphics.*;
 import android.graphics.Paint.Style;
-import android.graphics.Picture;
-import android.graphics.Rect;
 import android.location.Location;
+import android.os.Handler;
 import android.util.Log;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
@@ -47,13 +42,14 @@ public class ScaleBarOverlay extends Overlay {
     protected final Picture scaleBarPicture = new Picture();
     private final Matrix scaleBarMatrix = new Matrix();
 
-    private int lastZoomLevel = -1;
-
     float xdpi;
     float ydpi;
     int screenWidth;
     int screenHeight;
     private final MapSearchTabActivity master;
+
+    private Handler handler = new Handler();
+    private int lastLonSpan = -1;
 
     // ===========================================================
     // Constructors
@@ -155,13 +151,14 @@ public class ScaleBarOverlay extends Overlay {
     @Override
     public void draw(Canvas canvas, MapView localMapView, boolean shadow) {
         if (this.enabled) {
-            // Draw the overlay
             if (shadow == false) {
-                final int zoomLevel = localMapView.getZoomLevel();
+                Projection projection = localMapView.getProjection();
+                int lonSpan = projection.fromPixels(0,mapView.getHeight()/2).getLongitudeE6() -
+                        projection.fromPixels(mapView.getWidth(),mapView.getHeight()/2).getLongitudeE6();
 
-                if (zoomLevel != lastZoomLevel) {
-                    lastZoomLevel = zoomLevel;
+                if (lonSpan != lastLonSpan) {
                     createScaleBarPicture();
+                    lastLonSpan = lonSpan;
                 }
 
                 this.scaleBarMatrix.setTranslate(-1 * (scaleBarPicture.getWidth() / 2 - 0.5f), -1 * (scaleBarPicture.getHeight() / 2 - 0.5f));
@@ -314,4 +311,5 @@ public class ScaleBarOverlay extends Overlay {
         // Do not react to screen taps.
         return false;
     }
+
 }

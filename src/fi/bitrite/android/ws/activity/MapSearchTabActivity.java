@@ -6,10 +6,14 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.*;
-import android.widget.*;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.google.android.maps.*;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -36,11 +40,8 @@ import java.util.ListIterator;
 public class MapSearchTabActivity extends RoboMapActivity {
 
     private static final String HOST_OVERLAY = "hostoverlay";
-
-    // TODO: make this a user-definable setting (GitHub issue #13)
-    protected static final int NUM_HOSTS_CUTOFF = 150;
-
-    protected static final int MIN_ZOOM_LEVEL = 8;
+    private static final int NUM_HOSTS_CUTOFF = 150;
+    private static final int MIN_ZOOM_LEVEL = 8;
 
     @InjectView(R.id.mapView)
     MapView mapView;
@@ -57,17 +58,19 @@ public class MapSearchTabActivity extends RoboMapActivity {
     @Inject
     MapAnimator mapAnimator;
 
-    MapController mapController;
-    OverlayManager overlayManager;
-    MyLocationOverlay locationOverlay;
-    ScaleBarOverlay scaleBarOverlay;
-    Gson gson;
-    HostBriefInfo host;
-    Dialog hostPopup;
+    private MapController mapController;
+    private OverlayManager overlayManager;
+    private MyLocationOverlay locationOverlay;
+    private ScaleBarOverlay scaleBarOverlay;
+    private int lastZoomLevel = -1;
 
-    boolean cameFromHostInfo;
-    Host savedHost;
-    int savedHostId;
+    private Gson gson;
+    private HostBriefInfo host;
+    private Dialog hostPopup;
+
+    private boolean cameFromHostInfo;
+    private Host savedHost;
+    private int savedHostId;
 
     @Override
     @SuppressWarnings("deprecation")
@@ -146,13 +149,17 @@ public class MapSearchTabActivity extends RoboMapActivity {
         locationOverlay.enableMyLocation();
         mapView.getOverlays().add(locationOverlay);
 
-        // TODO: the scale bar currently lags one zoom level behind.
-        // Try using a polling solution like this:
-        // http://stackoverflow.com/questions/2013443/on-zoom-event-for-google-maps-on-android
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String unit = prefs.getString("distance_unit", "km");
 
         scaleBarOverlay = new ScaleBarOverlay(this, this, mapView);
+        if (unit.equals("mi")) {
+            scaleBarOverlay.setImperial();
+        } else {
+            scaleBarOverlay.setMetric();
+        }
+
         List<Overlay> overlays = mapView.getOverlays();
-        scaleBarOverlay.setMetric();
         overlays.add(scaleBarOverlay);
     }
 
@@ -356,12 +363,6 @@ public class MapSearchTabActivity extends RoboMapActivity {
         return false;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        locationOverlay.enableMyLocation();
-        animateToMapTargetIfNeeded();
-    }
 
     private void animateToMapTargetIfNeeded() {
         GeoPoint target = mapAnimator.getTarget();
@@ -373,10 +374,16 @@ public class MapSearchTabActivity extends RoboMapActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        locationOverlay.enableMyLocation();
+        animateToMapTargetIfNeeded();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         mapAnimator.clearTarget();
         locationOverlay.disableMyLocation();
     }
-
 }
