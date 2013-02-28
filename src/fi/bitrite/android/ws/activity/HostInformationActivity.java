@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import roboguice.util.Strings;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -93,7 +95,7 @@ public class HostInformationActivity extends RoboActivity {
     StarredHostDao starredHostDao;
 
     private Host host;
-    private List<Feedback> feedback;
+    private ArrayList<Feedback> feedback;
 
     private int id;
     private boolean starred;
@@ -107,6 +109,8 @@ public class HostInformationActivity extends RoboActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.host_information);
+
+        starredHostDao.close();
         starredHostDao.open();
 
         dialogHandler = new DialogHandler(HostInformationActivity.this);
@@ -117,6 +121,7 @@ public class HostInformationActivity extends RoboActivity {
         if (savedInstanceState != null) {
             host = savedInstanceState.getParcelable("host");
             id = savedInstanceState.getInt("id");
+            feedback = savedInstanceState.getParcelableArrayList("feedback");
             forceUpdate = savedInstanceState.getBoolean("force_update");
             starred = starredHostDao.isHostStarred(id, host.getName());
             shouldDownloadHostInfo = inProgress;
@@ -124,6 +129,8 @@ public class HostInformationActivity extends RoboActivity {
             Intent i = getIntent();
             host = (Host) i.getParcelableExtra("host");
             id = i.getIntExtra("id", NO_ID);
+            feedback = i.getParcelableArrayListExtra("feedback");
+
             starred = starredHostDao.isHostStarred(id, host.getName());
 
             if (intentProvidesFullHostInfo(i)) {
@@ -160,6 +167,7 @@ public class HostInformationActivity extends RoboActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("host", host);
         outState.putInt("id", id);
+        outState.putParcelableArrayList("feedback", feedback);
         outState.putBoolean("force_update", forceUpdate);
 
         if (hostInfoTask != null) {
@@ -242,6 +250,7 @@ public class HostInformationActivity extends RoboActivity {
         // #31: when going back from the map, we should end up on the host info page
         resultIntent.putExtra("host", host);
         resultIntent.putExtra("id", id);
+        resultIntent.putExtra("feedback", feedback);
 
         setResult(RESULT_SHOW_HOST_ON_MAP, resultIntent);
         finish();

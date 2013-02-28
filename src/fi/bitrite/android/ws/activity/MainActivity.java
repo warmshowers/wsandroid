@@ -16,14 +16,17 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
 
+import java.util.ArrayList;
+
 public class MainActivity extends RoboTabActivity  {
 	
 	private Dialog splashDialog;
 	private Parcelable savedHost;
 	private int savedHostId;
 	private int stashedFromTab;
+    private ArrayList<Parcelable> savedFeedback;
 
-	@Override
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -179,6 +182,7 @@ public class MainActivity extends RoboTabActivity  {
 	public void stashHost(Intent data, int stashedFrom) {
 		savedHost = data.getParcelableExtra("host");
 		savedHostId = data.getIntExtra("id", 0);
+        savedFeedback = data.getParcelableArrayListExtra("feedback");
 		stashedFromTab = stashedFrom;
 	}
 
@@ -189,6 +193,7 @@ public class MainActivity extends RoboTabActivity  {
 	public Intent popStashedHost(Intent i) {
 		i.putExtra("host", savedHost);
 		i.putExtra("id", savedHostId);
+        i.putExtra("feedback", savedFeedback);
 		i.putExtra("full_info", true);
 		savedHost = null;
 		savedHostId = 0;

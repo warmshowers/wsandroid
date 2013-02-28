@@ -30,7 +30,9 @@ public class StarredHostDaoImpl implements StarredHostDao {
 	}
 
 	public void close() {
-		database.close();
+        if (database != null && database.isOpen()) {
+            database.close();
+        }
 	}
 
 	public void insert(int id, String name, Host host) {

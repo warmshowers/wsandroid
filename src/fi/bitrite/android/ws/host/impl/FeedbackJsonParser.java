@@ -24,8 +24,8 @@ public class FeedbackJsonParser {
         this.json = json;
     }
 
-    public List<Feedback> getFeedback() {
-        List<Feedback> feedback = new ArrayList<Feedback>();
+    public ArrayList<Feedback> getFeedback() {
+        ArrayList<Feedback> feedback = new ArrayList<Feedback>();
 
         try {
             JSONObject jsonObj = new JSONObject(this.json);

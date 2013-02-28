@@ -4,7 +4,7 @@ import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.model.Feedback;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Retrieves feedback for a given host.
@@ -18,9 +18,9 @@ public class HttpHostFeedback extends HttpReader {
     /**
      * Given the ID of a WarmShowers user, retrieve feedback about him.
      * @param id
-     * @return List
+     * @return ArrayList
      */
-    public List<Feedback> getFeedback(int id) {
+    public ArrayList<Feedback> getFeedback(int id) {
         String simpleUrl = new StringBuilder().append("http://www.warmshowers.org/user/")
                 .append(id).append("/json_recommendations").toString();
         String json = getPage(simpleUrl);
