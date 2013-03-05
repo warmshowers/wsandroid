@@ -106,13 +106,12 @@ public class HostContactActivity extends RoboActivity {
 		protected void onPostExecute(Object result) {
 			dialogHandler.dismiss();
 			
-			if (result instanceof HttpAuthenticationFailedException) {
-				dialogHandler.alert(getResources().getString(R.string.error_sending_message));
-				// throw it all the way out to the user so we get some error feedback!
-				throw (HttpAuthenticationFailedException) result;
-			}		
-			
-			showSuccessDialog();
+			if (result instanceof Exception) {
+				dialogHandler.alert(getResources().getString(R.string.error_sending_message) + " (" + ((Exception) result).getMessage() + ")");
+			}
+            else {
+			    showSuccessDialog();
+            }
 		}
 	}
 
