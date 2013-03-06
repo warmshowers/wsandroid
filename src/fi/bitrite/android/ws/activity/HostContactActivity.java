@@ -69,6 +69,7 @@ public class HostContactActivity extends RoboActivity {
 
 		if (Strings.isEmpty(subject) || Strings.isEmpty(message)) {
 			dialogHandler.alert(getResources().getString(R.string.message_validation_error));
+            return;
 		}
 
 		dialogHandler.showDialog(DialogHandler.HOST_CONTACT);
