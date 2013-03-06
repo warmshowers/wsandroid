@@ -58,7 +58,7 @@
     <string name="error_retrieving_host_information">Could not retrieve host information. Check your credentials and internet connection.</string>
     <string name="subject_hint">Enter subject here</string>
     <string name="message_hint">Enter message here</string>
-    <string name="message_validation_error">Both subject and message are obligatory.</string>
+    <string name="message_validation_error">Both subject and message are required.</string>
     <string name="sending_message">Sending message …</string>
     <string name="error_sending_message">Could not send message. Check your credentials and internet connection.</string>
     <string name="message_sent">Message sent successfully.</string>
