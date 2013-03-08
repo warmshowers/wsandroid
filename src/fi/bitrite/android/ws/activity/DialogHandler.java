@@ -21,11 +21,13 @@ public class DialogHandler {
 	public static final int HOST_INFORMATION = 3;
 
 	public static final int HOST_CONTACT = 4;
-	
+
+    public static final int MESSAGES = 5;
+
 	private static boolean inProgress = false;
 	private static int  currentDialogId = NO_DIALOG;
-	
-	ProgressDialog progressDialog;
+
+    ProgressDialog progressDialog;
 	
 	Activity parentActivity;
 	

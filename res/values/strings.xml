@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WSAndroid</string>
-    <string name="app_title">"WarmShowers for Android\nVersion: 1.2.0"</string>
+    <string name="app_title">"WarmShowers for Android\nVersion: 1.3.0"</string>
     <string name="label">WarmShowers for Android</string>
     <string name="authenticating">Authenticating …</string>
     <string name="need_account">Cannot run without WarmShowers credentials</string>
@@ -66,4 +66,10 @@
     <string name="about_2">"Thanks to Randy Fay and Chris Meyer for support during development.</string>
     <string name="about_3">"This application is open source under the Apache 2.0 license. You can help out at:\nhttps://github.com/jstaffans/wsandroid</string>
     <string name="feedback">Feedback</string>
+    <string name="error_retrieving_messages">An error occurred while retrieving messages.</string>
+    <string name="messages_in_progress">Retrieving messages...</string>
+    <string name="no_unread_messages">You have no unread messages.</string>
+    <string name="unread_messages">You have %d unread message(s)!</string>
+    <string name="visit_warmshowers_website"><![CDATA[Please visit the <a href="http://www.warmshowers.org">WarmShowers website</a> to read your messages.]]></string>
+    <string name="updateMessages">Update</string>
 </resources>

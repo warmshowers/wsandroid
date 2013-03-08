@@ -4,11 +4,28 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/messagesTab"
-    android:paddingTop="10dp" >
+    android:paddingTop="10dp"
+    android:paddingLeft="5dp" >
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textView" android:layout_gravity="center"/>
+        android:id="@+id/unreadCount"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <Button
+        android:id="@+id/btnUpdateMessages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/updateMessages"
+        android:layout_marginTop="5dp"
+        android:visibility="gone" />
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/messagingHelp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingTop="10dp" />
+
 </LinearLayout>
