@@ -45,8 +45,12 @@ public class RestClient extends HttpReader {
 		finally {
 			client.getConnectionManager().shutdown();
 		}
-
-        return response;
+        if (response.getStatusLine().getStatusCode() == 200) {
+            return response;
+        }
+        else {
+            throw new HttpException("HTTP Error on service request = " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
+        }
     }
 
     protected String getJson(String url, List<NameValuePair> params) {
