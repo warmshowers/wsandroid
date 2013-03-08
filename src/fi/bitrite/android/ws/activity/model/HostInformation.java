@@ -47,7 +47,7 @@ public class HostInformation {
     }
 
     public ArrayList<Feedback> getFeedback() {
-        return feedback;
+        return (feedback == null) ? new ArrayList<Feedback>() : feedback;
     }
 
     public Host getHost() {

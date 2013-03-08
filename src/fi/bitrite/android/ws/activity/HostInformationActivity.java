@@ -28,6 +28,7 @@ import roboguice.util.Strings;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class HostInformationActivity extends RoboActivity {
 
@@ -278,7 +279,7 @@ public class HostInformationActivity extends RoboActivity {
         bikeShop.setText(host.getBikeshop());
         services.setText(host.getServices());
 
-        ArrayList<Feedback> feedback = hostInfo.getFeedback();
+        List feedback = hostInfo.getFeedback();
         Collections.sort(feedback);
         feedbackTable.addRows(feedback);
         feedbackLabel.setText("Feedback (" + feedback.size() + ")");
