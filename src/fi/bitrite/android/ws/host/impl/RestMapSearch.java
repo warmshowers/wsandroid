@@ -1,18 +1,16 @@
 package fi.bitrite.android.ws.host.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import fi.bitrite.android.ws.api.RestClient;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import com.google.android.maps.GeoPoint;
-
+import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RestMapSearch extends RestClient implements Search {
 
@@ -36,8 +34,8 @@ public class RestMapSearch extends RestClient implements Search {
 			authenticate();
 		}
 
-		String xml = getHostsJson();
-		return new MapSearchJsonParser(xml, numHostsCutoff).getHosts();
+		String json = getHostsJson();
+		return new MapSearchJsonParser(json, numHostsCutoff).getHosts();
 	}
 
     private String getHostsJson() {
