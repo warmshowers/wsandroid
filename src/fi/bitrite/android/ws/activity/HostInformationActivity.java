@@ -4,8 +4,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +12,7 @@ import android.view.View;
 import android.widget.*;
 import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.activity.model.HostInformation;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.host.impl.HttpHostFeedback;
@@ -29,13 +28,11 @@ import roboguice.util.Strings;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class HostInformationActivity extends RoboActivity {
 
     public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
 
-    private static final int NO_ID = 0;
 
     @InjectView(R.id.layoutHostDetails)
     LinearLayout hostDetails;
@@ -94,11 +91,8 @@ public class HostInformationActivity extends RoboActivity {
     @Inject
     StarredHostDao starredHostDao;
 
-    private Host host;
-    private ArrayList<Feedback> feedback;
+    private HostInformation hostInfo;
 
-    private int id;
-    private boolean starred;
     private boolean forceUpdate;
 
     private HostInformationTask hostInfoTask;
@@ -110,34 +104,32 @@ public class HostInformationActivity extends RoboActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.host_information);
 
-        starredHostDao.close();
-        starredHostDao.open();
-
         dialogHandler = new DialogHandler(HostInformationActivity.this);
         boolean inProgress = DialogHandler.inProgress();
         boolean shouldDownloadHostInfo = true;
         forceUpdate = false;
 
+        starredHostDao.close();
+        starredHostDao.open();
+
+
+
         if (savedInstanceState != null) {
-            host = savedInstanceState.getParcelable("host");
-            id = savedInstanceState.getInt("id");
-            feedback = savedInstanceState.getParcelableArrayList("feedback");
+            // recovering from e.g. screen rotation change
+            hostInfo = HostInformation.fromSavedInstanceState(savedInstanceState, starredHostDao);
             forceUpdate = savedInstanceState.getBoolean("force_update");
-            starred = starredHostDao.isHostStarred(id, host.getName());
             shouldDownloadHostInfo = inProgress;
         } else {
+            // returning from another activity
             Intent i = getIntent();
-            host = (Host) i.getParcelableExtra("host");
-            id = i.getIntExtra("id", NO_ID);
-            feedback = i.getParcelableArrayListExtra("feedback");
-
-            starred = starredHostDao.isHostStarred(id, host.getName());
+            hostInfo = HostInformation.fromIntent(i, starredHostDao);
 
             if (intentProvidesFullHostInfo(i)) {
                 shouldDownloadHostInfo = false;
             } else {
-                if (starred) {
-                    host = starredHostDao.get(id, host.getName());
+                if (hostInfo.isStarred()) {
+                    hostInfo.setHost(starredHostDao.get(hostInfo.getId(), hostInfo.getHost().getName()));
+
                     forceUpdate = i.getBooleanExtra("update", false);
                     shouldDownloadHostInfo = forceUpdate;
                 } else {
@@ -145,6 +137,8 @@ public class HostInformationActivity extends RoboActivity {
                 }
             }
         }
+
+        starredHostDao.close();
 
         if (shouldDownloadHostInfo) {
             getHostInformationAsync();
@@ -154,9 +148,7 @@ public class HostInformationActivity extends RoboActivity {
 
         setupStar();
 
-        fullname.setText(host.getFullname());
-
-        starredHostDao.close();
+        fullname.setText(hostInfo.getHost().getFullname());
     }
 
     private boolean intentProvidesFullHostInfo(Intent i) {
@@ -165,9 +157,7 @@ public class HostInformationActivity extends RoboActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("host", host);
-        outState.putInt("id", id);
-        outState.putParcelableArrayList("feedback", feedback);
+        hostInfo.onSaveInstanceState(outState);
         outState.putBoolean("force_update", forceUpdate);
 
         if (hostInfoTask != null) {
@@ -178,26 +168,26 @@ public class HostInformationActivity extends RoboActivity {
     }
 
     private void setupStar() {
-        int drawable = starred ? R.drawable.starred_on : R.drawable.starred_off;
+        int drawable = hostInfo.isStarred() ? R.drawable.starred_on : R.drawable.starred_off;
         star.setImageDrawable(getResources().getDrawable(drawable));
         star.setVisibility(View.VISIBLE);
     }
 
-    public void showStarHostDialog(View view) {
+    public void showStarHostDialog() {
         toggleHostStarred();
-        int msgId = (starred ? R.string.host_starred : R.string.host_unstarred);
+        int msgId = (hostInfo.isStarred() ? R.string.host_starred : R.string.host_unstarred);
         Toast.makeText(this, getResources().getString(msgId), Toast.LENGTH_LONG).show();
     }
 
     protected void toggleHostStarred() {
         starredHostDao.open();
-        if (starredHostDao.isHostStarred(id, host.getName())) {
-            starredHostDao.delete(id, host.getName());
+        if (starredHostDao.isHostStarred(hostInfo.getId(), hostInfo.getHost().getName())) {
+            starredHostDao.delete(hostInfo.getId(), hostInfo.getHost().getName());
         } else {
-            starredHostDao.insert(id, host.getName(), host);
+            starredHostDao.insert(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost());
         }
 
-        starred = !starred;
+        hostInfo.toggleStarred();
         setupStar();
         starredHostDao.close();
     }
@@ -213,7 +203,10 @@ public class HostInformationActivity extends RoboActivity {
     }
 
     public void toggleFeedback(View view) {
-        if (feedbackTable.getVisibility() == View.GONE) {
+        if (feedbackTable.getVisibility() != View.GONE) {
+            feedbackTable.setVisibility(View.GONE);
+            feedbackExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_min));
+        } else {
             feedbackTable.setVisibility(View.VISIBLE);
             feedbackExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_max));
             hostInformationScroller.post(new Runnable() {
@@ -221,16 +214,13 @@ public class HostInformationActivity extends RoboActivity {
                     hostInformationScroller.scrollTo(0, hostInformationScroller.getBottom());
                 }
             });
-        } else {
-            feedbackTable.setVisibility(View.GONE);
-            feedbackExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_min));
         }
     }
 
     public void contactHost(View view) {
         Intent i = new Intent(HostInformationActivity.this, HostContactActivity.class);
-        i.putExtra("host", host);
-        i.putExtra("id", id);
+        i.putExtra("host", hostInfo.getHost());
+        i.putExtra("id", hostInfo.getId());
         startActivity(i);
     }
 
@@ -240,17 +230,17 @@ public class HostInformationActivity extends RoboActivity {
 
         Intent resultIntent = new Intent();
 
-        if (!Strings.isEmpty(host.getLatitude()) && !Strings.isEmpty(host.getLongitude())) {
-            int lat = (int) Math.round(Float.parseFloat(host.getLatitude()) * 1.0e6);
-            int lon = (int) Math.round(Float.parseFloat(host.getLongitude()) * 1.0e6);
+        if (!Strings.isEmpty(hostInfo.getHost().getLatitude()) && !Strings.isEmpty(hostInfo.getHost().getLongitude())) {
+            int lat = (int) Math.round(Float.parseFloat(hostInfo.getHost().getLatitude()) * 1.0e6);
+            int lon = (int) Math.round(Float.parseFloat(hostInfo.getHost().getLongitude()) * 1.0e6);
             resultIntent.putExtra("lat", lat);
             resultIntent.putExtra("lon", lon);
         }
 
         // #31: when going back from the map, we should end up on the host info page
-        resultIntent.putExtra("host", host);
-        resultIntent.putExtra("id", id);
-        resultIntent.putExtra("feedback", feedback);
+        resultIntent.putExtra("host", hostInfo.getHost());
+        resultIntent.putExtra("id", hostInfo.getId());
+        resultIntent.putExtra("feedback", hostInfo.getFeedback());
 
         setResult(RESULT_SHOW_HOST_ON_MAP, resultIntent);
         finish();
@@ -272,6 +262,8 @@ public class HostInformationActivity extends RoboActivity {
     }
 
     private void updateViewContent() {
+        Host host = hostInfo.getHost();
+
         comments.setText(host.getComments());
         location.setText(host.getLocation());
         memberSince.setText(host.getMemberSince());
@@ -286,6 +278,7 @@ public class HostInformationActivity extends RoboActivity {
         bikeShop.setText(host.getBikeshop());
         services.setText(host.getServices());
 
+        ArrayList<Feedback> feedback = hostInfo.getFeedback();
         Collections.sort(feedback);
         feedbackTable.addRows(feedback);
         feedbackLabel.setText("Feedback (" + feedback.size() + ")");
@@ -300,16 +293,18 @@ public class HostInformationActivity extends RoboActivity {
             Object retObj = null;
 
             try {
-                HttpHostInformation hostInfo = new HttpHostInformation(authenticationService, sessionContainer);
+                HttpHostInformation httpHostInfo = new HttpHostInformation(authenticationService, sessionContainer);
                 HttpHostFeedback hostFeedback = new HttpHostFeedback(authenticationService, sessionContainer);
+                int id = hostInfo.getId();
 
-                if (id == NO_ID) {
-                    HttpHostId hostId = new HttpHostId(host.getName(), authenticationService, sessionContainer);
-                    id = hostId.getHostId(host.getName());
+                if (id == HostInformation.NO_ID) {
+                    HttpHostId httpHostId = new HttpHostId(hostInfo.getHost().getName(), authenticationService, sessionContainer);
+                    id = httpHostId.getHostId(hostInfo.getHost().getName());
                 }
 
-                host = hostInfo.getHostInformation(id);
-                feedback = hostFeedback.getFeedback(id);
+                Host host = httpHostInfo.getHostInformation(id);
+                ArrayList<Feedback> feedback = hostFeedback.getFeedback(id);
+                hostInfo = new HostInformation(host, feedback, id, false);
 
             } catch (Exception e) {
                 Log.e("WSAndroid", e.getMessage(), e);
@@ -330,14 +325,14 @@ public class HostInformationActivity extends RoboActivity {
 
             updateViewContent();
 
-            if (starred && forceUpdate) {
+            if (hostInfo.isStarred() && forceUpdate) {
                 starredHostDao.open();
-                starredHostDao.update(id, host.getName(), host);
+                starredHostDao.update(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost());
                 starredHostDao.close();
                 dialogHandler.alert(getResources().getString(R.string.host_updated));
             }
 
-            if (host.isNotCurrentlyAvailable()) {
+            if (hostInfo.getHost().isNotCurrentlyAvailable()) {
                 dialogHandler.alert(getResources().getString(R.string.host_not_available));
             }
         }
@@ -358,12 +353,12 @@ public class HostInformationActivity extends RoboActivity {
                 showHostOnMap(null);
                 return true;
             case R.id.menuStar:
-                showStarHostDialog(null);
+                showStarHostDialog();
                 return true;
             case R.id.menuUpdate:
                 Intent i = new Intent();
-                i.putExtra("host", host);
-                i.putExtra("id", id);
+                i.putExtra("host", hostInfo.getHost());
+                i.putExtra("id", hostInfo.getId());
                 i.putExtra("update", true);
                 setIntent(i);
                 onCreate(null);
