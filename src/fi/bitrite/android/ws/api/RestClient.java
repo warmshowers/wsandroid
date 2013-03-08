@@ -1,6 +1,5 @@
-package fi.bitrite.android.ws.host.impl;
+package fi.bitrite.android.ws.api;
 
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.util.http.HttpException;

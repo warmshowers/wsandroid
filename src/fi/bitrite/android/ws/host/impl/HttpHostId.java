@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.host.impl;
 
+import fi.bitrite.android.ws.api.HttpReader;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 

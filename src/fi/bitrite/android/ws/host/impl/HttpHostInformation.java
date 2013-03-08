@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.host.impl;
 
+import fi.bitrite.android.ws.api.HttpReader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

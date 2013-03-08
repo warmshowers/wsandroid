@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.host.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import fi.bitrite.android.ws.api.RestClient;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 

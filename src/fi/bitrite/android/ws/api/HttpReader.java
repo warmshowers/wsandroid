@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.host.impl;
+package fi.bitrite.android.ws.api;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
