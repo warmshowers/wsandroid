@@ -124,7 +124,7 @@ public class HttpAuthenticationService {
 		
 		catch (ClientProtocolException e) {
 			if (e.getCause() instanceof CircularRedirectException) {
-				// If we get this authentication has still been successful, so ignore it
+				// If we getHost this authentication has still been successful, so ignore it
 			} else {
 				throw new HttpAuthenticationFailedException(e);
 			}

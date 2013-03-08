@@ -128,8 +128,8 @@ public class HostInformationActivity extends RoboActivity {
                 shouldDownloadHostInfo = false;
             } else {
                 if (hostInfo.isStarred()) {
-                    hostInfo.setHost(starredHostDao.get(hostInfo.getId(), hostInfo.getHost().getName()));
-
+                    hostInfo.setHost(starredHostDao.getHost(hostInfo.getId(), hostInfo.getHost().getName()));
+                    hostInfo.setFeedback(starredHostDao.getFeedback(hostInfo.getId(), hostInfo.getHost().getName()));
                     forceUpdate = i.getBooleanExtra("update", false);
                     shouldDownloadHostInfo = forceUpdate;
                 } else {
@@ -173,7 +173,7 @@ public class HostInformationActivity extends RoboActivity {
         star.setVisibility(View.VISIBLE);
     }
 
-    public void showStarHostDialog() {
+    public void showStarHostDialog(View view) {
         toggleHostStarred();
         int msgId = (hostInfo.isStarred() ? R.string.host_starred : R.string.host_unstarred);
         Toast.makeText(this, getResources().getString(msgId), Toast.LENGTH_LONG).show();
@@ -181,10 +181,11 @@ public class HostInformationActivity extends RoboActivity {
 
     protected void toggleHostStarred() {
         starredHostDao.open();
+
         if (starredHostDao.isHostStarred(hostInfo.getId(), hostInfo.getHost().getName())) {
             starredHostDao.delete(hostInfo.getId(), hostInfo.getHost().getName());
         } else {
-            starredHostDao.insert(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost());
+            starredHostDao.insert(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost(), hostInfo.getFeedback());
         }
 
         hostInfo.toggleStarred();
@@ -325,7 +326,7 @@ public class HostInformationActivity extends RoboActivity {
 
             if (hostInfo.isStarred() && forceUpdate) {
                 starredHostDao.open();
-                starredHostDao.update(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost());
+                starredHostDao.update(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost(), hostInfo.getFeedback());
                 starredHostDao.close();
                 dialogHandler.alert(getResources().getString(R.string.host_updated));
             }
@@ -351,7 +352,7 @@ public class HostInformationActivity extends RoboActivity {
                 showHostOnMap(null);
                 return true;
             case R.id.menuStar:
-                showStarHostDialog();
+                showStarHostDialog(null);
                 return true;
             case R.id.menuUpdate:
                 Intent i = new Intent();

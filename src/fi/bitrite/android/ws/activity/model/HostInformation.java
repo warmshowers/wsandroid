@@ -7,19 +7,20 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
- * User: johannes
- * Date: 08.03.2013
+ * This class is used by the HostInformationActivity to pass host information along.
  */
 public class HostInformation {
     public static final int NO_ID = 0;
 
     private Host host;
-
-    private final ArrayList<Feedback> feedback;
-    private final int id;
     private boolean starred;
+
+    private List<Feedback> feedback;
+    private final int id;
 
     public HostInformation(Host host, ArrayList<Feedback> feedback, int id, boolean starred) {
         this.feedback = feedback;
@@ -46,8 +47,8 @@ public class HostInformation {
         return new HostInformation(host, feedback, id, starred);
     }
 
-    public ArrayList<Feedback> getFeedback() {
-        return (feedback == null) ? new ArrayList<Feedback>() : feedback;
+    public List getFeedback() {
+        return (feedback == null) ? Collections.emptyList() : feedback;
     }
 
     public Host getHost() {
@@ -69,7 +70,7 @@ public class HostInformation {
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("host", host);
         outState.putInt("id", id);
-        outState.putParcelableArrayList("feedback", feedback);
+        outState.putParcelableArrayList("feedback", (ArrayList<Feedback>) feedback);
     }
 
     public void toggleStarred() {
@@ -79,6 +80,10 @@ public class HostInformation {
     public void saveInIntent(Intent resultIntent) {
         resultIntent.putExtra("host", host);
         resultIntent.putExtra("id", id);
-        resultIntent.putExtra("feedback",feedback);
+        resultIntent.putExtra("feedback", (ArrayList<Feedback>) feedback);
+    }
+
+    public void setFeedback(List<Feedback> feedback) {
+        this.feedback = feedback;
     }
 }

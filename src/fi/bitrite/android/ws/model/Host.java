@@ -1,22 +1,20 @@
 package fi.bitrite.android.ws.model;
 
+import android.os.Parcel;
+import com.yelp.parcelgen.JsonParser.DualCreator;
+import org.json.JSONException;
+import org.json.JSONObject;
+import roboguice.util.Strings;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import roboguice.util.Strings;
-import android.os.Parcel;
-
-import com.yelp.parcelgen.JsonParser.DualCreator;
 
 public class Host extends _Host {
 	
 	private String mUpdated;
 
-	public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
+    public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
 		Host host = new Host();
 		host.mName = briefInfo.getName();
 		host.mFullname = briefInfo.getFullname();
@@ -125,4 +123,5 @@ public class Host extends _Host {
 		DateFormat dateFormat = SimpleDateFormat.getDateInstance();
 		return dateFormat.format(date);
 	}
+
 }
