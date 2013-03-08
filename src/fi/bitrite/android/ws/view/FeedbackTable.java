@@ -35,10 +35,15 @@ public class FeedbackTable extends TableLayout {
             addView(tr);
 
             tr = getFeedbackRow(bgColor);
+            TextView rating = getFeedbackText(f.getRating());
+            rating.setTypeface(null, Typeface.ITALIC);
+            tr.addView(rating);
+            addView(tr);
+
+            tr = getFeedbackRow(bgColor);
             TextView body = getFeedbackText(f.getBody());
             body.setPadding(0, 0, 0, 5);
             tr.addView(body);
-
             addView(tr);
         }
     }

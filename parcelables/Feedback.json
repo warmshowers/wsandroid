@@ -3,7 +3,7 @@
     "package": "fi.bitrite.android.ws.model",
     "props": {
         "String": [
-        "id", "uid", "fullname", "name", "body", "guestOrHost"
+        "id", "uid", "fullname", "name", "body", "guestOrHost", "rating"
         ],
         "long": [
             "hostingDate"
@@ -13,6 +13,7 @@
         "id" : "nid",
         "uid" : "uid_1",
         "guestOrHost": "field_guest_or_host_value",
-        "hostingDate": "field_hosting_date_value"
+        "hostingDate": "field_hosting_date_value",
+        "rating": "field_rating_value"
     }
 }
