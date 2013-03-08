@@ -7,7 +7,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import fi.bitrite.android.ws.model.Feedback;
-import org.hamcrest.generator.qdox.tools.QDoxTester;
 
 import java.text.DateFormat;
 import java.util.Date;
