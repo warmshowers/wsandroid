@@ -65,4 +65,5 @@
     <string name="about_1">"Developed by Johannes Staffans (WS: jstaffans)\njohannes.staffans\u0040gmail.com"</string>
     <string name="about_2">"Thanks to Randy Fay and Chris Meyer for support during development.</string>
     <string name="about_3">"This application is open source under the Apache 2.0 license. You can help out at:\nhttps://github.com/jstaffans/wsandroid</string>
+    <string name="feedback">Feedback</string>
 </resources>
