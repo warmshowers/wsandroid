@@ -75,4 +75,10 @@ public class HostInformation {
     public void toggleStarred() {
         starred = !starred;
     }
+
+    public void saveInIntent(Intent resultIntent) {
+        resultIntent.putExtra("host", host);
+        resultIntent.putExtra("id", id);
+        resultIntent.putExtra("feedback",feedback);
+    }
 }

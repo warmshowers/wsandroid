@@ -34,7 +34,6 @@ public class HostInformationActivity extends RoboActivity {
 
     public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
 
-
     @InjectView(R.id.layoutHostDetails)
     LinearLayout hostDetails;
 
@@ -239,9 +238,7 @@ public class HostInformationActivity extends RoboActivity {
         }
 
         // #31: when going back from the map, we should end up on the host info page
-        resultIntent.putExtra("host", hostInfo.getHost());
-        resultIntent.putExtra("id", hostInfo.getId());
-        resultIntent.putExtra("feedback", hostInfo.getFeedback());
+        hostInfo.saveInIntent(resultIntent);
 
         setResult(RESULT_SHOW_HOST_ON_MAP, resultIntent);
         finish();
@@ -282,7 +279,7 @@ public class HostInformationActivity extends RoboActivity {
         List feedback = hostInfo.getFeedback();
         Collections.sort(feedback);
         feedbackTable.addRows(feedback);
-        feedbackLabel.setText("Feedback (" + feedback.size() + ")");
+        feedbackLabel.setText(getResources().getString(R.string.feedback) + " (" + feedback.size() + ")");
 
         hostDetails.setVisibility(View.VISIBLE);
     }
