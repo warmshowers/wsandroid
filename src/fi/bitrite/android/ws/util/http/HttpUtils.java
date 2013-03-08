@@ -1,10 +1,6 @@
 package fi.bitrite.android.ws.util.http;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-
+import android.os.Build;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -12,11 +8,14 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
-import android.os.Build;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class HttpUtils {
 
-	private static final int TIMEOUT_MS = 30000;
+	private static final int TIMEOUT_MS = 20000;
 
 	public static String encodeUrl(String urlString) throws MalformedURLException, URISyntaxException {
 		URL url = new URL(urlString);
@@ -31,7 +30,7 @@ public class HttpUtils {
 	    HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MS);	
 
 		String userAgentString = new StringBuilder().
-				append("WSAndroid 1.2.0").append(" ")
+				append("WSAndroid 1.3.0").append(" ")
 				.append(Build.MANUFACTURER).append(" ")
 				.append(Build.MODEL).append(" ")
 				.append("Android v").append(Build.VERSION.RELEASE)
