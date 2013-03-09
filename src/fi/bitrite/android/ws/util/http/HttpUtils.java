@@ -30,7 +30,7 @@ public class HttpUtils {
 	    HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MS);	
 
 		String userAgentString = new StringBuilder().
-				append("WSAndroid 1.3.0").append(" ")
+				append("WSAndroid 1.3.1").append(" ")
 				.append(Build.MANUFACTURER).append(" ")
 				.append(Build.MODEL).append(" ")
 				.append("Android v").append(Build.VERSION.RELEASE)
