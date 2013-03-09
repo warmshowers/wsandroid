@@ -99,7 +99,10 @@ public class HttpAuthenticationService {
 		authtoken = accountManager.blockingGetAuthToken(account, AuthenticationService.ACCOUNT_TYPE, true);
 		username = account.name;
 	}
-	
+
+    /**
+     * Returns the user id after logging in or 0 if already logged in.
+     */
 	public int authenticate(String username, String password) {
 		HttpClient client = HttpUtils.getDefaultClient();
 		HttpContext httpContext = sessionContainer.getSessionContext();
@@ -115,6 +118,9 @@ public class HttpAuthenticationService {
 
 			HttpEntity entity = response.getEntity();
 			String rawJson = EntityUtils.toString(entity, "UTF-8");
+            if (rawJson.contains("Already logged in")) {
+                return 0;
+            }
 
             JsonParser parser = new JsonParser();
             JsonObject o = (JsonObject) parser.parse(rawJson);
