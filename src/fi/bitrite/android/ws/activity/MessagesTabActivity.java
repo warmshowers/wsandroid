@@ -36,6 +36,7 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
 
 	private DialogHandler dialogHandler;
     private int numUnread;
+    private MessagesTask messagesTask;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +44,14 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
 		setContentView(R.layout.messages_tab);
 
 		dialogHandler = new DialogHandler(this);
+        getUnreadCount();
 
         updateMessages.setOnClickListener(this);
-
-        getUnreadCount();
 	}
 
     private void getUnreadCount() {
         dialogHandler.showDialog(DialogHandler.MESSAGES);
-        MessagesTask messagesTask = new MessagesTask();
+        messagesTask = new MessagesTask();
         messagesTask.execute();
     }
 
@@ -69,6 +69,16 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
         getUnreadCount();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (DialogHandler.inProgress()) {
+            dialogHandler.dismiss();
+            dialogHandler.showDialog(DialogHandler.MESSAGES);
+        }
+    }
+
     private class MessagesTask extends AsyncTask<Void, Void, Object> {
 
         @Override
@@ -79,6 +89,9 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
                 RestUnreadCount unreadCount = new RestUnreadCount(authenticationService, sessionContainer);
                 numUnread = unreadCount.getUnreadCount();
             } catch (Exception e) {
+                if (DialogHandler.inProgress()) {
+                    dialogHandler.dismiss();
+                }
                 Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 retObj = e;
             }
