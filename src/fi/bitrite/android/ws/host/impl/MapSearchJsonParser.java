@@ -1,15 +1,15 @@
 package fi.bitrite.android.ws.host.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
+import roboguice.util.Strings;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapSearchJsonParser {
 
@@ -68,7 +68,7 @@ public class MapSearchJsonParser {
             int id = hostObj.get("uid").getAsInt();
 
             String name = hostObj.get("name").getAsString();
-            if (name.isEmpty()) {
+            if (Strings.isEmpty(name)) {
                 name = "(Unknown host)";
             }
 
