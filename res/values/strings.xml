@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WSAndroid</string>
-    <string name="app_title">"WarmShowers for Android\nVersion: 1.3.0"</string>
+    <string name="app_title">"WarmShowers for Android\nVersion: 1.3.1"</string>
     <string name="label">WarmShowers for Android</string>
     <string name="authenticating">Authenticating …</string>
     <string name="need_account">Cannot run without WarmShowers credentials</string>
@@ -13,7 +13,6 @@
     <string name="enter_credentials">Please enter your username and password:</string>
     <string name="about_credentials">These will be stored in an account on your device. You can delete the account at any time using the Android Settings / Account menu.</string>
     <string name="view_details">View details</string>
-    <string name="contact">Contact</string>
     <string name="show_on_map">Show on map</string>
     <string name="star">Star</string>
     <string name="close">Close</string>
