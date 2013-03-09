@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.view;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -27,17 +28,17 @@ public class FeedbackTable extends TableLayout {
             int bgColor = (i++ % 2 == 0) ? 0 : 0xFF222222;
 
             TableRow tr = getFeedbackRow(bgColor);
-
-            TextView meta = getFeedbackText(getMetaString(f));
-            meta.setTypeface(null, Typeface.ITALIC);
-            meta.setPadding(0, 5, 0, 0);
-            tr.addView(meta);
+            TextView rating = getFeedbackText(getRowHeaderString(f));
+            rating.setTypeface(null, Typeface.ITALIC);
+            rating.setTextSize(16);
+            rating.setPadding(0, 5, 0, 0);
+            tr.addView(rating);
             addView(tr);
 
             tr = getFeedbackRow(bgColor);
-            TextView rating = getFeedbackText(f.getRating());
-            rating.setTypeface(null, Typeface.ITALIC);
-            tr.addView(rating);
+            TextView meta = getFeedbackText(getAuthorString(f));
+            meta.setTypeface(null, Typeface.ITALIC);
+            tr.addView(meta);
             addView(tr);
 
             tr = getFeedbackRow(bgColor);
@@ -48,25 +49,26 @@ public class FeedbackTable extends TableLayout {
         }
     }
 
-    private String getMetaString(Feedback f) {
+    private String getRowHeaderString(Feedback f) {
         StringBuilder sb = new StringBuilder();
+
+        sb.append(f.getGuestOrHost());
+        Date d = new Date(f.getHostingDate()*1000L);
+        String hostedOn = DateFormat.getDateInstance().format(d);
+        sb.append(" (");
+        sb.append(hostedOn);
+        sb.append(") - ");
+        sb.append(f.getRating());
+        return sb.toString();
+    }
+
+    private String getAuthorString(Feedback f) {
         String name = f.getFullname();
         if (name == null || name.length() == 0) {
             name = "Unknown";
         }
-
-        sb.append(name.trim());
-
-        sb.append(" (");
-        sb.append(f.getGuestOrHost());
-        sb.append(", ");
-        Date d = new Date(f.getHostingDate()*1000L);
-        String hostedOn = DateFormat.getDateInstance().format(d);
-        sb.append(hostedOn);
-        sb.append(")");
-        return sb.toString();
+        return name;
     }
-
     private TextView getFeedbackText(String text) {
         TextView row = new TextView(getContext());
         row.setLayoutParams(new TableRow.LayoutParams(
