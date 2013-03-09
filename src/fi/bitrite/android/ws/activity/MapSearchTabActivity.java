@@ -118,17 +118,6 @@ public class MapSearchTabActivity extends RoboMapActivity {
             }
         });
 
-        TextView contact = (TextView) hostPopup.findViewById(R.id.lblMapPopupContact);
-        contact.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                hostPopup.dismiss();
-                Intent i = new Intent(MapSearchTabActivity.this, HostContactActivity.class);
-                i.putExtra("host", Host.createFromBriefInfo(host));
-                i.putExtra("id", host.getId());
-                startActivity(i);
-            }
-        });
-
     }
 
     @Override
