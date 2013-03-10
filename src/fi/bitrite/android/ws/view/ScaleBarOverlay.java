@@ -10,7 +10,9 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.Projection;
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.activity.MapSearchTabActivity;
+
 
 public class ScaleBarOverlay extends Overlay {
 
@@ -109,9 +111,6 @@ public class ScaleBarOverlay extends Overlay {
         return imperial;
     }
 
-    /**
-     * @param imperial the imperial to set
-     */
     public void setImperial() {
         this.imperial = true;
         this.nautical = false;
@@ -125,9 +124,6 @@ public class ScaleBarOverlay extends Overlay {
         return nautical;
     }
 
-    /**
-     * @param nautical the nautical to set
-     */
     public void setNautical() {
         this.nautical = true;
         this.imperial = false;
@@ -166,10 +162,17 @@ public class ScaleBarOverlay extends Overlay {
                 float xPos = xdpi / 2 + canvas.getWidth() - scaleBarPicture.getWidth() - 30;
                 this.scaleBarMatrix.postTranslate(xPos, yPos);
 
-                canvas.save();
-                canvas.setMatrix(scaleBarMatrix);
-                canvas.drawPicture(scaleBarPicture);
-                canvas.restore();
+                try {
+                    canvas.save();
+                    canvas.setMatrix(scaleBarMatrix);
+                    canvas.drawPicture(scaleBarPicture);
+                    canvas.restore();
+                }
+
+                catch (Exception e) {
+                    Log.e(WSAndroidApplication.TAG, "Disabling scale bar due to error: " + e);
+                    disableScaleBar();
+                }
             }
         }
     }
