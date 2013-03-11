@@ -9,26 +9,21 @@ import com.google.inject.Module;
 
 public class WSAndroidApplication extends RoboApplication {
 
-	public static final String TAG = "WSAndroid";
+    public static final String TAG = "WSAndroid";
 	
     private static Context context;
 
     public void onCreate() {
         super.onCreate();
-
         WSAndroidApplication.context = getApplicationContext();
-       
     }
 
     public static Context getAppContext() {
         return WSAndroidApplication.context;
     }
 	
-	@Override
-	protected void addApplicationModules(List<Module> modules) {
+    @Override
+    protected void addApplicationModules(List<Module> modules) {
         modules.add(new WSAndroidModule());
-	}
-	
-	
-
+    }
 }
