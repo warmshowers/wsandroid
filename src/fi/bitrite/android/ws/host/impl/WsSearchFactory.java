@@ -10,18 +10,18 @@ import fi.bitrite.android.ws.host.SearchFactory;
 
 public class WsSearchFactory implements SearchFactory {
 
-	@Inject
-	HttpAuthenticationService authenticationService;
+    @Inject
+    HttpAuthenticationService authenticationService;
 
-	@Inject
-	HttpSessionContainer sessionContainer;
+    @Inject
+    HttpSessionContainer sessionContainer;
 
-	public Search createTextSearch(String text) {
-		return new HttpTextSearch(text, authenticationService, sessionContainer);
-	}
+    public Search createTextSearch(String text) {
+        return new HttpTextSearch(text, authenticationService, sessionContainer);
+    }
 
-	public Search createMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff) {
-		return new RestMapSearch(topLeft, bottomRight, numHostsCutoff, authenticationService, sessionContainer);
-	}
+    public Search createMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff) {
+        return new RestMapSearch(topLeft, bottomRight, numHostsCutoff, authenticationService, sessionContainer);
+    }
 
 }

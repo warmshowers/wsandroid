@@ -4,18 +4,18 @@ import fi.bitrite.android.ws.util.http.HttpException;
 
 public class IncompleteResultsException extends HttpException {
 
-	private static final long serialVersionUID = -5196011773520934900L;
+    private static final long serialVersionUID = 1L;
 
-	public IncompleteResultsException(Exception e) {
-		super(e);
-	}
+    public IncompleteResultsException(Exception e) {
+        super(e);
+    }
 
-	public IncompleteResultsException() {
-		super();
-	}
+    public IncompleteResultsException() {
+        super();
+    }
 
-	public IncompleteResultsException(String msg) {
-		super(msg);
-	}
+    public IncompleteResultsException(String msg) {
+        super(msg);
+    }
 
 }

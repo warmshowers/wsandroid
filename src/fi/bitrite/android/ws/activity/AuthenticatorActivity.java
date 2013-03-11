@@ -27,120 +27,120 @@ import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
  */
 public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
-	public static final String PARAM_USERNAME = "username";
-	public static final String KEY_USERID = "userid";
-	public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
-	public static final String PARAM_INITIAL_AUTHENTICATION = "initialAuthentication";
+    public static final String PARAM_USERNAME = "username";
+    public static final String KEY_USERID = "userid";
+    public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
+    public static final String PARAM_INITIAL_AUTHENTICATION = "initialAuthentication";
 
-	public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
-	
-	private AccountManager accountManager;
+    public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
+    
+    private AccountManager accountManager;
 
-	@InjectView(R.id.editUsername) EditText editUsername;
-	@InjectView(R.id.editPassword) EditText editPassword;
+    @InjectView(R.id.editUsername) EditText editUsername;
+    @InjectView(R.id.editPassword) EditText editPassword;
 
-	private String username;
-	private String password;
-	private boolean initialAuthentication;
+    private String username;
+    private String password;
+    private boolean initialAuthentication;
 
-	private DialogHandler dialogHandler;
+    private DialogHandler dialogHandler;
 
-	@Inject
-	HttpAuthenticationService authenticationService;
+    @Inject
+    HttpAuthenticationService authenticationService;
 
-	@Override
-	protected void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
-		setContentView(R.layout.credentials);
+    @Override
+    protected void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        setContentView(R.layout.credentials);
 
-		accountManager = AccountManager.get(this);
-		dialogHandler = new DialogHandler(this);
+        accountManager = AccountManager.get(this);
+        dialogHandler = new DialogHandler(this);
 
-		Intent intent = getIntent();
-		username = intent.getStringExtra(PARAM_USERNAME);
-		initialAuthentication = username == null;
-		editUsername.setText(username);
-	}
+        Intent intent = getIntent();
+        username = intent.getStringExtra(PARAM_USERNAME);
+        initialAuthentication = username == null;
+        editUsername.setText(username);
+    }
 
-	public void cancel(View view) {
-		Intent resultIntent = new Intent();
-		resultIntent.putExtra(PARAM_INITIAL_AUTHENTICATION, initialAuthentication);
-		setResult(RESULT_CANCELED, resultIntent);
-		finish();
-	}
-	
-	@Override
-	public void onBackPressed() {
-		cancel(null);
-	}
+    public void cancel(View view) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(PARAM_INITIAL_AUTHENTICATION, initialAuthentication);
+        setResult(RESULT_CANCELED, resultIntent);
+        finish();
+    }
+    
+    @Override
+    public void onBackPressed() {
+        cancel(null);
+    }
 
-	public void applyCredentials(View view) {
-		username = editUsername.getText().toString();
-		password = editPassword.getText().toString();
-		if (!Strings.isEmpty(username) && !Strings.isEmpty(password)) {
-			dialogHandler.showDialog(DialogHandler.AUTHENTICATE);
-			doAuthentication();
-		}
-	}
+    public void applyCredentials(View view) {
+        username = editUsername.getText().toString();
+        password = editPassword.getText().toString();
+        if (!Strings.isEmpty(username) && !Strings.isEmpty(password)) {
+            dialogHandler.showDialog(DialogHandler.AUTHENTICATE);
+            doAuthentication();
+        }
+    }
 
-	@Override
-	protected Dialog onCreateDialog(int id, Bundle args) {
-		return dialogHandler.createDialog(id, getResources().getString(R.string.authenticating));
-	}
+    @Override
+    protected Dialog onCreateDialog(int id, Bundle args) {
+        return dialogHandler.createDialog(id, getResources().getString(R.string.authenticating));
+    }
 
-	public void doAuthentication() {
-		new AuthenticationThread(handler).start();
-	}
+    public void doAuthentication() {
+        new AuthenticationThread(handler).start();
+    }
 
-	final Handler handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			dialogHandler.dismiss();
+    final Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            dialogHandler.dismiss();
 
-			Object obj = msg.obj;
-			Intent resultIntent = new Intent();
-			resultIntent.putExtra(PARAM_INITIAL_AUTHENTICATION, initialAuthentication);
+            Object obj = msg.obj;
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra(PARAM_INITIAL_AUTHENTICATION, initialAuthentication);
 
-			if (obj instanceof Exception) {
-				setResult(RESULT_AUTHENTICATION_FAILED, resultIntent);
-			} else {
-				if (!initialAuthentication) {
-					Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
-					accountManager.removeAccount(oldAccount, null, null);
-				}
-				
-				Account account = new Account(username, AuthenticationService.ACCOUNT_TYPE);
-				accountManager.addAccountExplicitly(account, password, null);
-				accountManager.setUserData(account, KEY_USERID, String.valueOf(msg.arg1));
-				setResult(RESULT_OK, resultIntent);
-			}
+            if (obj instanceof Exception) {
+                setResult(RESULT_AUTHENTICATION_FAILED, resultIntent);
+            } else {
+                if (!initialAuthentication) {
+                    Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
+                    accountManager.removeAccount(oldAccount, null, null);
+                }
+                
+                Account account = new Account(username, AuthenticationService.ACCOUNT_TYPE);
+                accountManager.addAccountExplicitly(account, password, null);
+                accountManager.setUserData(account, KEY_USERID, String.valueOf(msg.arg1));
+                setResult(RESULT_OK, resultIntent);
+            }
 
-			finish();
-		}
-	};
+            finish();
+        }
+    };
 
-	private class AuthenticationThread extends Thread {
-		Handler handler;
+    private class AuthenticationThread extends Thread {
+        Handler handler;
 
-		public AuthenticationThread(Handler handler) {
-			this.handler = handler;
-		}
+        public AuthenticationThread(Handler handler) {
+            this.handler = handler;
+        }
 
-		public void run() {
-			Message msg = handler.obtainMessage();
+        public void run() {
+            Message msg = handler.obtainMessage();
 
-			try {
-				int userId = authenticationService.authenticate(username, password);
-				msg.obj = RESULT_OK;
-				msg.arg1 = userId;
-			}
+            try {
+                int userId = authenticationService.authenticate(username, password);
+                msg.obj = RESULT_OK;
+                msg.arg1 = userId;
+            }
 
-			catch (Exception e) {
-				Log.e("WSAndroid", e.getMessage(), e);
-				msg.obj = e;
-			}
+            catch (Exception e) {
+                Log.e("WSAndroid", e.getMessage(), e);
+                msg.obj = e;
+            }
 
-			handler.sendMessage(msg);
-		}
-	}
+            handler.sendMessage(msg);
+        }
+    }
 }

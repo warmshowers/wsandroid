@@ -21,22 +21,22 @@ public class HttpHostInformation extends HttpReader {
     }
 
     public Host getHostInformation(int id) {
-		String simpleUrl = new StringBuilder().append("http://www.warmshowers.org/user/")
-		.append(id).append("/json").toString();
-		String json = getPage(simpleUrl);
+        String simpleUrl = new StringBuilder().append("http://www.warmshowers.org/user/")
+        .append(id).append("/json").toString();
+        String json = getPage(simpleUrl);
 
-		try {
-			JSONArray hostJsonArray = new JSONObject(json).getJSONArray("users");
-			JSONObject hostJson = hostJsonArray.getJSONObject(0);
-			Host host = Host.CREATOR.parse(hostJson.getJSONObject("user"));
+        try {
+            JSONArray hostJsonArray = new JSONObject(json).getJSONArray("users");
+            JSONObject hostJson = hostJsonArray.getJSONObject(0);
+            Host host = Host.CREATOR.parse(hostJson.getJSONObject("user"));
 
-			if (Strings.isEmpty(host.getFullname())) {
-				throw new HttpException("Could not parse JSON");
-			}
+            if (Strings.isEmpty(host.getFullname())) {
+                throw new HttpException("Could not parse JSON");
+            }
 
-			return host;
-		} catch (JSONException e) {
-			throw new HttpException(e);
-		}
-	}
+            return host;
+        } catch (JSONException e) {
+            throw new HttpException(e);
+        }
+    }
 }

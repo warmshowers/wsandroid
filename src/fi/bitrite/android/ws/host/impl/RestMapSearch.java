@@ -14,33 +14,32 @@ import java.util.List;
 
 public class RestMapSearch extends RestClient implements Search {
 
-	private static final String WARMSHOWERS_MAP_SEARCH_URL = "http://www.warmshowers.org/services/rest/hosts/by_location";
+    private static final String WARMSHOWERS_MAP_SEARCH_URL = "http://www.warmshowers.org/services/rest/hosts/by_location";
 
-	private int numHostsCutoff;
-	private MapSearchArea searchArea;
+    private final int numHostsCutoff;
+    private final MapSearchArea searchArea;
 
-
-	public RestMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff, HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
+    public RestMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff, HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
         super(authenticationService, sessionContainer);
-		this.searchArea = MapSearchArea.fromGeoPoints(topLeft, bottomRight);
-		this.numHostsCutoff = numHostsCutoff; 
-	}
+        this.searchArea = MapSearchArea.fromGeoPoints(topLeft, bottomRight);
+        this.numHostsCutoff = numHostsCutoff; 
+    }
 
-	public List<HostBriefInfo> doSearch() {
-		// The map search works even if we're not authenticated,
-		// but it returns less data. Easier to check first using
-		// a simple GET
-		if (!isAuthenticationPerformed()) {
-			authenticate();
-		}
+    public List<HostBriefInfo> doSearch() {
+        // The map search works even if we're not authenticated,
+        // but it returns less data. Easier to check first using
+        // a simple GET
+        if (!isAuthenticationPerformed()) {
+            authenticate();
+        }
 
-		String json = getHostsJson();
-		return new MapSearchJsonParser(json, numHostsCutoff).getHosts();
-	}
+        String json = getHostsJson();
+        return new MapSearchJsonParser(json, numHostsCutoff).getHosts();
+    }
 
     private String getHostsJson() {
         return getJson(WARMSHOWERS_MAP_SEARCH_URL, getSearchParameters());
-	}
+    }
 
     private List<NameValuePair> getSearchParameters() {
         List<NameValuePair> args = new ArrayList<NameValuePair>();

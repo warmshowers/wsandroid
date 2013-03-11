@@ -11,24 +11,24 @@ import com.google.inject.Singleton;
 @Singleton
 public class MapAnimator {
 
-	private GeoPoint target;
-	
-	public MapAnimator() {
-		clearTarget();
-	}
+    private GeoPoint target;
+    
+    public MapAnimator() {
+        clearTarget();
+    }
 
-	public void prepareToAnimateToHost(Intent data) {
-		int lat = data.getIntExtra("lat", 0);
-		int lon = data.getIntExtra("lon", 0);
-		target = new GeoPoint(lat, lon);
-	}
+    public void prepareToAnimateToHost(Intent data) {
+        int lat = data.getIntExtra("lat", 0);
+        int lon = data.getIntExtra("lon", 0);
+        target = new GeoPoint(lat, lon);
+    }
 
-	public GeoPoint getTarget() {
-		return target;
-	}
+    public GeoPoint getTarget() {
+        return target;
+    }
 
-	public void clearTarget() {
-		target = null;
-	}
-	
+    public void clearTarget() {
+        target = null;
+    }
+    
 }

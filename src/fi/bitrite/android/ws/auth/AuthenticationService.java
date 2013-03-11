@@ -5,22 +5,22 @@ import android.content.Intent;
 import android.os.IBinder;
 
 public class AuthenticationService extends Service {
-	
-	public static final String ACCOUNT_TYPE = "org.warmshowers";
+    
+    public static final String ACCOUNT_TYPE = "org.warmshowers";
 
-	private Authenticator mAuthenticator;
+    private Authenticator mAuthenticator;
 
-	@Override
-	public void onCreate() {
-		mAuthenticator = new Authenticator(this);
-	}
+    @Override
+    public void onCreate() {
+        mAuthenticator = new Authenticator(this);
+    }
 
-	@Override
-	public void onDestroy() {
-	}
+    @Override
+    public void onDestroy() {
+    }
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return mAuthenticator.getIBinder();
-	}
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mAuthenticator.getIBinder();
+    }
 }

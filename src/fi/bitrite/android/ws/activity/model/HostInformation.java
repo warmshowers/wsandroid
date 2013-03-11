@@ -18,8 +18,8 @@ public class HostInformation {
 
     private Host host;
     private boolean starred;
-
     private List<Feedback> feedback;
+
     private final int id;
 
     public HostInformation(Host host, ArrayList<Feedback> feedback, int id, boolean starred) {

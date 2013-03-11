@@ -19,64 +19,64 @@ import fi.bitrite.android.ws.util.http.HttpUtils;
  */
 public class HttpReader {
 
-	protected HttpAuthenticationService authenticationService;
-	protected HttpSessionContainer sessionContainer;
-	protected boolean authenticationPerformed;
+    protected HttpAuthenticationService authenticationService;
+    protected HttpSessionContainer sessionContainer;
+    protected boolean authenticationPerformed;
 
-	public HttpReader(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
-		this.authenticationService = authenticationService;
-		this.sessionContainer = sessionContainer;
-		setAuthenticationPerformed(false);
-	}
+    public HttpReader(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
+        this.authenticationService = authenticationService;
+        this.sessionContainer = sessionContainer;
+        setAuthenticationPerformed(false);
+    }
 
-	public boolean isAuthenticationPerformed() {
-		return authenticationPerformed;
-	}
+    public boolean isAuthenticationPerformed() {
+        return authenticationPerformed;
+    }
 
-	private void setAuthenticationPerformed(boolean authenticationPerformed) {
-		this.authenticationPerformed = authenticationPerformed;
-	}
+    private void setAuthenticationPerformed(boolean authenticationPerformed) {
+        this.authenticationPerformed = authenticationPerformed;
+    }
 
-	protected String getPage(String simpleUrl) {
-		HttpClient client = HttpUtils.getDefaultClient();
-		String html;
-		int responseCode;
+    protected String getPage(String simpleUrl) {
+        HttpClient client = HttpUtils.getDefaultClient();
+        String html;
+        int responseCode;
 
-		try {
-			String url = HttpUtils.encodeUrl(simpleUrl);
-			HttpGet get = new HttpGet(url);
-			HttpContext context = sessionContainer.getSessionContext();
+        try {
+            String url = HttpUtils.encodeUrl(simpleUrl);
+            HttpGet get = new HttpGet(url);
+            HttpContext context = sessionContainer.getSessionContext();
 
-			HttpResponse response = client.execute(get, context);
-			HttpEntity entity = response.getEntity();
-			responseCode = response.getStatusLine().getStatusCode();
+            HttpResponse response = client.execute(get, context);
+            HttpEntity entity = response.getEntity();
+            responseCode = response.getStatusLine().getStatusCode();
 
-			html = EntityUtils.toString(entity, "UTF-8");
-		} 
-		
-		catch (Exception e) {
-			throw new HttpException(e);
-		}
+            html = EntityUtils.toString(entity, "UTF-8");
+        } 
+        
+        catch (Exception e) {
+            throw new HttpException(e);
+        }
 
-		finally {
-			client.getConnectionManager().shutdown();
-		}
+        finally {
+            client.getConnectionManager().shutdown();
+        }
 
-		if (responseCode == HttpStatus.SC_FORBIDDEN) {
-			if (!authenticationPerformed) {
-				authenticate();
-				html = getPage(simpleUrl);
-			} else {
-				throw new HttpException("Couldn't authenticate user");
-			}
-		}
+        if (responseCode == HttpStatus.SC_FORBIDDEN) {
+            if (!authenticationPerformed) {
+                authenticate();
+                html = getPage(simpleUrl);
+            } else {
+                throw new HttpException("Couldn't authenticate user");
+            }
+        }
 
-		return html;
-	}
+        return html;
+    }
 
-	protected void authenticate() {
-		authenticationService.authenticate();
-		setAuthenticationPerformed(true);
-	}
+    protected void authenticate() {
+        authenticationService.authenticate();
+        setAuthenticationPerformed(true);
+    }
 
 }

@@ -8,21 +8,21 @@ import java.util.List;
     
 public interface StarredHostDao {
 
-	public void insert(int id, String name, Host host, List<Feedback> feedback);
+    public void insert(int id, String name, Host host, List<Feedback> feedback);
 
-	public Host getHost(int id, String name);
+    public Host getHost(int id, String name);
 
     public List<Feedback> getFeedback(int id, String name);
 
-	public List<HostBriefInfo> getAllBrief();
+    public List<HostBriefInfo> getAllBrief();
 
-	public void delete(int id, String name);
+    public void delete(int id, String name);
 
-	public void update(int id, String name, Host host, List<Feedback> feedback);
-	
-	public boolean isHostStarred(int id, String name);
+    public void update(int id, String name, Host host, List<Feedback> feedback);
+    
+    public boolean isHostStarred(int id, String name);
 
-	public void open();
-	
-	public void close();
+    public void open();
+    
+    public void close();
 }

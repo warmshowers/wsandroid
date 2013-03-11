@@ -44,14 +44,13 @@ import fi.bitrite.android.ws.util.http.HttpUtils;
 public class HttpAuthenticationService {
 
 	private static final String WARMSHOWERS_USER_AUTHENTICATION_URL = "http://www.warmshowers.org/services/rest/user/login";
-
 	private static final String WARMSHOWERS_USER_AUTHENTICATION_TEST_URL = "http://www.warmshowers.org/search/wsuser";
 
 	@Inject
 	HttpSessionContainer sessionContainer;
 
-	String username;
-	String authtoken;
+	private String username;
+	private String authtoken;
 
 	/**
 	 * Load a page in order to see if we are authenticated

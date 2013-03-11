@@ -16,12 +16,6 @@ import fi.bitrite.android.ws.activity.MapSearchTabActivity;
 
 public class ScaleBarOverlay extends Overlay {
 
-    // ===========================================================
-    // Fields
-    // ===========================================================
-
-    // Defaults
-
     boolean enabled = true;
 
     float xOffset = 10;

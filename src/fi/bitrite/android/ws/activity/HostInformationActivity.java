@@ -92,11 +92,8 @@ public class HostInformationActivity extends RoboActivity {
     StarredHostDao starredHostDao;
 
     private HostInformation hostInfo;
-
     private boolean forceUpdate;
-
     private HostInformationTask hostInfoTask;
-
     private DialogHandler dialogHandler;
 
     @Override
@@ -111,8 +108,6 @@ public class HostInformationActivity extends RoboActivity {
 
         starredHostDao.close();
         starredHostDao.open();
-
-
 
         if (savedInstanceState != null) {
             // recovering from e.g. screen rotation change

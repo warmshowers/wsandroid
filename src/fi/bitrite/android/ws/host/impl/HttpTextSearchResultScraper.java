@@ -20,57 +20,57 @@ import fi.bitrite.android.ws.util.http.HttpException;
 
 public class HttpTextSearchResultScraper {
 
-	private static final String HOST_NODE_XPATH 	= "//h2[text()=\"Search results\"]/following-sibling::div/table/tbody/tr";
+    private static final String HOST_NODE_XPATH     = "//h2[text()=\"Search results\"]/following-sibling::div/table/tbody/tr";
 
-	private static final String HOST_FULLNAME_XPATH = "td[1]/a[1]/text()";
-	private static final String HOST_URL_XPATH 		= "td[1]/a[1]/@href";
-	private static final String HOST_LOCATION_XPATH = "td[1]/a[2]/text()";
-	private static final String HOST_COMMENTS_XPATH = "td[2]/p/text()";
+    private static final String HOST_FULLNAME_XPATH = "td[1]/a[1]/text()";
+    private static final String HOST_URL_XPATH      = "td[1]/a[1]/@href";
+    private static final String HOST_LOCATION_XPATH = "td[1]/a[2]/text()";
+    private static final String HOST_COMMENTS_XPATH = "td[2]/p/text()";
 
-	private String html;
+    private final String html;
 
-	public HttpTextSearchResultScraper(String html) {
-		this.html = html;
-	}
+    public HttpTextSearchResultScraper(String html) {
+        this.html = html;
+    }
 
-	public List<HostBriefInfo> getHosts() {
-		try {
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-					.parse(new InputSource(new StringReader(html)));
+    public List<HostBriefInfo> getHosts() {
+        try {
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                    .parse(new InputSource(new StringReader(html)));
 
-			XPath xpath = XPathFactory.newInstance().newXPath();
-			XPathExpression expr = xpath.compile(HOST_NODE_XPATH);
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            XPathExpression expr = xpath.compile(HOST_NODE_XPATH);
 
-			NodeList hostNodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+            NodeList hostNodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 
-			XPathExpression nameExpr = xpath.compile(HOST_URL_XPATH);
-			XPathExpression fullnameExpr = xpath.compile(HOST_FULLNAME_XPATH);
-			XPathExpression locationExpr = xpath.compile(HOST_LOCATION_XPATH);
-			XPathExpression commentsExpr = xpath.compile(HOST_COMMENTS_XPATH);
+            XPathExpression nameExpr = xpath.compile(HOST_URL_XPATH);
+            XPathExpression fullnameExpr = xpath.compile(HOST_FULLNAME_XPATH);
+            XPathExpression locationExpr = xpath.compile(HOST_LOCATION_XPATH);
+            XPathExpression commentsExpr = xpath.compile(HOST_COMMENTS_XPATH);
 
-			List<HostBriefInfo> hostList = new ArrayList<HostBriefInfo>();
-			for (int i = 0; i < hostNodes.getLength(); i++) {
-				Node hostNode = hostNodes.item(i);
+            List<HostBriefInfo> hostList = new ArrayList<HostBriefInfo>();
+            for (int i = 0; i < hostNodes.getLength(); i++) {
+                Node hostNode = hostNodes.item(i);
 
-				String hostUrl = nameExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
-				String name = getNameFromHostUrl(hostUrl);
-				
-				String fullname = fullnameExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
-				String location = locationExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
-				String comments = commentsExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
+                String hostUrl = nameExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
+                String name = getNameFromHostUrl(hostUrl);
+                
+                String fullname = fullnameExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
+                String location = locationExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
+                String comments = commentsExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
 
-				hostList.add(new HostBriefInfo(0, name, fullname, location, comments));
-			}
+                hostList.add(new HostBriefInfo(0, name, fullname, location, comments));
+            }
 
-			return hostList;
-		}
+            return hostList;
+        }
 
-		catch (Exception e) {
-			throw new HttpException(e);
-		}
-	}
+        catch (Exception e) {
+            throw new HttpException(e);
+        }
+    }
 
-	private String getNameFromHostUrl(String hostUrl) {
-		return hostUrl.substring(hostUrl.lastIndexOf('/')+1, hostUrl.length());
-	}
+    private String getNameFromHostUrl(String hostUrl) {
+        return hostUrl.substring(hostUrl.lastIndexOf('/')+1, hostUrl.length());
+    }
 }

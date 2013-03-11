@@ -13,52 +13,52 @@ import java.util.List;
 
 public class MapSearchJsonParser {
 
-	private String json;
-	private int numHostsCutoff;
-	
-	public MapSearchJsonParser(String json, int numHostsCutoff) {
-		this.json = json;
-		this.numHostsCutoff = numHostsCutoff;
-	}
+    private final String json;
+    private final int numHostsCutoff;
+    
+    public MapSearchJsonParser(String json, int numHostsCutoff) {
+        this.json = json;
+        this.numHostsCutoff = numHostsCutoff;
+    }
 
-	public List<HostBriefInfo> getHosts() {
-		try {
+    public List<HostBriefInfo> getHosts() {
+        try {
             JsonParser parser = new JsonParser();
             JsonObject jsonObj = parser.parse(json).getAsJsonObject();
 
-			if (!isComplete(jsonObj)) {
-				throw new IncompleteResultsException("Could not retrieve hosts. Try again.");
-			}
+            if (!isComplete(jsonObj)) {
+                throw new IncompleteResultsException("Could not retrieve hosts. Try again.");
+            }
 
-			int numHosts = getNumHosts(jsonObj);
-			if (numHosts > numHostsCutoff) {
-				throw new TooManyHostsException(numHosts);
-			}
+            int numHosts = getNumHosts(jsonObj);
+            if (numHosts > numHostsCutoff) {
+                throw new TooManyHostsException(numHosts);
+            }
 
-			return parseHosts(jsonObj);
-		}
+            return parseHosts(jsonObj);
+        }
 
-		catch (HttpException e) {
-			throw e;
-		}
-		
-		catch (Exception e) {
-			throw new HttpException(e);
-		}
-	}
+        catch (HttpException e) {
+            throw e;
+        }
+        
+        catch (Exception e) {
+            throw new HttpException(e);
+        }
+    }
 
-	private boolean isComplete(JsonObject jsonObj) throws Exception {
+    private boolean isComplete(JsonObject jsonObj) throws Exception {
         String status = jsonObj.getAsJsonObject("status").get("status").getAsString();
         boolean isComplete = status.equals("complete");
         return isComplete;
-	}
+    }
 
 
-	private int getNumHosts(JsonObject jsonObj) throws Exception {
+    private int getNumHosts(JsonObject jsonObj) throws Exception {
         return jsonObj.getAsJsonObject("status").get("totalresults").getAsInt();
-	}
+    }
 
-	private List<HostBriefInfo> parseHosts(JsonObject jsonObj) throws Exception {
+    private List<HostBriefInfo> parseHosts(JsonObject jsonObj) throws Exception {
         List<HostBriefInfo> hostList = new ArrayList<HostBriefInfo>();
 
         JsonArray hosts = jsonObj.getAsJsonArray("accounts");
@@ -90,7 +90,7 @@ public class MapSearchJsonParser {
             hostList.add(h);
         }
 
-		return hostList;
-	}
-	
+        return hostList;
+    }
+    
 }

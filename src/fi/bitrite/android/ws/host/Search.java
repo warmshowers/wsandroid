@@ -5,7 +5,7 @@ import java.util.List;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 
 public interface Search {
-	
-	public List<HostBriefInfo> doSearch();
+    
+    public List<HostBriefInfo> doSearch();
 
 }

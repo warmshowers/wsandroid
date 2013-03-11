@@ -11,18 +11,18 @@ import com.google.inject.Singleton;
 @Singleton
 public class HttpSessionContainer {
 
-	CookieStore cookieStore;
+    CookieStore cookieStore;
 
-	HttpContext httpContext;
-	
-	public HttpSessionContainer() {
-		cookieStore = new BasicCookieStore();
-		httpContext = new BasicHttpContext();
-		httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-	}
+    HttpContext httpContext;
+    
+    public HttpSessionContainer() {
+        cookieStore = new BasicCookieStore();
+        httpContext = new BasicHttpContext();
+        httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+    }
 
-	public HttpContext getSessionContext() {
-		return httpContext;
-	}
-	
+    public HttpContext getSessionContext() {
+        return httpContext;
+    }
+    
 }

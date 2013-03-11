@@ -53,7 +53,6 @@ public class Authenticator extends AbstractAccountAuthenticator {
 
 	@Override
 	public String getAuthTokenLabel(String authTokenType) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
