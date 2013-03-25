@@ -6,7 +6,6 @@ import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 
 /**
  * User: johannes
- * Date: 24.02.2013
  */
 public class HttpHostId extends HttpReader {
 
