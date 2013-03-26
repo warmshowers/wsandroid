@@ -49,7 +49,7 @@
     <string name="host_unstarred">Host information deleted from device.</string>
     <string name="performing_search">Performing search …</string>
     <string name="zoom_in">Zoom in</string>
-    <string name="zoom_in_error">Search are too large - zoom in!</string>
+    <string name="zoom_in_error">Search area too large - zoom in!</string>
     <string name="too_many_hosts">Too many hosts in area - zoom in!</string>
     <string name="error_loading_hosts">Error loading hosts, check Internet connection.</string>
     <string name="mi_distance">miles as the crow flies</string>
