@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.HostContact;
 import fi.bitrite.android.ws.host.impl.RestHostContact;
 import fi.bitrite.android.ws.model.Host;
@@ -18,6 +19,10 @@ import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import roboguice.util.Strings;
 
+/**
+ * Responsible for letting the user type in a message and then sending it to a host
+ * over the WarmShowers web service.
+ */
 public class HostContactActivity extends RoboActivity {
     
     @InjectView(R.id.txtContactHostTitle) TextView title;
@@ -84,7 +89,7 @@ public class HostContactActivity extends RoboActivity {
             }
 
             catch (Exception e) {
-                Log.e("WSAndroid", e.getMessage(), e);
+                Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 retObj = e;
             }
             
