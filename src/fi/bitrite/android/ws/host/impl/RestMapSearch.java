@@ -2,8 +2,6 @@ package fi.bitrite.android.ws.host.impl;
 
 import com.google.android.maps.GeoPoint;
 import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
-import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import org.apache.http.NameValuePair;
@@ -19,8 +17,7 @@ public class RestMapSearch extends RestClient implements Search {
     private final int numHostsCutoff;
     private final MapSearchArea searchArea;
 
-    public RestMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff, HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
-        super(authenticationService, sessionContainer);
+    public RestMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff) {
         this.searchArea = MapSearchArea.fromGeoPoints(topLeft, bottomRight);
         this.numHostsCutoff = numHostsCutoff; 
     }

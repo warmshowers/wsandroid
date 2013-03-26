@@ -1,5 +1,9 @@
 package fi.bitrite.android.ws.api;
 
+import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
+import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.util.http.HttpException;
+import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -8,24 +12,15 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
-import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
-import fi.bitrite.android.ws.util.http.HttpException;
-import fi.bitrite.android.ws.util.http.HttpUtils;
-
 /**
  * Base class for classes that use GET to either scrape the WS website for information
  * or interface with the REST API.
  */
 public class HttpReader {
 
-    protected HttpAuthenticationService authenticationService;
-    protected HttpSessionContainer sessionContainer;
-    protected boolean authenticationPerformed;
+    boolean authenticationPerformed;
 
-    public HttpReader(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
-        this.authenticationService = authenticationService;
-        this.sessionContainer = sessionContainer;
+    public HttpReader() {
         setAuthenticationPerformed(false);
     }
 
@@ -45,7 +40,7 @@ public class HttpReader {
         try {
             String url = HttpUtils.encodeUrl(simpleUrl);
             HttpGet get = new HttpGet(url);
-            HttpContext context = sessionContainer.getSessionContext();
+            HttpContext context = HttpSessionContainer.INSTANCE.getSessionContext();
 
             HttpResponse response = client.execute(get, context);
             HttpEntity entity = response.getEntity();
@@ -75,7 +70,8 @@ public class HttpReader {
     }
 
     protected void authenticate() {
-        authenticationService.authenticate();
+        HttpAuthenticator authenticator = new HttpAuthenticator();
+        authenticator.authenticate();
         setAuthenticationPerformed(true);
     }
 

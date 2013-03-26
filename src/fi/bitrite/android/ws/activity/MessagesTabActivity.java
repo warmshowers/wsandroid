@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
+import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.messaging.RestUnreadCount;
 import roboguice.activity.RoboActivity;
@@ -21,7 +21,7 @@ import roboguice.inject.InjectView;
 public class MessagesTabActivity extends RoboActivity implements View.OnClickListener {
 
     @Inject
-    HttpAuthenticationService authenticationService;
+    HttpAuthenticator authenticationService;
     @Inject
     HttpSessionContainer sessionContainer;
 
@@ -86,7 +86,7 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
             Object retObj = null;
 
             try {
-                RestUnreadCount unreadCount = new RestUnreadCount(authenticationService, sessionContainer);
+                RestUnreadCount unreadCount = new RestUnreadCount();
                 numUnread = unreadCount.getUnreadCount();
             } catch (Exception e) {
                 if (DialogHandler.inProgress()) {

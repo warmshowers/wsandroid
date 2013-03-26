@@ -1,20 +1,16 @@
 package fi.bitrite.android.ws.host.impl;
 
-import java.util.List;
-
 import fi.bitrite.android.ws.api.HttpReader;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
-import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+
+import java.util.List;
 
 public class HttpTextSearch extends HttpReader implements Search {
 
     private final String text;
 
-    public HttpTextSearch(String text, HttpAuthenticationService authenticationService,
-            HttpSessionContainer sessionContainer) {
-        super(authenticationService, sessionContainer);
+    public HttpTextSearch(String text) {
         this.text = text;
     }
 

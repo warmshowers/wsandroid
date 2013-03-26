@@ -1,8 +1,5 @@
 package fi.bitrite.android.ws.activity;
 
-import roboguice.activity.RoboAccountAuthenticatorActivity;
-import roboguice.inject.InjectView;
-import roboguice.util.Strings;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Dialog;
@@ -13,17 +10,19 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-
-import com.google.inject.Inject;
-
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.AuthenticationService;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
+import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
+import roboguice.activity.RoboAccountAuthenticatorActivity;
+import roboguice.inject.InjectView;
+import roboguice.util.Strings;
 
 /**
- * The activity responsible for getting WarmShowers credentials from the user
- * and storing them on the device using Android's custom account facilities.
+ * The activity responsible for getting WarmShowers credentials from the user,
+ * verifying them against the WarmShowers web service and storing and storing
+ * them on the device using Android's custom account facilities.
  */
 public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
@@ -44,9 +43,6 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
     private boolean initialAuthentication;
 
     private DialogHandler dialogHandler;
-
-    @Inject
-    HttpAuthenticationService authenticationService;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -105,17 +101,24 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
                 setResult(RESULT_AUTHENTICATION_FAILED, resultIntent);
             } else {
                 if (!initialAuthentication) {
-                    Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
-                    accountManager.removeAccount(oldAccount, null, null);
+                    deleteOldAccount();
                 }
-                
-                Account account = new Account(username, AuthenticationService.ACCOUNT_TYPE);
-                accountManager.addAccountExplicitly(account, password, null);
-                accountManager.setUserData(account, KEY_USERID, String.valueOf(msg.arg1));
+                createNewAccount(String.valueOf(msg.arg1));
                 setResult(RESULT_OK, resultIntent);
             }
 
             finish();
+        }
+
+        private void createNewAccount(String userId) {
+            Account account = new Account(username, AuthenticationService.ACCOUNT_TYPE);
+            accountManager.addAccountExplicitly(account, password, null);
+            accountManager.setUserData(account, KEY_USERID, userId);
+        }
+
+        private void deleteOldAccount() {
+            Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
+            accountManager.removeAccount(oldAccount, null, null);
         }
     };
 
@@ -130,13 +133,14 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
             Message msg = handler.obtainMessage();
 
             try {
-                int userId = authenticationService.authenticate(username, password);
+                HttpAuthenticator authenticator = new HttpAuthenticator();
+                int userId = authenticator.authenticate(username, password);
                 msg.obj = RESULT_OK;
                 msg.arg1 = userId;
             }
 
             catch (Exception e) {
-                Log.e("WSAndroid", e.getMessage(), e);
+                Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 msg.obj = e;
             }
 

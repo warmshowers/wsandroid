@@ -7,8 +7,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 
 /** 
- * Helper class for dialogs
- *
+ * Helper class for progress dialogs.
  */
 public class DialogHandler {
 
@@ -22,10 +21,9 @@ public class DialogHandler {
     private static boolean inProgress = false;
     private static int  currentDialogId = NO_DIALOG;
 
-    ProgressDialog progressDialog;
-    
-    Activity parentActivity;
-    
+    private final Activity parentActivity;
+    private ProgressDialog progressDialog;
+
     public DialogHandler(Activity parent) {
         this.parentActivity = parent;
     }

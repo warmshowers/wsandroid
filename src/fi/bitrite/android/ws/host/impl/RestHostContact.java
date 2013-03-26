@@ -1,8 +1,6 @@
 package fi.bitrite.android.ws.host.impl;
 
 import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
-import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.host.HostContact;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -16,10 +14,6 @@ import java.util.List;
 public class RestHostContact extends RestClient implements HostContact {
 
     private static final String WARMSHOWERS_HOST_CONTACT_URL = "http://www.warmshowers.org/services/rest/message/send";
-
-    public RestHostContact(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
-        super(authenticationService, sessionContainer);
-    }
 
     @Override
     public void send(String name, String subject, String message) {

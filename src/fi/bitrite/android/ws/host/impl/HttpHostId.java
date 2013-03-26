@@ -1,8 +1,6 @@
 package fi.bitrite.android.ws.host.impl;
 
 import fi.bitrite.android.ws.api.HttpReader;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
-import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 
 /**
  * User: johannes
@@ -11,8 +9,7 @@ public class HttpHostId extends HttpReader {
 
     private final String name;
 
-    public HttpHostId(String name, HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
-        super(authenticationService, sessionContainer);
+    public HttpHostId(String name) {
         this.name = name;
     }
 

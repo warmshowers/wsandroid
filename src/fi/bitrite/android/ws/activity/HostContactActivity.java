@@ -1,11 +1,5 @@
 package fi.bitrite.android.ws.activity;
 
-import fi.bitrite.android.ws.host.HostContact;
-import fi.bitrite.android.ws.host.impl.RestHostContact;
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
-import roboguice.util.Strings;
-import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -16,23 +10,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.google.inject.Inject;
-
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
-import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.host.HostContact;
+import fi.bitrite.android.ws.host.impl.RestHostContact;
 import fi.bitrite.android.ws.model.Host;
+import roboguice.activity.RoboActivity;
+import roboguice.inject.InjectView;
+import roboguice.util.Strings;
 
 public class HostContactActivity extends RoboActivity {
     
     @InjectView(R.id.txtContactHostTitle) TextView title;
     @InjectView(R.id.editContactHostSubject) EditText editSubject;
     @InjectView(R.id.editContactHostMessage) EditText editMessage;
-    
-    @Inject HttpAuthenticationService authenticationService;
-    @Inject HttpSessionContainer sessionContainer;
     
     private Host host;
     private DialogHandler dialogHandler;
@@ -89,7 +79,7 @@ public class HostContactActivity extends RoboActivity {
             String message = params[1];
             Object retObj = null;
             try {
-                HostContact contact = new RestHostContact(authenticationService, sessionContainer);
+                HostContact contact = new RestHostContact();
                 contact.send(host.getName(), subject, message);
             }
 

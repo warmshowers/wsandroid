@@ -1,28 +1,23 @@
 package fi.bitrite.android.ws.auth.http;
 
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 
-import com.google.inject.Singleton;
+public enum HttpSessionContainer {
 
-@Singleton
-public class HttpSessionContainer {
+    INSTANCE;
 
-    CookieStore cookieStore;
+    private final BasicCookieStore cookieStore;
+    private final BasicHttpContext httpContext;
 
-    HttpContext httpContext;
-    
-    public HttpSessionContainer() {
+    HttpSessionContainer() {
         cookieStore = new BasicCookieStore();
         httpContext = new BasicHttpContext();
         httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
     }
 
-    public HttpContext getSessionContext() {
+    public BasicHttpContext getSessionContext() {
         return httpContext;
     }
-    
 }

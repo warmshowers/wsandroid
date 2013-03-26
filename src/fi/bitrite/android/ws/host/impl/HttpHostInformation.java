@@ -1,24 +1,17 @@
 package fi.bitrite.android.ws.host.impl;
 
 import fi.bitrite.android.ws.api.HttpReader;
+import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.util.http.HttpException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import roboguice.util.Strings;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
-import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
-import fi.bitrite.android.ws.model.Host;
-import fi.bitrite.android.ws.util.http.HttpException;
 
 /**
  * Gets host information based on host ID.
  */
 public class HttpHostInformation extends HttpReader {
-
-    public HttpHostInformation(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
-        super(authenticationService, sessionContainer);
-    }
 
     public Host getHostInformation(int id) {
         String simpleUrl = new StringBuilder().append("http://www.warmshowers.org/user/")

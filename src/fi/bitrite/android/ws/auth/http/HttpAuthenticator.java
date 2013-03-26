@@ -1,12 +1,15 @@
 package fi.bitrite.android.ws.auth.http;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.gson.Gson;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.auth.AuthenticationHelper;
+import fi.bitrite.android.ws.auth.AuthenticationService;
+import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -23,31 +26,17 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
-import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.auth.AuthenticationHelper;
-import fi.bitrite.android.ws.auth.AuthenticationService;
-import fi.bitrite.android.ws.host.impl.HttpHostIdScraper;
-import fi.bitrite.android.ws.util.http.HttpUtils;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Responsible for authenticating the user against the WarmShowers web service.
  */
-@Singleton
-public class HttpAuthenticationService {
+public class HttpAuthenticator {
 
 	private static final String WARMSHOWERS_USER_AUTHENTICATION_URL = "http://www.warmshowers.org/services/rest/user/login";
 	private static final String WARMSHOWERS_USER_AUTHENTICATION_TEST_URL = "http://www.warmshowers.org/search/wsuser";
-
-	@Inject
-	HttpSessionContainer sessionContainer;
 
 	private String username;
 	private String authtoken;
@@ -61,7 +50,7 @@ public class HttpAuthenticationService {
 		try {
 			String url = HttpUtils.encodeUrl(WARMSHOWERS_USER_AUTHENTICATION_TEST_URL);
 			HttpGet get = new HttpGet(url);
-			HttpContext context = sessionContainer.getSessionContext();
+			HttpContext context = HttpSessionContainer.INSTANCE.getSessionContext();
 
 			HttpResponse response = client.execute(get, context);
 			HttpEntity entity = response.getEntity();
@@ -104,7 +93,7 @@ public class HttpAuthenticationService {
      */
 	public int authenticate(String username, String password) {
 		HttpClient client = HttpUtils.getDefaultClient();
-		HttpContext httpContext = sessionContainer.getSessionContext();
+		HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
 		CookieStore cookieStore = (CookieStore) httpContext.getAttribute(ClientContext.COOKIE_STORE);
 		cookieStore.clear();
 		int userId = 0;
@@ -129,7 +118,7 @@ public class HttpAuthenticationService {
 		
 		catch (ClientProtocolException e) {
 			if (e.getCause() instanceof CircularRedirectException) {
-				// If we getHost this authentication has still been successful, so ignore it
+				// If we get this authentication has still been successful, so ignore it
 			} else {
 				throw new HttpAuthenticationFailedException(e);
 			}
@@ -142,6 +131,7 @@ public class HttpAuthenticationService {
 		finally {
 			client.getConnectionManager().shutdown();
 		}
+
 
 		if (!isAuthenticated()) {
 			throw new HttpAuthenticationFailedException("Invalid credentials");

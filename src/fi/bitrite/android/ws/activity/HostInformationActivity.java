@@ -13,8 +13,6 @@ import android.widget.*;
 import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.activity.model.HostInformation;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
-import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.host.impl.HttpHostFeedback;
 import fi.bitrite.android.ws.host.impl.HttpHostId;
 import fi.bitrite.android.ws.host.impl.HttpHostInformation;
@@ -82,11 +80,6 @@ public class HostInformationActivity extends RoboActivity {
     TextView bikeShop;
     @InjectView(R.id.txtServices)
     TextView services;
-
-    @Inject
-    HttpAuthenticationService authenticationService;
-    @Inject
-    HttpSessionContainer sessionContainer;
 
     @Inject
     StarredHostDao starredHostDao;
@@ -287,12 +280,12 @@ public class HostInformationActivity extends RoboActivity {
             Object retObj = null;
 
             try {
-                HttpHostInformation httpHostInfo = new HttpHostInformation(authenticationService, sessionContainer);
-                HttpHostFeedback hostFeedback = new HttpHostFeedback(authenticationService, sessionContainer);
+                HttpHostInformation httpHostInfo = new HttpHostInformation();
+                HttpHostFeedback hostFeedback = new HttpHostFeedback();
                 int id = hostInfo.getId();
 
                 if (id == HostInformation.NO_ID) {
-                    HttpHostId httpHostId = new HttpHostId(hostInfo.getHost().getName(), authenticationService, sessionContainer);
+                    HttpHostId httpHostId = new HttpHostId(hostInfo.getHost().getName());
                     id = httpHostId.getHostId(hostInfo.getHost().getName());
                 }
 

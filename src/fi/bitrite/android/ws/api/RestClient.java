@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws.api;
 
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.util.http.HttpUtils;
@@ -22,10 +21,6 @@ import java.util.List;
  */
 public class RestClient extends HttpReader {
 
-    public RestClient(HttpAuthenticationService authenticationService, HttpSessionContainer sessionContainer) {
-        super(authenticationService, sessionContainer);
-    }
-
     protected HttpResponse post(String url, List<NameValuePair> params) {
         HttpClient client = HttpUtils.getDefaultClient();
         HttpResponse response;
@@ -33,7 +28,7 @@ public class RestClient extends HttpReader {
         try {
             HttpPost post = new HttpPost(url);
             post.setEntity(new UrlEncodedFormEntity(params));
-            HttpContext httpContext = sessionContainer.getSessionContext();
+            HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
             response = client.execute(post, httpContext);
         }
 
@@ -59,7 +54,7 @@ public class RestClient extends HttpReader {
 		try {
             HttpPost post = new HttpPost(url);
             post.setEntity(new UrlEncodedFormEntity(params));
-            HttpContext httpContext = sessionContainer.getSessionContext();
+            HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
             HttpResponse response = client.execute(post, httpContext);
 			HttpEntity entity = response.getEntity();
             json = EntityUtils.toString(entity, "UTF-8");
