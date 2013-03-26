@@ -9,21 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
-import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.messaging.RestUnreadCount;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
 public class MessagesTabActivity extends RoboActivity implements View.OnClickListener {
-
-    @Inject
-    HttpAuthenticator authenticationService;
-    @Inject
-    HttpSessionContainer sessionContainer;
 
     @InjectView(R.id.unreadCount)
     TextView unreadCount;
@@ -36,7 +28,6 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
 
 	private DialogHandler dialogHandler;
     private int numUnread;
-    private MessagesTask messagesTask;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +35,14 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
 		setContentView(R.layout.messages_tab);
 
 		dialogHandler = new DialogHandler(this);
-        getUnreadCount();
+        downloadUnreadCount();
 
         updateMessages.setOnClickListener(this);
 	}
 
-    private void getUnreadCount() {
+    private void downloadUnreadCount() {
         dialogHandler.showDialog(DialogHandler.MESSAGES);
-        messagesTask = new MessagesTask();
+        MessagesTask messagesTask = new MessagesTask();
         messagesTask.execute();
     }
 
@@ -66,7 +57,7 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        getUnreadCount();
+        downloadUnreadCount();
     }
 
     @Override

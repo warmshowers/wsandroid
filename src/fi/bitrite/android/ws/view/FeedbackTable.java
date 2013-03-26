@@ -3,7 +3,6 @@ package fi.bitrite.android.ws.view;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;

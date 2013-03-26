@@ -1,9 +1,5 @@
 package fi.bitrite.android.ws.activity;
 
-import java.util.List;
-
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -13,24 +9,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.google.inject.Inject;
-
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.util.MapAnimator;
+import roboguice.activity.RoboActivity;
+import roboguice.inject.InjectView;
+
+import java.util.List;
 
 public class StarredHostTabActivity extends RoboActivity {
 
     private static final int CONTEXT_MENU_UPDATE = 0;
     private static final int CONTEXT_MENU_DELETE = 1;
 
-    @InjectView(R.id.starredHostsTab) LinearLayout starredHostsTab;
     @InjectView(R.id.lstStarredHosts) ListView starredHostsList;
     @InjectView(R.id.lblNoStarredHosts) TextView noStarredHostsLabel;
     

@@ -13,7 +13,10 @@ import com.google.android.maps.Projection;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.activity.MapSearchTabActivity;
 
-
+/**
+ * Shamelessly stolen from:
+ * http://stackoverflow.com/questions/12964608/how-to-add-a-map-scale-in-mapview-on-android
+ */
 public class ScaleBarOverlay extends Overlay {
 
     boolean enabled = true;

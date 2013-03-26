@@ -7,7 +7,6 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,8 +46,8 @@ public class HostInformation {
         return new HostInformation(host, feedback, id, starred);
     }
 
-    public List getFeedback() {
-        return (feedback == null) ? Collections.emptyList() : feedback;
+    public List<Feedback> getFeedback() {
+        return (feedback == null) ? new ArrayList<Feedback>() : feedback;
     }
 
     public Host getHost() {

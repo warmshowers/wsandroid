@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.*;
 import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.activity.model.HostInformation;
 import fi.bitrite.android.ws.host.impl.HttpHostFeedback;
 import fi.bitrite.android.ws.host.impl.HttpHostId;
@@ -25,9 +26,15 @@ import roboguice.inject.InjectView;
 import roboguice.util.Strings;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.sort;
+
+/**
+ * Activity that fetches host information and shows it to the user.
+ * The information is retrieved either from the device storage (for starred hosts)
+ * or downloaded from the WarmShowers web service.
+ */
 public class HostInformationActivity extends RoboActivity {
 
     public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
@@ -96,7 +103,7 @@ public class HostInformationActivity extends RoboActivity {
 
         dialogHandler = new DialogHandler(HostInformationActivity.this);
         boolean inProgress = DialogHandler.inProgress();
-        boolean shouldDownloadHostInfo = true;
+        boolean shouldDownloadHostInfo;
         forceUpdate = false;
 
         starredHostDao.close();
@@ -129,7 +136,7 @@ public class HostInformationActivity extends RoboActivity {
         starredHostDao.close();
 
         if (shouldDownloadHostInfo) {
-            getHostInformationAsync();
+            downloadHostInformation();
         } else {
             updateViewContent();
         }
@@ -242,7 +249,7 @@ public class HostInformationActivity extends RoboActivity {
         }
     }
 
-    private void getHostInformationAsync() {
+    private void downloadHostInformation() {
         dialogHandler.showDialog(DialogHandler.HOST_INFORMATION);
         hostInfoTask = new HostInformationTask();
         hostInfoTask.execute();
@@ -265,8 +272,8 @@ public class HostInformationActivity extends RoboActivity {
         bikeShop.setText(host.getBikeshop());
         services.setText(host.getServices());
 
-        List feedback = hostInfo.getFeedback();
-        Collections.sort(feedback);
+        List<Feedback> feedback = hostInfo.getFeedback();
+        sort(feedback);
         feedbackTable.addRows(feedback);
         feedbackLabel.setText(getResources().getString(R.string.feedback) + " (" + feedback.size() + ")");
 
@@ -294,7 +301,7 @@ public class HostInformationActivity extends RoboActivity {
                 hostInfo = new HostInformation(host, feedback, id, false);
 
             } catch (Exception e) {
-                Log.e("WSAndroid", e.getMessage(), e);
+                Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 retObj = e;
             }
 

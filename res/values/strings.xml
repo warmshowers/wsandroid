@@ -71,4 +71,6 @@
     <string name="unread_messages">You have %d unread message(s)!</string>
     <string name="visit_warmshowers_website"><![CDATA[Please visit the <a href="http://www.warmshowers.org">WarmShowers website</a> to read your messages.]]></string>
     <string name="updateMessages">Update</string>
+    <string name="loading_hosts">Loading hosts ...</string>
+    <string name="hosts_in_area">%1$s hosts in area.</string>
 </resources>

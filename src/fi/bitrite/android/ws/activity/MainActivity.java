@@ -21,10 +21,12 @@ import java.util.ArrayList;
 public class MainActivity extends RoboTabActivity  {
     
     private Dialog splashDialog;
-    private Parcelable savedHost;
-    private int savedHostId;
-    private int stashedFromTab;
-    private ArrayList<Parcelable> savedFeedback;
+
+    // a host is "stashed" when moving from e.g. the host information activity directly
+    // to the map ("Show host on map") and back again.
+    private Parcelable stashedHost;
+    private int stashedHostId;
+    private ArrayList<Parcelable> stashedFeedback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,27 +182,23 @@ public class MainActivity extends RoboTabActivity  {
     }
     
     public void stashHost(Intent data, int stashedFrom) {
-        savedHost = data.getParcelableExtra("host");
-        savedHostId = data.getIntExtra("id", 0);
-        savedFeedback = data.getParcelableArrayListExtra("feedback");
-        stashedFromTab = stashedFrom;
+        stashedHost = data.getParcelableExtra("host");
+        stashedHostId = data.getIntExtra("id", 0);
+        stashedFeedback = data.getParcelableArrayListExtra("feedback");
     }
 
     public boolean hasStashedHost() {
-        return savedHost != null;
+        return stashedHost != null;
     }
     
     public Intent popStashedHost(Intent i) {
-        i.putExtra("host", savedHost);
-        i.putExtra("id", savedHostId);
-        i.putExtra("feedback", savedFeedback);
+        i.putExtra("host", stashedHost);
+        i.putExtra("id", stashedHostId);
+        i.putExtra("feedback", stashedFeedback);
         i.putExtra("full_info", true);
-        savedHost = null;
-        savedHostId = 0;
+        stashedHost = null;
+        stashedHostId = 0;
         return i;
     }
     
-    public int getStashedFromTab() {
-        return stashedFromTab;
-    }
 }

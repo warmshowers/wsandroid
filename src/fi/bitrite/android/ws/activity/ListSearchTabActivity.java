@@ -1,9 +1,5 @@
 package fi.bitrite.android.ws.activity;
 
-import java.util.ArrayList;
-
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,17 +10,10 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-
 import com.google.inject.Inject;
-
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.Search;
@@ -32,10 +21,13 @@ import fi.bitrite.android.ws.host.SearchFactory;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.MapAnimator;
+import roboguice.activity.RoboActivity;
+import roboguice.inject.InjectView;
+
+import java.util.ArrayList;
 
 public class ListSearchTabActivity extends RoboActivity {
 
-    @InjectView(R.id.listTab) LinearLayout listTab;
     @InjectView(R.id.editListSearch) EditText listSearchEdit;
     @InjectView(R.id.btnListSearch) ImageView listSearchButton;
     @InjectView(R.id.lstSearchResult) ListView listSearchResult;
@@ -137,14 +129,14 @@ public class ListSearchTabActivity extends RoboActivity {
         @Override
         protected Object doInBackground(Search... params) {
             Search search = params[0];
-            Object retObj = null;
+            Object retObj;
             
             try {
                 retObj = search.doSearch();
             }
                 
             catch (Exception e) {
-                Log.e("WSAndroid", e.getMessage(), e);
+                Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 retObj = e;
             }
             

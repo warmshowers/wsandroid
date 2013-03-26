@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -22,6 +21,7 @@ import de.android1.overlaymanager.ManagedOverlayGestureDetector.OnOverlayGesture
 import de.android1.overlaymanager.lazyload.LazyLoadCallback;
 import de.android1.overlaymanager.lazyload.LazyLoadException;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
 import fi.bitrite.android.ws.host.impl.TooManyHostsException;
@@ -35,13 +35,13 @@ import roboguice.inject.InjectView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 public class MapSearchTabActivity extends RoboMapActivity {
 
     private static final String HOST_OVERLAY = "hostoverlay";
     private static final int NUM_HOSTS_CUTOFF = 150;
     private static final int MIN_ZOOM_LEVEL = 8;
+    private static final int HOST_FOCUS_ZOOM_LEVEL = 16;
 
     @InjectView(R.id.mapView)
     MapView mapView;
@@ -62,15 +62,10 @@ public class MapSearchTabActivity extends RoboMapActivity {
     private OverlayManager overlayManager;
     private MyLocationOverlay locationOverlay;
     private ScaleBarOverlay scaleBarOverlay;
-    private int lastZoomLevel = -1;
 
     private Gson gson;
     private HostBriefInfo host;
     private Dialog hostPopup;
-
-    private boolean cameFromHostInfo;
-    private Host savedHost;
-    private int savedHostId;
 
     @Override
     @SuppressWarnings("deprecation")
@@ -87,7 +82,6 @@ public class MapSearchTabActivity extends RoboMapActivity {
 
         gson = new Gson();
         setupHostPopup();
-        cameFromHostInfo = false;
     }
 
     private void setupHostPopup() {
@@ -138,14 +132,11 @@ public class MapSearchTabActivity extends RoboMapActivity {
         locationOverlay.enableMyLocation();
         mapView.getOverlays().add(locationOverlay);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String unit = prefs.getString("distance_unit", "km");
-
         scaleBarOverlay = new ScaleBarOverlay(this, this, mapView);
-        if (unit.equals("mi")) {
-            scaleBarOverlay.setImperial();
-        } else {
+        if (usingMetricSystem()) {
             scaleBarOverlay.setMetric();
+        } else {
+            scaleBarOverlay.setImperial();
         }
 
         List<Overlay> overlays = mapView.getOverlays();
@@ -166,27 +157,24 @@ public class MapSearchTabActivity extends RoboMapActivity {
                         return overlayItems;
                     }
 
-                    sendMessage("Loading hosts ...", false);
+                    sendMessage(getResources().getString(R.string.loading_hosts), false);
 
                     Search search = searchFactory.createMapSearch(topLeft, bottomRight, NUM_HOSTS_CUTOFF);
                     try {
                         List<HostBriefInfo> hosts = search.doSearch();
-                        sendMessage(hosts.size() + " hosts in area", false);
-                        ListIterator<HostBriefInfo> hostIter = hosts.listIterator();
+                        sendMessage(getResources().getString(R.string.hosts_in_area, hosts.size()), false);
 
-                        while (hostIter.hasNext()) {
-                            HostBriefInfo host = hostIter.next();
+                        for (HostBriefInfo host : hosts) {
                             GeoPoint point = host.getGeoPoint();
-
                             ManagedOverlayItem item = new ManagedOverlayItem(point, host.getFullname(), gson.toJson(host));
                             overlayItems.add(item);
                         }
                     } catch (TooManyHostsException e) {
                         int n = e.getNumHosts();
-                        showBigNumber((n > 1000) ? "1000+" : new Integer(n).toString());
+                        showBigNumber((n > 1000) ? "1000+" : Integer.toString(n));
                         sendMessage(getResources().getString(R.string.too_many_hosts), true);
                     } catch (HttpException e) {
-                        Log.e("WSAndroid", e.getMessage(), e);
+                        Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                         sendMessage(getResources().getString(R.string.error_loading_hosts), true);
                     }
                 } catch (Exception e) {
@@ -228,7 +216,7 @@ public class MapSearchTabActivity extends RoboMapActivity {
 
             public boolean onSingleTap(MotionEvent e, ManagedOverlay overlay, GeoPoint point, ManagedOverlayItem item) {
                 if (item != null) {
-                    showHostPopup(item.getTitle(), item.getSnippet());
+                    showHostPopup(item.getSnippet());
                 }
                 return true;
             }
@@ -256,16 +244,14 @@ public class MapSearchTabActivity extends RoboMapActivity {
         };
     }
 
-    private void showHostPopup(String title, String snippet) {
+    private void showHostPopup(String snippet) {
         host = gson.fromJson(snippet, HostBriefInfo.class);
         hostPopup.setTitle(host.getFullname());
         TextView location = (TextView) hostPopup.findViewById(R.id.lblMapPopupLocation);
         location.setText(host.getLocation());
-
         TextView distance = (TextView) hostPopup.findViewById(R.id.lblMapPopupDistance);
 
         Location loc1 = locationOverlay.getLastFix();
-
         GeoPoint hostPoint = host.getGeoPoint();
         Location loc2 = new Location("");
         loc2.setLatitude((float) hostPoint.getLatitudeE6() / 1.0e6);
@@ -283,15 +269,19 @@ public class MapSearchTabActivity extends RoboMapActivity {
     }
 
     private String getDistanceText(float d) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String unit = prefs.getString("distance_unit", "km");
-        if (unit.equals("mi")) {
-            float temp = d / 160.9344f;
-            return (Math.round(temp)) / 10.0f + " " + getResources().getString(R.string.mi_distance);
-        } else {
+        if (usingMetricSystem()) {
             float temp = d / 100.0f;
             return (Math.round(temp)) / 10.0f + " " + getResources().getString(R.string.km_distance);
+        } else {
+            float temp = d / 160.9344f;
+            return (Math.round(temp)) / 10.0f + " " + getResources().getString(R.string.mi_distance);
         }
+    }
+
+    private boolean usingMetricSystem() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String unit = prefs.getString("distance_unit", "km");
+        return unit.equals("km");
     }
 
     private void updateStatusMessage(String message, boolean error) {
@@ -354,10 +344,11 @@ public class MapSearchTabActivity extends RoboMapActivity {
 
 
     private void animateToMapTargetIfNeeded() {
+
         GeoPoint target = mapAnimator.getTarget();
         if (target != null && target.getLatitudeE6() != 0 && target.getLongitudeE6() != 0) {
             mapController.animateTo(target);
-            mapController.setZoom(16);
+            mapController.setZoom(HOST_FOCUS_ZOOM_LEVEL);
             mapView.invalidate();
         }
     }

@@ -1,7 +1,5 @@
 package fi.bitrite.android.ws.activity;
 
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+
+import java.util.List;
 
 public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
