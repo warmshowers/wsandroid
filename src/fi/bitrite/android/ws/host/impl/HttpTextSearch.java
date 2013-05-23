@@ -18,7 +18,7 @@ public class HttpTextSearch extends HttpReader implements Search {
      * Scrapes the standard WarmShowers list search page.
      */
     public List<HostBriefInfo> doSearch() {
-        String simpleUrl = "http://www.warmshowers.org/search/wsuser/" + text;
+        String simpleUrl = "https://www.warmshowers.org/search/wsuser/" + text;
         String html = getPage(simpleUrl);
         HttpTextSearchResultScraper scraper = new HttpTextSearchResultScraper(html);
         List<HostBriefInfo> hosts = scraper.getHosts();

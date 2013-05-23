@@ -31,13 +31,13 @@ public class MainActivity extends RoboTabActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         handleFirstRun();
-        
+
         setContentView(R.layout.main);
         setupTabs();
         setupCredentials();
-        
+
         if (savedInstanceState != null) {
             boolean splash = savedInstanceState.getBoolean("splash", false);
             if (splash) {

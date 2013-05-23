@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class RestUnreadCount extends RestClient {
 
-    private static final String WARMSHOWERS_UNREAD_COUNT_URL = "http://www.warmshowers.org/services/rest/message/unreadCount";
+    private static final String WARMSHOWERS_UNREAD_COUNT_URL = "https://www.warmshowers.org/services/rest/message/unreadCount";
 
     private static final Pattern p = Pattern.compile(".*(\\d+).*");
 

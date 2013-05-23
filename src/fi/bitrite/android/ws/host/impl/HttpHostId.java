@@ -14,7 +14,7 @@ public class HttpHostId extends HttpReader {
     }
 
     public int getHostId(String hostName) {
-        String simpleUrl = new StringBuilder("http://www.warmshowers.org/users/").append(hostName).toString();
+        String simpleUrl = new StringBuilder("https://www.warmshowers.org/users/").append(hostName).toString();
         String html = getPage(simpleUrl);
         HttpHostIdScraper scraper = new HttpHostIdScraper(html);
         return scraper.getId();

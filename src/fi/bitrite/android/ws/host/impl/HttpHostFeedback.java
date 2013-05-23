@@ -16,7 +16,7 @@ public class HttpHostFeedback extends HttpReader {
      * @return ArrayList
      */
     public ArrayList<Feedback> getFeedback(int id) {
-        String simpleUrl = new StringBuilder().append("http://www.warmshowers.org/user/")
+        String simpleUrl = new StringBuilder().append("https://www.warmshowers.org/user/")
                 .append(id).append("/json_recommendations").toString();
         String json = getPage(simpleUrl);
 

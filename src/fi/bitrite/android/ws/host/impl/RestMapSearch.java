@@ -12,7 +12,7 @@ import java.util.List;
 
 public class RestMapSearch extends RestClient implements Search {
 
-    private static final String WARMSHOWERS_MAP_SEARCH_URL = "http://www.warmshowers.org/services/rest/hosts/by_location";
+    private static final String WARMSHOWERS_MAP_SEARCH_URL = "https://www.warmshowers.org/services/rest/hosts/by_location";
 
     private final int numHostsCutoff;
     private final MapSearchArea searchArea;

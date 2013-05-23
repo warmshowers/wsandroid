@@ -35,8 +35,8 @@ import java.util.List;
  */
 public class HttpAuthenticator {
 
-	private static final String WARMSHOWERS_USER_AUTHENTICATION_URL = "http://www.warmshowers.org/services/rest/user/login";
-	private static final String WARMSHOWERS_USER_AUTHENTICATION_TEST_URL = "http://www.warmshowers.org/search/wsuser";
+	private static final String WARMSHOWERS_USER_AUTHENTICATION_URL = "https://www.warmshowers.org/services/rest/user/login";
+	private static final String WARMSHOWERS_USER_AUTHENTICATION_TEST_URL = "https://www.warmshowers.org/search/wsuser";
 
 	private String username;
 	private String authtoken;
