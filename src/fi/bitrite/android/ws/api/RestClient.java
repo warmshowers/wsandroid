@@ -27,7 +27,7 @@ public class RestClient extends HttpReader {
 
         try {
             HttpPost post = new HttpPost(url);
-            post.setEntity(new UrlEncodedFormEntity(params));
+            post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
             HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
             response = client.execute(post, httpContext);
         }
