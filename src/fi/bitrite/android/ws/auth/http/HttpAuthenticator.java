@@ -93,7 +93,6 @@ public class HttpAuthenticator {
      * Returns the user id after logging in or 0 if already logged in.
      */
 	public int authenticate(String username, String password) {
-        Log.d(WSAndroidApplication.TAG, "Logging in using username " + username);
 		HttpClient client = HttpUtils.getDefaultClient();
 		HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
 		CookieStore cookieStore = (CookieStore) httpContext.getAttribute(ClientContext.COOKIE_STORE);
@@ -114,7 +113,6 @@ public class HttpAuthenticator {
             }
 
             if (rawJson.contains("Already logged in")) {
-                Log.d(WSAndroidApplication.TAG, "Already logged in");
                 return 0;
             }
 
