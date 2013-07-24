@@ -17,10 +17,6 @@ public class RestHostContact extends RestClient implements HostContact {
 
     @Override
     public void send(String name, String subject, String message) {
-        if (!isAuthenticationPerformed()) {
-            authenticate();
-        }
-
         List<NameValuePair> args = new ArrayList<NameValuePair>();
         args.add(new BasicNameValuePair("recipients", name));
         args.add(new BasicNameValuePair("subject", subject));

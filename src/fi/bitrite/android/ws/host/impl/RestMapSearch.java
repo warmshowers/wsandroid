@@ -23,13 +23,6 @@ public class RestMapSearch extends RestClient implements Search {
     }
 
     public List<HostBriefInfo> doSearch() {
-        // The map search works even if we're not authenticated,
-        // but it returns less data. Easier to check first using
-        // a simple GET
-        if (!isAuthenticationPerformed()) {
-            authenticate();
-        }
-
         String json = getHostsJson();
         return new MapSearchJsonParser(json, numHostsCutoff).getHosts();
     }

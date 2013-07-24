@@ -15,10 +15,6 @@ public class RestUnreadCount extends RestClient {
     private static final Pattern p = Pattern.compile(".*(\\d+).*");
 
     public int getUnreadCount() {
-        if (!isAuthenticationPerformed()) {
-			authenticate();
-        }
-
         String json = getJson(WARMSHOWERS_UNREAD_COUNT_URL, Collections.<NameValuePair>emptyList());
         Matcher m = p.matcher(json);
         try {

@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.util.Log;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fi.bitrite.android.ws.WSAndroidApplication;
@@ -92,6 +93,7 @@ public class HttpAuthenticator {
      * Returns the user id after logging in or 0 if already logged in.
      */
 	public int authenticate(String username, String password) {
+        Log.d(WSAndroidApplication.TAG, "Logging in using username " + username);
 		HttpClient client = HttpUtils.getDefaultClient();
 		HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
 		CookieStore cookieStore = (CookieStore) httpContext.getAttribute(ClientContext.COOKIE_STORE);
@@ -106,7 +108,13 @@ public class HttpAuthenticator {
 
 			HttpEntity entity = response.getEntity();
 			String rawJson = EntityUtils.toString(entity, "UTF-8");
+
+            if (rawJson.contains("Wrong username or password")) {
+                throw new HttpAuthenticationFailedException("Wrong username or password");
+            }
+
             if (rawJson.contains("Already logged in")) {
+                Log.d(WSAndroidApplication.TAG, "Already logged in");
                 return 0;
             }
 

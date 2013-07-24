@@ -57,8 +57,9 @@ public class HttpReader {
             client.getConnectionManager().shutdown();
         }
 
-        if (responseCode == HttpStatus.SC_FORBIDDEN) {
-            if (!authenticationPerformed) {
+        if (responseCode == HttpStatus.SC_FORBIDDEN ||
+            responseCode == HttpStatus.SC_UNAUTHORIZED) {
+            if (!isAuthenticationPerformed()) {
                 authenticate();
                 html = getPage(simpleUrl);
             } else {

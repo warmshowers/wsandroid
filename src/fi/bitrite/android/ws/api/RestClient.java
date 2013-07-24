@@ -5,6 +5,7 @@ import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -17,7 +18,7 @@ import java.util.List;
 
 /**
  * Base class for classes that interface with the REST API via POST.
- * @see https://github.com/rfay/Warmshowers.org/wiki/Warmshowers-RESTful-Services-for-Mobile-Apps
+ * see https://github.com/rfay/Warmshowers.org/wiki/Warmshowers-RESTful-Services-for-Mobile-Apps
  */
 public class RestClient extends HttpReader {
 
@@ -30,6 +31,17 @@ public class RestClient extends HttpReader {
             post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
             HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
             response = client.execute(post, httpContext);
+
+            int responseCode = response.getStatusLine().getStatusCode();
+            if (responseCode == HttpStatus.SC_FORBIDDEN ||
+                responseCode == HttpStatus.SC_UNAUTHORIZED) {
+                if (!isAuthenticationPerformed()) {
+                    authenticate();
+                    return post(url, params);
+                } else {
+                    throw new HttpException("Couldn't authenticate user");
+                }
+            }
         }
 
         catch (Exception e) {
@@ -57,8 +69,21 @@ public class RestClient extends HttpReader {
             HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
             HttpResponse response = client.execute(post, httpContext);
 			HttpEntity entity = response.getEntity();
+
+            int responseCode = response.getStatusLine().getStatusCode();
+            if (responseCode == HttpStatus.SC_FORBIDDEN ||
+                responseCode == HttpStatus.SC_UNAUTHORIZED) {
+                if (!isAuthenticationPerformed()) {
+                    authenticate();
+                    return getJson(url, params);
+                } else {
+                    throw new HttpException("Couldn't authenticate user");
+                }
+            }
+
             json = EntityUtils.toString(entity, "UTF-8");
-		}
+
+        }
 
         catch (IOException e) {
             throw new HttpException(e.getMessage());
