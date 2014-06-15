@@ -72,6 +72,7 @@ public class ListSearchTabActivity extends RoboActivity {
                 HostBriefInfo briefInfo = (HostBriefInfo) listSearchResult.getItemAtPosition(position);
                 Host host = Host.createFromBriefInfo(briefInfo);
                 i.putExtra("host", host);
+				i.putExtra("id", briefInfo.getId());
                 startActivityForResult(i, 0);
             }
         });

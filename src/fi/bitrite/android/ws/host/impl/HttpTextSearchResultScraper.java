@@ -1,31 +1,25 @@
 package fi.bitrite.android.ws.host.impl;
 
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import fi.bitrite.android.ws.activity.model.HostInformation;
+import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.http.HttpException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.util.http.HttpException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HttpTextSearchResultScraper {
 
-    private static final String HOST_NODE_XPATH     = "//h2[text()=\"Search results\"]/following-sibling::div/table/tbody/tr";
-
-    private static final String HOST_FULLNAME_XPATH = "td[1]/a[1]/text()";
-    private static final String HOST_URL_XPATH      = "td[1]/a[1]/@href";
-    private static final String HOST_LOCATION_XPATH = "td[1]/a[2]/text()";
-    private static final String HOST_COMMENTS_XPATH = "td[2]/p/text()";
+    private static final String HOST_NODE_XPATH     = "//tbody/tr";
 
     private final String html;
 
@@ -35,31 +29,40 @@ public class HttpTextSearchResultScraper {
 
     public List<HostBriefInfo> getHosts() {
         try {
+			String body = html.substring(html.indexOf("<body"));
+			String full = "<html>" + body;
+
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                    .parse(new InputSource(new StringReader(html)));
+                    .parse(new InputSource(new StringReader(full)));
 
             XPath xpath = XPathFactory.newInstance().newXPath();
             XPathExpression expr = xpath.compile(HOST_NODE_XPATH);
 
             NodeList hostNodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 
-            XPathExpression nameExpr = xpath.compile(HOST_URL_XPATH);
-            XPathExpression fullnameExpr = xpath.compile(HOST_FULLNAME_XPATH);
-            XPathExpression locationExpr = xpath.compile(HOST_LOCATION_XPATH);
-            XPathExpression commentsExpr = xpath.compile(HOST_COMMENTS_XPATH);
-
             List<HostBriefInfo> hostList = new ArrayList<HostBriefInfo>();
             for (int i = 0; i < hostNodes.getLength(); i++) {
                 Node hostNode = hostNodes.item(i);
 
-                String hostUrl = nameExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
-                String name = getNameFromHostUrl(hostUrl);
-                
-                String fullname = fullnameExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
-                String location = locationExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
-                String comments = commentsExpr.evaluate(hostNode, XPathConstants.STRING).toString().trim();
+				String fullname = hostNode.getFirstChild().getFirstChild().getTextContent().trim();
+				String hostUrl = hostNode.getFirstChild().getFirstChild().getAttributes().getNamedItem("href").getTextContent();
+				String name = hostUrl.substring(hostUrl.lastIndexOf("/") + 1);
 
-                hostList.add(new HostBriefInfo(0, name, fullname, location, comments));
+				int id = HostInformation.NO_ID;
+
+				try {
+					id = Integer.parseInt(name);
+					name = null;
+				}
+
+				catch (NumberFormatException e) {
+					// do nothing
+				}
+
+				String location = hostNode.getFirstChild().getFirstChild().getNextSibling().getNextSibling().getTextContent().trim();
+				String comments = hostNode.getFirstChild().getNextSibling().getTextContent();
+
+                hostList.add(new HostBriefInfo(id, name, fullname, location, comments));
             }
 
             return hostList;

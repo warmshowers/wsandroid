@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -67,6 +69,8 @@ public class HostInformationActivity extends RoboActivity {
     TextView memberSince;
     @InjectView(R.id.txtLastLogin)
     TextView lastLogin;
+	@InjectView(R.id.txtViewOnSite)
+	TextView viewOnSite;
     @InjectView(R.id.txtHostLocation)
     TextView location;
     @InjectView(R.id.txtHostMobilePhone)
@@ -258,7 +262,7 @@ public class HostInformationActivity extends RoboActivity {
     private void updateViewContent() {
         Host host = hostInfo.getHost();
 
-        comments.setText(host.getComments());
+		comments.setText(host.getComments());
         location.setText(host.getLocation());
         memberSince.setText(host.getMemberSince());
         lastLogin.setText(host.getLastLogin());
@@ -271,6 +275,10 @@ public class HostInformationActivity extends RoboActivity {
         campground.setText(host.getCampground());
         bikeShop.setText(host.getBikeshop());
         services.setText(host.getServices());
+
+		viewOnSite.setText(Html.fromHtml("<a href=\"https://www.warmshowers.org/user/" + hostInfo.getId() + "\">" + getResources().getString(R.string.view_on_site) + "</a>"));
+		viewOnSite.setMovementMethod(LinkMovementMethod.getInstance());
+		viewOnSite.setClickable(true);
 
         List<Feedback> feedback = hostInfo.getFeedback();
         sort(feedback);
