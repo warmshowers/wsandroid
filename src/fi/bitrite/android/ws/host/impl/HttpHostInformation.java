@@ -13,9 +13,9 @@ import roboguice.util.Strings;
  */
 public class HttpHostInformation extends HttpReader {
 
-    public Host getHostInformation(int id) {
+    public Host getHostInformation(String username) {
         String simpleUrl = new StringBuilder().append("https://www.warmshowers.org/user/")
-        .append(id).append("/json").toString();
+        .append(username).append("/json").toString();
         String json = getPage(simpleUrl);
 
         try {

@@ -12,6 +12,7 @@ import android.os.Parcelable;
  */
 /* package */ abstract class _Host implements Parcelable {
 
+    protected int mUid;
     protected String mName;
     protected String mFullname;
     protected String mStreet;
@@ -43,8 +44,9 @@ import android.os.Parcelable;
     protected String mLogin;
     protected String mCreated;
 
-    protected _Host(String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude, String login, String created) {
+    protected _Host(int uid, String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude, String login, String created) {
         this();
+        mUid = uid;
         mName = name;
         mFullname = fullname;
         mStreet = street;
@@ -81,6 +83,7 @@ import android.os.Parcelable;
         super();
     }
 
+    public int getUid() { return mUid; }
     public String getName() {
          return mName;
     }
@@ -177,6 +180,7 @@ import android.os.Parcelable;
     }
 
     public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeInt(mUid);
         parcel.writeString(mName);
         parcel.writeString(mFullname);
         parcel.writeString(mStreet);
@@ -210,6 +214,7 @@ import android.os.Parcelable;
     }
 
     public void readFromParcel(Parcel source) {
+        mUid = source.readInt();
         mName = source.readString();
         mFullname = source.readString();
         mStreet = source.readString();
@@ -243,6 +248,7 @@ import android.os.Parcelable;
     }
 
     public void readFromJson(JSONObject json) throws JSONException {
+        mUid = json.optInt("uid");
         if (!json.isNull("name")) {
             mName = json.optString("name");
         }

@@ -297,14 +297,10 @@ public class HostInformationActivity extends RoboActivity {
             try {
                 HttpHostInformation httpHostInfo = new HttpHostInformation();
                 HttpHostFeedback hostFeedback = new HttpHostFeedback();
-                int id = hostInfo.getId();
+                String username = hostInfo.getHost().getName();
 
-                if (id == HostInformation.NO_ID) {
-                    HttpHostId httpHostId = new HttpHostId(hostInfo.getHost().getName());
-                    id = httpHostId.getHostId(hostInfo.getHost().getName());
-                }
-
-                Host host = httpHostInfo.getHostInformation(id);
+                Host host = httpHostInfo.getHostInformation(username);
+                int id = host.getUid();
                 ArrayList<Feedback> feedback = hostFeedback.getFeedback(id);
                 hostInfo = new HostInformation(host, feedback, id, false);
 
