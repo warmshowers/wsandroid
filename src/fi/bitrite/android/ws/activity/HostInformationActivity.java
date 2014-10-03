@@ -17,7 +17,6 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.activity.model.HostInformation;
 import fi.bitrite.android.ws.host.impl.HttpHostFeedback;
-import fi.bitrite.android.ws.host.impl.HttpHostId;
 import fi.bitrite.android.ws.host.impl.HttpHostInformation;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
@@ -127,7 +126,7 @@ public class HostInformationActivity extends RoboActivity {
                 shouldDownloadHostInfo = false;
             } else {
                 if (hostInfo.isStarred()) {
-                    hostInfo.setHost(starredHostDao.getHost(hostInfo.getId(), hostInfo.getHost().getName()));
+                    hostInfo.setHost(starredHostDao.getHost(hostInfo.getId()));
                     hostInfo.setFeedback(starredHostDao.getFeedback(hostInfo.getId(), hostInfo.getHost().getName()));
                     forceUpdate = i.getBooleanExtra("update", false);
                     shouldDownloadHostInfo = forceUpdate;
@@ -297,12 +296,11 @@ public class HostInformationActivity extends RoboActivity {
             try {
                 HttpHostInformation httpHostInfo = new HttpHostInformation();
                 HttpHostFeedback hostFeedback = new HttpHostFeedback();
-                String username = hostInfo.getHost().getName();
+                int uid = hostInfo.getHost().getUid();
 
-                Host host = httpHostInfo.getHostInformation(username);
-                int id = host.getUid();
-                ArrayList<Feedback> feedback = hostFeedback.getFeedback(id);
-                hostInfo = new HostInformation(host, feedback, id, false);
+                Host host = httpHostInfo.getHostInformation(uid);
+                ArrayList<Feedback> feedback = hostFeedback.getFeedback(uid);
+                hostInfo = new HostInformation(host, feedback, uid, false);
 
             } catch (Exception e) {
                 Log.e(WSAndroidApplication.TAG, e.getMessage(), e);

@@ -39,9 +39,6 @@ import org.json.JSONObject;
     public String getId() {
          return mId;
     }
-    public String getUid() {
-         return mUid;
-    }
     public String getFullname() {
          return mFullname;
     }

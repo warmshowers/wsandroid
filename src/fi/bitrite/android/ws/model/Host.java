@@ -16,6 +16,7 @@ public class Host extends _Host {
 
     public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
         Host host = new Host();
+        host.mId = briefInfo.getId();
         host.mName = briefInfo.getName();
         host.mFullname = briefInfo.getFullname();
         host.mComments = briefInfo.getComments();

@@ -131,7 +131,7 @@ public class ListSearchTabActivity extends RoboActivity {
         protected Object doInBackground(Search... params) {
             Search search = params[0];
             Object retObj;
-            
+
             try {
                 retObj = search.doSearch();
             }

@@ -4,7 +4,7 @@ import com.google.android.maps.GeoPoint;
 
 public interface SearchFactory {
 
-    public Search createTextSearch(String text);
+    public Search createTextSearch(String keyword);
     public Search createMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff);
 
 }

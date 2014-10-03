@@ -10,7 +10,7 @@ public interface StarredHostDao {
 
     public void insert(int id, String name, Host host, List<Feedback> feedback);
 
-    public Host getHost(int id, String name);
+    public Host getHost(int id);
 
     public List<Feedback> getFeedback(int id, String name);
 
