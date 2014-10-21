@@ -52,7 +52,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
         database.insert(DbHelper.TABLE_HOSTS, null, values);
     }
 
-    public Host getHost(int id, String name) {
+    public Host getHost(int id) {
         Cursor cursor;
         
         if (id > 0) {
@@ -60,7 +60,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
                     DbHelper.COLUMN_UPDATED }, DbHelper.COLUMN_ID + " = " + id, null, null, null, null);
         } else {
             cursor = database.query(DbHelper.TABLE_HOSTS, new String[] { DbHelper.COLUMN_NAME, DbHelper.COLUMN_DETAILS,
-                    DbHelper.COLUMN_UPDATED }, DbHelper.COLUMN_NAME + " = '" + name + "'", null, null, null, null);
+                    DbHelper.COLUMN_UPDATED }, DbHelper.COLUMN_NAME + " = '" + id + "'", null, null, null, null);
         }
 
         if (cursor.getCount() == 0) {
@@ -162,6 +162,6 @@ public class StarredHostDaoImpl implements StarredHostDao {
     }
     
     public boolean isHostStarred(int id, String name) {
-        return (getHost(id, name) != null);
+        return (getHost(id) != null);
     }
 }
