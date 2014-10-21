@@ -5,3 +5,6 @@ AndroidManifest.out.xml
 .settings
 *.iml
 .idea/
+build
+.gradle
+local.properties
