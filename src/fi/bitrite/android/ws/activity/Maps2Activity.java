@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
@@ -51,6 +52,34 @@ public class Maps2Activity extends FragmentActivity implements
     private ClusterManager<HostBriefInfo> mClusterManager;
     private Cluster<HostBriefInfo> mLastClickedCluster;
 
+    /**
+     * Add the title and snippet to the marker so that infoWindow can be rendered.
+     */
+    private class HostRenderer extends DefaultClusterRenderer<HostBriefInfo> {
+        private final IconGenerator mIconGenerator = new IconGenerator(getApplicationContext());
+        private final IconGenerator mClusterIconGenerator = new IconGenerator(getApplicationContext());
+
+        public HostRenderer() {
+            super(getApplicationContext(), mMap, mClusterManager);
+        }
+
+        @Override
+        protected void onBeforeClusterRendered(Cluster<HostBriefInfo> cluster, MarkerOptions markerOptions) {
+            super.onBeforeClusterRendered(cluster, markerOptions);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(HostBriefInfo hostBriefInfo, MarkerOptions markerOptions) {
+            markerOptions.title(hostBriefInfo.getFullname()).snippet(hostBriefInfo.getLocation());
+        }
+
+        @Override
+        protected boolean shouldRenderAsCluster(Cluster cluster) {
+            // Always render clusters.
+            return cluster.getSize() > 1;
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +96,7 @@ public class Maps2Activity extends FragmentActivity implements
         mClusterManager.setOnClusterInfoWindowClickListener(this);
         mClusterManager.setOnClusterItemClickListener(this);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+        mClusterManager.setRenderer(new HostRenderer());
         mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
         mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
     }
