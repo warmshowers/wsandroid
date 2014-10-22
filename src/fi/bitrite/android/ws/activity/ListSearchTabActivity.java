@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
@@ -86,14 +87,21 @@ public class ListSearchTabActivity extends RoboActivity {
             }
         });
 
+        // Hide the SearchResults header by default
         mSearchResultsLayout.setVisibility(View.INVISIBLE);
+        mSearchResultsLayout.getLayoutParams().height = 0;
+
         Intent receivedIntent = getIntent();
         if (receivedIntent.hasExtra("search_results")) {
             listSearchHosts = receivedIntent.getParcelableArrayListExtra("search_results");
             if (!listSearchHosts.isEmpty()) {
+                // Hide the SearchEdit
                 mSearchEditLayout.setVisibility(View.INVISIBLE);
                 mSearchEditLayout.getLayoutParams().height = 0;
+                // Show the search results header
                 mSearchResultsLayout.setVisibility(View.VISIBLE);
+                mSearchResultsLayout.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+
                 mMultipleHostsAddress.setText(listSearchHosts.get(0).getLocation());
                 mHostsAtAddress.setText(getString(R.string.host_count, listSearchHosts.size()));
             }
