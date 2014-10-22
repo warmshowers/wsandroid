@@ -53,6 +53,18 @@
             android:autoLink="web"
             android:gravity="center_horizontal"
             android:text="@string/about_3" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp" />
+        <TextView
+            android:id="@+id/txtAboutDetailsGoogle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:text="Some dummy text" />
     </LinearLayout>
 
 </ScrollView>

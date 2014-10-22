@@ -4,14 +4,20 @@ import roboguice.activity.RoboTabActivity;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
@@ -166,6 +172,8 @@ public class MainActivity extends RoboTabActivity  {
     private void showAboutDialog() {
         splashDialog = new Dialog(this, R.style.about_dialog);
         splashDialog.setContentView(R.layout.about);
+        TextView googleDetails = (TextView)splashDialog.findViewById(R.id.txtAboutDetailsGoogle);
+        googleDetails.setText(GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this));
         splashDialog.show();
     }
 
