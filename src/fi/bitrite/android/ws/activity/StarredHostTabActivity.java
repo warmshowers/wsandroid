@@ -16,7 +16,6 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
-//import fi.bitrite.android.ws.util.MapAnimator;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -33,8 +32,6 @@ public class StarredHostTabActivity extends RoboActivity {
     @Inject StarredHostDao starredHostDao;
     private List<HostBriefInfo> starredHosts;
 
-//    @Inject MapAnimator mapAnimator;
-    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
