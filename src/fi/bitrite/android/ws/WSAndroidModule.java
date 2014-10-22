@@ -1,8 +1,8 @@
 package fi.bitrite.android.ws;
 
+import fi.bitrite.android.ws.host.SearchFactory;
 import fi.bitrite.android.ws.host.impl.WsSearchFactory;
 import roboguice.config.AbstractAndroidModule;
-import fi.bitrite.android.ws.host.SearchFactory;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
 

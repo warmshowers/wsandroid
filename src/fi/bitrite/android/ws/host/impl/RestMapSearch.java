@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.host.impl;
 
-import com.google.android.maps.GeoPoint;
+import com.google.android.gms.maps.model.LatLng;
+
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.model.HostBriefInfo;
@@ -13,18 +14,17 @@ import java.util.List;
 public class RestMapSearch extends RestClient implements Search {
 
     private static final String WARMSHOWERS_MAP_SEARCH_URL = "https://www.warmshowers.org/services/rest/hosts/by_location";
+    private int numHostsCutoff = 800;
 
-    private final int numHostsCutoff;
     private final MapSearchArea searchArea;
 
-    public RestMapSearch(GeoPoint topLeft, GeoPoint bottomRight, int numHostsCutoff) {
-        this.searchArea = MapSearchArea.fromGeoPoints(topLeft, bottomRight);
-        this.numHostsCutoff = numHostsCutoff; 
+    public RestMapSearch(LatLng northEast, LatLng southWest) {
+        this.searchArea = MapSearchArea.fromLatLngs(northEast, southWest);
     }
 
     public List<HostBriefInfo> doSearch() {
         String json = getHostsJson();
-        return new MapSearchJsonParser(json, numHostsCutoff).getHosts();
+        return new MapSearchJsonParser(json).getHosts();
     }
 
     private String getHostsJson() {

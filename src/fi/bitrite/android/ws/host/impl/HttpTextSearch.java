@@ -47,7 +47,7 @@ public class HttpTextSearch extends RestClient implements Search {
                 JSONObject account = (JSONObject) (hostJson.get(Integer.toString(uid)));
                 String username = (String) account.get("name");
                 String fullname = (String) account.get("fullname");
-                String location = account.get("city") + ", " + account.get("province") + " " + account.get("country");
+                String location = account.get("city") + ", " + account.get("province");
                 String comments = (String) account.get("comments");
                 HostBriefInfo bi = new HostBriefInfo(uid, username, fullname, location, comments);
                 list.add(bi);

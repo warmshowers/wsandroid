@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WSAndroid</string>
-    <string name="app_title">"WarmShowers for Android\nVersion: 1.3.5"</string>
+    <string name="app_title">"WarmShowers for Android\nVersion: 1.4.0"</string>
     <string name="label">WarmShowers for Android</string>
     <string name="authenticating">Authenticating …</string>
     <string name="need_account">Cannot run without WarmShowers credentials</string>
@@ -63,7 +63,7 @@
     <string name="message_sent">Message sent successfully.</string>
     <string name="about_1">"Developed by Johannes Staffans (WS: jstaffans)\njohannes.staffans\u0040gmail.com"</string>
     <string name="about_2">"Thanks to Randy Fay and Chris Meyer for support during development.</string>
-    <string name="about_3">"This application is open source under the Apache 2.0 license. You can help out at:\nhttps://github.com/jstaffans/wsandroid</string>
+    <string name="about_3">"This application is open source under the Apache 2.0 license. You can help out at:\nhttps://github.com/warmshowers/wsandroid</string>
     <string name="feedback">Feedback</string>
     <string name="error_retrieving_messages">An error occurred while retrieving messages.</string>
     <string name="messages_in_progress">Retrieving messages...</string>
@@ -73,5 +73,8 @@
     <string name="updateMessages">Update</string>
     <string name="loading_hosts">Loading hosts ...</string>
     <string name="hosts_in_area">%1$s hosts in area.</string>
+    <string name="hosts_at_location">%1$s hosts at %2$s</string>
 	<string name="view_on_site">View on website</string>
+    <string name="host_count">%1$d hosts at this location</string>
+    <string name="click_to_view_all"><strong>Click to view all</strong></string>
 </resources>

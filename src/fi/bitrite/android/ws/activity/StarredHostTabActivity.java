@@ -16,7 +16,7 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
-import fi.bitrite.android.ws.util.MapAnimator;
+//import fi.bitrite.android.ws.util.MapAnimator;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -33,7 +33,7 @@ public class StarredHostTabActivity extends RoboActivity {
     @Inject StarredHostDao starredHostDao;
     private List<HostBriefInfo> starredHosts;
 
-    @Inject MapAnimator mapAnimator;
+//    @Inject MapAnimator mapAnimator;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,12 +104,6 @@ public class StarredHostTabActivity extends RoboActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == HostInformationActivity.RESULT_SHOW_HOST_ON_MAP) {
-            MainActivity parent = (MainActivity) this.getParent();
-            parent.stashHost(data, 0);
-            mapAnimator.prepareToAnimateToHost(data);
-            parent.switchTab(2);
-        }
     }
 
     @Override
