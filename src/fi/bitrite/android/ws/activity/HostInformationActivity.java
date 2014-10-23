@@ -21,6 +21,7 @@ import fi.bitrite.android.ws.host.impl.HttpHostInformation;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
+import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.view.FeedbackTable;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
@@ -261,7 +262,9 @@ public class HostInformationActivity extends RoboActivity {
     private void updateViewContent() {
         Host host = hostInfo.getHost();
 
-		comments.setText(host.getComments());
+        // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
+        comments.setText(Tools.siteHtmlToHtml(host.getComments()));
+
         location.setText(host.getLocation());
         memberSince.setText(host.getMemberSince());
         lastLogin.setText(host.getLastLogin());
