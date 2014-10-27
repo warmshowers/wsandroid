@@ -4,14 +4,15 @@ import roboguice.util.Strings;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.android.maps.GeoPoint;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
 import com.yelp.parcelgen.JsonParser.DualCreator;
 
 
 /**
  * Used for passing search results. More in-depth information is handled by the Host object.
  */
-public class HostBriefInfo implements Parcelable {
+public class HostBriefInfo implements Parcelable, ClusterItem {
 
     private int id;
     private String name;
@@ -93,13 +94,11 @@ public class HostBriefInfo implements Parcelable {
         return updated;
     }
 
-    public GeoPoint getGeoPoint() {
-        return new GeoPoint((int) Math.round(new Float(getLatitude()).floatValue() * 1e6),
-            (int) Math.round(new Float(getLongitude()).floatValue() * 1e6));
+    public LatLng getLatLng() {
+        return new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
     }
     
     public int describeContents() {
-        // TODO Auto-generated method stub
         return 0;
     }
     
@@ -134,5 +133,10 @@ public class HostBriefInfo implements Parcelable {
         comments = src.readString();
         longitude = src.readString();
         latitude = src.readString();
-    }   
+    }
+
+    @Override
+    public LatLng getPosition() {
+        return new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+    }
 }

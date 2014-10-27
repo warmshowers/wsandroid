@@ -14,11 +14,9 @@ import java.util.List;
 public class MapSearchJsonParser {
 
     private final String json;
-    private final int numHostsCutoff;
-    
-    public MapSearchJsonParser(String json, int numHostsCutoff) {
+
+    public MapSearchJsonParser(String json) {
         this.json = json;
-        this.numHostsCutoff = numHostsCutoff;
     }
 
     public List<HostBriefInfo> getHosts() {
@@ -28,11 +26,6 @@ public class MapSearchJsonParser {
 
             if (!isComplete(jsonObj)) {
                 throw new IncompleteResultsException("Could not retrieve hosts. Try again.");
-            }
-
-            int numHosts = getNumHosts(jsonObj);
-            if (numHosts > numHostsCutoff) {
-                throw new TooManyHostsException(numHosts);
             }
 
             return parseHosts(jsonObj);
@@ -74,11 +67,16 @@ public class MapSearchJsonParser {
 
             StringBuilder location = new StringBuilder();
             location.append(hostObj.get("street").getAsString());
+            if (location.length() > 0) {
+                location.append(", ");
+            }
 
-            if (location.length() == 0) {
-                location.append(hostObj.get("city").getAsString()).append(", ")
-                        .append(hostObj.get("postal_code").getAsString()).append(", ")
-                        .append(hostObj.get("country").getAsString().toUpperCase());
+            location.append(
+                hostObj.get("city").getAsString()).append(", ")
+                    .append(hostObj.get("province").getAsString().toUpperCase());
+
+            if (hostObj.get("postal_code").getAsString().length() > 0 && 0 != hostObj.get("postal_code").getAsString().compareToIgnoreCase("none")) {
+                location.append(" " + hostObj.get("postal_code").getAsString());
             }
 
             String lat = hostObj.get("latitude").getAsString();

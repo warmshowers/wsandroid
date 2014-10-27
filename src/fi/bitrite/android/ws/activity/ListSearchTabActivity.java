@@ -8,19 +8,20 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 import com.google.inject.Inject;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.util.MapAnimator;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -32,20 +33,29 @@ public class ListSearchTabActivity extends RoboActivity {
     @InjectView(R.id.btnListSearch) ImageView listSearchButton;
     @InjectView(R.id.lstSearchResult) ListView listSearchResult;
 
-    @Inject SearchFactory searchFactory;
-    
-    @Inject MapAnimator mapAnimator;
+    @Inject
+    SearchFactory searchFactory;
 
     private ArrayList<HostBriefInfo> listSearchHosts;
     
     private DialogHandler dialogHandler;
     private TextSearchTask textSearchTask;
+    private LinearLayout mSearchEditLayout;
+    private LinearLayout mSearchResultsLayout;
+    private TextView mMultipleHostsAddress;
+    private TextView mHostsAtAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_tab);
         dialogHandler = new DialogHandler(this);
+
+        mSearchEditLayout = (LinearLayout)findViewById(R.id.searchEditLayout);
+        mSearchResultsLayout = (LinearLayout)findViewById(R.id.listSummaryLayout);
+        mMultipleHostsAddress = (TextView)findViewById(R.id.multipleHostAddress);
+        mHostsAtAddress = (TextView)findViewById(R.id.hostsAtAddress);
+
         setupListSearch(savedInstanceState);
     }
 
@@ -76,19 +86,38 @@ public class ListSearchTabActivity extends RoboActivity {
                 startActivityForResult(i, 0);
             }
         });
-        
-        if (savedInstanceState != null) {
+
+        // Hide the SearchResults header by default
+        mSearchResultsLayout.setVisibility(View.INVISIBLE);
+        mSearchResultsLayout.getLayoutParams().height = 0;
+
+        Intent receivedIntent = getIntent();
+        if (receivedIntent.hasExtra("search_results")) {
+            listSearchHosts = receivedIntent.getParcelableArrayListExtra("search_results");
+            if (!listSearchHosts.isEmpty()) {
+                // Hide the SearchEdit
+                mSearchEditLayout.setVisibility(View.INVISIBLE);
+                mSearchEditLayout.getLayoutParams().height = 0;
+                // Show the search results header
+                mSearchResultsLayout.setVisibility(View.VISIBLE);
+                mSearchResultsLayout.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+
+                mMultipleHostsAddress.setText(listSearchHosts.get(0).getLocation());
+                mHostsAtAddress.setText(getString(R.string.host_count, listSearchHosts.size()));
+            }
+        }
+        else if (savedInstanceState != null) {
             listSearchHosts = savedInstanceState.getParcelableArrayList("list_search_hosts");
-            boolean inProgress = DialogHandler.inProgress();
-            if (listSearchHosts != null) {
-                listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
-                        R.layout.host_list_item, listSearchHosts));
-            }
-            
-            if (inProgress) {
-                dialogHandler.dismiss();
-                doTextSearch(savedInstanceState.getString("search_text"));
-            }
+        }
+        boolean inProgress = DialogHandler.inProgress();
+        if (listSearchHosts != null) {
+            listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
+                    R.layout.host_list_item, listSearchHosts));
+        }
+
+        if (inProgress) {
+            dialogHandler.dismiss();
+            doTextSearch(savedInstanceState.getString("search_text"));
         }
     }
     
@@ -105,12 +134,6 @@ public class ListSearchTabActivity extends RoboActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == HostInformationActivity.RESULT_SHOW_HOST_ON_MAP) {
-            MainActivity parent = (MainActivity) this.getParent();
-            parent.stashHost(data, 1);
-            mapAnimator.prepareToAnimateToHost(data);
-            parent.switchTab(2);
-        }
     }
 
     @Override
@@ -119,7 +142,7 @@ public class ListSearchTabActivity extends RoboActivity {
     }
 
     public void doTextSearch(String text) {
-        dialogHandler.showDialog(DialogHandler.TEXT_SEARCH);        
+        dialogHandler.showDialog(DialogHandler.TEXT_SEARCH);
         Search search = searchFactory.createTextSearch(text);
         textSearchTask = new TextSearchTask();
         textSearchTask.execute(search);
