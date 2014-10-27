@@ -1,6 +1,8 @@
 package fi.bitrite.android.ws.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -11,11 +13,15 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -43,14 +49,62 @@ public class Maps2Activity extends FragmentActivity implements
         ClusterManager.OnClusterInfoWindowClickListener<HostBriefInfo>,
         ClusterManager.OnClusterItemClickListener<HostBriefInfo>,
         ClusterManager.OnClusterItemInfoWindowClickListener<HostBriefInfo>,
-        GoogleMap.OnCameraChangeListener {
+        GoogleMap.OnCameraChangeListener,
+        GooglePlayServicesClient.ConnectionCallbacks,
+        GooglePlayServicesClient.OnConnectionFailedListener {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapSearchTask searchTask;
-    private DialogHandler dialogHandler;
     private ConcurrentHashMap<Integer, HostBriefInfo> mHosts = new ConcurrentHashMap<Integer, HostBriefInfo>();
     private ClusterManager<HostBriefInfo> mClusterManager;
     private Cluster<HostBriefInfo> mLastClickedCluster;
+    private final static int  CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    LocationClient mLocationClient;
+    private boolean mPlayServicesConnectionStatus = false;
+    private static final String TAG = "Maps2Activity";
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.i(TAG, "Connected to location services");
+        mPlayServicesConnectionStatus = true;
+        setMapLocation();
+
+    }
+
+    @Override
+    public void onDisconnected() {
+        Log.i(TAG, "Disconnected from location services");
+        mPlayServicesConnectionStatus = false;
+        Toast.makeText(this, "Disconnected from location services. Please re-connect.",
+                Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(
+                        this,
+                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                /*
+                 * Thrown if Google Play services canceled the original
+                 * PendingIntent
+                 */
+            } catch (IntentSender.SendIntentException e) {
+                // Log the error
+                e.printStackTrace();
+            }
+        } else {
+            /*
+             * If no resolution is available, display a dialog to the
+             * user with the error.
+             */
+//            showErrorDialog(connectionResult.getErrorCode());
+        }
+
+    }
 
     /**
      * Add the title and snippet to the marker so that infoWindow can be rendered.
@@ -88,6 +142,9 @@ public class Maps2Activity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        mLocationClient = new LocationClient(this, this, this);
+
         setUpMapIfNeeded();
 
         mMap.setOnCameraChangeListener(this);
@@ -154,6 +211,18 @@ public class Maps2Activity extends FragmentActivity implements
         setUpMapIfNeeded();
     }
 
+    @Override
+    protected void onStop() {
+        mLocationClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mLocationClient.connect();
+    }
+
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
@@ -183,7 +252,20 @@ public class Maps2Activity extends FragmentActivity implements
     }
 
     private void setUpMap() {
+
         mMap.setMyLocationEnabled(true);
+
+    }
+
+    void setMapLocation() {
+        Log.d(TAG, "About to request getLastLocation, connectionstatus=" + mPlayServicesConnectionStatus);
+        Location myLocation = mLocationClient.getLastLocation();
+
+        LatLng curLatLng = new LatLng(myLocation.getLatitude(),
+                myLocation.getLongitude());
+        int zoom = getResources().getInteger(R.integer.map_initial_zoom);
+        int other = R.integer.map_initial_zoom;
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLatLng, (float)zoom));
 
     }
 

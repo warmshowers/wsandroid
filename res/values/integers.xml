@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="cluster_explode_padding">250</integer>
+    <integer name="map_initial_zoom">9</integer>
 </resources>
