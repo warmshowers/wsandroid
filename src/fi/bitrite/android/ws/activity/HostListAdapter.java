@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.Tools;
 
 import java.util.List;
 
@@ -39,7 +41,9 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
         fullname.setText(host.getFullname());
         location.setText(host.getLocation());
-        comments.setText(host.getComments());
+        
+        // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
+        comments.setText(Tools.siteHtmlToHtml(host.getComments()));
         
         if (host.getUpdated() != null) {
             updated.setText(getContext().getResources().getString(R.string.last_updated) + " " + host.getUpdated());
