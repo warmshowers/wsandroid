@@ -23,7 +23,6 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
 
@@ -68,8 +67,13 @@ public class Maps2Activity extends FragmentActivity implements
         }
 
         @Override
-        protected void onBeforeClusterItemRendered(HostBriefInfo hostBriefInfo, MarkerOptions markerOptions) {
-            markerOptions.title(hostBriefInfo.getFullname()).snippet(hostBriefInfo.getLocation());
+        protected void onBeforeClusterItemRendered(HostBriefInfo host, MarkerOptions markerOptions) {
+            String street = host.getStreet();
+            String snippet = host.getCity() + ", " + host.getProvince().toUpperCase();
+            if (street != null && street.length() > 0) {
+                snippet = street + "<br/>" + snippet;
+            }
+            markerOptions.title(host.getFullname()).snippet(snippet);
         }
 
         @Override
@@ -220,7 +224,7 @@ public class Maps2Activity extends FragmentActivity implements
             // Offset from edge of map in pixels when exploding cluster
             int padding = getResources().getInteger(R.integer.cluster_explode_padding);
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            mMap.moveCamera(cu);
+            mMap.animateCamera(cu);
             return true; // No more processing needed for this click.
         }
         // If there was nothing in the bounds, normal handling with info window.
@@ -324,10 +328,9 @@ public class Maps2Activity extends FragmentActivity implements
                 mPopup = mInflater.inflate(R.layout.single_host_infowindow, null);
             }
             TextView titleView = (TextView) mPopup.findViewById(R.id.title);
-//            titleView.setText(marker.getTitle());
-
+            titleView.setText(marker.getTitle());
             TextView snippetView = (TextView) mPopup.findViewById(R.id.snippet);
-            snippetView.setText(marker.getSnippet());
+            snippetView.setText(Html.fromHtml(marker.getSnippet()));
             return (mPopup);
         }
     }
