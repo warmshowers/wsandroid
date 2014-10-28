@@ -1,4 +1,5 @@
 package fi.bitrite.android.ws.activity;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -56,8 +57,6 @@ public class Maps2Activity extends FragmentActivity implements
      * Add the title and snippet to the marker so that infoWindow can be rendered.
      */
     private class HostRenderer extends DefaultClusterRenderer<HostBriefInfo> {
-        private final IconGenerator mIconGenerator = new IconGenerator(getApplicationContext());
-        private final IconGenerator mClusterIconGenerator = new IconGenerator(getApplicationContext());
 
         public HostRenderer() {
             super(getApplicationContext(), mMap, mClusterManager);
@@ -99,6 +98,8 @@ public class Maps2Activity extends FragmentActivity implements
         mClusterManager.setRenderer(new HostRenderer());
         mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
         mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
+        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleHostInfoWindowAdapter(getLayoutInflater()));
+//        mMap.setInfoWindowAdapter(new Maps2Activity.SingleHostInfoWindowAdapter(getLayoutInflater()));
     }
 
     class ClusterInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -296,6 +297,39 @@ public class Maps2Activity extends FragmentActivity implements
             mClusterManager.cluster();
         }
 
+    }
+
+
+    /**
+     * InfoWindowAdapter to present info about a single host marker.
+     * Implemented here so we can have multiple lines, which the maps-provided one prevents.
+     */
+    class SingleHostInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+        private View mPopup = null;
+        private LayoutInflater mInflater = null;
+
+        SingleHostInfoWindowAdapter(LayoutInflater inflater) {
+            this.mInflater = inflater;
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return (null);
+        }
+
+        @SuppressLint("InflateParams")
+        @Override
+        public View getInfoContents(Marker marker) {
+            if (mPopup == null){
+                mPopup = mInflater.inflate(R.layout.single_host_infowindow, null);
+            }
+            TextView titleView = (TextView) mPopup.findViewById(R.id.title);
+//            titleView.setText(marker.getTitle());
+
+            TextView snippetView = (TextView) mPopup.findViewById(R.id.snippet);
+            snippetView.setText(marker.getSnippet());
+            return (mPopup);
+        }
     }
 
     private Toast lastToast = null;
