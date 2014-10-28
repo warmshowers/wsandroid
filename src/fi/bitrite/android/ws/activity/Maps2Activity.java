@@ -1,10 +1,14 @@
 package fi.bitrite.android.ws.activity;
-import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.util.Log;
@@ -15,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -59,16 +64,32 @@ public class Maps2Activity extends FragmentActivity implements
     private ClusterManager<HostBriefInfo> mClusterManager;
     private Cluster<HostBriefInfo> mLastClickedCluster;
     private final static int  CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private static final int REQUEST_RESOLVE_ERROR = 1001;
+    private static final String DIALOG_ERROR = "dialog_error";
+
     LocationClient mLocationClient;
     private boolean mPlayServicesConnectionStatus = false;
     private static final String TAG = "Maps2Activity";
-    private CameraPosition mCLastCameraPosition = null;
+    private CameraPosition mLastCameraPosition = null;
+    private boolean mResolvingError = false;
 
+    /**
+     * This is where google play services gets connected and we can now find recent location.
+     *
+     * Note that all the complex stuff about connecting to Google Play Services (just to get location)
+     * is from http://developer.android.com/training/location/retrieve-current.html and I don't actually
+     * know how to test it.
+     *
+     * @param bundle
+     */
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i(TAG, "Connected to location services mLastCameraPosition==" + (mCLastCameraPosition != null));
+        Log.i(TAG, "Connected to location services mLastCameraPosition==" + (mLastCameraPosition != null));
         mPlayServicesConnectionStatus = true;
-        if (mCLastCameraPosition == null) {
+
+        mMap.setMyLocationEnabled(true);
+
+        if (getSavedCameraPosition() == null) {
             setMapToCurrentLocation();
         }
     }
@@ -79,7 +100,6 @@ public class Maps2Activity extends FragmentActivity implements
         mPlayServicesConnectionStatus = false;
         Toast.makeText(this, "Disconnected from location services. Please re-connect.",
                 Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
@@ -103,7 +123,7 @@ public class Maps2Activity extends FragmentActivity implements
              * If no resolution is available, display a dialog to the
              * user with the error.
              */
-//            showErrorDialog(connectionResult.getErrorCode());
+            showErrorDialog(connectionResult.getErrorCode());
         }
 
     }
@@ -143,12 +163,6 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mMap != null) {
-            outState.putParcelable("camera_position", mMap.getCameraPosition());
-            outState.putString("junk_string", "This is a junk string");
-            outState.putInt("junk_int", 42);
-            Log.i(TAG, "Put camera position (and junk_string) to savedInstanceState");
-        }
     }
 
     @Override
@@ -169,12 +183,11 @@ public class Maps2Activity extends FragmentActivity implements
         setUpMapIfNeeded();
         mMap.setOnCameraChangeListener(this);
 
-        // Get saved map position from previous session; so far this doesn't actually work; never get savedInstanceState
-//        if (savedInstanceState != null && savedInstanceState.containsKey("camera_position")) {
-//            Log.i(TAG, "Retrieved camera_position from saved state");
-//            CameraPosition position = savedInstanceState.getParcelable("camera_position");
-//            CameraUpdateFactory.newCameraPosition(position);
-//        }
+        CameraPosition position = getSavedCameraPosition();
+        if (position != null) {
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
+            // The move itself will end up setting the mlastCameraPosition.
+        }
 
         mClusterManager = new ClusterManager<HostBriefInfo>(this, mMap);
         mClusterManager.setAlgorithm(new PreCachingAlgorithmDecorator<HostBriefInfo>(new WSNonHierarchicalDistanceBasedAlgorithm<HostBriefInfo>()));
@@ -242,7 +255,40 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onStop() {
         mLocationClient.disconnect();
+        Log.d(TAG, "onStop()");
+        if (mLastCameraPosition != null) {
+            saveMapLocation(mLastCameraPosition);
+            Log.d(TAG, "Saved mLastCameraPosition");
+        }
         super.onStop();
+    }
+
+    protected void saveMapLocation(CameraPosition position) {
+        SharedPreferences settings = getSharedPreferences("map_last_location", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putFloat("latitude", (float)position.target.latitude);
+        editor.putFloat("longitude", (float)position.target.longitude);
+        editor.putFloat("zoom", (float)position.zoom);
+        editor.commit();
+    }
+
+
+    /**
+     * Retrieve map location and zoom from saved preference. Returns null if none existed.
+     *
+     * @return
+     */
+    protected CameraPosition getSavedCameraPosition() {
+        SharedPreferences settings = getSharedPreferences("map_last_location", 0);
+        if (!settings.contains("latitude")) {
+            return null;
+        }
+        float latitude = settings.getFloat("latitude", Float.parseFloat(getResources().getString(R.string.map_default_latitude)));
+        float longitude = settings.getFloat("longitude", Float.parseFloat(getResources().getString(R.string.map_default_longitude)));
+        float zoom = settings.getFloat("zoom", (float)getResources().getInteger(R.integer.map_initial_zoom));
+
+        CameraPosition position = new CameraPosition(new LatLng(latitude, longitude), zoom, 0, 0);
+        return position;
     }
 
     @Override
@@ -280,21 +326,31 @@ public class Maps2Activity extends FragmentActivity implements
     }
 
     private void setUpMap() {
-        mMap.setMyLocationEnabled(true);
     }
 
+    /**
+     * If we can get a location, go to it with default zoom.
+     * Else use a default location.
+     */
     void setMapToCurrentLocation() {
         Location myLocation = mLocationClient.getLastLocation();
+        LatLng gotoLatLng;
+        float zoom = (float) getResources().getInteger(R.integer.map_initial_zoom);
 
-        LatLng curLatLng = new LatLng(myLocation.getLatitude(),
-                myLocation.getLongitude());
-        float zoom = (float)getResources().getInteger(R.integer.map_initial_zoom);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLatLng, zoom));
+        if (myLocation != null) {
+            gotoLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+        }
+        // Otherwise bail - their location is turned off, use default
+        else {
+            gotoLatLng = new LatLng(Double.parseDouble(getResources().getString(R.string.map_default_latitude)),
+                    Double.parseDouble(getResources().getString(R.string.map_default_longitude)));
+        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(gotoLatLng, zoom));
     }
 
     @Override
     public void onCameraChange(CameraPosition position) {
-        mCLastCameraPosition = position;
+        mLastCameraPosition = position;
         LatLngBounds curScreen = mMap.getProjection().getVisibleRegion().latLngBounds;
         sendMessage(getResources().getString(R.string.loading_hosts), false);
         Search search = new RestMapSearch(curScreen.northeast, curScreen.southwest);
@@ -408,6 +464,52 @@ public class Maps2Activity extends FragmentActivity implements
 
     }
 
+    /* Creates a dialog for an error message */
+    private void showErrorDialog(int errorCode) {
+        // Create a fragment for the error dialog
+        ErrorDialogFragment dialogFragment = new ErrorDialogFragment();
+        // Pass the error that should be displayed
+        Bundle args = new Bundle();
+        args.putInt(DIALOG_ERROR, errorCode);
+        dialogFragment.setArguments(args);
+        dialogFragment.show(getSupportFragmentManager(), "errordialog");
+    }
+
+    /* Called from ErrorDialogFragment when the dialog is dismissed. */
+    public void onDialogDismissed() {
+        mResolvingError = false;
+    }
+
+    /* A fragment to display an error dialog */
+    public static class ErrorDialogFragment extends DialogFragment {
+        public ErrorDialogFragment() { }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Get the error code and retrieve the appropriate dialog
+            int errorCode = this.getArguments().getInt(DIALOG_ERROR);
+            return GooglePlayServicesUtil.getErrorDialog(errorCode,
+                    this.getActivity(), REQUEST_RESOLVE_ERROR);
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            ((Maps2Activity)getActivity()).onDialogDismissed();
+        }
+    }
+
+
+
+    /*
+     * Handle results returned to the FragmentActivity
+     * by Google Play services
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CONNECTION_FAILURE_RESOLUTION_REQUEST && resultCode == Activity.RESULT_OK) {
+            mLocationClient.connect();
+        }
+    }
 
     /**
      * InfoWindowAdapter to present info about a single host marker.
@@ -452,3 +554,4 @@ public class Maps2Activity extends FragmentActivity implements
     }
 
 }
+
