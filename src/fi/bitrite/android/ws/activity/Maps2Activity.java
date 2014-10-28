@@ -62,13 +62,15 @@ public class Maps2Activity extends FragmentActivity implements
     LocationClient mLocationClient;
     private boolean mPlayServicesConnectionStatus = false;
     private static final String TAG = "Maps2Activity";
+    private CameraPosition mCLastCameraPosition = null;
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i(TAG, "Connected to location services");
+        Log.i(TAG, "Connected to location services mLastCameraPosition==" + (mCLastCameraPosition != null));
         mPlayServicesConnectionStatus = true;
-        setMapLocation();
-
+        if (mCLastCameraPosition == null) {
+            setMapToCurrentLocation();
+        }
     }
 
     @Override
@@ -139,15 +141,41 @@ public class Maps2Activity extends FragmentActivity implements
 
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mMap != null) {
+            outState.putParcelable("camera_position", mMap.getCameraPosition());
+            outState.putString("junk_string", "This is a junk string");
+            outState.putInt("junk_int", 42);
+            Log.i(TAG, "Put camera position (and junk_string) to savedInstanceState");
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.i(TAG, "onRestoreInstanceState, savedInstanceState==" + (savedInstanceState != null));
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_maps);
 
         mLocationClient = new LocationClient(this, this, this);
 
         setUpMapIfNeeded();
-
         mMap.setOnCameraChangeListener(this);
+
+        // Get saved map position from previous session; so far this doesn't actually work; never get savedInstanceState
+//        if (savedInstanceState != null && savedInstanceState.containsKey("camera_position")) {
+//            Log.i(TAG, "Retrieved camera_position from saved state");
+//            CameraPosition position = savedInstanceState.getParcelable("camera_position");
+//            CameraUpdateFactory.newCameraPosition(position);
+//        }
+
         mClusterManager = new ClusterManager<HostBriefInfo>(this, mMap);
         mClusterManager.setAlgorithm(new PreCachingAlgorithmDecorator<HostBriefInfo>(new WSNonHierarchicalDistanceBasedAlgorithm<HostBriefInfo>()));
         mMap.setOnMarkerClickListener(mClusterManager);
@@ -242,7 +270,7 @@ public class Maps2Activity extends FragmentActivity implements
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment))
                     .getMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
@@ -252,31 +280,25 @@ public class Maps2Activity extends FragmentActivity implements
     }
 
     private void setUpMap() {
-
         mMap.setMyLocationEnabled(true);
-
     }
 
-    void setMapLocation() {
-        Log.d(TAG, "About to request getLastLocation, connectionstatus=" + mPlayServicesConnectionStatus);
+    void setMapToCurrentLocation() {
         Location myLocation = mLocationClient.getLastLocation();
 
         LatLng curLatLng = new LatLng(myLocation.getLatitude(),
                 myLocation.getLongitude());
-        int zoom = getResources().getInteger(R.integer.map_initial_zoom);
-        int other = R.integer.map_initial_zoom;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLatLng, (float)zoom));
-
+        float zoom = (float)getResources().getInteger(R.integer.map_initial_zoom);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curLatLng, zoom));
     }
 
     @Override
     public void onCameraChange(CameraPosition position) {
-
+        mCLastCameraPosition = position;
         LatLngBounds curScreen = mMap.getProjection().getVisibleRegion().latLngBounds;
-
         sendMessage(getResources().getString(R.string.loading_hosts), false);
-
         Search search = new RestMapSearch(curScreen.northeast, curScreen.southwest);
+        Log.i(TAG, "onCameraChange fired, setting location");
         doMapSearch(search);
     }
 
