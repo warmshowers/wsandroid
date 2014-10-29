@@ -383,8 +383,10 @@ public class Maps2Activity extends FragmentActivity implements
         // If the hosts are not all at the same location, then change bounds of map.
         if (!bounds.southwest.equals(bounds.northeast)) {
             // Offset from edge of map in pixels when exploding cluster
-            int padding = getResources().getInteger(R.integer.cluster_explode_padding);
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+            View mapView = findViewById(R.id.map_fragment);
+            int padding_percent = getResources().getInteger(R.integer.cluster_explode_padding_percent);
+            int padding = Math.min(mapView.getHeight(), mapView.getWidth()) * padding_percent / 100;
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, mapView.getWidth(), mapView.getHeight(), padding);
             mMap.animateCamera(cu);
             return true; // No more processing needed for this click.
         }
