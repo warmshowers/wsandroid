@@ -46,13 +46,6 @@
             android:paddingBottom="10dp"
             android:text="@string/about_2" />
 
-        <TextView
-            android:id="@+id/txtAboutDetails3"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:autoLink="web"
-            android:gravity="center_horizontal"
-            android:text="@string/about_3" />
         <View
             android:layout_width="fill_parent"
             android:layout_height="2dp"
