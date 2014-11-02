@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- percentage padding to use when exploding a cluster -->
-    <integer name="cluster_explode_padding_percent">20</integer>
-    <integer name="map_initial_zoom">9</integer>
+    <integer name="cluster_explode_padding">250</integer>
 </resources>
