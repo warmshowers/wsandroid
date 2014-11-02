@@ -1,4 +1,5 @@
 package fi.bitrite.android.ws.activity;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -268,7 +269,7 @@ public class Maps2Activity extends FragmentActivity implements
         SharedPreferences.Editor editor = settings.edit();
         editor.putFloat("latitude", (float)position.target.latitude);
         editor.putFloat("longitude", (float)position.target.longitude);
-        editor.putFloat("zoom", (float)position.zoom);
+        editor.putFloat("zoom", (float) position.zoom);
         editor.commit();
     }
 
