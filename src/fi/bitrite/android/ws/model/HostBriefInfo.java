@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws.model;
 
-import roboguice.util.Strings;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -14,88 +13,83 @@ import com.yelp.parcelgen.JsonParser.DualCreator;
  */
 public class HostBriefInfo implements Parcelable, ClusterItem {
 
-    private int id;
-    private String name;
-    private String fullname;
-    private String location;
-    private String comments;
-    private String longitude;
-    private String latitude;
+    private int mId;
+    private String mUsername, mFullName, mStreet, mCity, mProvince, mCountry, mAboutMe, mLatitude, mLongitude;
+    private String mUpdated;
     
-    private String updated;
-    
-    public HostBriefInfo(int id, String name, String fullname, String location, String comments) {
-        this.id = id;
-        this.name = name;
-        this.fullname = fullname;
-        this.location = location;
-        this.comments = comments;
+    public HostBriefInfo(int id, String username, String fullName, String street, String city, String province, String country, String aboutMe) {
+        mId = id;
+        mUsername = username;
+        mFullName = fullName;
+        mStreet = street;
+        mCity = city;
+        mProvince = province;
+        mCountry = country;
+        mAboutMe = aboutMe;
     }
 
     public HostBriefInfo(int id, Host host) {
-        this.id = id;
-        this.name = host.getName();
-        this.fullname = host.getFullname();
-        
-        this.location = getBriefLocation(host);
-        this.comments = host.getComments();
-        this.updated = host.getUpdated();
-    }
-    
-    private String getBriefLocation(Host host) {
-        String location = host.getCity() + ", " + host.getProvince();
-        String country = host.getCountry();
-        if (!Strings.isEmpty(country)) {
-            location += ", " + country.toUpperCase();
-        }
-        return location;
+        mId = id;
+        mUsername = host.getName();
+        mFullName = host.getFullname();
+        mStreet = host.getStreet();
+        mCity = host.getCity();
+        mProvince = host.getProvince();
+        mCountry = host.getCountry();
+
+        mAboutMe = host.getComments();
+        mUpdated = host.getUpdated();
     }
 
     public HostBriefInfo() {
     }
 
     public int getId() {
-        return id;
+        return mId;
     }
 
     public String getName() {
-        return name;
+        return mUsername;
     }
     
     public String getFullname() {
-        return fullname;
+        return mFullName;
     }
 
     public String getLocation() {
+        String location = mCity + ", " + mProvince.toUpperCase();
+        if (mStreet != "" && mStreet.length() > 0) {
+            location = mStreet + ", " + location;
+        }
         return location;
     }
 
-    public String getComments() {
-        return comments;
+    public String getAboutMe() {
+        return mAboutMe;
     }
 
     public String getLongitude() {
-        return longitude;
+        return mLongitude;
     }
 
     public void setLongitude(String longitude) {
-        this.longitude = longitude;
+        this.mLongitude = longitude;
     }
 
     public String getLatitude() {
-        return latitude;
+        return mLatitude;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
+    public void setLatitude(String mLatitude) {
+        this.mLatitude = mLatitude;
     }
 
     public String getUpdated() {
-        return updated;
+        return mUpdated;
     }
 
     public LatLng getLatLng() {
-        return new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+        return new LatLng(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
     }
     
     public int describeContents() {
@@ -116,27 +110,45 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
     };  
     
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(name);
-        dest.writeString(fullname);
-        dest.writeString(location);
-        dest.writeString(comments);
-        dest.writeString(longitude);
-        dest.writeString(latitude);
+        dest.writeInt(mId);
+        dest.writeString(mUsername);
+        dest.writeString(mFullName);
+        dest.writeString(mStreet);
+        dest.writeString(mAboutMe);
+        dest.writeString(mLongitude);
+        dest.writeString(mLatitude);
+        dest.writeString(mCity);
+        dest.writeString(mProvince);
+        dest.writeString(mCountry);
     }
     
     public void readFromParcel(Parcel src) {
-        id = src.readInt();
-        name = src.readString();
-        fullname = src.readString();
-        location = src.readString();
-        comments = src.readString();
-        longitude = src.readString();
-        latitude = src.readString();
+        mId = src.readInt();
+        mUsername = src.readString();
+        mFullName = src.readString();
+        mStreet = src.readString();
+        mAboutMe = src.readString();
+        mLongitude = src.readString();
+        mLatitude = src.readString();
+        mCity = src.readString();
+        mProvince = src.readString();
+        mCountry = src.readString();
     }
 
     @Override
     public LatLng getPosition() {
-        return new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+        return new LatLng(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
+    }
+
+    public String getStreet() {
+        return mStreet;
+    }
+
+    public String getCity() {
+        return mCity;
+    }
+
+    public String getProvince() {
+        return mProvince;
     }
 }

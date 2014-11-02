@@ -19,7 +19,7 @@ public class Host extends _Host {
         host.mId = briefInfo.getId();
         host.mName = briefInfo.getName();
         host.mFullname = briefInfo.getFullname();
-        host.mComments = briefInfo.getComments();
+        host.mComments = briefInfo.getAboutMe();
         host.mLongitude = briefInfo.getLongitude();
         host.mLatitude = briefInfo.getLatitude();
         return host;

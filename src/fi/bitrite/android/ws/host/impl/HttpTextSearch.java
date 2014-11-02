@@ -45,11 +45,16 @@ public class HttpTextSearch extends RestClient implements Search {
             for (int i = 0; i < hostJson.names().length(); i++) {
                 int uid = hostJson.names().getInt(i);
                 JSONObject account = (JSONObject) (hostJson.get(Integer.toString(uid)));
-                String username = (String) account.get("name");
-                String fullname = (String) account.get("fullname");
-                String location = account.get("city") + ", " + account.get("province");
-                String comments = (String) account.get("comments");
-                HostBriefInfo bi = new HostBriefInfo(uid, username, fullname, location, comments);
+                HostBriefInfo bi = new HostBriefInfo(
+                        uid,
+                        account.get("name").toString(),
+                        account.get("fullname").toString(),
+                        account.get("street").toString(),
+                        account.get("city").toString(),
+                        account.get("province").toString(),
+                        account.get("country").toString(),
+                        account.get("comments").toString()
+                );
                 list.add(bi);
             }
             return list;

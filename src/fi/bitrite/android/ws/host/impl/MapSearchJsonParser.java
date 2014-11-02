@@ -60,9 +60,9 @@ public class MapSearchJsonParser {
 
             int id = hostObj.get("uid").getAsInt();
 
-            String name = hostObj.get("name").getAsString();
-            if (Strings.isEmpty(name)) {
-                name = "(Unknown host)";
+            String fullName = hostObj.get("name").getAsString();
+            if (Strings.isEmpty(fullName)) {
+                fullName = "(Unknown host)";
             }
 
             StringBuilder location = new StringBuilder();
@@ -71,10 +71,6 @@ public class MapSearchJsonParser {
                 location.append(", ");
             }
 
-            location.append(
-                hostObj.get("city").getAsString()).append(", ")
-                    .append(hostObj.get("province").getAsString().toUpperCase());
-
             if (hostObj.get("postal_code").getAsString().length() > 0 && 0 != hostObj.get("postal_code").getAsString().compareToIgnoreCase("none")) {
                 location.append(" " + hostObj.get("postal_code").getAsString());
             }
@@ -82,7 +78,16 @@ public class MapSearchJsonParser {
             String lat = hostObj.get("latitude").getAsString();
             String lon = hostObj.get("longitude").getAsString();
 
-            HostBriefInfo h = new HostBriefInfo(id, null, name, location.toString(), null);
+            HostBriefInfo h = new HostBriefInfo(
+                    id,
+                    "",  // No username provided in this feed
+                    fullName,
+                    hostObj.get("street").getAsString(),
+                    hostObj.get("city").getAsString(),
+                    hostObj.get("province").getAsString(),
+                    hostObj.get("country").getAsString(),
+                    "" // No about_me provided here
+            );
             h.setLatitude(lat);
             h.setLongitude(lon);
             hostList.add(h);

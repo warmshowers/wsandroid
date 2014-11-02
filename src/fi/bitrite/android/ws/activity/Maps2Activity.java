@@ -1,4 +1,5 @@
 package fi.bitrite.android.ws.activity;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
 
@@ -56,8 +56,6 @@ public class Maps2Activity extends FragmentActivity implements
      * Add the title and snippet to the marker so that infoWindow can be rendered.
      */
     private class HostRenderer extends DefaultClusterRenderer<HostBriefInfo> {
-        private final IconGenerator mIconGenerator = new IconGenerator(getApplicationContext());
-        private final IconGenerator mClusterIconGenerator = new IconGenerator(getApplicationContext());
 
         public HostRenderer() {
             super(getApplicationContext(), mMap, mClusterManager);
@@ -69,8 +67,13 @@ public class Maps2Activity extends FragmentActivity implements
         }
 
         @Override
-        protected void onBeforeClusterItemRendered(HostBriefInfo hostBriefInfo, MarkerOptions markerOptions) {
-            markerOptions.title(hostBriefInfo.getFullname()).snippet(hostBriefInfo.getLocation());
+        protected void onBeforeClusterItemRendered(HostBriefInfo host, MarkerOptions markerOptions) {
+            String street = host.getStreet();
+            String snippet = host.getCity() + ", " + host.getProvince().toUpperCase();
+            if (street != null && street.length() > 0) {
+                snippet = street + "<br/>" + snippet;
+            }
+            markerOptions.title(host.getFullname()).snippet(snippet);
         }
 
         @Override
@@ -99,6 +102,8 @@ public class Maps2Activity extends FragmentActivity implements
         mClusterManager.setRenderer(new HostRenderer());
         mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
         mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
+        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleHostInfoWindowAdapter(getLayoutInflater()));
+//        mMap.setInfoWindowAdapter(new Maps2Activity.SingleHostInfoWindowAdapter(getLayoutInflater()));
     }
 
     class ClusterInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -219,7 +224,7 @@ public class Maps2Activity extends FragmentActivity implements
             // Offset from edge of map in pixels when exploding cluster
             int padding = getResources().getInteger(R.integer.cluster_explode_padding);
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            mMap.moveCamera(cu);
+            mMap.animateCamera(cu);
             return true; // No more processing needed for this click.
         }
         // If there was nothing in the bounds, normal handling with info window.
@@ -296,6 +301,38 @@ public class Maps2Activity extends FragmentActivity implements
             mClusterManager.cluster();
         }
 
+    }
+
+
+    /**
+     * InfoWindowAdapter to present info about a single host marker.
+     * Implemented here so we can have multiple lines, which the maps-provided one prevents.
+     */
+    class SingleHostInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+        private View mPopup = null;
+        private LayoutInflater mInflater = null;
+
+        SingleHostInfoWindowAdapter(LayoutInflater inflater) {
+            this.mInflater = inflater;
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return (null);
+        }
+
+        @SuppressLint("InflateParams")
+        @Override
+        public View getInfoContents(Marker marker) {
+            if (mPopup == null){
+                mPopup = mInflater.inflate(R.layout.single_host_infowindow, null);
+            }
+            TextView titleView = (TextView) mPopup.findViewById(R.id.title);
+            titleView.setText(marker.getTitle());
+            TextView snippetView = (TextView) mPopup.findViewById(R.id.snippet);
+            snippetView.setText(Html.fromHtml(marker.getSnippet()));
+            return (mPopup);
+        }
     }
 
     private Toast lastToast = null;
