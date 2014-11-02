@@ -61,9 +61,8 @@
     <string name="sending_message">Sending message …</string>
     <string name="error_sending_message">Could not send message. Check your credentials and internet connection.</string>
     <string name="message_sent">Message sent successfully.</string>
-    <string name="about_1">"Developed by Johannes Staffans (WS: jstaffans)\njohannes.staffans\u0040gmail.com"</string>
-    <string name="about_2">"Thanks to Randy Fay and Chris Meyer for support during development.</string>
-    <string name="about_3">"This application is open source under the Apache 2.0 license. You can help out at:\nhttps://github.com/warmshowers/wsandroid</string>
+    <string name="about_1">"Developed by Warmshowers.org volunteers led by original author Johannes Staffans</string>
+    <string name="about_2">This application is open source under the Apache 2.0 license. Contribute by forking our repository at github.com/warmshowers/wsandroid\nReport problems there or via the Warmshowers contact form, warmshowers.org/contact</string>
     <string name="feedback">Feedback</string>
     <string name="error_retrieving_messages">An error occurred while retrieving messages.</string>
     <string name="messages_in_progress">Retrieving messages...</string>

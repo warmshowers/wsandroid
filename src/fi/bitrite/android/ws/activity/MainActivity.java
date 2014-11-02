@@ -4,14 +4,12 @@ import roboguice.activity.RoboTabActivity;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -173,7 +171,14 @@ public class MainActivity extends RoboTabActivity  {
         splashDialog = new Dialog(this, R.style.about_dialog);
         splashDialog.setContentView(R.layout.about);
         TextView googleDetails = (TextView)splashDialog.findViewById(R.id.txtAboutDetailsGoogle);
-        googleDetails.setText(GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this));
+        String licenseInfo = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this);
+        if (licenseInfo != null) {
+            // licenseInfo is a bit of a mess (coming directly from google)
+            // Change the multi-\n to <br/>, then change single \n perhaps followed by whitespace to a space
+            // then change the <br/> back to \n
+            licenseInfo = licenseInfo.replaceAll("\n\n+", "<br/>").replaceAll("\n[ \t]*", " ").replace("<br/>", "\n");
+            googleDetails.setText(licenseInfo);
+        }
         splashDialog.show();
     }
 
