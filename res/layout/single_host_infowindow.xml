@@ -5,7 +5,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@android:color/background_light">
+    android:background="@android:color/background_light"
+    android:gravity="center_horizontal">
 
     <TextView
         android:layout_width="wrap_content"
@@ -14,7 +15,7 @@
         android:text="Title Placeholder"
         android:id="@+id/title"
         android:textColor="@android:color/black"
-        android:layout_gravity="center_horizontal" />
+        android:gravity="center_horizontal" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -22,7 +23,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Snippet placeholder"
         android:id="@+id/snippet"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@android:color/primary_text_light" />
+        android:textColor="@android:color/primary_text_light"
+        android:gravity="center_horizontal" />
 
 </LinearLayout>

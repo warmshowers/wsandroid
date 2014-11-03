@@ -71,11 +71,12 @@
     <string name="visit_warmshowers_website"><![CDATA[Please visit the <a href="http://www.warmshowers.org">WarmShowers website</a> to read your messages.]]></string>
     <string name="updateMessages">Update</string>
     <string name="loading_hosts">Loading hosts ...</string>
-    <string name="hosts_in_area">%1$s hosts in area.</string>
     <string name="hosts_at_location">%1$s hosts at %2$s</string>
 	<string name="view_on_site">View on website</string>
     <string name="host_count">%1$d hosts at this location</string>
     <string name="click_to_view_all"><strong>Click to view all</strong></string>
     <string name="map_default_latitude">46.8625</string>
     <string name="map_default_longitude">-114.011667</string>
+    <!-- Distance from current has 2 args, number and units -->
+    <string name="distance_from_current">"%1$d %2$s from current location"</string>
 </resources>

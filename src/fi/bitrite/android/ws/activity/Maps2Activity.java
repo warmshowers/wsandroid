@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.SphericalUtil;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
@@ -46,6 +48,7 @@ import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestMapSearch;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.WSNonHierarchicalDistanceBasedAlgorithm;
 import fi.bitrite.android.ws.util.http.HttpException;
 
@@ -73,6 +76,42 @@ public class Maps2Activity extends FragmentActivity implements
     private static final String TAG = "Maps2Activity";
     private CameraPosition mLastCameraPosition = null;
     private boolean mResolvingError = false;
+    Location mLastDeviceLocation;
+    String mDistanceUnit;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mDistanceUnit = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("distance_unit", "km");
+
+        setContentView(R.layout.activity_maps);
+
+        mLocationClient = new LocationClient(this, this, this);
+
+        setUpMapIfNeeded();
+        mMap.setOnCameraChangeListener(this);
+
+        CameraPosition position = getSavedCameraPosition();
+        if (position != null) {
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
+            // The move itself will end up setting the mlastCameraPosition.
+        }
+
+        mClusterManager = new ClusterManager<HostBriefInfo>(this, mMap);
+        mClusterManager.setAlgorithm(new PreCachingAlgorithmDecorator<HostBriefInfo>(new WSNonHierarchicalDistanceBasedAlgorithm<HostBriefInfo>()));
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterInfoWindowClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+        mClusterManager.setRenderer(new HostRenderer());
+        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+        mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
+        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleHostInfoWindowAdapter(getLayoutInflater()));
+    }
 
     /**
      * This is where google play services gets connected and we can now find recent location.
@@ -87,6 +126,17 @@ public class Maps2Activity extends FragmentActivity implements
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "Connected to location services mLastCameraPosition==" + (mLastCameraPosition != null));
         mPlayServicesConnectionStatus = true;
+
+        mLastDeviceLocation = mLocationClient.getLastLocation();
+
+        // If we are now connected, but still don't have a location, use a bogus default.
+        if (mLastDeviceLocation == null) {
+            mLastDeviceLocation = new Location("default");
+
+            mLastDeviceLocation.setLatitude(
+                    Double.parseDouble(getResources().getString(R.string.map_default_latitude)));
+            mLastDeviceLocation.setLongitude(Double.parseDouble(getResources().getString(R.string.map_default_longitude)));
+        }
 
         mMap.setMyLocationEnabled(true);
 
@@ -150,6 +200,10 @@ public class Maps2Activity extends FragmentActivity implements
             if (street != null && street.length() > 0) {
                 snippet = street + "<br/>" + snippet;
             }
+            if (mLastDeviceLocation != null) {
+                double distance = Tools.calculateDistanceBetween(host.getLatLng(), mLastDeviceLocation, mDistanceUnit);
+                snippet += "<br/>" + getString(R.string.distance_from_current, (int)distance, mDistanceUnit);
+            }
             markerOptions.title(host.getFullname()).snippet(snippet);
         }
 
@@ -173,37 +227,7 @@ public class Maps2Activity extends FragmentActivity implements
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_maps);
-
-        mLocationClient = new LocationClient(this, this, this);
-
-        setUpMapIfNeeded();
-        mMap.setOnCameraChangeListener(this);
-
-        CameraPosition position = getSavedCameraPosition();
-        if (position != null) {
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-            // The move itself will end up setting the mlastCameraPosition.
-        }
-
-        mClusterManager = new ClusterManager<HostBriefInfo>(this, mMap);
-        mClusterManager.setAlgorithm(new PreCachingAlgorithmDecorator<HostBriefInfo>(new WSNonHierarchicalDistanceBasedAlgorithm<HostBriefInfo>()));
-        mMap.setOnMarkerClickListener(mClusterManager);
-        mMap.setOnInfoWindowClickListener(mClusterManager);
-        mClusterManager.setOnClusterClickListener(this);
-        mClusterManager.setOnClusterInfoWindowClickListener(this);
-        mClusterManager.setOnClusterItemClickListener(this);
-        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
-        mClusterManager.setRenderer(new HostRenderer());
-        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
-        mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
-        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleHostInfoWindowAdapter(getLayoutInflater()));
-//        mMap.setInfoWindowAdapter(new Maps2Activity.SingleHostInfoWindowAdapter(getLayoutInflater()));
-    }
 
     class ClusterInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private View mPopup=null;
@@ -224,12 +248,18 @@ public class Maps2Activity extends FragmentActivity implements
             String hostList = "";
             ArrayList<HostBriefInfo> hosts = new ArrayList<HostBriefInfo>();
             if (mPopup == null) {
-                // TODO: Should not be passing null as second param
                 mPopup = mInflater.inflate(R.layout.info_window, null);
             }
             TextView tv = (TextView)mPopup.findViewById(R.id.title);
 
             if (mLastClickedCluster != null) {
+
+                if (mLastDeviceLocation != null) {
+                    double distance = Tools.calculateDistanceBetween(marker.getPosition(), mLastDeviceLocation, mDistanceUnit);
+                    TextView distance_tv = (TextView)mPopup.findViewById(R.id.distance_from_current);
+                    distance_tv.setText(Html.fromHtml(getString(R.string.distance_from_current, (int)distance, mDistanceUnit)));
+                }
+
                 hosts = (ArrayList<HostBriefInfo>) mLastClickedCluster.getItems();
                 if (mLastClickedCluster != null) {
                     for (HostBriefInfo host : hosts) {
@@ -238,9 +268,12 @@ public class Maps2Activity extends FragmentActivity implements
 
                     hostList += getString(R.string.click_to_view_all);
                 }
-                tv.setText(getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getLocation()));
+                String title = getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getLocation());
+
+                tv.setText(Html.fromHtml(title));
                 tv=(TextView)mPopup.findViewById(R.id.snippet);
                 tv.setText(Html.fromHtml(hostList));
+
             }
 
             return(mPopup);
@@ -331,21 +364,10 @@ public class Maps2Activity extends FragmentActivity implements
 
     /**
      * If we can get a location, go to it with default zoom.
-     * Else use a default location.
      */
     void setMapToCurrentLocation() {
-        Location myLocation = mLocationClient.getLastLocation();
-        LatLng gotoLatLng;
-        float zoom = (float) getResources().getInteger(R.integer.map_initial_zoom);
-
-        if (myLocation != null) {
-            gotoLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-        }
-        // Otherwise bail - their location is turned off, use default
-        else {
-            gotoLatLng = new LatLng(Double.parseDouble(getResources().getString(R.string.map_default_latitude)),
-                    Double.parseDouble(getResources().getString(R.string.map_default_longitude)));
-        }
+        LatLng gotoLatLng = new LatLng(mLastDeviceLocation.getLatitude(), mLastDeviceLocation.getLongitude());
+        float zoom = (float) getResources().getInteger(R.integer.map_initial_zoom); // Default
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(gotoLatLng, zoom));
     }
 
@@ -355,7 +377,6 @@ public class Maps2Activity extends FragmentActivity implements
         LatLngBounds curScreen = mMap.getProjection().getVisibleRegion().latLngBounds;
         sendMessage(getResources().getString(R.string.loading_hosts), false);
         Search search = new RestMapSearch(curScreen.northeast, curScreen.southwest);
-        Log.i(TAG, "onCameraChange fired, setting location");
         doMapSearch(search);
     }
 
@@ -545,6 +566,7 @@ public class Maps2Activity extends FragmentActivity implements
         }
     }
 
+
     private Toast lastToast = null;
 
     private void sendMessage(final String message, final boolean error) {
@@ -555,6 +577,7 @@ public class Maps2Activity extends FragmentActivity implements
         toast.show();
         lastToast = toast;
     }
+
 
 }
 
