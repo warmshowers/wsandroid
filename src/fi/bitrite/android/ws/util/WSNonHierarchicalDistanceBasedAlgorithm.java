@@ -149,8 +149,6 @@ public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> impl
     }
 
     private Bounds createBoundsFromSpan(Point p, double span) {
-        // TODO: Use a span that takes into account the visual size of the marker, not just its
-        // LatLng.
         double halfSpan = span / 2;
         return new Bounds(
                 p.x - halfSpan, p.x + halfSpan,

@@ -2,6 +2,7 @@ package fi.bitrite.android.ws.host.impl;
 
 import fi.bitrite.android.ws.api.HttpReader;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,7 +15,7 @@ import roboguice.util.Strings;
 public class HttpHostInformation extends HttpReader {
 
     public Host getHostInformation(int uid) {
-        String simpleUrl = new StringBuilder().append("https://www.warmshowers.org/user/")
+        String simpleUrl = new StringBuilder().append(GlobalInfo.warmshowersBaseUrl).append("/user/")
         .append(uid).append("/json").toString();
         String json = getPage(simpleUrl);
 

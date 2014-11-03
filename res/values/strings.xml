@@ -81,6 +81,5 @@
     <string name="map_default_longitude">-114.011667</string>
     <string name="alert_neutral_button">OK</string>
     <string name="contact_message_to">"Message to %1$s"</string>
-    <string name="warmshowers_base_url">https://www.warmshowers.org</string>
     <string name="disconnected_location_services">Disconnected from location services. Please re-connect.</string>
 </resources>

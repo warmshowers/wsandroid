@@ -4,12 +4,14 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.util.Log;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.AuthenticationService;
+import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -36,20 +38,20 @@ import java.util.List;
  */
 public class HttpAuthenticator {
 
-	private static final String WARMSHOWERS_USER_AUTHENTICATION_URL = "https://www.warmshowers.org/services/rest/user/login";
-	private static final String WARMSHOWERS_USER_AUTHENTICATION_TEST_URL = "https://www.warmshowers.org/search/wsuser";
+    private final String wsUserAuthUrl = GlobalInfo.warmshowersBaseUrl + "/services/rest/user/login";
+	private final String wsUserAuthTestUrl = GlobalInfo.warmshowersBaseUrl + "/search/wsuser";
 
 	private String username;
 	private String authtoken;
 
-	/**
+    /**
 	 * Load a page in order to see if we are authenticated
 	 */
 	public boolean isAuthenticated() {
 		HttpClient client = HttpUtils.getDefaultClient();
 		int responseCode;
 		try {
-			String url = HttpUtils.encodeUrl(WARMSHOWERS_USER_AUTHENTICATION_TEST_URL);
+			String url = HttpUtils.encodeUrl(wsUserAuthTestUrl);
 			HttpGet get = new HttpGet(url);
 			HttpContext context = HttpSessionContainer.INSTANCE.getSessionContext();
 
@@ -101,7 +103,7 @@ public class HttpAuthenticator {
 		
 		try {
 			List<NameValuePair> credentials = generateCredentialsForPost(username, password);
-			HttpPost post = new HttpPost(WARMSHOWERS_USER_AUTHENTICATION_URL);
+			HttpPost post = new HttpPost(wsUserAuthUrl);
 			post.setEntity(new UrlEncodedFormEntity(credentials));
 			HttpResponse response = client.execute(post, httpContext);
 

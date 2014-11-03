@@ -222,7 +222,7 @@ public class Maps2Activity extends FragmentActivity implements
             String hostList = "";
             ArrayList<HostBriefInfo> hosts = new ArrayList<HostBriefInfo>();
             if (mPopup == null) {
-                // TODO: Should not be passing null as second param
+                // TODO: Override complaint from lint
                 mPopup = mInflater.inflate(R.layout.info_window, null);
             }
             TextView tv = (TextView)mPopup.findViewById(R.id.title);
