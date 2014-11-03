@@ -278,7 +278,7 @@ public class HostInformationActivity extends RoboActivity {
         bikeShop.setText(host.getBikeshop());
         services.setText(host.getServices());
 
-		viewOnSite.setText(Html.fromHtml("<a href=\"https://www.warmshowers.org/user/" + hostInfo.getId() + "\">" + getResources().getString(R.string.view_on_site) + "</a>"));
+		viewOnSite.setText(Html.fromHtml("<a href=\"" + getString(R.string.warmshowers_base_url) + "/user/" + hostInfo.getId() + "\">" + getResources().getString(R.string.view_on_site) + "</a>"));
 		viewOnSite.setMovementMethod(LinkMovementMethod.getInstance());
 		viewOnSite.setClickable(true);
 

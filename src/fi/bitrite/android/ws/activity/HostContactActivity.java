@@ -47,7 +47,7 @@ public class HostContactActivity extends RoboActivity {
             host = (Host) i.getParcelableExtra("host");
         }
 
-        title.setText("Message to " + host.getFullname());
+        title.setText(getString(R.string.contact_message_to, host.getFullname()));
     }
 
     @Override

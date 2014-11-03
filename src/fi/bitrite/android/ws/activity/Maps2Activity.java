@@ -99,7 +99,7 @@ public class Maps2Activity extends FragmentActivity implements
     public void onDisconnected() {
         Log.i(TAG, "Disconnected from location services");
         mPlayServicesConnectionStatus = false;
-        Toast.makeText(this, "Disconnected from location services. Please re-connect.",
+        Toast.makeText(this, getString(R.string.disconnected_location_services),
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -169,8 +169,6 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Log.i(TAG, "onRestoreInstanceState, savedInstanceState==" + (savedInstanceState != null));
-
     }
 
     @Override
@@ -355,7 +353,6 @@ public class Maps2Activity extends FragmentActivity implements
         LatLngBounds curScreen = mMap.getProjection().getVisibleRegion().latLngBounds;
         sendMessage(getResources().getString(R.string.loading_hosts), false);
         Search search = new RestMapSearch(curScreen.northeast, curScreen.southwest);
-        Log.i(TAG, "onCameraChange fired, setting location");
         doMapSearch(search);
     }
 
