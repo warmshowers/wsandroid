@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
+import fi.bitrite.android.ws.BuildConfig;
 import roboguice.activity.RoboTabActivity;
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -31,6 +32,7 @@ public class MainActivity extends RoboTabActivity  {
     private Parcelable stashedHost;
     private int stashedHostId;
     private ArrayList<Parcelable> stashedFeedback;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +172,8 @@ public class MainActivity extends RoboTabActivity  {
     private void showAboutDialog() {
         splashDialog = new Dialog(this, R.style.about_dialog);
         splashDialog.setContentView(R.layout.about);
+        TextView versionTextView = (TextView)splashDialog.findViewById(R.id.app_version);
+        versionTextView.setText(getString(R.string.app_version, BuildConfig.VERSION_NAME));
         TextView googleDetails = (TextView)splashDialog.findViewById(R.id.txtAboutDetailsGoogle);
         String licenseInfo = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this);
         if (licenseInfo != null) {

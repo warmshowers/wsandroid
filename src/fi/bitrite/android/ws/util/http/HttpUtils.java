@@ -13,6 +13,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import fi.bitrite.android.ws.BuildConfig;
+
 public class HttpUtils {
 
     private static final int TIMEOUT_MS = 20000;
@@ -30,12 +32,12 @@ public class HttpUtils {
         HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MS);  
 
         String userAgentString = new StringBuilder().
-                append("WSAndroid 1.4.0").append(" ")
+                append("WSAndroid ").append(BuildConfig.VERSION_NAME).append(" ")
                 .append(Build.MANUFACTURER).append(" ")
                 .append(Build.MODEL).append(" ")
                 .append("Android v").append(Build.VERSION.RELEASE)
                 .toString();
-        
+
         httpParams.setParameter(HttpProtocolParams.USER_AGENT, userAgentString);
         
         return new DefaultHttpClient(httpParams);

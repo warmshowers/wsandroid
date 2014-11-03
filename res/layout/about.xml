@@ -29,6 +29,15 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
+            android:id="@+id/app_version"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="email"
+            android:gravity="center_horizontal"
+            android:paddingBottom="10dp"
+            android:text="Version xxx" />
+
+        <TextView
             android:id="@+id/txtAboutDetails1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

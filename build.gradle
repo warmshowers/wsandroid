@@ -49,4 +49,8 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
+    defaultConfig {
+        versionName "1.4.0"
+        versionCode 20
+    }
 }
