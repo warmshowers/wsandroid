@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -410,10 +412,10 @@ public class Maps2Activity extends FragmentActivity implements
             int padding = Math.min(mapView.getHeight(), mapView.getWidth()) * padding_percent / 100;
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, mapView.getWidth(), mapView.getHeight(), padding);
             mMap.animateCamera(cu);
-            return true; // No more processing needed for this click.
+            return true;
         }
-        // If there was nothing in the bounds, normal handling with info window.
-        return false;
+        showMultihostSelectDialog((ArrayList<HostBriefInfo>)cluster.getItems());
+        return true;
     }
 
     @Override
@@ -422,7 +424,7 @@ public class Maps2Activity extends FragmentActivity implements
      */
     public void onClusterInfoWindowClick(Cluster<HostBriefInfo> hostBriefInfoCluster) {
         Intent intent = new Intent(this, ListSearchTabActivity.class);
-        intent.putParcelableArrayListExtra("search_results", (ArrayList<HostBriefInfo>)hostBriefInfoCluster.getItems());
+        intent.putParcelableArrayListExtra("search_results", (ArrayList<HostBriefInfo>) hostBriefInfoCluster.getItems());
         startActivity(intent);
     }
 
@@ -564,6 +566,50 @@ public class Maps2Activity extends FragmentActivity implements
             snippetView.setText(Html.fromHtml(marker.getSnippet()));
             return (mPopup);
         }
+    }
+
+    public void showMultihostSelectDialog(final ArrayList<HostBriefInfo> hosts) {
+        String[] mPossibleItems = new String[hosts.size()];
+
+        double distance = Tools.calculateDistanceBetween(hosts.get(0).getLatLng(), mLastDeviceLocation, mDistanceUnit);
+        String distanceSummary = getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
+
+        LinearLayout customTitleView = (LinearLayout)getLayoutInflater().inflate(R.layout.multihost_dialog_header, null);
+        TextView titleView = (TextView)customTitleView.findViewById(R.id.title);
+        titleView.setText(getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getStreetCityAddress()));
+
+        TextView distanceView = (TextView)customTitleView.findViewById(R.id.distance_from_current);
+        distanceView.setText(distanceSummary);
+
+        for (int i = 0; i < hosts.size(); i++) {
+            mPossibleItems[i] = hosts.get(i).getFullname();
+        }
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setCustomTitle(customTitleView);
+
+        alertDialogBuilder
+                .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                return;
+                            }
+                        }
+                )
+                .setItems(mPossibleItems,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int index) {
+                                Intent intent = new Intent(Maps2Activity.this, HostInformationActivity.class);
+                                HostBriefInfo briefHost = hosts.get(index);
+                                Host host = Host.createFromBriefInfo(hosts.get(index));
+                                intent.putExtra("host", host);
+                                intent.putExtra("id", briefHost.getId());
+                                startActivity(intent);
+                            }
+
+                        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
 

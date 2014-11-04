@@ -151,4 +151,13 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
     public String getProvince() {
         return mProvince;
     }
+
+    public String getStreetCityAddress() {
+        String result = "";
+        if (mStreet != null && mStreet.length() > 0) {
+            result = mStreet + ", ";
+        }
+        result += mCity + ", " + mProvince.toUpperCase();
+        return result;
+    }
 }
