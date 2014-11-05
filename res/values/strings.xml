@@ -78,4 +78,5 @@
     <string name="click_to_view_all"><strong>Click to view all</strong></string>
     <string name="map_default_latitude">46.8625</string>
     <string name="map_default_longitude">-114.011667</string>
+    <string name="hosts_dont_load">Host locations don\'t load at this zoom level\nZoom in....</string>
 </resources>

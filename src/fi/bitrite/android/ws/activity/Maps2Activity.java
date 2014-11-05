@@ -355,8 +355,14 @@ public class Maps2Activity extends FragmentActivity implements
         LatLngBounds curScreen = mMap.getProjection().getVisibleRegion().latLngBounds;
         sendMessage(getResources().getString(R.string.loading_hosts), false);
         Search search = new RestMapSearch(curScreen.northeast, curScreen.southwest);
-        Log.i(TAG, "onCameraChange fired, setting location");
-        doMapSearch(search);
+        Log.i(TAG, "onCameraChange zoom=" + position.zoom + " fired, setting location");
+
+        if (position.zoom < getResources().getInteger(R.integer.map_zoom_min_load)) {
+            sendMessage(R.string.hosts_dont_load, false);
+        }
+        else {
+            doMapSearch(search);
+        }
     }
 
     public void doMapSearch(Search search) {
@@ -547,6 +553,10 @@ public class Maps2Activity extends FragmentActivity implements
 
     private Toast lastToast = null;
 
+    private void sendMessage(int message_id, final boolean error) {
+        String message = getString(message_id);
+        sendMessage(message, error);
+    }
     private void sendMessage(final String message, final boolean error) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         if (lastToast != null) {
