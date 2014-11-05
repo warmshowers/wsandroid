@@ -3,4 +3,5 @@
     <!-- percentage padding to use when exploding a cluster -->
     <integer name="cluster_explode_padding_percent">20</integer>
     <integer name="map_initial_zoom">9</integer>
+    <integer name="map_zoom_min_load">7</integer>
 </resources>
