@@ -216,7 +216,7 @@ public class Maps2Activity extends FragmentActivity implements
             super.onBeforeClusterRendered(cluster, markerOptions);
 
             if (allItemsInSameLocation(cluster)) {
-                Drawable drawable = getResources().getDrawable(R.drawable.map_marker);
+                Drawable drawable = getResources().getDrawable(R.drawable.map_markers_multiple);
                 mClusterImageView.setImageDrawable(drawable);
                 Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
@@ -236,7 +236,7 @@ public class Maps2Activity extends FragmentActivity implements
             }
             markerOptions.title(host.getFullname()).snippet(snippet);
 
-            mImageView.setImageResource(R.drawable.map_marker);
+            mImageView.setImageResource(R.drawable.map_markers_single);
             Bitmap icon = mIconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(host.getFullname());
         }
