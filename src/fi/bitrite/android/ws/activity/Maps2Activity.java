@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,10 +15,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -191,37 +188,32 @@ public class Maps2Activity extends FragmentActivity implements
      * Add the title and snippet to the marker so that infoWindow can be rendered.
      */
     private class HostRenderer extends DefaultClusterRenderer<HostBriefInfo> {
-        private final IconGenerator mIconGenerator = new IconGenerator(getApplicationContext());
-        private final IconGenerator mClusterIconGenerator = new IconGenerator(getApplicationContext());
-        private final ImageView mImageView;
-        private final ImageView mClusterImageView;
-        private final int mDimension;
+        private final IconGenerator mSingleLocationClusterIconGenerator = new IconGenerator(getApplicationContext());
+        private SparseArray<BitmapDescriptor> mIcons = new SparseArray<BitmapDescriptor>();
 
         public HostRenderer() {
             super(getApplicationContext(), mMap, mClusterManager);
 
-            View singleHostMarkerView = getLayoutInflater().inflate(R.layout.single_host_marker, null);
-            mClusterIconGenerator.setContentView(singleHostMarkerView);
-            mClusterImageView = (ImageView) singleHostMarkerView.findViewById(R.id.image);
-
-            mImageView = new ImageView(getApplicationContext());
-            mDimension = (int) getResources().getDimension(R.dimen.single_host_marker_size);
-            mImageView.setLayoutParams(new ViewGroup.LayoutParams(mDimension, mDimension));
-            int padding = (int) getResources().getDimension(R.dimen.custom_profile_padding);
-            mImageView.setPadding(padding, padding, padding, padding);
-            mIconGenerator.setContentView(mImageView);
+            View sameLocationMultiHostClusterView = getLayoutInflater().inflate(R.layout.same_location_cluster_marker, null);
+            mSingleLocationClusterIconGenerator.setContentView(sameLocationMultiHostClusterView);
+            mSingleLocationClusterIconGenerator.setBackground(null);
         }
 
         @Override
         protected void onBeforeClusterRendered(Cluster<HostBriefInfo> cluster, MarkerOptions markerOptions) {
-            super.onBeforeClusterRendered(cluster, markerOptions);
 
             if (allItemsInSameLocation(cluster)) {
-                Drawable drawable = getResources().getDrawable(R.drawable.map_markers_multiple);
-                mClusterImageView.setImageDrawable(drawable);
-//                Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
-//                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
-                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_markers_multiple));
+                int size = cluster.getSize();
+                BitmapDescriptor descriptor = mIcons.get(size);
+                if (descriptor == null) {
+                    // Cache new bitmaps
+                    descriptor = BitmapDescriptorFactory.fromBitmap(mSingleLocationClusterIconGenerator.makeIcon(String.valueOf(size)));
+                    mIcons.put(size, descriptor);
+                }
+                markerOptions.icon(descriptor);
+            }
+            else {
+                super.onBeforeClusterRendered(cluster, markerOptions);
             }
         }
 
