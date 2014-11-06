@@ -33,6 +33,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -218,8 +219,9 @@ public class Maps2Activity extends FragmentActivity implements
             if (allItemsInSameLocation(cluster)) {
                 Drawable drawable = getResources().getDrawable(R.drawable.map_markers_multiple);
                 mClusterImageView.setImageDrawable(drawable);
-                Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
+//                Bitmap icon = mClusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
+//                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
+                markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_markers_multiple));
             }
         }
 
@@ -235,10 +237,7 @@ public class Maps2Activity extends FragmentActivity implements
                 snippet += "<br/>" + getString(R.string.distance_from_current, (int)distance, mDistanceUnit);
             }
             markerOptions.title(host.getFullname()).snippet(snippet);
-
-            mImageView.setImageResource(R.drawable.map_markers_single);
-            Bitmap icon = mIconGenerator.makeIcon();
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(host.getFullname());
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_markers_single));
         }
 
         @Override
