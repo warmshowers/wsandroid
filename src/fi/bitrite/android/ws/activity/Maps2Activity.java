@@ -234,13 +234,14 @@ public class Maps2Activity extends FragmentActivity implements
 
         @Override
         protected boolean shouldRenderAsCluster(Cluster cluster) {
-            return (cluster.getSize() > 1);
+            // Render as a cluster if all the items are at the exact same location, or if there are more than
+            // min_cluster_size in the cluster.
+            return ( (cluster.getSize() > 1 && allItemsInSameLocation(cluster)) || cluster.getSize() >= getResources().getInteger(R.integer.min_cluster_size));
         }
 
         protected boolean allItemsInSameLocation(Cluster<HostBriefInfo> cluster) {
             boolean allInOnePlace = true;
-            HostBriefInfo firstHost = (HostBriefInfo)cluster.getItems().toArray()[0];
-            LatLng firstLatLng = firstHost.getLatLng();
+            LatLng firstLatLng = cluster.getItems().iterator().next().getLatLng();
             for (HostBriefInfo host: cluster.getItems()) {
                 if (!host.getLatLng().equals(firstLatLng)) {
                     allInOnePlace = false;
