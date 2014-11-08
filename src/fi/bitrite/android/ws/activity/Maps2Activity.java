@@ -99,7 +99,7 @@ public class Maps2Activity extends FragmentActivity implements
     public void onDisconnected() {
         Log.i(TAG, "Disconnected from location services");
         mPlayServicesConnectionStatus = false;
-        Toast.makeText(this, getString(R.string.disconnected_location_services),
+        Toast.makeText(this, "Disconnected from location services. Please re-connect.",
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -169,6 +169,8 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        Log.i(TAG, "onRestoreInstanceState, savedInstanceState==" + (savedInstanceState != null));
+
     }
 
     @Override
@@ -222,7 +224,7 @@ public class Maps2Activity extends FragmentActivity implements
             String hostList = "";
             ArrayList<HostBriefInfo> hosts = new ArrayList<HostBriefInfo>();
             if (mPopup == null) {
-                // TODO: Override complaint from lint
+                // TODO: Should not be passing null as second param
                 mPopup = mInflater.inflate(R.layout.info_window, null);
             }
             TextView tv = (TextView)mPopup.findViewById(R.id.title);
@@ -353,7 +355,14 @@ public class Maps2Activity extends FragmentActivity implements
         LatLngBounds curScreen = mMap.getProjection().getVisibleRegion().latLngBounds;
         sendMessage(getResources().getString(R.string.loading_hosts), false);
         Search search = new RestMapSearch(curScreen.northeast, curScreen.southwest);
-        doMapSearch(search);
+        Log.i(TAG, "onCameraChange zoom=" + position.zoom + " fired, setting location");
+
+        if (position.zoom < getResources().getInteger(R.integer.map_zoom_min_load)) {
+            sendMessage(R.string.hosts_dont_load, false);
+        }
+        else {
+            doMapSearch(search);
+        }
     }
 
     public void doMapSearch(Search search) {
@@ -544,6 +553,10 @@ public class Maps2Activity extends FragmentActivity implements
 
     private Toast lastToast = null;
 
+    private void sendMessage(int message_id, final boolean error) {
+        String message = getString(message_id);
+        sendMessage(message, error);
+    }
     private void sendMessage(final String message, final boolean error) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         if (lastToast != null) {

@@ -82,4 +82,5 @@
     <string name="alert_neutral_button">OK</string>
     <string name="contact_message_to">"Message to %1$s"</string>
     <string name="disconnected_location_services">Disconnected from location services. Please re-connect.</string>
+    <string name="hosts_dont_load">Host locations don\'t load at this zoom level\nZoom in....</string>
 </resources>
