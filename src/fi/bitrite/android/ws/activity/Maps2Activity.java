@@ -145,7 +145,7 @@ public class Maps2Activity extends FragmentActivity implements
     public void onDisconnected() {
         Log.i(TAG, "Disconnected from location services");
         mPlayServicesConnectionStatus = false;
-        Toast.makeText(this, "Disconnected from location services. Please re-connect.",
+        Toast.makeText(this, getString(R.string.disconnected_location_services),
                 Toast.LENGTH_SHORT).show();
     }
 
