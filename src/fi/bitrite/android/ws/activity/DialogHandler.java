@@ -6,6 +6,8 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 
+import fi.bitrite.android.ws.R;
+
 /** 
  * Helper class for progress dialogs.
  */
@@ -47,7 +49,7 @@ public class DialogHandler {
     private void showAlertDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
         builder.setMessage(message).setCancelable(false)
-                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                .setNeutralButton(parentActivity.getString(R.string.alert_neutral_button), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }

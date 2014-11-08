@@ -58,7 +58,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
 
     public String getLocation() {
         String location = mCity + ", " + mProvince.toUpperCase();
-        if (mStreet != "" && mStreet.length() > 0) {
+        if (mStreet != null && mStreet.length() > 0) {
             location = mStreet + ", " + location;
         }
         return location;

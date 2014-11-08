@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WSAndroid</string>
-    <string name="app_title">"WarmShowers for Android\nVersion: 1.4.0"</string>
+    <string name="app_title">"WarmShowers for Android"</string>
+    <string name="app_version">Version %1$s</string>
     <string name="label">WarmShowers for Android</string>
     <string name="authenticating">Authenticating …</string>
     <string name="need_account">Cannot run without WarmShowers credentials</string>
@@ -78,4 +79,7 @@
     <string name="click_to_view_all"><strong>Click to view all</strong></string>
     <string name="map_default_latitude">46.8625</string>
     <string name="map_default_longitude">-114.011667</string>
+    <string name="alert_neutral_button">OK</string>
+    <string name="contact_message_to">"Message to %1$s"</string>
+    <string name="disconnected_location_services">Disconnected from location services. Please re-connect.</string>
 </resources>

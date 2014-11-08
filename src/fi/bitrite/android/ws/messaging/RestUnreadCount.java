@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.messaging;
 
 import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 import org.apache.http.NameValuePair;
 
@@ -9,8 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RestUnreadCount extends RestClient {
-
-    private static final String WARMSHOWERS_UNREAD_COUNT_URL = "https://www.warmshowers.org/services/rest/message/unreadCount";
+    private static final String WARMSHOWERS_UNREAD_COUNT_URL = GlobalInfo.warmshowersBaseUrl + "/services/rest/message/unreadCount";
 
     private static final Pattern p = Pattern.compile(".*(\\d+).*");
 

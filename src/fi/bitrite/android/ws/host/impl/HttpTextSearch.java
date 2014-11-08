@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class HttpTextSearch extends RestClient implements Search {
     public HttpTextSearch(String keyword) {
         this.keyword = keyword;
     }
-    private static final String WARMSHOWERS_HOST_BY_KEYWORD_URL = "https://www.warmshowers.org/services/rest/hosts/by_keyword";
+    private static final String WARMSHOWERS_HOST_BY_KEYWORD_URL = GlobalInfo.warmshowersBaseUrl + "/services/rest/hosts/by_keyword";
 
     /*
      * Searches wsuser using service.
