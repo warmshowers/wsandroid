@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,15 +10,17 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -26,28 +29,24 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.*;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-
-import java.util.ArrayList;
-
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.google.maps.android.ui.IconGenerator;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestMapSearch;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.WSNonHierarchicalDistanceBasedAlgorithm;
 import fi.bitrite.android.ws.util.http.HttpException;
+
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Maps2Activity extends FragmentActivity implements
@@ -73,6 +72,42 @@ public class Maps2Activity extends FragmentActivity implements
     private static final String TAG = "Maps2Activity";
     private CameraPosition mLastCameraPosition = null;
     private boolean mResolvingError = false;
+    Location mLastDeviceLocation;
+    String mDistanceUnit;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mDistanceUnit = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("distance_unit", "km");
+
+        setContentView(R.layout.activity_maps);
+
+        mLocationClient = new LocationClient(this, this, this);
+
+        setUpMapIfNeeded();
+        mMap.setOnCameraChangeListener(this);
+
+        CameraPosition position = getSavedCameraPosition();
+        if (position != null) {
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
+            // The move itself will end up setting the mlastCameraPosition.
+        }
+
+        mClusterManager = new ClusterManager<HostBriefInfo>(this, mMap);
+        mClusterManager.setAlgorithm(new PreCachingAlgorithmDecorator<HostBriefInfo>(new WSNonHierarchicalDistanceBasedAlgorithm<HostBriefInfo>()));
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterInfoWindowClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+        mClusterManager.setRenderer(new HostRenderer());
+        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+        mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
+        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleHostInfoWindowAdapter(getLayoutInflater()));
+    }
 
     /**
      * This is where google play services gets connected and we can now find recent location.
@@ -87,6 +122,17 @@ public class Maps2Activity extends FragmentActivity implements
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "Connected to location services mLastCameraPosition==" + (mLastCameraPosition != null));
         mPlayServicesConnectionStatus = true;
+
+        mLastDeviceLocation = mLocationClient.getLastLocation();
+
+        // If we are now connected, but still don't have a location, use a bogus default.
+        if (mLastDeviceLocation == null) {
+            mLastDeviceLocation = new Location("default");
+
+            mLastDeviceLocation.setLatitude(
+                    Double.parseDouble(getResources().getString(R.string.map_default_latitude)));
+            mLastDeviceLocation.setLongitude(Double.parseDouble(getResources().getString(R.string.map_default_longitude)));
+        }
 
         mMap.setMyLocationEnabled(true);
 
@@ -133,14 +179,33 @@ public class Maps2Activity extends FragmentActivity implements
      * Add the title and snippet to the marker so that infoWindow can be rendered.
      */
     private class HostRenderer extends DefaultClusterRenderer<HostBriefInfo> {
+        private final IconGenerator mSingleLocationClusterIconGenerator = new IconGenerator(getApplicationContext());
+        private SparseArray<BitmapDescriptor> mIcons = new SparseArray<BitmapDescriptor>();
 
         public HostRenderer() {
             super(getApplicationContext(), mMap, mClusterManager);
+
+            View sameLocationMultiHostClusterView = getLayoutInflater().inflate(R.layout.same_location_cluster_marker, null);
+            mSingleLocationClusterIconGenerator.setContentView(sameLocationMultiHostClusterView);
+            mSingleLocationClusterIconGenerator.setBackground(null);
         }
 
         @Override
         protected void onBeforeClusterRendered(Cluster<HostBriefInfo> cluster, MarkerOptions markerOptions) {
-            super.onBeforeClusterRendered(cluster, markerOptions);
+
+            if (allItemsInSameLocation(cluster)) {
+                int size = cluster.getSize();
+                BitmapDescriptor descriptor = mIcons.get(size);
+                if (descriptor == null) {
+                    // Cache new bitmaps
+                    descriptor = BitmapDescriptorFactory.fromBitmap(mSingleLocationClusterIconGenerator.makeIcon(String.valueOf(size)));
+                    mIcons.put(size, descriptor);
+                }
+                markerOptions.icon(descriptor);
+            }
+            else {
+                super.onBeforeClusterRendered(cluster, markerOptions);
+            }
         }
 
         @Override
@@ -150,13 +215,31 @@ public class Maps2Activity extends FragmentActivity implements
             if (street != null && street.length() > 0) {
                 snippet = street + "<br/>" + snippet;
             }
+            if (mLastDeviceLocation != null) {
+                double distance = Tools.calculateDistanceBetween(host.getLatLng(), mLastDeviceLocation, mDistanceUnit);
+                snippet += "<br/>" + getString(R.string.distance_from_current, (int)distance, mDistanceUnit);
+            }
             markerOptions.title(host.getFullname()).snippet(snippet);
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_markers_single));
         }
 
         @Override
         protected boolean shouldRenderAsCluster(Cluster cluster) {
-            // Always render clusters.
-            return cluster.getSize() > 1;
+            // Render as a cluster if all the items are at the exact same location, or if there are more than
+            // min_cluster_size in the cluster.
+            return ( (cluster.getSize() > 1 && allItemsInSameLocation(cluster)) || cluster.getSize() >= getResources().getInteger(R.integer.min_cluster_size));
+        }
+
+        protected boolean allItemsInSameLocation(Cluster<HostBriefInfo> cluster) {
+            boolean allInOnePlace = true;
+            LatLng firstLatLng = cluster.getItems().iterator().next().getLatLng();
+            for (HostBriefInfo host: cluster.getItems()) {
+                if (!host.getLatLng().equals(firstLatLng)) {
+                    allInOnePlace = false;
+                    break;
+                }
+            }
+            return allInOnePlace;
         }
     }
 
@@ -173,37 +256,7 @@ public class Maps2Activity extends FragmentActivity implements
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_maps);
-
-        mLocationClient = new LocationClient(this, this, this);
-
-        setUpMapIfNeeded();
-        mMap.setOnCameraChangeListener(this);
-
-        CameraPosition position = getSavedCameraPosition();
-        if (position != null) {
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-            // The move itself will end up setting the mlastCameraPosition.
-        }
-
-        mClusterManager = new ClusterManager<HostBriefInfo>(this, mMap);
-        mClusterManager.setAlgorithm(new PreCachingAlgorithmDecorator<HostBriefInfo>(new WSNonHierarchicalDistanceBasedAlgorithm<HostBriefInfo>()));
-        mMap.setOnMarkerClickListener(mClusterManager);
-        mMap.setOnInfoWindowClickListener(mClusterManager);
-        mClusterManager.setOnClusterClickListener(this);
-        mClusterManager.setOnClusterInfoWindowClickListener(this);
-        mClusterManager.setOnClusterItemClickListener(this);
-        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
-        mClusterManager.setRenderer(new HostRenderer());
-        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
-        mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
-        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleHostInfoWindowAdapter(getLayoutInflater()));
-//        mMap.setInfoWindowAdapter(new Maps2Activity.SingleHostInfoWindowAdapter(getLayoutInflater()));
-    }
 
     class ClusterInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private View mPopup=null;
@@ -224,12 +277,18 @@ public class Maps2Activity extends FragmentActivity implements
             String hostList = "";
             ArrayList<HostBriefInfo> hosts = new ArrayList<HostBriefInfo>();
             if (mPopup == null) {
-                // TODO: Should not be passing null as second param
                 mPopup = mInflater.inflate(R.layout.info_window, null);
             }
             TextView tv = (TextView)mPopup.findViewById(R.id.title);
 
             if (mLastClickedCluster != null) {
+
+                if (mLastDeviceLocation != null) {
+                    double distance = Tools.calculateDistanceBetween(marker.getPosition(), mLastDeviceLocation, mDistanceUnit);
+                    TextView distance_tv = (TextView)mPopup.findViewById(R.id.distance_from_current);
+                    distance_tv.setText(Html.fromHtml(getString(R.string.distance_from_current, (int)distance, mDistanceUnit)));
+                }
+
                 hosts = (ArrayList<HostBriefInfo>) mLastClickedCluster.getItems();
                 if (mLastClickedCluster != null) {
                     for (HostBriefInfo host : hosts) {
@@ -238,9 +297,12 @@ public class Maps2Activity extends FragmentActivity implements
 
                     hostList += getString(R.string.click_to_view_all);
                 }
-                tv.setText(getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getLocation()));
+                String title = getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getLocation());
+
+                tv.setText(Html.fromHtml(title));
                 tv=(TextView)mPopup.findViewById(R.id.snippet);
                 tv.setText(Html.fromHtml(hostList));
+
             }
 
             return(mPopup);
@@ -331,21 +393,10 @@ public class Maps2Activity extends FragmentActivity implements
 
     /**
      * If we can get a location, go to it with default zoom.
-     * Else use a default location.
      */
     void setMapToCurrentLocation() {
-        Location myLocation = mLocationClient.getLastLocation();
-        LatLng gotoLatLng;
-        float zoom = (float) getResources().getInteger(R.integer.map_initial_zoom);
-
-        if (myLocation != null) {
-            gotoLatLng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-        }
-        // Otherwise bail - their location is turned off, use default
-        else {
-            gotoLatLng = new LatLng(Double.parseDouble(getResources().getString(R.string.map_default_latitude)),
-                    Double.parseDouble(getResources().getString(R.string.map_default_longitude)));
-        }
+        LatLng gotoLatLng = new LatLng(mLastDeviceLocation.getLatitude(), mLastDeviceLocation.getLongitude());
+        float zoom = (float) getResources().getInteger(R.integer.map_initial_zoom); // Default
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(gotoLatLng, zoom));
     }
 
@@ -395,10 +446,10 @@ public class Maps2Activity extends FragmentActivity implements
             int padding = Math.min(mapView.getHeight(), mapView.getWidth()) * padding_percent / 100;
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, mapView.getWidth(), mapView.getHeight(), padding);
             mMap.animateCamera(cu);
-            return true; // No more processing needed for this click.
+            return true;
         }
-        // If there was nothing in the bounds, normal handling with info window.
-        return false;
+        showMultihostSelectDialog((ArrayList<HostBriefInfo>)cluster.getItems());
+        return true;
     }
 
     @Override
@@ -407,7 +458,7 @@ public class Maps2Activity extends FragmentActivity implements
      */
     public void onClusterInfoWindowClick(Cluster<HostBriefInfo> hostBriefInfoCluster) {
         Intent intent = new Intent(this, ListSearchTabActivity.class);
-        intent.putParcelableArrayListExtra("search_results", (ArrayList<HostBriefInfo>)hostBriefInfoCluster.getItems());
+        intent.putParcelableArrayListExtra("search_results", (ArrayList<HostBriefInfo>) hostBriefInfoCluster.getItems());
         startActivity(intent);
     }
 
@@ -551,6 +602,51 @@ public class Maps2Activity extends FragmentActivity implements
         }
     }
 
+    public void showMultihostSelectDialog(final ArrayList<HostBriefInfo> hosts) {
+        String[] mPossibleItems = new String[hosts.size()];
+
+        double distance = Tools.calculateDistanceBetween(hosts.get(0).getLatLng(), mLastDeviceLocation, mDistanceUnit);
+        String distanceSummary = getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
+
+        LinearLayout customTitleView = (LinearLayout)getLayoutInflater().inflate(R.layout.multihost_dialog_header, null);
+        TextView titleView = (TextView)customTitleView.findViewById(R.id.title);
+        titleView.setText(getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getStreetCityAddress()));
+
+        TextView distanceView = (TextView)customTitleView.findViewById(R.id.distance_from_current);
+        distanceView.setText(distanceSummary);
+
+        for (int i = 0; i < hosts.size(); i++) {
+            mPossibleItems[i] = hosts.get(i).getFullname();
+        }
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setCustomTitle(customTitleView);
+
+        alertDialogBuilder
+                .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                return;
+                            }
+                        }
+                )
+                .setItems(mPossibleItems,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int index) {
+                                Intent intent = new Intent(Maps2Activity.this, HostInformationActivity.class);
+                                HostBriefInfo briefHost = hosts.get(index);
+                                Host host = Host.createFromBriefInfo(hosts.get(index));
+                                intent.putExtra("host", host);
+                                intent.putExtra("id", briefHost.getId());
+                                startActivity(intent);
+                            }
+
+                        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+
     private Toast lastToast = null;
 
     private void sendMessage(int message_id, final boolean error) {
@@ -565,6 +661,7 @@ public class Maps2Activity extends FragmentActivity implements
         toast.show();
         lastToast = toast;
     }
+
 
 }
 

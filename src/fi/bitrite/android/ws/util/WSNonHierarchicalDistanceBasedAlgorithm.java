@@ -38,7 +38,8 @@ import java.util.Set;
 public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> implements Algorithm<T> {
     // Turning this down makes for more markers and less clusters
     // 20 seems to make too many clusters. 100 was the original default.
-    public static final int MAX_DISTANCE_AT_ZOOM = 50;
+    // TODO: Initialize this from global, or use a resource. Can pass in a context and use resource.
+    public static final int MAX_DISTANCE_AT_ZOOM = 80;
 
     /**
      * Any modifications should be synchronized on mQuadTree.

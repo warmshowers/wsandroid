@@ -83,4 +83,6 @@
     <string name="contact_message_to">"Message to %1$s"</string>
     <string name="disconnected_location_services">Disconnected from location services. Please re-connect.</string>
     <string name="hosts_dont_load">Host locations don\'t load at this zoom level\nZoom in....</string>
+    <!-- Distance from current has 2 args, number and units -->
+    <string name="distance_from_current">"%1$d %2$s from current location"</string>
 </resources>
