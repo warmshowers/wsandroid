@@ -2,7 +2,17 @@
 <resources>
     <!-- percentage padding to use when exploding a cluster -->
     <integer name="cluster_explode_padding_percent">20</integer>
+
+    <!-- Zoom on original map view if nothing is stored for context -->
     <integer name="map_initial_zoom">9</integer>
+
+    <!-- If the zoom is below this number, we won't try to load hosts and will emit a message saying that -->
     <integer name="map_zoom_min_load">7</integer>
+
+    <!-- Clusters won't be formed below this size - individual pins will be used -->
     <integer name="min_cluster_size">10</integer>
+
+    <!-- This is just a plugin to the WSNonHierarchical clustering algo to fine-tune clustering -->
+    <!-- See WSNonHierarchicalDistanceBasedAlgorithm -->
+    <integer name="map_algo_max_distance_at_zoom">80</integer>
 </resources>
