@@ -300,7 +300,7 @@ public class HostInformationActivity extends RoboActivity {
             try {
                 HttpHostInformation httpHostInfo = new HttpHostInformation();
                 HttpHostFeedback hostFeedback = new HttpHostFeedback();
-                int uid = hostInfo.getHost().getUid();
+                int uid = hostInfo.getId();
 
                 Host host = httpHostInfo.getHostInformation(uid);
                 ArrayList<Feedback> feedback = hostFeedback.getFeedback(uid);
