@@ -1,5 +1,7 @@
 package fi.bitrite.android.ws.util;
 
+import android.content.Context;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
@@ -18,6 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import fi.bitrite.android.ws.R;
 
 /**
  * This is just copied from the provided NonHierarchicalDistanceBasedAlgorithm, changing
@@ -38,8 +42,13 @@ import java.util.Set;
 public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> implements Algorithm<T> {
     // Turning this down makes for more markers and less clusters
     // 20 seems to make too many clusters. 100 was the original default.
-    // TODO: Initialize this from global, or use a resource. Can pass in a context and use resource.
-    public static final int MAX_DISTANCE_AT_ZOOM = 80;
+    private Context mContext;
+    private static int MAX_DISTANCE_AT_ZOOM = 80;
+
+    public WSNonHierarchicalDistanceBasedAlgorithm(Context context) {
+        mContext = context;
+        MAX_DISTANCE_AT_ZOOM = mContext.getResources().getInteger(R.integer.map_algo_max_distance_at_zoom);
+    }
 
     /**
      * Any modifications should be synchronized on mQuadTree.
