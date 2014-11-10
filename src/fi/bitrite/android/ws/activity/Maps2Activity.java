@@ -30,6 +30,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
@@ -46,6 +50,8 @@ import fi.bitrite.android.ws.util.WSNonHierarchicalDistanceBasedAlgorithm;
 import fi.bitrite.android.ws.util.http.HttpException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -74,6 +80,8 @@ public class Maps2Activity extends FragmentActivity implements
     private boolean mResolvingError = false;
     Location mLastDeviceLocation;
     String mDistanceUnit;
+
+    enum ClusterStatus {none, some, all};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,7 +201,7 @@ public class Maps2Activity extends FragmentActivity implements
         @Override
         protected void onBeforeClusterRendered(Cluster<HostBriefInfo> cluster, MarkerOptions markerOptions) {
 
-            if (allItemsInSameLocation(cluster)) {
+            if (clusterLocationStatus(cluster) == ClusterStatus.all) {
                 int size = cluster.getSize();
                 BitmapDescriptor descriptor = mIcons.get(size);
                 if (descriptor == null) {
@@ -227,19 +235,41 @@ public class Maps2Activity extends FragmentActivity implements
         protected boolean shouldRenderAsCluster(Cluster cluster) {
             // Render as a cluster if all the items are at the exact same location, or if there are more than
             // min_cluster_size in the cluster.
-            return ( (cluster.getSize() > 1 && allItemsInSameLocation(cluster)) || cluster.getSize() >= getResources().getInteger(R.integer.min_cluster_size));
+            ClusterStatus status = clusterLocationStatus(cluster);
+            boolean renderAsCluster = status == ClusterStatus.all || status == ClusterStatus.some || cluster.getSize() >= getResources().getInteger(R.integer.min_cluster_size);
+            return renderAsCluster;
         }
 
-        protected boolean allItemsInSameLocation(Cluster<HostBriefInfo> cluster) {
-            boolean allInOnePlace = true;
-            LatLng firstLatLng = cluster.getItems().iterator().next().getLatLng();
-            for (HostBriefInfo host: cluster.getItems()) {
-                if (!host.getLatLng().equals(firstLatLng)) {
-                    allInOnePlace = false;
-                    break;
-                }
+        /**
+         * Attempt to determine the location status of items in the cluster, whether all in one location
+         * or in a variety of locations.
+         *
+         * @param cluster
+         * @return
+         */
+        protected ClusterStatus clusterLocationStatus(Cluster<HostBriefInfo> cluster) {
+//            ImmutableMap<String, HostBriefInfo> latLngs = Maps.uniqueIndex(cluster.getItems(), new Function<HostBriefInfo, String>() {
+//                public String apply(HostBriefInfo from) {
+//                    if (this.)
+//                    return from.getLatLng().toString();
+//                }
+//            });
+
+            HashSet<String> latLngs = new HashSet<String>();
+            for (HostBriefInfo item : cluster.getItems()) {
+                latLngs.add(item.getLatLng().toString());
             }
-            return allInOnePlace;
+
+            // if cluster size and latLngs size are same, all are unique locations, so 'none'
+            if (cluster.getSize() == latLngs.size()) {
+                return ClusterStatus.none;
+            }
+            // If there is only one unique location, then all are in same location.
+            else if (latLngs.size() == 1) {
+                return ClusterStatus.all;
+            }
+            // Otherwise it's a mix of same and other location
+            return ClusterStatus.some;
         }
     }
 

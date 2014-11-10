@@ -20,6 +20,7 @@ dependencies {
     compile files('lib/roboguice-1.1.2.jar')
     compile 'com.google.android.gms:play-services:5.0.89'
     compile 'com.google.maps.android:android-maps-utils:0.3+'
+    compile group: 'com.google.guava', name: 'guava', version: '18.0'
 }
 
 android {
