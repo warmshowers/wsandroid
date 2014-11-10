@@ -263,8 +263,9 @@ public class HostInformationActivity extends RoboActivity {
     private void updateViewContent() {
         Host host = hostInfo.getHost();
 
+        String availability = host.getNotCurrentlyAvailable().equals("1") ? getString(R.string.host_not_currently_available) : getString(R.string.host_currently_available);
         // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
-        comments.setText(Tools.siteHtmlToHtml(host.getComments()));
+        comments.setText(Tools.siteHtmlToHtml(availability + "<br/>" + host.getComments()));
 
         location.setText(host.getLocation());
         memberSince.setText(host.getMemberSince());

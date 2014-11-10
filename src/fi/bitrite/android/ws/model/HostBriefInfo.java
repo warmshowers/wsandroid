@@ -16,8 +16,9 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
     private int mId;
     private String mUsername, mFullName, mStreet, mCity, mProvince, mCountry, mAboutMe, mLatitude, mLongitude;
     private String mUpdated;
+    private boolean mNotCurrentlyAvailable;
     
-    public HostBriefInfo(int id, String username, String fullName, String street, String city, String province, String country, String aboutMe) {
+    public HostBriefInfo(int id, String username, String fullName, String street, String city, String province, String country, String aboutMe, boolean notCurrentlyAvailable) {
         mId = id;
         mUsername = username;
         mFullName = fullName;
@@ -26,6 +27,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mProvince = province;
         mCountry = country;
         mAboutMe = aboutMe;
+        mNotCurrentlyAvailable = notCurrentlyAvailable;
     }
 
     public HostBriefInfo(int id, Host host) {
@@ -39,6 +41,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
 
         mAboutMe = host.getComments();
         mUpdated = host.getUpdated();
+        mNotCurrentlyAvailable = host.getNotCurrentlyAvailable().equals("1");
     }
 
     public HostBriefInfo() {
@@ -120,6 +123,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         dest.writeString(mCity);
         dest.writeString(mProvince);
         dest.writeString(mCountry);
+        dest.writeByte((byte)(mNotCurrentlyAvailable ? 1 : 0));
     }
     
     public void readFromParcel(Parcel src) {
@@ -133,6 +137,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mCity = src.readString();
         mProvince = src.readString();
         mCountry = src.readString();
+        mNotCurrentlyAvailable = src.readByte() != 0;
     }
 
     @Override
@@ -159,5 +164,8 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         }
         result += mCity + ", " + mProvince.toUpperCase();
         return result;
+    }
+    public boolean getNotCurrentlyAvailable() {
+        return mNotCurrentlyAvailable;
     }
 }

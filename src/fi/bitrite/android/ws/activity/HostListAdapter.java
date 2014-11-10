@@ -18,9 +18,11 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
     private int[] colors = new int[] { 0xFF000000, 0xFF222222 };
     
     private int resource;
+    private Context mContext;
 
     public HostListAdapter(Context context, int resource, List<HostBriefInfo> hosts) {
         super(context, resource, hosts);
+        mContext = context;
         this.resource = resource;
     }
 
@@ -40,9 +42,11 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
         fullname.setText(host.getFullname());
         location.setText(host.getLocation());
-        
+
+        String availability = host.getNotCurrentlyAvailable() ? mContext.getString(R.string.host_not_currently_available) : mContext.getString(R.string.host_currently_available);
+
         // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
-        comments.setText(Tools.siteHtmlToHtml(host.getAboutMe()));
+        comments.setText(Tools.siteHtmlToHtml(availability + " " + host.getAboutMe()));
         
         if (host.getUpdated() != null) {
             updated.setText(getContext().getResources().getString(R.string.last_updated) + " " + host.getUpdated());
