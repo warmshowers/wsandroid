@@ -290,6 +290,11 @@ public class HostInformationActivity extends RoboActivity {
         feedbackLabel.setText(getResources().getString(R.string.feedback) + " (" + feedback.size() + ")");
 
         hostDetails.setVisibility(View.VISIBLE);
+
+        if (hostInfo.getHost().isNotCurrentlyAvailable()) {
+            dialogHandler.alert(getResources().getString(R.string.host_not_available));
+        }
+
     }
 
     private class HostInformationTask extends AsyncTask<Void, Void, Object> {
@@ -333,9 +338,6 @@ public class HostInformationActivity extends RoboActivity {
                 dialogHandler.alert(getResources().getString(R.string.host_updated));
             }
 
-            if (hostInfo.getHost().isNotCurrentlyAvailable()) {
-                dialogHandler.alert(getResources().getString(R.string.host_not_available));
-            }
         }
 
     }

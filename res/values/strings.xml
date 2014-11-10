@@ -43,7 +43,7 @@
     <string name="about">About</string>
     <string name="last_updated">Last updated: </string>
     <string name="host_updated">Host information updated.</string>
-    <string name="host_not_available">It is indicated that this host is currently not available. You may still contact the host, but you may not get a response.</string>
+    <string name="host_not_available">This member is marked as not currently available. You may still contact the member, but not for hosting.</string>
     <string name="host_info_in_progress">Retrieving host information …</string>
     <string name="unstar_host">Un-star this host?</string>
     <string name="host_starred">Host starred. You can now access this information off-line.</string>
