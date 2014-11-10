@@ -257,20 +257,6 @@ public class Maps2Activity extends FragmentActivity implements
     }
 
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Log.i(TAG, "onRestoreInstanceState, savedInstanceState==" + (savedInstanceState != null));
-
-    }
-
-
-
     class ClusterInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private View mPopup=null;
         private LayoutInflater mInflater=null;
