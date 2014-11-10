@@ -6,10 +6,10 @@
         android:icon="@drawable/star"
         android:title="@string/star" />
 
-    <!--<item-->
-        <!--android:id="@+id/menuMap"-->
-        <!--android:icon="@drawable/map"-->
-        <!--android:title="@string/show_on_map" />-->
+    <item
+        android:id="@+id/menuMap"
+        android:icon="@drawable/map"
+        android:title="@string/show_on_map" />
     
     <item
         android:id="@+id/menuUpdate"
