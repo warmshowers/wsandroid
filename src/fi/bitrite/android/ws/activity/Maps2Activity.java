@@ -18,6 +18,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -89,7 +90,19 @@ public class Maps2Activity extends FragmentActivity implements
         setUpMapIfNeeded();
         mMap.setOnCameraChangeListener(this);
 
-        CameraPosition position = getSavedCameraPosition();
+        CameraPosition position = null;
+
+        // If we were launched with an intent asking us to zoom to a member
+        Intent receivedIntent = getIntent();
+        if (receivedIntent.hasExtra("target_map_latlng")) {
+            LatLng targetLatLng = receivedIntent.getParcelableExtra("target_map_latlng");
+            position = new CameraPosition(targetLatLng, getResources().getInteger(R.integer.map_showhost_zoom), 0, 0);
+            // TODO: Turn off the too much cool finger moves that Nancy complains about.
+        }
+
+        if (position == null) {
+            position = getSavedCameraPosition();
+        }
         if (position != null) {
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
             // The move itself will end up setting the mlastCameraPosition.
@@ -389,6 +402,8 @@ public class Maps2Activity extends FragmentActivity implements
     }
 
     private void setUpMap() {
+        // Rotate gestures probably aren't needed here and can be disorienting for some of our users.
+        mMap.getUiSettings().setRotateGesturesEnabled(false);
     }
 
     /**
