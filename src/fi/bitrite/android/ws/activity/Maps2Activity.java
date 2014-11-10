@@ -180,14 +180,21 @@ public class Maps2Activity extends FragmentActivity implements
      */
     private class HostRenderer extends DefaultClusterRenderer<HostBriefInfo> {
         private final IconGenerator mSingleLocationClusterIconGenerator = new IconGenerator(getApplicationContext());
+        private final IconGenerator mSingleHostIconGenerator = new IconGenerator(getApplicationContext());
         private SparseArray<BitmapDescriptor> mIcons = new SparseArray<BitmapDescriptor>();
+        private BitmapDescriptor mSingleHostBitmapDescriptor;
 
         public HostRenderer() {
             super(getApplicationContext(), mMap, mClusterManager);
 
             View sameLocationMultiHostClusterView = getLayoutInflater().inflate(R.layout.same_location_cluster_marker, null);
+            View singleHostMarkerView = getLayoutInflater().inflate(R.layout.location_marker, null);
             mSingleLocationClusterIconGenerator.setContentView(sameLocationMultiHostClusterView);
             mSingleLocationClusterIconGenerator.setBackground(null);
+            mSingleHostIconGenerator.setContentView(singleHostMarkerView);
+            mSingleHostIconGenerator.setBackground(null);
+            mSingleHostBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(mSingleHostIconGenerator.makeIcon());
+
         }
 
         @Override
@@ -220,7 +227,7 @@ public class Maps2Activity extends FragmentActivity implements
                 snippet += "<br/>" + getString(R.string.distance_from_current, (int)distance, mDistanceUnit);
             }
             markerOptions.title(host.getFullname()).snippet(snippet);
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_markers_single));
+            markerOptions.icon(mSingleHostBitmapDescriptor);
         }
 
         @Override
