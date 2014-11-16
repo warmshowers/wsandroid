@@ -86,7 +86,8 @@ public class MapSearchJsonParser {
                     hostObj.get("city").getAsString(),
                     hostObj.get("province").getAsString(),
                     hostObj.get("country").getAsString(),
-                    "" // No about_me provided here
+                    "",   // No about_me provided here
+                    (hostObj.get("notcurrentlyavailable").getAsString().equals("1"))
             );
             h.setLatitude(lat);
             h.setLongitude(lon);

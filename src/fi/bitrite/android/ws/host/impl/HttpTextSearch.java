@@ -54,7 +54,8 @@ public class HttpTextSearch extends RestClient implements Search {
                         account.get("city").toString(),
                         account.get("province").toString(),
                         account.get("country").toString(),
-                        account.get("comments").toString()
+                        account.get("comments").toString(),
+                        (account.get("notcurrentlyavailable").toString().equals("1"))
                 );
                 list.add(bi);
             }
