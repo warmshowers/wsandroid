@@ -1,6 +1,8 @@
 package fi.bitrite.android.ws.model;
 
 import android.os.Parcel;
+
+import com.google.android.gms.maps.model.LatLng;
 import com.yelp.parcelgen.JsonParser.DualCreator;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -125,4 +127,7 @@ public class Host extends _Host {
         return dateFormat.format(date);
     }
 
+    public Object getLatLng() {
+        return new LatLng(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
+    }
 }

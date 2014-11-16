@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -12,6 +13,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+
+import com.google.android.gms.maps.model.LatLng;
 import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
@@ -20,6 +23,7 @@ import fi.bitrite.android.ws.host.impl.HttpHostFeedback;
 import fi.bitrite.android.ws.host.impl.HttpHostInformation;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
@@ -229,20 +233,17 @@ public class HostInformationActivity extends RoboActivity {
         // We need to finish the host info dialog, switch to the map tab and
         // zoom/scroll to the location of the host
 
-        Intent resultIntent = new Intent();
+        Intent intent = new Intent(this, Maps2Activity.class);
 
-        if (!Strings.isEmpty(hostInfo.getHost().getLatitude()) && !Strings.isEmpty(hostInfo.getHost().getLongitude())) {
-            int lat = (int) Math.round(Float.parseFloat(hostInfo.getHost().getLatitude()) * 1.0e6);
-            int lon = (int) Math.round(Float.parseFloat(hostInfo.getHost().getLongitude()) * 1.0e6);
-            resultIntent.putExtra("lat", lat);
-            resultIntent.putExtra("lon", lon);
-        }
+        intent.putExtra("target_map_latlng", (Parcelable)hostInfo.getHost().getLatLng());
 
-        // #31: when going back from the map, we should end up on the host info page
-        hostInfo.saveInIntent(resultIntent);
+        startActivity(intent);
 
-        setResult(RESULT_SHOW_HOST_ON_MAP, resultIntent);
-        finish();
+//        // #31: when going back from the map, we should end up on the host info page
+//        hostInfo.saveInIntent(intent);
+//
+//        setResult(RESULT_SHOW_HOST_ON_MAP, intent);
+//        finish();
     }
 
     @Override
@@ -352,9 +353,9 @@ public class HostInformationActivity extends RoboActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-//            case R.id.menuMap:
-//                showHostOnMap(null);
-//                return true;
+            case R.id.menuMap:
+                showHostOnMap(null);
+                return true;
             case R.id.menuStar:
                 showStarHostDialog(null);
                 return true;
