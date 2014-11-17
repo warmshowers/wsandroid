@@ -15,13 +15,13 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 import com.google.inject.Inject;
-
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.http.HttpException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -29,15 +29,18 @@ import java.util.ArrayList;
 
 public class ListSearchTabActivity extends RoboActivity {
 
-    @InjectView(R.id.editListSearch) EditText listSearchEdit;
-    @InjectView(R.id.btnListSearch) ImageView listSearchButton;
-    @InjectView(R.id.lstSearchResult) ListView listSearchResult;
+    @InjectView(R.id.editListSearch)
+    EditText listSearchEdit;
+    @InjectView(R.id.btnListSearch)
+    ImageView listSearchButton;
+    @InjectView(R.id.lstSearchResult)
+    ListView listSearchResult;
 
     @Inject
     SearchFactory searchFactory;
 
     private ArrayList<HostBriefInfo> listSearchHosts;
-    
+
     private DialogHandler dialogHandler;
     private TextSearchTask textSearchTask;
     private LinearLayout mSearchEditLayout;
@@ -51,10 +54,10 @@ public class ListSearchTabActivity extends RoboActivity {
         setContentView(R.layout.list_tab);
         dialogHandler = new DialogHandler(this);
 
-        mSearchEditLayout = (LinearLayout)findViewById(R.id.searchEditLayout);
-        mSearchResultsLayout = (LinearLayout)findViewById(R.id.listSummaryLayout);
-        mMultipleHostsAddress = (TextView)findViewById(R.id.multipleHostAddress);
-        mHostsAtAddress = (TextView)findViewById(R.id.hostsAtAddress);
+        mSearchEditLayout = (LinearLayout) findViewById(R.id.searchEditLayout);
+        mSearchResultsLayout = (LinearLayout) findViewById(R.id.listSummaryLayout);
+        mMultipleHostsAddress = (TextView) findViewById(R.id.multipleHostAddress);
+        mHostsAtAddress = (TextView) findViewById(R.id.hostsAtAddress);
 
         setupListSearch(savedInstanceState);
     }
@@ -65,11 +68,11 @@ public class ListSearchTabActivity extends RoboActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     startSearchUsingEditFieldInput();
                 }
-                
+
                 return true;
             }
         });
-        
+
         listSearchButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startSearchUsingEditFieldInput();
@@ -82,7 +85,7 @@ public class ListSearchTabActivity extends RoboActivity {
                 HostBriefInfo briefInfo = (HostBriefInfo) listSearchResult.getItemAtPosition(position);
                 Host host = Host.createFromBriefInfo(briefInfo);
                 i.putExtra("host", host);
-				i.putExtra("id", briefInfo.getId());
+                i.putExtra("id", briefInfo.getId());
                 startActivityForResult(i, 0);
             }
         });
@@ -105,8 +108,7 @@ public class ListSearchTabActivity extends RoboActivity {
                 mMultipleHostsAddress.setText(listSearchHosts.get(0).getLocation());
                 mHostsAtAddress.setText(getString(R.string.host_count, listSearchHosts.size()));
             }
-        }
-        else if (savedInstanceState != null) {
+        } else if (savedInstanceState != null) {
             listSearchHosts = savedInstanceState.getParcelableArrayList("list_search_hosts");
         }
         boolean inProgress = DialogHandler.inProgress();
@@ -120,7 +122,7 @@ public class ListSearchTabActivity extends RoboActivity {
             doTextSearch(savedInstanceState.getString("search_text"));
         }
     }
-    
+
     protected void startSearchUsingEditFieldInput() {
         hideKeyboard();
         doTextSearch(listSearchEdit.getText().toString());
@@ -149,7 +151,7 @@ public class ListSearchTabActivity extends RoboActivity {
     }
 
     private class TextSearchTask extends AsyncTask<Search, Void, Object> {
-        
+
         @Override
         protected Object doInBackground(Search... params) {
             Search search = params[0];
@@ -157,26 +159,26 @@ public class ListSearchTabActivity extends RoboActivity {
 
             try {
                 retObj = search.doSearch();
-            }
-                
-            catch (Exception e) {
+            } catch (Exception e) {
                 Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 retObj = e;
             }
-            
+
             return retObj;
         }
-        
+
         @SuppressWarnings("unchecked")
         @Override
         protected void onPostExecute(Object result) {
             dialogHandler.dismiss();
-            
+
             if (result instanceof Exception) {
-                dialogHandler.alert(getResources().getString(R.string.error_retrieving_host_information));
+                // TODO: Improve error reporting with more specifics
+                int r = (result instanceof HttpException ? R.string.network_error : R.string.error_retrieving_host_information);
+                dialogHandler.alert(getResources().getString(r));
                 return;
             }
-            
+
             listSearchHosts = (ArrayList<HostBriefInfo>) result;
             listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
                     R.layout.host_list_item, listSearchHosts));
@@ -186,8 +188,8 @@ public class ListSearchTabActivity extends RoboActivity {
             }
         }
 
-    }   
-    
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("list_search_hosts", listSearchHosts);

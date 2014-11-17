@@ -1,4 +1,5 @@
 package fi.bitrite.android.ws.activity;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,7 +19,6 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,10 +31,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
@@ -52,7 +48,6 @@ import fi.bitrite.android.ws.util.http.HttpException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -70,7 +65,7 @@ public class Maps2Activity extends FragmentActivity implements
     private ConcurrentHashMap<Integer, HostBriefInfo> mHosts = new ConcurrentHashMap<Integer, HostBriefInfo>();
     private ClusterManager<HostBriefInfo> mClusterManager;
     private Cluster<HostBriefInfo> mLastClickedCluster;
-    private final static int  CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     private static final String DIALOG_ERROR = "dialog_error";
 
@@ -82,7 +77,9 @@ public class Maps2Activity extends FragmentActivity implements
     Location mLastDeviceLocation;
     String mDistanceUnit;
 
-    enum ClusterStatus {none, some, all};
+    enum ClusterStatus {none, some, all}
+
+    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +129,7 @@ public class Maps2Activity extends FragmentActivity implements
 
     /**
      * This is where google play services gets connected and we can now find recent location.
-     *
+     * <p/>
      * Note that all the complex stuff about connecting to Google Play Services (just to get location)
      * is from http://developer.android.com/training/location/retrieve-current.html and I don't actually
      * know how to test it.
@@ -230,8 +227,7 @@ public class Maps2Activity extends FragmentActivity implements
                     mIcons.put(size, descriptor);
                 }
                 markerOptions.icon(descriptor);
-            }
-            else {
+            } else {
                 super.onBeforeClusterRendered(cluster, markerOptions);
             }
         }
@@ -245,7 +241,7 @@ public class Maps2Activity extends FragmentActivity implements
             }
             if (mLastDeviceLocation != null) {
                 double distance = Tools.calculateDistanceBetween(host.getLatLng(), mLastDeviceLocation, mDistanceUnit);
-                snippet += "<br/>" + getString(R.string.distance_from_current, (int)distance, mDistanceUnit);
+                snippet += "<br/>" + getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
             }
             markerOptions.title(host.getFullname()).snippet(snippet);
             markerOptions.icon(mSingleHostBitmapDescriptor);
@@ -295,8 +291,8 @@ public class Maps2Activity extends FragmentActivity implements
 
 
     class ClusterInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
-        private View mPopup=null;
-        private LayoutInflater mInflater=null;
+        private View mPopup = null;
+        private LayoutInflater mInflater = null;
 
         ClusterInfoWindowAdapter(LayoutInflater inflater) {
             this.mInflater = inflater;
@@ -315,14 +311,14 @@ public class Maps2Activity extends FragmentActivity implements
             if (mPopup == null) {
                 mPopup = mInflater.inflate(R.layout.info_window, null);
             }
-            TextView tv = (TextView)mPopup.findViewById(R.id.title);
+            TextView tv = (TextView) mPopup.findViewById(R.id.title);
 
             if (mLastClickedCluster != null) {
 
                 if (mLastDeviceLocation != null) {
                     double distance = Tools.calculateDistanceBetween(marker.getPosition(), mLastDeviceLocation, mDistanceUnit);
-                    TextView distance_tv = (TextView)mPopup.findViewById(R.id.distance_from_current);
-                    distance_tv.setText(Html.fromHtml(getString(R.string.distance_from_current, (int)distance, mDistanceUnit)));
+                    TextView distance_tv = (TextView) mPopup.findViewById(R.id.distance_from_current);
+                    distance_tv.setText(Html.fromHtml(getString(R.string.distance_from_current, (int) distance, mDistanceUnit)));
                 }
 
                 hosts = (ArrayList<HostBriefInfo>) mLastClickedCluster.getItems();
@@ -336,12 +332,12 @@ public class Maps2Activity extends FragmentActivity implements
                 String title = getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getLocation());
 
                 tv.setText(Html.fromHtml(title));
-                tv=(TextView)mPopup.findViewById(R.id.snippet);
+                tv = (TextView) mPopup.findViewById(R.id.snippet);
                 tv.setText(Html.fromHtml(hostList));
 
             }
 
-            return(mPopup);
+            return (mPopup);
         }
     }
 
@@ -365,8 +361,8 @@ public class Maps2Activity extends FragmentActivity implements
     protected void saveMapLocation(CameraPosition position) {
         SharedPreferences settings = getSharedPreferences("map_last_location", 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putFloat("latitude", (float)position.target.latitude);
-        editor.putFloat("longitude", (float)position.target.longitude);
+        editor.putFloat("latitude", (float) position.target.latitude);
+        editor.putFloat("longitude", (float) position.target.longitude);
         editor.putFloat("zoom", (float) position.zoom);
         editor.commit();
     }
@@ -384,7 +380,7 @@ public class Maps2Activity extends FragmentActivity implements
         }
         float latitude = settings.getFloat("latitude", Float.parseFloat(getResources().getString(R.string.map_default_latitude)));
         float longitude = settings.getFloat("longitude", Float.parseFloat(getResources().getString(R.string.map_default_longitude)));
-        float zoom = settings.getFloat("zoom", (float)getResources().getInteger(R.integer.map_initial_zoom));
+        float zoom = settings.getFloat("zoom", (float) getResources().getInteger(R.integer.map_initial_zoom));
 
         CameraPosition position = new CameraPosition(new LatLng(latitude, longitude), zoom, 0, 0);
         return position;
@@ -400,11 +396,11 @@ public class Maps2Activity extends FragmentActivity implements
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
      * installed) and the map has not already been instantiated.. This will ensure that we only ever
      * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p>
+     * <p/>
      * If it isn't installed {@link SupportMapFragment} (and
      * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
      * install/update the Google Play services APK on their device.
-     * <p>
+     * <p/>
      * A user can return to this FragmentActivity after following the prompt and correctly
      * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
      * have been completely destroyed during this process (it is likely that it would only be
@@ -448,8 +444,7 @@ public class Maps2Activity extends FragmentActivity implements
 
         if (position.zoom < getResources().getInteger(R.integer.map_zoom_min_load)) {
             sendMessage(R.string.hosts_dont_load, false);
-        }
-        else {
+        } else {
             doMapSearch(search);
         }
     }
@@ -471,7 +466,7 @@ public class Maps2Activity extends FragmentActivity implements
 
         // Find out the bounds of the hosts currently in cluster
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for(HostBriefInfo host : cluster.getItems()){
+        for (HostBriefInfo host : cluster.getItems()) {
             builder.include(host.getLatLng());
         }
         LatLngBounds bounds = builder.build();
@@ -486,7 +481,7 @@ public class Maps2Activity extends FragmentActivity implements
             mMap.animateCamera(cu);
             return true;
         }
-        showMultihostSelectDialog((ArrayList<HostBriefInfo>)cluster.getItems());
+        showMultihostSelectDialog((ArrayList<HostBriefInfo>) cluster.getItems());
         return true;
     }
 
@@ -522,8 +517,7 @@ public class Maps2Activity extends FragmentActivity implements
 
             try {
                 retObj = search.doSearch();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 retObj = e;
             }
@@ -535,22 +529,18 @@ public class Maps2Activity extends FragmentActivity implements
         @Override
         protected void onPostExecute(Object result) {
             if (result instanceof Exception) {
-                // TODO: Test offline to see if this works
-                if (result instanceof HttpException) {
-                    Log.e(WSAndroidApplication.TAG, ((HttpException)(result)).getMessage());
-                    sendMessage(getResources().getString(R.string.error_loading_hosts), true);
-                }
-
                 // TODO: Improve error reporting with more specifics
-                sendMessage(getResources().getString(R.string.error_retrieving_host_information), true);
+                int r = (result instanceof HttpException ? R.string.network_error : R.string.error_retrieving_host_information);
+                sendMessage(getResources().getString(r), true);
                 return;
             }
+
             ArrayList<HostBriefInfo> hosts = (ArrayList<HostBriefInfo>) result;
             if (hosts.isEmpty()) {
-                sendMessage((String)getResources().getText(R.string.no_results), false);
+                sendMessage((String) getResources().getText(R.string.no_results), false);
             }
 
-            for (HostBriefInfo host: hosts) {
+            for (HostBriefInfo host : hosts) {
                 HostBriefInfo v = mHosts.putIfAbsent(host.getId(), host);
                 // Only add to the cluster if it wasn't in mHosts before.
                 if (v == null) {
@@ -580,7 +570,8 @@ public class Maps2Activity extends FragmentActivity implements
 
     /* A fragment to display an error dialog */
     public static class ErrorDialogFragment extends DialogFragment {
-        public ErrorDialogFragment() { }
+        public ErrorDialogFragment() {
+        }
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -592,10 +583,9 @@ public class Maps2Activity extends FragmentActivity implements
 
         @Override
         public void onDismiss(DialogInterface dialog) {
-            ((Maps2Activity)getActivity()).onDialogDismissed();
+            ((Maps2Activity) getActivity()).onDialogDismissed();
         }
     }
-
 
 
     /*
@@ -629,7 +619,7 @@ public class Maps2Activity extends FragmentActivity implements
         @SuppressLint("InflateParams")
         @Override
         public View getInfoContents(Marker marker) {
-            if (mPopup == null){
+            if (mPopup == null) {
                 mPopup = mInflater.inflate(R.layout.single_host_infowindow, null);
             }
             TextView titleView = (TextView) mPopup.findViewById(R.id.title);
@@ -646,11 +636,11 @@ public class Maps2Activity extends FragmentActivity implements
         double distance = Tools.calculateDistanceBetween(hosts.get(0).getLatLng(), mLastDeviceLocation, mDistanceUnit);
         String distanceSummary = getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
 
-        LinearLayout customTitleView = (LinearLayout)getLayoutInflater().inflate(R.layout.multihost_dialog_header, null);
-        TextView titleView = (TextView)customTitleView.findViewById(R.id.title);
+        LinearLayout customTitleView = (LinearLayout) getLayoutInflater().inflate(R.layout.multihost_dialog_header, null);
+        TextView titleView = (TextView) customTitleView.findViewById(R.id.title);
         titleView.setText(getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getStreetCityAddress()));
 
-        TextView distanceView = (TextView)customTitleView.findViewById(R.id.distance_from_current);
+        TextView distanceView = (TextView) customTitleView.findViewById(R.id.distance_from_current);
         distanceView.setText(distanceSummary);
 
         for (int i = 0; i < hosts.size(); i++) {
@@ -691,6 +681,7 @@ public class Maps2Activity extends FragmentActivity implements
         String message = getString(message_id);
         sendMessage(message, error);
     }
+
     private void sendMessage(final String message, final boolean error) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         if (lastToast != null) {

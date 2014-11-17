@@ -13,8 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-
-import com.google.android.gms.maps.model.LatLng;
 import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
@@ -23,14 +21,13 @@ import fi.bitrite.android.ws.host.impl.HttpHostFeedback;
 import fi.bitrite.android.ws.host.impl.HttpHostInformation;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
-import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
+import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.view.FeedbackTable;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
-import roboguice.util.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,8 +71,8 @@ public class HostInformationActivity extends RoboActivity {
     TextView memberSince;
     @InjectView(R.id.txtLastLogin)
     TextView lastLogin;
-	@InjectView(R.id.txtViewOnSite)
-	TextView viewOnSite;
+    @InjectView(R.id.txtViewOnSite)
+    TextView viewOnSite;
     @InjectView(R.id.txtHostLocation)
     TextView location;
     @InjectView(R.id.txtHostMobilePhone)
@@ -235,7 +232,7 @@ public class HostInformationActivity extends RoboActivity {
 
         Intent intent = new Intent(this, Maps2Activity.class);
 
-        intent.putExtra("target_map_latlng", (Parcelable)hostInfo.getHost().getLatLng());
+        intent.putExtra("target_map_latlng", (Parcelable) hostInfo.getHost().getLatLng());
 
         startActivity(intent);
 
@@ -281,9 +278,9 @@ public class HostInformationActivity extends RoboActivity {
         bikeShop.setText(host.getBikeshop());
         services.setText(host.getServices());
 
-		viewOnSite.setText(Html.fromHtml("<a href=\"" + GlobalInfo.warmshowersBaseUrl + "/user/" + hostInfo.getId() + "\">" + getResources().getString(R.string.view_on_site) + "</a>"));
-		viewOnSite.setMovementMethod(LinkMovementMethod.getInstance());
-		viewOnSite.setClickable(true);
+        viewOnSite.setText(Html.fromHtml("<a href=\"" + GlobalInfo.warmshowersBaseUrl + "/user/" + hostInfo.getId() + "\">" + getResources().getString(R.string.view_on_site) + "</a>"));
+        viewOnSite.setMovementMethod(LinkMovementMethod.getInstance());
+        viewOnSite.setClickable(true);
 
         List<Feedback> feedback = hostInfo.getFeedback();
         sort(feedback);
@@ -326,7 +323,9 @@ public class HostInformationActivity extends RoboActivity {
             dialogHandler.dismiss();
 
             if (result instanceof Exception) {
-                dialogHandler.alert(getResources().getString(R.string.error_retrieving_host_information));
+                // TODO: Improve error reporting with more specifics
+                int r = (result instanceof HttpException ? R.string.network_error : R.string.error_retrieving_host_information);
+                dialogHandler.alert(getResources().getString(r));
                 return;
             }
 

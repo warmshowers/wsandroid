@@ -12,6 +12,7 @@ import android.widget.TextView;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.messaging.RestUnreadCount;
+import fi.bitrite.android.ws.util.http.HttpException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -26,19 +27,19 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
     @InjectView(R.id.btnUpdateMessages)
     Button updateMessages;
 
-	private DialogHandler dialogHandler;
+    private DialogHandler dialogHandler;
     private int numUnread;
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.messages_tab);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.messages_tab);
 
-		dialogHandler = new DialogHandler(this);
+        dialogHandler = new DialogHandler(this);
         downloadUnreadCount();
 
         updateMessages.setOnClickListener(this);
-	}
+    }
 
     private void downloadUnreadCount() {
         dialogHandler.showDialog(DialogHandler.MESSAGES);
@@ -95,7 +96,9 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
             dialogHandler.dismiss();
 
             if (result instanceof Exception) {
-                dialogHandler.alert(getResources().getString(R.string.error_retrieving_messages));
+                // TODO: Improve error reporting with more specifics
+                int r = (result instanceof HttpException ? R.string.network_error : R.string.error_retrieving_messages);
+                dialogHandler.alert(getResources().getString(r));
                 return;
             }
 
