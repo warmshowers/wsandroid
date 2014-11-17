@@ -49,13 +49,8 @@
     <string name="host_starred">Host starred. You can now access this information off-line.</string>
     <string name="host_unstarred">Host information deleted from device.</string>
     <string name="performing_search">Performing search …</string>
-    <string name="zoom_in">Zoom in</string>
-    <string name="zoom_in_error">Search area too large - zoom in!</string>
-    <string name="too_many_hosts">Too many hosts in area - zoom in!</string>
-    <string name="error_loading_hosts">Error loading hosts, check Internet connection.</string>
-    <string name="mi_distance">miles as the crow flies</string>
-    <string name="km_distance">km as the crow flies</string>
-    <string name="error_retrieving_host_information">Could not retrieve host information. Check your credentials and internet connection.</string>
+    <string name="network_error">No Internet connection.</string>
+    <string name="error_retrieving_host_information">Could not retrieve host information. Check your credentials and Internet connection.</string>
     <string name="subject_hint">Enter subject here</string>
     <string name="message_hint">Enter message here</string>
     <string name="message_validation_error">Both subject and message are required.</string>
@@ -66,13 +61,12 @@
     <string name="about_2">This application is open source under the Apache 2.0 license. Contribute by forking our repository at github.com/warmshowers/wsandroid\nReport problems there or via the Warmshowers contact form, warmshowers.org/contact</string>
     <string name="feedback">Feedback</string>
     <string name="error_retrieving_messages">An error occurred while retrieving messages.</string>
-    <string name="messages_in_progress">Retrieving messages...</string>
+    <string name="messages_in_progress">Retrieving messages …</string>
     <string name="no_unread_messages">You have no unread messages.</string>
     <string name="unread_messages">You have %d unread message(s)!</string>
     <string name="visit_warmshowers_website"><![CDATA[Please visit the <a href="http://www.warmshowers.org">WarmShowers website</a> to read your messages.]]></string>
     <string name="updateMessages">Update</string>
-    <string name="loading_hosts">Loading hosts ...</string>
-    <string name="hosts_in_area">%1$s hosts in area.</string>
+    <string name="loading_hosts">Loading hosts …</string>
     <string name="hosts_at_location">%1$s hosts at %2$s</string>
 	<string name="view_on_site">View on website</string>
     <string name="host_count">%1$d hosts at this location</string>
