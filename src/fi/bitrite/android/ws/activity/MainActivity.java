@@ -124,8 +124,8 @@ public class MainActivity extends RoboTabActivity  {
     private void setupTabs() {
         TabHost tabHost = getTabHost();
         addTab(tabHost, "tab_map", R.drawable.tab_icon_map, new Intent(this, Maps2Activity.class));
-        addTab(tabHost, "tab_starred", R.drawable.tab_icon_starred, new Intent(this, StarredHostTabActivity.class));
         addTab(tabHost, "tab_list", R.drawable.tab_icon_list, new Intent(this, ListSearchTabActivity.class));
+        addTab(tabHost, "tab_starred", R.drawable.tab_icon_starred, new Intent(this, StarredHostTabActivity.class));
         addTab(tabHost, "tab_messages", R.drawable.tab_icon_messages, new Intent(this, MessagesTabActivity.class));
     }
 
