@@ -51,7 +51,7 @@ android {
         release.setRoot('build-types/release')
     }
     defaultConfig {
-        versionName "1.4.0"
-        versionCode 20
+        versionName "1.4.1"
+        versionCode 21
     }
 }
