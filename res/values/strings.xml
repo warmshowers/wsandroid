@@ -81,4 +81,9 @@
     <string name="distance_from_current">"%1$d %2$s from current location"</string>
     <string name="host_not_currently_available">(Not currently available)</string>
     <string name="host_currently_available">(Available for hosting)</string>
+    <string name="ga_property_id">UA-13228014-2</string>
+    <string name="prefs_distance_unit">Unit of distance</string>
+    <string name="prefs_distance_unit_summary">Do you want distances expressed in kilometers or in miles?</string>
+    <string name="prefs_ga_collect_stats_title">Send anonymous statistics</string>
+    <string name="prefs_ga_collect_stats_summary">Sending statistics to Google Analytics helps the developers to understand usage and improve the app, but you can opt out.</string>
 </resources>

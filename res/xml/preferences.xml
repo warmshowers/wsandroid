@@ -2,18 +2,20 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory 
-        android:title="Map"
-        android:key="map">
-        
-        <ListPreference 
-            android:key="distance_unit"
-            android:title="Unit of distance"
-            android:summary="Determines in which unit distances should be shown"
-            android:defaultValue="km" 
-            android:entries="@array/distanceUnits"
-            android:entryValues="@array/distanceUnitValues" />    
+    <ListPreference
+        android:key="distance_unit"
+        android:title="@string/prefs_distance_unit"
+        android:summary="@string/prefs_distance_unit_summary"
+        android:defaultValue="km"
+        android:entries="@array/distanceUnits"
+        android:entryValues="@array/distanceUnitValues" />
+
+    <CheckBoxPreference
+        android:key="ga_collect_stats"
+        android:title="@string/prefs_ga_collect_stats_title"
+        android:summary="@string/prefs_ga_collect_stats_summary"
+        android:defaultValue="true"
+        />
             
-    </PreferenceCategory>
-    
+
 </PreferenceScreen>

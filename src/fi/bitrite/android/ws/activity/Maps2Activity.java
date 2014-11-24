@@ -22,6 +22,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -58,7 +60,9 @@ public class Maps2Activity extends FragmentActivity implements
         ClusterManager.OnClusterItemInfoWindowClickListener<HostBriefInfo>,
         GoogleMap.OnCameraChangeListener,
         GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener {
+        GooglePlayServicesClient.OnConnectionFailedListener,
+        SharedPreferences.OnSharedPreferenceChangeListener
+{
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapSearchTask searchTask;
@@ -77,13 +81,12 @@ public class Maps2Activity extends FragmentActivity implements
     Location mLastDeviceLocation;
     String mDistanceUnit;
 
-    enum ClusterStatus {none, some, all}
-
-    ;
+    enum ClusterStatus {none, some, all};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((WSAndroidApplication) getApplication()).getTracker(WSAndroidApplication.TrackerName.APP_TRACKER);
 
         mDistanceUnit = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString("distance_unit", "km");
@@ -125,6 +128,14 @@ public class Maps2Activity extends FragmentActivity implements
         mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
         mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
         mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleHostInfoWindowAdapter(getLayoutInflater()));
+    }
+
+    // Immediately handle change to distance unit if requrired
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("distance_unit")) {
+            mDistanceUnit = PreferenceManager.getDefaultSharedPreferences(this)
+                    .getString("distance_unit", "km");
+        }
     }
 
     /**
@@ -264,12 +275,6 @@ public class Maps2Activity extends FragmentActivity implements
          * @return
          */
         protected ClusterStatus clusterLocationStatus(Cluster<HostBriefInfo> cluster) {
-//            ImmutableMap<String, HostBriefInfo> latLngs = Maps.uniqueIndex(cluster.getItems(), new Function<HostBriefInfo, String>() {
-//                public String apply(HostBriefInfo from) {
-//                    if (this.)
-//                    return from.getLatLng().toString();
-//                }
-//            });
 
             HashSet<String> latLngs = new HashSet<String>();
             for (HostBriefInfo item : cluster.getItems()) {
@@ -350,11 +355,11 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onStop() {
         mLocationClient.disconnect();
-        Log.d(TAG, "onStop()");
         if (mLastCameraPosition != null) {
             saveMapLocation(mLastCameraPosition);
-            Log.d(TAG, "Saved mLastCameraPosition");
         }
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+
         super.onStop();
     }
 
@@ -390,6 +395,7 @@ public class Maps2Activity extends FragmentActivity implements
     protected void onStart() {
         super.onStart();
         mLocationClient.connect();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
     /**
