@@ -18,9 +18,10 @@ dependencies {
     compile files('lib/overlaymanager-1.0.1.jar')
     compile files('lib/parcelgen.jar')
     compile files('lib/roboguice-1.1.2.jar')
-    compile 'com.google.android.gms:play-services:5.0.89'
     compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile group: 'com.google.guava', name: 'guava', version: '18.0'
+    compile 'com.google.android.gms:play-services:6.1.11'
+
 }
 
 android {

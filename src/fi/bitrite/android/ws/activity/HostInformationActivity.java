@@ -2,6 +2,7 @@ package fi.bitrite.android.ws.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -29,6 +30,8 @@ import fi.bitrite.android.ws.view.FeedbackTable;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +76,9 @@ public class HostInformationActivity extends RoboActivity {
     TextView lastLogin;
     @InjectView(R.id.txtViewOnSite)
     TextView viewOnSite;
+    @InjectView(R.id.txtLeaveFeedback)
+    TextView leaveFeedback;
+
     @InjectView(R.id.txtHostLocation)
     TextView location;
     @InjectView(R.id.txtHostMobilePhone)
@@ -101,6 +107,7 @@ public class HostInformationActivity extends RoboActivity {
     private boolean forceUpdate;
     private HostInformationTask hostInfoTask;
     private DialogHandler dialogHandler;
+    private static String TAG = "HostInformationActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,7 +266,7 @@ public class HostInformationActivity extends RoboActivity {
     }
 
     private void updateViewContent() {
-        Host host = hostInfo.getHost();
+        final Host host = hostInfo.getHost();
 
         String availability = host.getNotCurrentlyAvailable().equals("1") ? getString(R.string.host_not_currently_available) : getString(R.string.host_currently_available);
         // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
@@ -278,9 +285,33 @@ public class HostInformationActivity extends RoboActivity {
         bikeShop.setText(host.getBikeshop());
         services.setText(host.getServices());
 
-        viewOnSite.setText(Html.fromHtml("<a href=\"" + GlobalInfo.warmshowersBaseUrl + "/user/" + hostInfo.getId() + "\">" + getResources().getString(R.string.view_on_site) + "</a>"));
-        viewOnSite.setMovementMethod(LinkMovementMethod.getInstance());
-        viewOnSite.setClickable(true);
+        // Set up to view the member account on warmshowers.org
+        viewOnSite.setText(Html.fromHtml("<u>" + getString(R.string.view_on_site) + "</u>"));
+        viewOnSite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HostInformationActivity.this, WebViewActivity.class);
+                intent.setData(Uri.parse(GlobalInfo.warmshowersBaseUrl + "/user/" + hostInfo.getId()));
+                intent.putExtra("webview_title", host.getFullname());
+                startActivity(intent);
+            }
+        });
+
+        // This experimental hack at adding the ability to leave feedback is optional. We might
+        // just try it and see if it works. I'd rather replace it with a "real" anddroid function,
+        // but it was just sitting here as a freebie as I was working on providing access to the site
+        // via webview. rfay 2014-11-25
+        leaveFeedback.setText(Html.fromHtml("<u>" + getString(R.string.leave_feedback) + "</u>"));
+        leaveFeedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HostInformationActivity.this, WebViewActivity.class);
+
+                intent.setData(Uri.parse(GlobalInfo.warmshowersBaseUrl + "/node/add/trust-referral?edit%5Bfield_member_i_trust%5D%5B0%5D%5Buid%5D%5Buid%5D=" + host.getName()));
+                intent.putExtra("webview_title", getString(R.string.leave_feedback_for, host.getFullname()));
+                startActivity(intent);
+            }
+        });
 
         List<Feedback> feedback = hostInfo.getFeedback();
         sort(feedback);
