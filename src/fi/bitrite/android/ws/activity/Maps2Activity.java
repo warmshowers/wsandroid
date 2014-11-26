@@ -86,7 +86,11 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Google analytics tracker
         ((WSAndroidApplication) getApplication()).getTracker(WSAndroidApplication.TrackerName.APP_TRACKER);
+        
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 
         mDistanceUnit = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString("distance_unit", "km");

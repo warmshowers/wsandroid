@@ -5,7 +5,6 @@
     <ListPreference
         android:key="distance_unit"
         android:title="@string/prefs_distance_unit"
-        android:summary="@string/prefs_distance_unit_summary"
         android:defaultValue="km"
         android:entries="@array/distanceUnits"
         android:entryValues="@array/distanceUnitValues" />
