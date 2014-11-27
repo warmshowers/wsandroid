@@ -2,6 +2,7 @@ package fi.bitrite.android.ws.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -226,21 +227,30 @@ public class HostInformationActivity extends RoboActivity {
         startActivity(i);
     }
 
+    /**
+     * Show host in context on our own Maps2Activity
+     * @param view
+     */
     public void showHostOnMap(View view) {
-        // We need to finish the host info dialog, switch to the map tab and
-        // zoom/scroll to the location of the host
-
         Intent intent = new Intent(this, Maps2Activity.class);
-
         intent.putExtra("target_map_latlng", (Parcelable) hostInfo.getHost().getLatLng());
-
         startActivity(intent);
+    }
 
-//        // #31: when going back from the map, we should end up on the host info page
-//        hostInfo.saveInIntent(intent);
-//
-//        setResult(RESULT_SHOW_HOST_ON_MAP, intent);
-//        finish();
+    /**
+     * Send a geo intent so that we can view the host on external maps application
+     * @param view
+     */
+    public void sendGeoIntent(View view) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String lat = hostInfo.getHost().getLatitude();
+        String lng = hostInfo.getHost().getLongitude();
+        String query = Uri.encode(lat + "," + lng + "(" + hostInfo.getHost().getFullname() +")");
+        String uri = "geo:" + lat + "," + lng + "?q=" + query;
+        intent.setData(Uri.parse(uri));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     @Override
