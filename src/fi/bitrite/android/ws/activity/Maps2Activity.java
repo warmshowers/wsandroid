@@ -31,6 +31,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
+import com.google.inject.Inject;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
@@ -42,12 +43,15 @@ import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestMapSearch;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.persistence.StarredHostDao;
+import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.WSNonHierarchicalDistanceBasedAlgorithm;
 import fi.bitrite.android.ws.util.http.HttpException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -58,7 +62,8 @@ public class Maps2Activity extends FragmentActivity implements
         ClusterManager.OnClusterItemInfoWindowClickListener<HostBriefInfo>,
         GoogleMap.OnCameraChangeListener,
         GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener {
+        GooglePlayServicesClient.OnConnectionFailedListener
+        {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapSearchTask searchTask;
@@ -76,6 +81,10 @@ public class Maps2Activity extends FragmentActivity implements
     private boolean mResolvingError = false;
     Location mLastDeviceLocation;
     String mDistanceUnit;
+    private boolean mIsOffline = false;
+    StarredHostDao starredHostDao = new StarredHostDaoImpl();
+    private List<HostBriefInfo> starredHosts;
+
 
     enum ClusterStatus {none, some, all}
 
@@ -102,7 +111,6 @@ public class Maps2Activity extends FragmentActivity implements
         if (receivedIntent.hasExtra("target_map_latlng")) {
             LatLng targetLatLng = receivedIntent.getParcelableExtra("target_map_latlng");
             position = new CameraPosition(targetLatLng, getResources().getInteger(R.integer.map_showhost_zoom), 0, 0);
-            // TODO: Turn off the too much cool finger moves that Nancy complains about.
         }
 
         if (position == null) {
@@ -264,12 +272,6 @@ public class Maps2Activity extends FragmentActivity implements
          * @return
          */
         protected ClusterStatus clusterLocationStatus(Cluster<HostBriefInfo> cluster) {
-//            ImmutableMap<String, HostBriefInfo> latLngs = Maps.uniqueIndex(cluster.getItems(), new Function<HostBriefInfo, String>() {
-//                public String apply(HostBriefInfo from) {
-//                    if (this.)
-//                    return from.getLatLng().toString();
-//                }
-//            });
 
             HashSet<String> latLngs = new HashSet<String>();
             for (HostBriefInfo item : cluster.getItems()) {
@@ -344,7 +346,17 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        // We'll use the starred hosts when network is offline.
+        starredHostDao.open();
+        starredHosts = starredHostDao.getAllBrief();
+
         setUpMapIfNeeded();
+    }
+
+    @Override
+    protected void onPause() {
+        starredHostDao.close();
+        super.onPause();
     }
 
     @Override
@@ -437,16 +449,46 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     public void onCameraChange(CameraPosition position) {
         mLastCameraPosition = position;
+
+        // If not connected, we'll switch to offline/starred hosts mode
+        if (!Tools.isNetworkConnected(this)) {
+            sendMessage(R.string.network_not_connected, false);
+            // If we already knew we were offline, return
+            if (mIsOffline) {
+                return;
+            }
+            // Otherwise, set state to offline and load only offline hosts
+            mIsOffline = true;
+            loadOfflineHosts();
+            return;
+        }
+
+        // If we were offline, switch back on, but remove the offline markers
+        if (mIsOffline) {
+            mIsOffline = false;
+            mClusterManager.clearItems();
+            mClusterManager.getMarkerCollection().clear();
+            mHosts.clear();
+        }
+
+        // And get standard host list for region from server
         LatLngBounds curScreen = mMap.getProjection().getVisibleRegion().latLngBounds;
-        sendMessage(getResources().getString(R.string.loading_hosts), false);
         Search search = new RestMapSearch(curScreen.northeast, curScreen.southwest);
-        Log.i(TAG, "onCameraChange zoom=" + position.zoom + " fired, setting location");
 
         if (position.zoom < getResources().getInteger(R.integer.map_zoom_min_load)) {
             sendMessage(R.string.hosts_dont_load, false);
         } else {
+            sendMessage(getResources().getString(R.string.loading_hosts), false);
             doMapSearch(search);
         }
+    }
+
+    private void loadOfflineHosts() {
+        mClusterManager.clearItems();
+        mClusterManager.getMarkerCollection().clear();
+        mHosts.clear();
+        mClusterManager.addItems(starredHosts);
+        mClusterManager.cluster();
     }
 
     public void doMapSearch(Search search) {
