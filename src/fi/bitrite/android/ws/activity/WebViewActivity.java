@@ -1,7 +1,10 @@
 package fi.bitrite.android.ws.activity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -12,6 +15,8 @@ import android.webkit.WebView;
 
 import android.webkit.CookieManager;
 import android.webkit.WebViewClient;
+
+import java.net.URI;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.util.GlobalInfo;
@@ -87,5 +92,12 @@ public class WebViewActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void viewOnSite(Context context, String urlString, String title) {
+        Intent intent = new Intent(context, WebViewActivity.class);
+        intent.setData(Uri.parse(urlString));
+        intent.putExtra("webview_title", title);
+        context.startActivity(intent);
     }
 }

@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -290,10 +291,8 @@ public class HostInformationActivity extends RoboActivity {
         viewOnSite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HostInformationActivity.this, WebViewActivity.class);
-                intent.setData(Uri.parse(GlobalInfo.warmshowersBaseUrl + "/user/" + hostInfo.getId()));
-                intent.putExtra("webview_title", host.getFullname());
-                startActivity(intent);
+                String url = GlobalInfo.warmshowersBaseUrl + "/user/" + hostInfo.getId();
+                WebViewActivity.viewOnSite(HostInformationActivity.this, url, host.getFullname());
             }
         });
 
@@ -305,11 +304,8 @@ public class HostInformationActivity extends RoboActivity {
         leaveFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HostInformationActivity.this, WebViewActivity.class);
-
-                intent.setData(Uri.parse(GlobalInfo.warmshowersBaseUrl + "/node/add/trust-referral?edit%5Bfield_member_i_trust%5D%5B0%5D%5Buid%5D%5Buid%5D=" + host.getName()));
-                intent.putExtra("webview_title", getString(R.string.leave_feedback_for, host.getFullname()));
-                startActivity(intent);
+                String url = GlobalInfo.warmshowersBaseUrl + "/node/add/trust-referral?edit%5Bfield_member_i_trust%5D%5B0%5D%5Buid%5D%5Buid%5D=" + host.getName();
+                WebViewActivity.viewOnSite(HostInformationActivity.this, url, getString(R.string.leave_feedback_for, host.getFullname()));
             }
         });
 

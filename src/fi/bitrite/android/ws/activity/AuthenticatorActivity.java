@@ -138,7 +138,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
                 int userId = authenticator.authenticate(username, password);
                 msg.obj = RESULT_OK;
                 msg.arg1 = userId;
-                saveCookieData(authenticator.getCookieSessName(), authenticator.getCookieSessId());
+                saveCookieData(userId, authenticator.getCookieSessName(), authenticator.getCookieSessId());
             }
 
             catch (Exception e) {
@@ -149,9 +149,10 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
             handler.sendMessage(msg);
         }
 
-        public void saveCookieData(String sess_name, String sess_id) {
+        public void saveCookieData(int uid, String sess_name, String sess_id) {
             SharedPreferences settings = getSharedPreferences("auth_cookie", 0);
             SharedPreferences.Editor editor = settings.edit();
+            editor.putInt("account_uid", uid);
             editor.putString("cookie_sess_id", sess_id);
             editor.putString("cookie_sess_name", sess_name);
             editor.commit();

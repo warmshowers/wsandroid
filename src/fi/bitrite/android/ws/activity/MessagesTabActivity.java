@@ -1,6 +1,8 @@
 package fi.bitrite.android.ws.activity;
 
+import android.accounts.Account;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -11,7 +13,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.messaging.RestUnreadCount;
+import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
@@ -20,9 +24,6 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
 
     @InjectView(R.id.unreadCount)
     TextView unreadCount;
-
-    @InjectView(R.id.messagingHelp)
-    TextView messagingHelp;
 
     @InjectView(R.id.btnUpdateMessages)
     Button updateMessages;
@@ -39,6 +40,21 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
         downloadUnreadCount();
 
         updateMessages.setOnClickListener(this);
+
+        Button viewMessagesOnSite = (Button)findViewById(R.id.btnViewOnSite);
+        viewMessagesOnSite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Getting the uid out of the stashed cookie info is pretty sad. Maybe @jstaffans
+                // can show me how to get it from the account object.
+                SharedPreferences authInfo = getSharedPreferences("auth_cookie", 0);
+                if (authInfo.contains("account_uid")) {
+                    int uid = authInfo.getInt("account_uid", 0);
+                    String url = GlobalInfo.warmshowersBaseUrl + "/user/" + uid + "/messages";
+                    WebViewActivity.viewOnSite(MessagesTabActivity.this, url, getString(R.string.messages_on_site));
+                }
+            }
+        });
     }
 
     private void downloadUnreadCount() {
@@ -117,11 +133,6 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
         }
 
         unreadCount.setText(text);
-
-        messagingHelp.setVisibility(View.VISIBLE);
-        messagingHelp.setText(Html.fromHtml(getResources().getString(R.string.visit_warmshowers_website)));
-        messagingHelp.setMovementMethod(LinkMovementMethod.getInstance());
-
         updateMessages.setVisibility(View.VISIBLE);
     }
 }
