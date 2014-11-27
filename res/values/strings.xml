@@ -81,4 +81,5 @@
     <string name="distance_from_current">"%1$d %2$s from current location"</string>
     <string name="host_not_currently_available">(Not currently available)</string>
     <string name="host_currently_available">(Available for hosting)</string>
+    <string name="languages_spoken">Languages spoken:</string>
 </resources>

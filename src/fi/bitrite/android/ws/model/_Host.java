@@ -43,8 +43,9 @@ import android.os.Parcelable;
     protected String mLongitude;
     protected String mLogin;
     protected String mCreated;
+    protected String mLanguagesSpoken;
 
-    protected _Host(int id, String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude, String login, String created) {
+    protected _Host(int id, String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude, String login, String created, String languagesSpoken) {
         this();
         mId = id;
         mName = name;
@@ -77,6 +78,7 @@ import android.os.Parcelable;
         mLongitude = longitude;
         mLogin = login;
         mCreated = created;
+        mLanguagesSpoken = languagesSpoken;
     }
 
     protected _Host() {
@@ -213,6 +215,7 @@ import android.os.Parcelable;
         parcel.writeString(mLogin);
         parcel.writeString(mCreated);
         parcel.writeInt(mId);
+        parcel.writeString(mLanguagesSpoken);
     }
 
     public void readFromParcel(Parcel source) {
@@ -247,6 +250,7 @@ import android.os.Parcelable;
         mLogin = source.readString();
         mCreated = source.readString();
         mId = source.readInt();
+        mLanguagesSpoken = source.readString();
     }
 
     public void readFromJson(JSONObject json) throws JSONException {
@@ -341,6 +345,12 @@ import android.os.Parcelable;
         if (!json.isNull("created")) {
             mCreated = json.optString("created");
         }
+        if (!json.isNull("languagesspoken")) {
+            mLanguagesSpoken = json.optString("languagesspoken");
+        }
     }
 
+    public String getLanguagesSpoken() {
+        return mLanguagesSpoken;
+    }
 }
