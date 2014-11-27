@@ -231,10 +231,12 @@ public class HostInformationActivity extends RoboActivity {
         // zoom/scroll to the location of the host
 
         Intent intent = new Intent(this, Maps2Activity.class);
-
         intent.putExtra("target_map_latlng", (Parcelable) hostInfo.getHost().getLatLng());
 
-        startActivity(intent);
+        if (!Tools.isNetworkConnected(this)) {
+            intent.putExtra("saved_offline_host", hostInfo.getHost());
+            startActivity(intent);
+        }
 
 //        // #31: when going back from the map, we should end up on the host info page
 //        hostInfo.saveInIntent(intent);
