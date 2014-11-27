@@ -38,6 +38,8 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mCity = host.getCity();
         mProvince = host.getProvince();
         mCountry = host.getCountry();
+        mLatitude = host.getLatitude();
+        mLongitude = host.getLongitude();
 
         mAboutMe = host.getComments();
         mUpdated = host.getUpdated();

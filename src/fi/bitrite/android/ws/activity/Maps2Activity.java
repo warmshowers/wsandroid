@@ -97,22 +97,6 @@ public class Maps2Activity extends FragmentActivity implements
 
         CameraPosition position = null;
 
-        // If we were launched with an intent asking us to zoom to a member
-        Intent receivedIntent = getIntent();
-        if (receivedIntent.hasExtra("target_map_latlng")) {
-            LatLng targetLatLng = receivedIntent.getParcelableExtra("target_map_latlng");
-            position = new CameraPosition(targetLatLng, getResources().getInteger(R.integer.map_showhost_zoom), 0, 0);
-            // TODO: Turn off the too much cool finger moves that Nancy complains about.
-        }
-
-        if (position == null) {
-            position = getSavedCameraPosition();
-        }
-        if (position != null) {
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-            // The move itself will end up setting the mlastCameraPosition.
-        }
-
         mClusterManager = new ClusterManager<HostBriefInfo>(this, mMap);
         mClusterManager.setAlgorithm(new PreCachingAlgorithmDecorator<HostBriefInfo>(new WSNonHierarchicalDistanceBasedAlgorithm<HostBriefInfo>(this)));
         mMap.setOnMarkerClickListener(mClusterManager);
@@ -125,6 +109,27 @@ public class Maps2Activity extends FragmentActivity implements
         mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
         mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
         mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleHostInfoWindowAdapter(getLayoutInflater()));
+
+        // If we were launched with an intent asking us to zoom to a member
+        Intent receivedIntent = getIntent();
+        if (receivedIntent.hasExtra("target_map_latlng")) {
+            LatLng targetLatLng = receivedIntent.getParcelableExtra("target_map_latlng");
+            position = new CameraPosition(targetLatLng, getResources().getInteger(R.integer.map_showhost_zoom), 0, 0);
+        }
+        if (receivedIntent.hasExtra("saved_offline_host")) {
+            Host host = receivedIntent.getParcelableExtra("saved_offline_host");
+            HostBriefInfo briefInfo = new HostBriefInfo(host.getId(), host);
+            mClusterManager.addItem(briefInfo);
+        }
+
+        if (position == null) {
+            position = getSavedCameraPosition();
+        }
+        if (position != null) {
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
+            // The move itself will end up setting the mlastCameraPosition.
+        }
+
     }
 
     /**
@@ -264,12 +269,6 @@ public class Maps2Activity extends FragmentActivity implements
          * @return
          */
         protected ClusterStatus clusterLocationStatus(Cluster<HostBriefInfo> cluster) {
-//            ImmutableMap<String, HostBriefInfo> latLngs = Maps.uniqueIndex(cluster.getItems(), new Function<HostBriefInfo, String>() {
-//                public String apply(HostBriefInfo from) {
-//                    if (this.)
-//                    return from.getLatLng().toString();
-//                }
-//            });
 
             HashSet<String> latLngs = new HashSet<String>();
             for (HostBriefInfo item : cluster.getItems()) {
@@ -444,6 +443,8 @@ public class Maps2Activity extends FragmentActivity implements
 
         if (position.zoom < getResources().getInteger(R.integer.map_zoom_min_load)) {
             sendMessage(R.string.hosts_dont_load, false);
+        } else if (!Tools.isNetworkConnected(this)) {
+            sendMessage(getString(R.string.network_not_connected), false);
         } else {
             doMapSearch(search);
         }

@@ -1,6 +1,9 @@
 package fi.bitrite.android.ws.util;
 
+import android.content.Context;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.Html;
 import android.text.Spanned;
 import com.google.android.gms.maps.model.LatLng;
@@ -35,4 +38,14 @@ public class Tools {
 		location.setLongitude(l1.longitude);
 		return calculateDistanceBetween(location, l2, units);
 	}
+
+    static public boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
+    }
 }
