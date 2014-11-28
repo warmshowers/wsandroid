@@ -47,9 +47,13 @@ public class WSAndroidApplication extends RoboApplication
 
         mContext = getApplicationContext();
 
+        // Set automatic activity reports, per http://stackoverflow.com/a/24983778/215713
+        GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+        analytics.enableAutoActivityReports(this);
+
         boolean gaOptOut = !PreferenceManager.getDefaultSharedPreferences(this)
                 .getBoolean("ga_collect_stats", true);
-        GoogleAnalytics.getInstance(getApplicationContext()).setAppOptOut(gaOptOut);
+        analytics.setAppOptOut(gaOptOut);
 
     }
 
