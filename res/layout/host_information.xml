@@ -100,6 +100,22 @@
                             android:id="@+id/txtLastLogin"
                             android:paddingLeft="10dp"/>
                 </TableRow>
+
+                <TableRow
+                        android:paddingBottom="2dp"
+                        android:paddingTop="2dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                    <TextView
+                            android:id="@+id/lblLanguagesSpoken"
+                            android:text="@string/languages_spoken"
+                            />
+                    <TextView
+                            android:id="@+id/txtLanguagesSpoken"
+                            android:paddingLeft="10dp"
+                            />
+                </TableRow>
             </TableLayout>
 
             <TextView
