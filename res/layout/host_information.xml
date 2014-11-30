@@ -119,7 +119,41 @@
             </TableLayout>
 
             <TextView
+                    android:id="@+id/send_message"
+                    android:text="@string/send_message"
+                    android:textColor="#FFAAAAFF"
+                    android:clickable="true"
+                    android:onClick="contactHost"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="4dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
+            <TextView
+                    android:id="@+id/view_on_map"
+                    android:text="@string/view_on_map"
+                    android:textColor="#FFAAAAFF"
+                    android:clickable="true"
+                    android:onClick="showHostOnMap"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
+            <TextView
+                    android:id="@+id/view_in_maps_app"
+                    android:text="@string/view_in_maps_app"
+                    android:textColor="#FFAAAAFF"
+                    android:clickable="true"
+                    android:onClick="sendGeoIntent"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
+            <TextView
                 android:id="@+id/txtViewOnSite"
+                android:textColor="#FFAAAAFF"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="4dp"
@@ -127,10 +161,11 @@
 
             <TextView
                 android:id="@+id/txtLeaveFeedback"
+                android:textColor="#FFAAAAFF"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="4dp"
-                android:paddingTop="4dp" />
+                android:paddingTop="6dp" />
 
             <LinearLayout
                     android:layout_width="fill_parent"
@@ -171,17 +206,25 @@
                         android:paddingBottom="2dp"
                         android:paddingTop="2dp">
 
-                    <TextView
-                            android:id="@+id/lblHostLocation"
-                            android:text="@string/location"
-                            android:textColor="#FFAAAAFF"
-                            android:clickable="true"
-                            android:onClick="showHostOnMap"/>
+                    <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                        <TextView
+                                android:id="@+id/lblHostLocation"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/location" />
+
+                    </LinearLayout>
 
                     <TextView
                             android:id="@+id/txtHostLocation"
                             android:paddingLeft="10dp"/>
+
                 </TableRow>
+
 
                 <TableRow
                         android:paddingBottom="2dp"

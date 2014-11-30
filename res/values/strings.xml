@@ -14,7 +14,7 @@
     <string name="enter_credentials">Please enter your username and password:</string>
     <string name="about_credentials">These will be stored in an account on your device. You can delete the account at any time using the Android Settings / Account menu.</string>
     <string name="view_details">View details</string>
-    <string name="show_on_map">Show on map</string>
+    <string name="show_on_map">Show on WS map</string>
     <string name="star">Star</string>
     <string name="close">Close</string>
     <string name="username_hint">Username</string>
@@ -30,7 +30,7 @@
     <string name="mobile_phone"><u>Mobile phone:</u></string>
     <string name="preferred_notice"><u>Preferred notice:</u></string>
     <string name="max_guests"><u>Max guests:</u></string>
-    <string name="nearest_accomodation"><u>Accomodation:</u></string>
+    <string name="nearest_accomodation"><u>Accommodation:</u></string>
     <string name="campground"><u>Campground:</u></string>
     <string name="bike_shop"><u>Bike shop:</u></string>
     <string name="services"><u>Can provide:</u></string>
@@ -83,8 +83,9 @@
     <string name="host_currently_available">(Available for hosting)</string>
     <string name="parsing_error">Error parsing response from server. Please report this search using the contact form at warmshowers.org.</string>
     <string name="unknown_exception">Unknown error, please report to warmshowers.org contact form: %1$s</string>
-    <string name="view_on_map">View on map</string>
-    <string name="view_in_maps_app">View in maps app</string>
+    <string name="send_message">&#8226; Send message</string>
+    <string name="view_on_map">View on WarmShowers map</string>
+    <string name="view_in_maps_app">View in map application</string>
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -98,6 +99,7 @@
     <string name="prefs_distance_unit_summary">Do you want distances expressed in kilometers or in miles?</string>
     <string name="prefs_ga_collect_stats_title">Send anonymous statistics</string>
     <string name="prefs_ga_collect_stats_summary">Sending statistics to Google Analytics helps the developers to understand usage and improve the app, but you can opt out.</string>
-    <string name="languages_spoken">Languages spoken:</string>
+    <string name="languages_spoken"><u>Languages spoken:</u></string>
     <string name="network_not_connected">Network is not connected, showing starred hosts only.</string>
+    <string name="open_in_map_application">Open in maps app</string>
 </resources>

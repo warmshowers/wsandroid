@@ -1,23 +1,19 @@
 package fi.bitrite.android.ws.activity;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
-
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.activity.model.HostInformation;
@@ -26,6 +22,7 @@ import fi.bitrite.android.ws.host.impl.HttpHostInformation;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
+import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
@@ -33,8 +30,6 @@ import fi.bitrite.android.ws.view.FeedbackTable;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,8 +100,7 @@ public class HostInformationActivity extends RoboActivity {
     @InjectView(R.id.txtServices)
     TextView services;
 
-    @Inject
-    StarredHostDao starredHostDao;
+    StarredHostDao starredHostDao = new StarredHostDaoImpl();
 
     private HostInformation hostInfo;
     private boolean forceUpdate;
@@ -301,7 +295,7 @@ public class HostInformationActivity extends RoboActivity {
         services.setText(host.getServices());
 
         // Set up to view the member account on warmshowers.org
-        viewOnSite.setText(Html.fromHtml("<u>" + getString(R.string.view_on_site) + "</u>"));
+        viewOnSite.setText(Html.fromHtml(getString(R.string.view_on_site)));
         viewOnSite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -314,7 +308,7 @@ public class HostInformationActivity extends RoboActivity {
         // just try it and see if it works. I'd rather replace it with a "real" anddroid function,
         // but it was just sitting here as a freebie as I was working on providing access to the site
         // via webview. rfay 2014-11-25
-        leaveFeedback.setText(Html.fromHtml("<u>" + getString(R.string.leave_feedback) + "</u>"));
+        leaveFeedback.setText(Html.fromHtml(getString(R.string.leave_feedback)));
         leaveFeedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -396,8 +390,8 @@ public class HostInformationActivity extends RoboActivity {
             case R.id.menuMap:
                 showHostOnMap(null);
                 return true;
-            case R.id.menuStar:
-                showStarHostDialog(null);
+            case R.id.menuMapApplication:
+                sendGeoIntent(null);
                 return true;
             case R.id.menuUpdate:
                 Intent i = new Intent();
