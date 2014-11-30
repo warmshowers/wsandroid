@@ -81,6 +81,8 @@
     <string name="distance_from_current">"%1$d %2$s from current location"</string>
     <string name="host_not_currently_available">(Not currently available)</string>
     <string name="host_currently_available">(Available for hosting)</string>
+    <string name="view_on_map">View on map</string>
+    <string name="view_in_maps_app">View in maps app</string>
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
