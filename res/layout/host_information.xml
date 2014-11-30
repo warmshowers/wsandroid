@@ -155,41 +155,16 @@
                         android:paddingBottom="2dp"
                         android:paddingTop="2dp">
 
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
+                    <TextView
                             android:id="@+id/lblHostLocation"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/location" />
-
-                        <TextView
-                            android:id="@+id/view_on_map"
-                            android:text="@string/view_on_map"
+                            android:text="@string/location"
                             android:textColor="#FFAAAAFF"
                             android:clickable="true"
-                            android:onClick="showHostOnMap"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                        <TextView
-                            android:id="@+id/view_in_maps_app"
-                            android:text="@string/view_in_maps_app"
-                            android:textColor="#FFAAAAFF"
-                            android:clickable="true"
-                            android:onClick="sendGeoIntent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
+                            android:onClick="showHostOnMap"/>
 
                     <TextView
                             android:id="@+id/txtHostLocation"
                             android:paddingLeft="10dp"/>
-
                 </TableRow>
 
                 <TableRow

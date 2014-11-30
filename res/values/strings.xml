@@ -96,4 +96,5 @@
     <string name="prefs_distance_unit_summary">Do you want distances expressed in kilometers or in miles?</string>
     <string name="prefs_ga_collect_stats_title">Send anonymous statistics</string>
     <string name="prefs_ga_collect_stats_summary">Sending statistics to Google Analytics helps the developers to understand usage and improve the app, but you can opt out.</string>
+    <string name="languages_spoken">Languages spoken:</string>
 </resources>

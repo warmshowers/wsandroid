@@ -77,6 +77,8 @@ public class HostInformationActivity extends RoboActivity {
     TextView memberSince;
     @InjectView(R.id.txtLastLogin)
     TextView lastLogin;
+    @InjectView(R.id.txtLanguagesSpoken)
+    TextView languagesSpoken;
     @InjectView(R.id.txtViewOnSite)
     TextView viewOnSite;
     @InjectView(R.id.txtLeaveFeedback)
@@ -287,6 +289,7 @@ public class HostInformationActivity extends RoboActivity {
         location.setText(host.getLocation());
         memberSince.setText(host.getMemberSince());
         lastLogin.setText(host.getLastLogin());
+        languagesSpoken.setText(host.getLanguagesSpoken());
         mobilePhone.setText(host.getMobilePhone());
         homePhone.setText(host.getHomePhone());
         workPhone.setText(host.getWorkPhone());
