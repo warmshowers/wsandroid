@@ -80,7 +80,7 @@
         <activity
             android:name=".activity.HostInformationActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar"></activity>
+            android:theme="@style/Theme.AppCompat"></activity>
         <activity
             android:name=".activity.HostContactActivity"
             android:label="@string/app_name"
