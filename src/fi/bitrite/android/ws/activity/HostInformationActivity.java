@@ -403,14 +403,6 @@ public class HostInformationActivity extends RoboActionBarActivity {
             case R.id.menuViewOnSite:
                 viewOnSite();
                 return true;
-            case R.id.menuUpdate:
-                Intent i = new Intent();
-                i.putExtra("host", hostInfo.getHost());
-                i.putExtra("id", hostInfo.getId());
-                i.putExtra("update", true);
-                setIntent(i);
-                onCreate(null);
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

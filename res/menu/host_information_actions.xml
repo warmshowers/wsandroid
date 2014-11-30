@@ -29,9 +29,4 @@
             android:title="@string/leave_feedback"
             ws:showAsAction="never" />
 
-    <item
-            android:id="@+id/menuUpdate"
-            android:title="@string/update"
-            ws:showAsAction="never" />
-
 </menu>
