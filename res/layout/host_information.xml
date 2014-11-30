@@ -7,42 +7,6 @@
               android:paddingRight="4dp"
               android:paddingTop="10dp">
 
-    <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="6dp">
-
-        <ImageView
-                android:id="@+id/btnHostStar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingRight="6dp"
-                android:clickable="true"
-                android:onClick="showStarHostDialog"
-                android:src="@drawable/starred_off"
-                android:visibility="invisible"/>
-
-        <TextView
-                android:id="@+id/txtHostFullname"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-        <ImageView
-                android:id="@+id/btnHostContact"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:clickable="true"
-                android:onClick="contactHost"
-                android:src="@drawable/message"/>
-    </LinearLayout>
-
     <ScrollView
             android:id="@+id/scrollHostInformation"
             android:layout_width="fill_parent"
@@ -55,13 +19,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone">
-
-            <TextView
-                    android:id="@+id/lblHostDescription"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/description"
-                    android:textAppearance="?android:textAppearanceMedium"/>
 
             <TextView
                     android:id="@+id/txtHostComments"
@@ -117,55 +74,6 @@
                             />
                 </TableRow>
             </TableLayout>
-
-            <TextView
-                    android:id="@+id/send_message"
-                    android:text="@string/send_message"
-                    android:textColor="#FFAAAAFF"
-                    android:clickable="true"
-                    android:onClick="contactHost"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="4dp"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
-
-            <TextView
-                    android:id="@+id/view_on_map"
-                    android:text="@string/view_on_map"
-                    android:textColor="#FFAAAAFF"
-                    android:clickable="true"
-                    android:onClick="showHostOnMap"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
-
-            <TextView
-                    android:id="@+id/view_in_maps_app"
-                    android:text="@string/view_in_maps_app"
-                    android:textColor="#FFAAAAFF"
-                    android:clickable="true"
-                    android:onClick="sendGeoIntent"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/txtViewOnSite"
-                android:textColor="#FFAAAAFF"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp" />
-
-            <TextView
-                android:id="@+id/txtLeaveFeedback"
-                android:textColor="#FFAAAAFF"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:paddingTop="6dp" />
 
             <LinearLayout
                     android:layout_width="fill_parent"

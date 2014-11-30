@@ -6,12 +6,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.Html;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.*;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import fi.bitrite.android.ws.R;
@@ -31,6 +27,7 @@ import roboguice.RoboGuice;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,10 +60,6 @@ public class HostInformationActivity extends RoboActionBarActivity {
     @InjectView(R.id.tblFeedback)
     FeedbackTable feedbackTable;
 
-    @InjectView(R.id.btnHostStar)
-    ImageView star;
-    @InjectView(R.id.txtHostFullname)
-    TextView fullname;
     @InjectView(R.id.txtHostComments)
     TextView comments;
     @InjectView(R.id.txtMemberSince)
@@ -75,10 +68,6 @@ public class HostInformationActivity extends RoboActionBarActivity {
     TextView lastLogin;
     @InjectView(R.id.txtLanguagesSpoken)
     TextView languagesSpoken;
-    @InjectView(R.id.txtViewOnSite)
-    TextView viewOnSite;
-    @InjectView(R.id.txtLeaveFeedback)
-    TextView leaveFeedback;
 
     @InjectView(R.id.txtHostLocation)
     TextView location;
@@ -153,9 +142,22 @@ public class HostInformationActivity extends RoboActionBarActivity {
             updateViewContent();
         }
 
-        setupStar();
+        getSupportActionBar().setTitle(hostInfo.getHost().getFullname());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        fullname.setText(hostInfo.getHost().getFullname());
+        // Force overflow icon (three dots) to always appear
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+
+            if (menuKeyField != null) {
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        }
+        catch (Exception e) {
+            // presumably, not relevant
+        }
     }
 
     @Override
@@ -180,12 +182,6 @@ public class HostInformationActivity extends RoboActionBarActivity {
         super.onSaveInstanceState(outState);
     }
 
-    private void setupStar() {
-        int drawable = hostInfo.isStarred() ? R.drawable.starred_on : R.drawable.starred_off;
-        star.setImageDrawable(getResources().getDrawable(drawable));
-        star.setVisibility(View.VISIBLE);
-    }
-
     public void showStarHostDialog(View view) {
         toggleHostStarred();
         int msgId = (hostInfo.isStarred() ? R.string.host_starred : R.string.host_unstarred);
@@ -202,7 +198,6 @@ public class HostInformationActivity extends RoboActionBarActivity {
         }
 
         hostInfo.toggleStarred();
-        setupStar();
         starredHostDao.close();
     }
 
@@ -284,7 +279,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
 
         String availability = host.getNotCurrentlyAvailable().equals("1") ? getString(R.string.host_not_currently_available) : getString(R.string.host_currently_available);
         // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
-        comments.setText(Tools.siteHtmlToHtml(availability + "<br/>" + host.getComments()));
+        comments.setText(Tools.siteHtmlToHtml(host.getComments() + "<br/><br/><b>" + availability + "</b>"));
 
         location.setText(host.getLocation());
         memberSince.setText(host.getMemberSince());
@@ -300,29 +295,6 @@ public class HostInformationActivity extends RoboActionBarActivity {
         bikeShop.setText(host.getBikeshop());
         services.setText(host.getServices());
 
-        // Set up to view the member account on warmshowers.org
-        viewOnSite.setText(Html.fromHtml(getString(R.string.view_on_site)));
-        viewOnSite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = GlobalInfo.warmshowersBaseUrl + "/user/" + hostInfo.getId();
-                WebViewActivity.viewOnSite(HostInformationActivity.this, url, host.getFullname());
-            }
-        });
-
-        // This experimental hack at adding the ability to leave feedback is optional. We might
-        // just try it and see if it works. I'd rather replace it with a "real" anddroid function,
-        // but it was just sitting here as a freebie as I was working on providing access to the site
-        // via webview. rfay 2014-11-25
-        leaveFeedback.setText(Html.fromHtml(getString(R.string.leave_feedback)));
-        leaveFeedback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = GlobalInfo.warmshowersBaseUrl + "/node/add/trust-referral?edit%5Bfield_member_i_trust%5D%5B0%5D%5Buid%5D%5Buid%5D=" + host.getName();
-                WebViewActivity.viewOnSite(HostInformationActivity.this, url, getString(R.string.leave_feedback_for, host.getFullname()));
-            }
-        });
-
         List<Feedback> feedback = hostInfo.getFeedback();
         sort(feedback);
         feedbackTable.addRows(feedback);
@@ -334,6 +306,22 @@ public class HostInformationActivity extends RoboActionBarActivity {
             dialogHandler.alert(getResources().getString(R.string.host_not_available));
         }
 
+    }
+
+    public void viewOnSite() {
+        final Host host = hostInfo.getHost();
+        String url = GlobalInfo.warmshowersBaseUrl + "/user/" + hostInfo.getId();
+        WebViewActivity.viewOnSite(HostInformationActivity.this, url, host.getFullname());
+
+    }
+    public void leaveFeedback() {
+        // This experimental hack at adding the ability to leave feedback is optional. We might
+        // just try it and see if it works. I'd rather replace it with a "real" anddroid function,
+        // but it was just sitting here as a freebie as I was working on providing access to the site
+        // via webview. rfay 2014-11-25
+        final Host host = hostInfo.getHost();
+        String url = GlobalInfo.warmshowersBaseUrl + "/node/add/trust-referral?edit%5Bfield_member_i_trust%5D%5B0%5D%5Buid%5D%5Buid%5D=" + host.getName();
+        WebViewActivity.viewOnSite(HostInformationActivity.this, url, getString(R.string.leave_feedback_for, host.getFullname()));
     }
 
     private class HostInformationTask extends AsyncTask<Void, Void, Object> {
@@ -385,19 +373,35 @@ public class HostInformationActivity extends RoboActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.host_information_menu, menu);
-        return true;
+        inflater.inflate(R.menu.host_information_actions, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.menuSendMessage:
+                contactHost(null);
+                return true;
+            case R.id.menuStar:
+                showStarHostDialog(null);
+                return true;
             case R.id.menuMap:
                 showHostOnMap(null);
                 return true;
             case R.id.menuMapApplication:
                 sendGeoIntent(null);
+                return true;
+            case R.id.menuLeaveFeedback:
+                leaveFeedback();
+                return true;
+            case R.id.menuViewOnSite:
+                viewOnSite();
                 return true;
             case R.id.menuUpdate:
                 Intent i = new Intent();

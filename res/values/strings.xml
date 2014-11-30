@@ -14,7 +14,6 @@
     <string name="enter_credentials">Please enter your username and password:</string>
     <string name="about_credentials">These will be stored in an account on your device. You can delete the account at any time using the Android Settings / Account menu.</string>
     <string name="view_details">View details</string>
-    <string name="show_on_map">Show on WS map</string>
     <string name="star">Star</string>
     <string name="close">Close</string>
     <string name="username_hint">Username</string>
@@ -83,13 +82,13 @@
     <string name="host_currently_available">(Available for hosting)</string>
     <string name="parsing_error">Error parsing response from server. Please report this search using the contact form at warmshowers.org.</string>
     <string name="unknown_exception">Unknown error, please report to warmshowers.org contact form: %1$s</string>
-    <string name="send_message">&#8226; Send message</string>
+    <string name="send_message">Send message</string>
     <string name="view_on_map">View on WarmShowers map</string>
     <string name="view_in_maps_app">View in map application</string>
     <string name="title_activity_web_view">WebViewActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="leave_feedback">Leave feedback for member</string>
+    <string name="leave_feedback">Leave feedback for this host</string>
     <string name="leave_feedback_for">Leave feedback for %1$s</string>
     <string name="viewMessagesOnSite">View messages on site</string>
     <string name="messages_on_site">Messages on site</string>
@@ -101,5 +100,7 @@
     <string name="prefs_ga_collect_stats_summary">Sending statistics to Google Analytics helps the developers to understand usage and improve the app, but you can opt out.</string>
     <string name="languages_spoken"><u>Languages spoken:</u></string>
     <string name="network_not_connected">Network is not connected, showing starred hosts only.</string>
-    <string name="open_in_map_application">Open in maps app</string>
+    <string name="open_in_map_application">Open in maps application</string>
+    <string name="save">Save</string>
+    <string name="star_this_host">Star/unstar this host</string>
 </resources>

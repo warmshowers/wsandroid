@@ -1,0 +1,37 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:ws="http://schemas.android.com/apk/res-auto" >
+    <item
+            android:id="@+id/menuSendMessage"
+            android:icon="@drawable/message"
+            android:title="@string/send_message"
+            ws:showAsAction="always" />
+    <item
+            android:id="@+id/menuStar"
+            android:title="@string/star_this_host"
+            ws:showAsAction="never" />
+    <item
+            android:id="@+id/menuMap"
+            android:title="@string/view_on_map"
+            ws:showAsAction="never" />
+
+    <item
+            android:id="@+id/menuMapApplication"
+            android:title="@string/open_in_map_application"
+            ws:showAsAction="never"/>
+
+    <item
+            android:id="@+id/menuViewOnSite"
+            android:title="@string/view_on_site"
+            ws:showAsAction="never" />
+
+    <item
+            android:id="@+id/menuLeaveFeedback"
+            android:title="@string/leave_feedback"
+            ws:showAsAction="never" />
+
+    <item
+            android:id="@+id/menuUpdate"
+            android:title="@string/update"
+            ws:showAsAction="never" />
+
+</menu>
