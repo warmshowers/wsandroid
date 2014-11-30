@@ -97,4 +97,5 @@
     <string name="prefs_ga_collect_stats_title">Send anonymous statistics</string>
     <string name="prefs_ga_collect_stats_summary">Sending statistics to Google Analytics helps the developers to understand usage and improve the app, but you can opt out.</string>
     <string name="languages_spoken">Languages spoken:</string>
+    <string name="network_not_connected">Network is not connected, showing starred hosts only.</string>
 </resources>
