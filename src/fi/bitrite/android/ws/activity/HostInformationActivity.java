@@ -27,7 +27,8 @@ import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.view.FeedbackTable;
-import roboguice.activity.RoboActivity;
+import roboguice.RoboGuice;
+import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ import static java.util.Collections.sort;
  * The information is retrieved either from the device storage (for starred hosts)
  * or downloaded from the WarmShowers web service.
  */
-public class HostInformationActivity extends RoboActivity {
+public class HostInformationActivity extends RoboActionBarActivity {
 
     public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
 
@@ -106,7 +107,6 @@ public class HostInformationActivity extends RoboActivity {
     private boolean forceUpdate;
     private HostInformationTask hostInfoTask;
     private DialogHandler dialogHandler;
-    private static String TAG = "HostInformationActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,6 +156,12 @@ public class HostInformationActivity extends RoboActivity {
         setupStar();
 
         fullname.setText(hostInfo.getHost().getFullname());
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        RoboGuice.getInjector(this).injectViewMembers(this);
     }
 
     private boolean intentProvidesFullHostInfo(Intent i) {
