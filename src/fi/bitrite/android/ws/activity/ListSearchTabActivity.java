@@ -17,6 +17,9 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.inject.Inject;
+
+import org.json.JSONException;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.Search;
@@ -174,11 +177,15 @@ public class ListSearchTabActivity extends RoboActivity {
         protected void onPostExecute(Object result) {
             dialogHandler.dismiss();
 
-            if (result instanceof Exception) {
-                // TODO: Improve error reporting with more specifics
-                int r = (result instanceof HttpException ? R.string.network_error : R.string.error_retrieving_host_information);
-                dialogHandler.alert(getResources().getString(r));
+            if (result instanceof HttpException) {
+                dialogHandler.alert(getResources().getString(R.string.network_error));
                 return;
+            } else if (result instanceof JSONException) {
+                dialogHandler.alert(getResources().getString(R.string.parsing_error));
+                return;
+            } else if (result instanceof Exception) {
+                dialogHandler.alert(getResources().getString(R.string.unknown_exception, result.toString()));
+
             }
 
             listSearchHosts = (ArrayList<HostBriefInfo>) result;
