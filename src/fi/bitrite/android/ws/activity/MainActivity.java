@@ -15,6 +15,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import fi.bitrite.android.ws.R;
@@ -217,5 +218,17 @@ public class MainActivity extends RoboTabActivity  {
         stashedHostId = 0;
         return i;
     }
-    
+
+    @Override
+    protected void onStop() {
+        GoogleAnalytics.getInstance(this).reportActivityStop(this);
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
 }
