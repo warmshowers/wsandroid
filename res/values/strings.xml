@@ -49,7 +49,7 @@
     <string name="host_starred">Host starred. You can now access this information off-line.</string>
     <string name="host_unstarred">Host information deleted from device.</string>
     <string name="performing_search">Performing search …</string>
-    <string name="network_error">No Internet connection.</string>
+    <string name="network_error">An error occurred. Check your Internet connection and re-enter credentials (Menu / Account).</string>
     <string name="error_retrieving_host_information">Could not retrieve host information. Check your credentials and Internet connection.</string>
     <string name="subject_hint">Enter subject here</string>
     <string name="message_hint">Enter message here</string>
