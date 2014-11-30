@@ -21,11 +21,13 @@
         android:layout_marginTop="5dp"
         android:visibility="gone" />
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/messagingHelp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:paddingTop="10dp" />
+    <Button
+        android:id="@+id/btnViewOnSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/viewMessagesOnSite"
+        android:layout_marginTop="5dp"
+        />
+
 
 </LinearLayout>

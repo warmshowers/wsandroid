@@ -43,6 +43,8 @@ public class HttpAuthenticator {
 
 	private String username;
 	private String authtoken;
+    private String mCookieSessId = "";
+    private String mCookieSessName = "";
 
     /**
 	 * Load a page in order to see if we are authenticated
@@ -97,8 +99,6 @@ public class HttpAuthenticator {
 	public int authenticate(String username, String password) {
 		HttpClient client = HttpUtils.getDefaultClient();
 		HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
-		CookieStore cookieStore = (CookieStore) httpContext.getAttribute(ClientContext.COOKIE_STORE);
-		cookieStore.clear();
 		int userId = 0;
 		
 		try {
@@ -122,6 +122,9 @@ public class HttpAuthenticator {
             JsonObject o = (JsonObject) parser.parse(rawJson);
             String s = o.get("user").getAsJsonObject().get("uid").getAsString();
             userId = Integer.valueOf(s);
+
+            mCookieSessName = o.get("session_name").getAsString();
+            mCookieSessId = o.get("sessid").getAsString();
 		}
 		
 		catch (ClientProtocolException e) {
@@ -154,4 +157,12 @@ public class HttpAuthenticator {
 		args.add(new BasicNameValuePair("password", password));
 		return args;
 	}
+
+    public String getCookieSessId() {
+        return mCookieSessId;
+    }
+
+    public String getCookieSessName() {
+        return mCookieSessName;
+    }
 }
