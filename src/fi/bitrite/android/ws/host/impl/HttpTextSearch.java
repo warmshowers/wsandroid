@@ -1,10 +1,13 @@
 package fi.bitrite.android.ws.host.impl;
 
+import android.util.Log;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.model.HostBriefInfo;
@@ -32,16 +35,20 @@ public class HttpTextSearch extends RestClient implements Search {
      * we should just use the info returned by that service and move on.
      *
      */
-    public List<HostBriefInfo> doSearch() {
+    public List<HostBriefInfo> doSearch() throws JSONException, HttpException {
 
         List<NameValuePair> args = new ArrayList<NameValuePair>();
         args.add(new BasicNameValuePair("keyword", this.keyword));
         post(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
 
-        try {
-            String json = getJson(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
-            JSONObject hostJson = new JSONObject(json).getJSONObject("accounts");
-            List<HostBriefInfo> list = new ArrayList<HostBriefInfo>();
+        String json = getJson(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
+        JSONObject allJson = new JSONObject(json);
+
+        List<HostBriefInfo> list = new ArrayList<HostBriefInfo>();
+        JSONObject statusJson = allJson.getJSONObject("status");
+        String numDelivered = statusJson.get("delivered").toString();
+        if (Integer.parseInt(numDelivered) > 0){
+            JSONObject hostJson = allJson.getJSONObject("accounts");
 
             for (int i = 0; i < hostJson.names().length(); i++) {
                 int uid = hostJson.names().getInt(i);
@@ -59,9 +66,7 @@ public class HttpTextSearch extends RestClient implements Search {
                 );
                 list.add(bi);
             }
-            return list;
-        } catch (JSONException e) {
-            throw new HttpException(e);
         }
+        return list;
     }
 }
