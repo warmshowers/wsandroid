@@ -305,8 +305,6 @@ public class HostInformationActivity extends RoboActionBarActivity {
         if (hostInfo.getHost().isNotCurrentlyAvailable()) {
             dialogHandler.alert(getResources().getString(R.string.host_not_available));
         }
-
-        setHostStarredInUI();
     }
 
     public void viewOnSite() {
@@ -378,6 +376,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.host_information_actions, menu);
         optionsMenu = menu;
+        setHostStarredInUI();
         return super.onCreateOptionsMenu(menu);
     }
 
