@@ -11,13 +11,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.inject.Inject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
+import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -31,7 +30,7 @@ public class StarredHostTabActivity extends RoboActivity {
     @InjectView(R.id.lstStarredHosts) ListView starredHostsList;
     @InjectView(R.id.lblNoStarredHosts) TextView noStarredHostsLabel;
     
-    @Inject StarredHostDao starredHostDao;
+    private StarredHostDao starredHostDao = new StarredHostDaoImpl();
     private List<HostBriefInfo> starredHosts;
 
     @Override

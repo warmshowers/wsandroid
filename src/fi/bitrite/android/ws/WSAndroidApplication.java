@@ -1,20 +1,16 @@
 package fi.bitrite.android.ws;
 
-import java.util.HashMap;
-import java.util.List;
-
-import roboguice.application.RoboApplication;
+import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-
-import com.google.android.gms.analytics.Tracker;
-import com.google.inject.Module;
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
+
+import java.util.HashMap;
 
 
 
-public class WSAndroidApplication extends RoboApplication
+public class WSAndroidApplication extends Application
 {
 
     public static final String TAG = "WSAndroidApplication";
@@ -59,11 +55,6 @@ public class WSAndroidApplication extends RoboApplication
 
     public static Context getAppContext() {
         return WSAndroidApplication.mContext;
-    }
-	
-    @Override
-    protected void addApplicationModules(List<Module> modules) {
-        modules.add(new WSAndroidModule());
     }
 
 }

@@ -14,19 +14,16 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
-
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.inject.Inject;
-
-import org.json.JSONException;
-
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
+import fi.bitrite.android.ws.host.impl.WsSearchFactory;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
+import org.json.JSONException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -41,8 +38,7 @@ public class ListSearchTabActivity extends RoboActivity {
     @InjectView(R.id.lstSearchResult)
     ListView listSearchResult;
 
-    @Inject
-    SearchFactory searchFactory;
+    SearchFactory searchFactory = new WsSearchFactory();
 
     private ArrayList<HostBriefInfo> listSearchHosts;
 

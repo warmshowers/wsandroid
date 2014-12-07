@@ -7,42 +7,6 @@
               android:paddingRight="4dp"
               android:paddingTop="10dp">
 
-    <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="6dp">
-
-        <ImageView
-                android:id="@+id/btnHostStar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingRight="6dp"
-                android:clickable="true"
-                android:onClick="showStarHostDialog"
-                android:src="@drawable/starred_off"
-                android:visibility="invisible"/>
-
-        <TextView
-                android:id="@+id/txtHostFullname"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-        <ImageView
-                android:id="@+id/btnHostContact"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:clickable="true"
-                android:onClick="contactHost"
-                android:src="@drawable/message"/>
-    </LinearLayout>
-
     <ScrollView
             android:id="@+id/scrollHostInformation"
             android:layout_width="fill_parent"
@@ -55,13 +19,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone">
-
-            <TextView
-                    android:id="@+id/lblHostDescription"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/description"
-                    android:textAppearance="?android:textAppearanceMedium"/>
 
             <TextView
                     android:id="@+id/txtHostComments"
@@ -118,20 +75,6 @@
                 </TableRow>
             </TableLayout>
 
-            <TextView
-                android:id="@+id/txtViewOnSite"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp" />
-
-            <TextView
-                android:id="@+id/txtLeaveFeedback"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:paddingTop="4dp" />
-
             <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -173,15 +116,17 @@
 
                     <TextView
                             android:id="@+id/lblHostLocation"
-                            android:text="@string/location"
-                            android:textColor="#FFAAAAFF"
-                            android:clickable="true"
-                            android:onClick="showHostOnMap"/>
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/location" />
+
 
                     <TextView
                             android:id="@+id/txtHostLocation"
                             android:paddingLeft="10dp"/>
+
                 </TableRow>
+
 
                 <TableRow
                         android:paddingBottom="2dp"
