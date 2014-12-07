@@ -2,7 +2,7 @@
       xmlns:ws="http://schemas.android.com/apk/res-auto" >
     <item
             android:id="@+id/menuSendMessage"
-            android:icon="@drawable/message"
+            android:icon="@drawable/ic_action_email"
             android:title="@string/send_message"
             ws:showAsAction="always" />
     <item
