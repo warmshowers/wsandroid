@@ -102,5 +102,6 @@
     <string name="network_not_connected">Network is not connected, showing starred hosts only.</string>
     <string name="open_in_map_application">Open in maps application</string>
     <string name="save">Save</string>
-    <string name="star_this_host">Star/unstar this host</string>
+    <string name="star_this_host">Star this host</string>
+    <string name="unstar_this_host">Unstar this host</string>
 </resources>

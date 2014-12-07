@@ -7,7 +7,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.*;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import fi.bitrite.android.ws.R;
@@ -27,7 +30,6 @@ import roboguice.RoboGuice;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +43,8 @@ import static java.util.Collections.sort;
 public class HostInformationActivity extends RoboActionBarActivity {
 
     public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
+
+    Menu optionsMenu;
 
     @InjectView(R.id.layoutHostDetails)
     LinearLayout hostDetails;
@@ -144,21 +148,8 @@ public class HostInformationActivity extends RoboActionBarActivity {
 
         getSupportActionBar().setTitle(hostInfo.getHost().getFullname());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Force overflow icon (three dots) to always appear
-        try {
-            ViewConfiguration config = ViewConfiguration.get(this);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-
-            if (menuKeyField != null) {
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        }
-        catch (Exception e) {
-            // presumably, not relevant
-        }
     }
+
 
     @Override
     public void setContentView(int layoutResID) {
@@ -182,13 +173,22 @@ public class HostInformationActivity extends RoboActionBarActivity {
         super.onSaveInstanceState(outState);
     }
 
-    public void showStarHostDialog(View view) {
-        toggleHostStarred();
+    public void showStarHostToast(View view) {
         int msgId = (hostInfo.isStarred() ? R.string.host_starred : R.string.host_unstarred);
         Toast.makeText(this, getResources().getString(msgId), Toast.LENGTH_LONG).show();
     }
 
     protected void toggleHostStarred() {
+        toggleHostStarredOnDevice();
+        setHostStarredInUI();
+    }
+
+    private void setHostStarredInUI() {
+        optionsMenu.findItem(R.id.menuStarIcon).setIcon(hostInfo.isStarred() ? R.drawable.ic_action_star_on : R.drawable.ic_action_star_off);
+        optionsMenu.findItem(R.id.menuStar).setTitle(getResources().getString(hostInfo.isStarred() ? R.string.unstar_this_host : R.string.star_this_host));
+    }
+
+    private void toggleHostStarredOnDevice() {
         starredHostDao.open();
 
         if (starredHostDao.isHostStarred(hostInfo.getId(), hostInfo.getHost().getName())) {
@@ -306,6 +306,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
             dialogHandler.alert(getResources().getString(R.string.host_not_available));
         }
 
+        setHostStarredInUI();
     }
 
     public void viewOnSite() {
@@ -376,6 +377,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.host_information_actions, menu);
+        optionsMenu = menu;
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -385,11 +387,14 @@ public class HostInformationActivity extends RoboActionBarActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.menuSendMessageIcon:
             case R.id.menuSendMessage:
                 contactHost(null);
                 return true;
+            case R.id.menuStarIcon:
             case R.id.menuStar:
-                showStarHostDialog(null);
+                toggleHostStarred();
+                showStarHostToast(null);
                 return true;
             case R.id.menuMap:
                 showHostOnMap(null);
