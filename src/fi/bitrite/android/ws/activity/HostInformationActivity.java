@@ -26,6 +26,9 @@ import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.view.FeedbackTable;
+import roboguice.RoboGuice;
+import roboguice.activity.RoboActionBarActivity;
+import roboguice.inject.InjectView;
 
 import java.util.ArrayList;
 import java.util.List;
