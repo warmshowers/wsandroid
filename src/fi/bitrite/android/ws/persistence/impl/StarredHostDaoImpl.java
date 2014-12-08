@@ -54,13 +54,13 @@ public class StarredHostDaoImpl implements StarredHostDao {
 
     public Host getHost(int id) {
         Cursor cursor;
-        
+
         if (id > 0) {
-            cursor = database.query(DbHelper.TABLE_HOSTS, new String[] { DbHelper.COLUMN_ID, DbHelper.COLUMN_DETAILS,
-                    DbHelper.COLUMN_UPDATED }, DbHelper.COLUMN_ID + " = " + id, null, null, null, null);
+            cursor = database.query(DbHelper.TABLE_HOSTS, new String[]{DbHelper.COLUMN_ID, DbHelper.COLUMN_DETAILS,
+                    DbHelper.COLUMN_UPDATED}, DbHelper.COLUMN_ID + " = " + id, null, null, null, null);
         } else {
-            cursor = database.query(DbHelper.TABLE_HOSTS, new String[] { DbHelper.COLUMN_NAME, DbHelper.COLUMN_DETAILS,
-                    DbHelper.COLUMN_UPDATED }, DbHelper.COLUMN_NAME + " = '" + id + "'", null, null, null, null);
+            cursor = database.query(DbHelper.TABLE_HOSTS, new String[]{DbHelper.COLUMN_NAME, DbHelper.COLUMN_DETAILS,
+                    DbHelper.COLUMN_UPDATED}, DbHelper.COLUMN_NAME + " = '" + id + "'", null, null, null, null);
         }
 
         if (cursor.getCount() == 0) {
@@ -70,11 +70,11 @@ public class StarredHostDaoImpl implements StarredHostDao {
 
         cursor.moveToFirst();
         Host host = cursorToHost(cursor);
-        
+
         cursor.close();
         return host;
     }
-    
+
     private Host cursorToHost(Cursor cursor) {
         String json = cursor.getString(1);
         Gson gson = new Gson();
@@ -82,9 +82,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
             Host host = gson.fromJson(json, Host.class);
             host.setUpdated(cursor.getString(2));
             return host;
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new PersistenceException("Could not load starred host details");
         }
     }
@@ -93,10 +91,10 @@ public class StarredHostDaoImpl implements StarredHostDao {
         Cursor cursor;
 
         if (id > 0) {
-            cursor = database.query(DbHelper.TABLE_HOSTS, new String[] { DbHelper.COLUMN_FEEDBACK },
+            cursor = database.query(DbHelper.TABLE_HOSTS, new String[]{DbHelper.COLUMN_FEEDBACK},
                     DbHelper.COLUMN_ID + " = " + id, null, null, null, null);
         } else {
-            cursor = database.query(DbHelper.TABLE_HOSTS, new String[] { DbHelper.COLUMN_FEEDBACK },
+            cursor = database.query(DbHelper.TABLE_HOSTS, new String[]{DbHelper.COLUMN_FEEDBACK},
                     DbHelper.COLUMN_NAME + " = '" + name + "'", null, null, null, null);
         }
 
@@ -116,19 +114,18 @@ public class StarredHostDaoImpl implements StarredHostDao {
         String json = cursor.getString(0);
         Gson gson = new Gson();
         try {
-            Type listType = new TypeToken<List<Feedback>>(){}.getType();
+            Type listType = new TypeToken<List<Feedback>>() {
+            }.getType();
             List<Feedback> feedback = gson.fromJson(json, listType);
             return feedback;
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new PersistenceException("Could not load host feedback");
         }
     }
 
     public List<HostBriefInfo> getAllBrief() {
-        Cursor cursor = database.query(DbHelper.TABLE_HOSTS, new String[] { DbHelper.COLUMN_ID,
-                DbHelper.COLUMN_DETAILS, DbHelper.COLUMN_UPDATED }, null, null, null, null, null);
+        Cursor cursor = database.query(DbHelper.TABLE_HOSTS, new String[]{DbHelper.COLUMN_ID,
+                DbHelper.COLUMN_DETAILS, DbHelper.COLUMN_UPDATED}, null, null, null, null, null);
 
         if (cursor.getCount() == 0) {
             cursor.close();
@@ -144,7 +141,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
         }
 
         cursor.close();
-        
+
         return hosts;
     }
 
@@ -160,7 +157,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
         delete(id, name);
         insert(id, name, host, feedback);
     }
-    
+
     public boolean isHostStarred(int id, String name) {
         return (getHost(id) != null);
     }

@@ -28,8 +28,8 @@ public class HttpUtils {
 
     public static HttpClient getDefaultClient() {
         HttpParams httpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_MS);      
-        HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MS);  
+        HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_MS);
+        HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MS);
 
         String userAgentString = new StringBuilder().
                 append("WSAndroid ").append(BuildConfig.VERSION_NAME).append(" ")
@@ -39,7 +39,7 @@ public class HttpUtils {
                 .toString();
 
         httpParams.setParameter(HttpProtocolParams.USER_AGENT, userAgentString);
-        
+
         return new DefaultHttpClient(httpParams);
     }
 

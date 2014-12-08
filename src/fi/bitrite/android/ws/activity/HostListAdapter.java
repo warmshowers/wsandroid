@@ -18,8 +18,8 @@ import java.util.List;
 
 public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
-    private int[] colors = new int[] { 0xFF000000, 0xFF222222 };
-    
+    private int[] colors = new int[]{0xFF000000, 0xFF222222};
+
     private int resource;
     private Context mContext;
 
@@ -35,13 +35,13 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
         int colorPos = position % colors.length;
         hostListItem.setBackgroundColor(colors[colorPos]);
-        
+
         HostBriefInfo host = getItem(position);
 
         TextView fullname = (TextView) hostListItem.findViewById(R.id.txtHostFullname);
         TextView location = (TextView) hostListItem.findViewById(R.id.txtHostLocation);
         TextView comments = (TextView) hostListItem.findViewById(R.id.txtHostComments);
-        TextView updated =  (TextView) hostListItem.findViewById(R.id.txtHostUpdated);
+        TextView updated = (TextView) hostListItem.findViewById(R.id.txtHostUpdated);
 
         fullname.setText(host.getFullname());
         location.setText(host.getLocation());
@@ -50,13 +50,13 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
         // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
         comments.setText(Tools.siteHtmlToHtml(availability + " " + host.getAboutMe()));
-        
+
         if (host.getUpdated() != null) {
             updated.setText(getContext().getResources().getString(R.string.last_updated) + " " + host.getUpdated());
             updated.setVisibility(View.VISIBLE);
         } else {
             updated.setVisibility(View.GONE);
-            
+
         }
 
         return hostListItem;

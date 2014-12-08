@@ -24,8 +24,8 @@ import fi.bitrite.android.ws.auth.NoAccountException;
 
 import java.util.ArrayList;
 
-public class MainActivity extends RoboTabActivity  {
-    
+public class MainActivity extends RoboTabActivity {
+
     private Dialog splashDialog;
 
     // a host is "stashed" when moving from e.g. the host information activity directly
@@ -52,9 +52,9 @@ public class MainActivity extends RoboTabActivity  {
             }
         }
     }
-    
+
     /**
-     * New for version code 10. We want to store some additional data with the 
+     * New for version code 10. We want to store some additional data with the
      * account, so we need to remove the old one.
      */
     private void handleFirstRun() {
@@ -64,25 +64,21 @@ public class MainActivity extends RoboTabActivity  {
                 AccountManager accountManager = AccountManager.get(this);
                 Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
                 accountManager.removeAccount(oldAccount, null, null);
-            }
-            
-            catch (NoAccountException e) {
+            } catch (NoAccountException e) {
                 // OK, so there was no account - fine
             }
-            getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("v10update", false).commit();            
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("v10update", false).commit();
         }
     }
 
     private void setupCredentials() {
         try {
             AuthenticationHelper.getWarmshowersAccount();
-        }
-        
-        catch (NoAccountException e) {
+        } catch (NoAccountException e) {
             startAuthenticatorActivity(new Intent(MainActivity.this, AuthenticatorActivity.class));
         }
     }
-    
+
     private void startAuthenticatorActivity(Intent i) {
         i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         overridePendingTransition(0, 0);
@@ -105,7 +101,7 @@ public class MainActivity extends RoboTabActivity  {
             }
         }
     }
-        
+
     private boolean initialAccountCreation(Intent intent) {
         return intent.getBooleanExtra(AuthenticatorActivity.PARAM_INITIAL_AUTHENTICATION, true);
     }
@@ -133,28 +129,28 @@ public class MainActivity extends RoboTabActivity  {
     private void addTab(TabHost tabHost, String tabSpec, int icon, Intent content) {
         tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator("", getResources().getDrawable(icon)).setContent(content));
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
-    }   
-    
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menuAccount:
-            startAuthenticationActivityForExistingAccount();
-            return true;
-        case R.id.menuSettings:
-            startSettingsActivity();
-            return true;
-        case R.id.menuAbout:
-            showAboutDialog();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+            case R.id.menuAccount:
+                startAuthenticationActivityForExistingAccount();
+                return true;
+            case R.id.menuSettings:
+                startSettingsActivity();
+                return true;
+            case R.id.menuAbout:
+                showAboutDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -173,9 +169,9 @@ public class MainActivity extends RoboTabActivity  {
     private void showAboutDialog() {
         splashDialog = new Dialog(this, R.style.about_dialog);
         splashDialog.setContentView(R.layout.about);
-        TextView versionTextView = (TextView)splashDialog.findViewById(R.id.app_version);
+        TextView versionTextView = (TextView) splashDialog.findViewById(R.id.app_version);
         versionTextView.setText(getString(R.string.app_version, BuildConfig.VERSION_NAME));
-        TextView googleDetails = (TextView)splashDialog.findViewById(R.id.txtAboutDetailsGoogle);
+        TextView googleDetails = (TextView) splashDialog.findViewById(R.id.txtAboutDetailsGoogle);
         String licenseInfo = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this);
         if (licenseInfo != null) {
             // licenseInfo is a bit of a mess (coming directly from google)
@@ -198,7 +194,7 @@ public class MainActivity extends RoboTabActivity  {
     public void switchTab(int tab) {
         getTabHost().setCurrentTab(tab);
     }
-    
+
     public void stashHost(Intent data, int stashedFrom) {
         stashedHost = data.getParcelableExtra("host");
         stashedHostId = data.getIntExtra("id", 0);
@@ -208,7 +204,7 @@ public class MainActivity extends RoboTabActivity  {
     public boolean hasStashedHost() {
         return stashedHost != null;
     }
-    
+
     public Intent popStashedHost(Intent i) {
         i.putExtra("host", stashedHost);
         i.putExtra("id", stashedHostId);

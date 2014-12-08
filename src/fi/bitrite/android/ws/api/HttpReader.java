@@ -47,18 +47,14 @@ public class HttpReader {
             responseCode = response.getStatusLine().getStatusCode();
 
             html = EntityUtils.toString(entity, "UTF-8");
-        } 
-        
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new HttpException(e);
-        }
-
-        finally {
+        } finally {
             client.getConnectionManager().shutdown();
         }
 
         if (responseCode == HttpStatus.SC_FORBIDDEN ||
-            responseCode == HttpStatus.SC_UNAUTHORIZED) {
+                responseCode == HttpStatus.SC_UNAUTHORIZED) {
             if (!isAuthenticationPerformed()) {
                 authenticate();
                 html = getPage(simpleUrl);

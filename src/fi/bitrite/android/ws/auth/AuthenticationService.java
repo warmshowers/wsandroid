@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 public class AuthenticationService extends Service {
-    
+
     public static final String ACCOUNT_TYPE = "org.warmshowers";
 
     private Authenticator mAuthenticator;

@@ -65,8 +65,7 @@ public class Maps2Activity extends FragmentActivity implements
         GoogleMap.OnCameraChangeListener,
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener,
-        SharedPreferences.OnSharedPreferenceChangeListener
-{
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapSearchTask searchTask;
@@ -96,7 +95,7 @@ public class Maps2Activity extends FragmentActivity implements
 
         // Google analytics tracker
         ((WSAndroidApplication) getApplication()).getTracker(WSAndroidApplication.TrackerName.APP_TRACKER);
-        
+
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 
         mDistanceUnit = PreferenceManager.getDefaultSharedPreferences(this)

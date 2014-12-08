@@ -44,7 +44,7 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
 
         updateMessages.setOnClickListener(this);
 
-        Button viewMessagesOnSite = (Button)findViewById(R.id.btnViewOnSite);
+        Button viewMessagesOnSite = (Button) findViewById(R.id.btnViewOnSite);
         viewMessagesOnSite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

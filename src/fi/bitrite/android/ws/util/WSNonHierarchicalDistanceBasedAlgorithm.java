@@ -26,7 +26,7 @@ import fi.bitrite.android.ws.R;
 /**
  * This is just copied from the provided NonHierarchicalDistanceBasedAlgorithm, changing
  * MAX_DISTANCE_AT_ZOOM.
- *
+ * <p/>
  * A simple clustering algorithm with O(nlog n) performance. Resulting clusters are not
  * hierarchical.
  * <p/>

@@ -6,9 +6,10 @@ import org.json.JSONObject;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/** Automatically generated Parcelable implementation for _Host.
- *    DO NOT MODIFY THIS FILE MANUALLY! IT WILL BE OVERWRITTEN THE NEXT TIME
- *    _Host's PARCELABLE DESCRIPTION IS CHANGED.
+/**
+ * Automatically generated Parcelable implementation for _Host.
+ * DO NOT MODIFY THIS FILE MANUALLY! IT WILL BE OVERWRITTEN THE NEXT TIME
+ * _Host's PARCELABLE DESCRIPTION IS CHANGED.
  */
 /* package */ abstract class _Host implements Parcelable {
 
@@ -85,96 +86,130 @@ import android.os.Parcelable;
         super();
     }
 
-    public int getUid() { return getId(); }
-    public int getId() { return mId; }
+    public int getUid() {
+        return getId();
+    }
+
+    public int getId() {
+        return mId;
+    }
 
     public String getName() {
-         return mName;
+        return mName;
     }
+
     public String getFullname() {
-         return mFullname;
+        return mFullname;
     }
+
     public String getStreet() {
-         return mStreet;
+        return mStreet;
     }
+
     public String getAdditional() {
         return mAdditional;
     }
+
     public String getCity() {
-         return mCity;
+        return mCity;
     }
+
     public String getProvince() {
-         return mProvince;
+        return mProvince;
     }
+
     public String getPostalCode() {
-         return mPostalCode;
+        return mPostalCode;
     }
+
     public String getCountry() {
-         return mCountry;
+        return mCountry;
     }
+
     public String getMobilePhone() {
-         return mMobilePhone;
+        return mMobilePhone;
     }
+
     public String getHomePhone() {
-         return mHomePhone;
+        return mHomePhone;
     }
+
     public String getWorkPhone() {
-         return mWorkPhone;
+        return mWorkPhone;
     }
+
     public String getComments() {
-         return mComments;
+        return mComments;
     }
+
     public String getPreferredNotice() {
-         return mPreferredNotice;
+        return mPreferredNotice;
     }
+
     public String getMaxCyclists() {
-         return mMaxCyclists;
+        return mMaxCyclists;
     }
+
     public String getNotCurrentlyAvailable() {
-         return mNotCurrentlyAvailable;
+        return mNotCurrentlyAvailable;
     }
+
     public String getBed() {
-         return mBed;
+        return mBed;
     }
+
     public String getBikeshop() {
-         return mBikeshop;
+        return mBikeshop;
     }
+
     public String getCampground() {
-         return mCampground;
+        return mCampground;
     }
+
     public String getFood() {
-         return mFood;
+        return mFood;
     }
+
     public String getKitchenUse() {
-         return mKitchenUse;
+        return mKitchenUse;
     }
+
     public String getLaundry() {
-         return mLaundry;
+        return mLaundry;
     }
+
     public String getLawnspace() {
-         return mLawnspace;
+        return mLawnspace;
     }
+
     public String getMotel() {
-         return mMotel;
+        return mMotel;
     }
+
     public String getSag() {
-         return mSag;
+        return mSag;
     }
+
     public String getShower() {
-         return mShower;
+        return mShower;
     }
+
     public String getStorage() {
-         return mStorage;
+        return mStorage;
     }
+
     public String getLatitude() {
-         return mLatitude;
+        return mLatitude;
     }
+
     public String getLongitude() {
-         return mLongitude;
+        return mLongitude;
     }
+
     public String getLogin() {
         return mLogin;
     }
+
     public String getCreated() {
         return mCreated;
     }

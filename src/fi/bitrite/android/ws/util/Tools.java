@@ -20,30 +20,30 @@ public class Tools {
         return Html.fromHtml(text.replace("\n", "<br/>"));
     }
 
-	/**
-	 * Return distance between two points in km/miles
-	 *
-	 * @param l1
-	 * @param l2
-	 * @param units (mi or km)
-	 * @return
-	 */
-	static public int calculateDistanceBetween(Location l1, Location l2, String units) {
-		double factor = units.equals("mi") ? 1609.34 : 1000;
-		float meters = l1.distanceTo(l2);
-		return (int)(meters / factor);
-	}
+    /**
+     * Return distance between two points in km/miles
+     *
+     * @param l1
+     * @param l2
+     * @param units (mi or km)
+     * @return
+     */
+    static public int calculateDistanceBetween(Location l1, Location l2, String units) {
+        double factor = units.equals("mi") ? 1609.34 : 1000;
+        float meters = l1.distanceTo(l2);
+        return (int) (meters / factor);
+    }
 
-	static public int calculateDistanceBetween(LatLng l1, Location l2, String units) {
-		Location location = new Location("fromlatlng");
-		location.setLatitude(l1.latitude);
-		location.setLongitude(l1.longitude);
-		return calculateDistanceBetween(location, l2, units);
-	}
+    static public int calculateDistanceBetween(LatLng l1, Location l2, String units) {
+        Location location = new Location("fromlatlng");
+        location.setLatitude(l1.latitude);
+        location.setLongitude(l1.longitude);
+        return calculateDistanceBetween(location, l2, units);
+    }
 
     static public boolean isNetworkConnected(Context context) {
         ConnectivityManager cm =
-                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&

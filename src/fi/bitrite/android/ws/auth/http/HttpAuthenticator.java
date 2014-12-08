@@ -39,76 +39,70 @@ import java.util.List;
 public class HttpAuthenticator {
 
     private final String wsUserAuthUrl = GlobalInfo.warmshowersBaseUrl + "/services/rest/user/login";
-	private final String wsUserAuthTestUrl = GlobalInfo.warmshowersBaseUrl + "/search/wsuser";
+    private final String wsUserAuthTestUrl = GlobalInfo.warmshowersBaseUrl + "/search/wsuser";
 
-	private String username;
-	private String authtoken;
+    private String username;
+    private String authtoken;
     private String mCookieSessId = "";
     private String mCookieSessName = "";
 
     /**
-	 * Load a page in order to see if we are authenticated
-	 */
-	public boolean isAuthenticated() {
-		HttpClient client = HttpUtils.getDefaultClient();
-		int responseCode;
-		try {
-			String url = HttpUtils.encodeUrl(wsUserAuthTestUrl);
-			HttpGet get = new HttpGet(url);
-			HttpContext context = HttpSessionContainer.INSTANCE.getSessionContext();
+     * Load a page in order to see if we are authenticated
+     */
+    public boolean isAuthenticated() {
+        HttpClient client = HttpUtils.getDefaultClient();
+        int responseCode;
+        try {
+            String url = HttpUtils.encodeUrl(wsUserAuthTestUrl);
+            HttpGet get = new HttpGet(url);
+            HttpContext context = HttpSessionContainer.INSTANCE.getSessionContext();
 
-			HttpResponse response = client.execute(get, context);
-			HttpEntity entity = response.getEntity();
-			responseCode = response.getStatusLine().getStatusCode();
-			EntityUtils.toString(entity, "UTF-8");
-		}
-		
-		catch (Exception e) {
-			throw new HttpAuthenticationFailedException(e);
-		}
+            HttpResponse response = client.execute(get, context);
+            HttpEntity entity = response.getEntity();
+            responseCode = response.getStatusLine().getStatusCode();
+            EntityUtils.toString(entity, "UTF-8");
+        } catch (Exception e) {
+            throw new HttpAuthenticationFailedException(e);
+        } finally {
+            client.getConnectionManager().shutdown();
+        }
 
-		finally {
-			client.getConnectionManager().shutdown();
-		}
-		
-		return (responseCode == HttpStatus.SC_OK);
-	}
+        return (responseCode == HttpStatus.SC_OK);
+    }
 
-	public void authenticate() {
-		try {
-			getCredentialsFromAccount();
-			authenticate(username, authtoken);
-		}
-		
-		catch (Exception e) {
-			throw new HttpAuthenticationFailedException(e);
-		}
-	}
+    public void authenticate() {
+        try {
+            getCredentialsFromAccount();
+            authenticate(username, authtoken);
+        } catch (Exception e) {
+            throw new HttpAuthenticationFailedException(e);
+        }
+    }
 
-	private void getCredentialsFromAccount() throws OperationCanceledException, AuthenticatorException, IOException {
-		AccountManager accountManager = AccountManager.get(WSAndroidApplication.getAppContext());
-		Account account = AuthenticationHelper.getWarmshowersAccount();
+    private void getCredentialsFromAccount() throws OperationCanceledException, AuthenticatorException, IOException {
+        AccountManager accountManager = AccountManager.get(WSAndroidApplication.getAppContext());
+        Account account = AuthenticationHelper.getWarmshowersAccount();
 
-		authtoken = accountManager.blockingGetAuthToken(account, AuthenticationService.ACCOUNT_TYPE, true);
-		username = account.name;
-	}
+        authtoken = accountManager.blockingGetAuthToken(account, AuthenticationService.ACCOUNT_TYPE, true);
+        username = account.name;
+    }
 
     /**
      * Returns the user id after logging in or 0 if already logged in.
      */
-	public int authenticate(String username, String password) {
-		HttpClient client = HttpUtils.getDefaultClient();
-		HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
-		int userId = 0;
-		
-		try {
-			List<NameValuePair> credentials = generateCredentialsForPost(username, password);
-			HttpPost post = new HttpPost(wsUserAuthUrl);
-			post.setEntity(new UrlEncodedFormEntity(credentials));
-			HttpResponse response = client.execute(post, httpContext);
+    public int authenticate(String username, String password) {
+        HttpClient client = HttpUtils.getDefaultClient();
+        HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
+        int userId = 0;
 
-			HttpEntity entity = response.getEntity();
-			String rawJson = EntityUtils.toString(entity, "UTF-8");
+        try {
+            List<NameValuePair> credentials = generateCredentialsForPost(username, password);
+            HttpPost post = new HttpPost(wsUserAuthUrl);
+            post.setEntity(new UrlEncodedFormEntity(credentials));
+            HttpResponse response = client.execute(post, httpContext);
+
+            HttpEntity entity = response.getEntity();
+            String rawJson = EntityUtils.toString(entity, "UTF-8");
 
             if (rawJson.contains("Wrong username or password")) {
                 throw new HttpAuthenticationFailedException("Wrong username or password");
@@ -125,38 +119,32 @@ public class HttpAuthenticator {
 
             mCookieSessName = o.get("session_name").getAsString();
             mCookieSessId = o.get("sessid").getAsString();
-		}
-		
-		catch (ClientProtocolException e) {
-			if (e.getCause() instanceof CircularRedirectException) {
-				// If we get this authentication has still been successful, so ignore it
-			} else {
-				throw new HttpAuthenticationFailedException(e);
-			}
-		}		
-		
-		catch (Exception e) {
-			throw new HttpAuthenticationFailedException(e);
-		}
-
-		finally {
-			client.getConnectionManager().shutdown();
-		}
+        } catch (ClientProtocolException e) {
+            if (e.getCause() instanceof CircularRedirectException) {
+                // If we get this authentication has still been successful, so ignore it
+            } else {
+                throw new HttpAuthenticationFailedException(e);
+            }
+        } catch (Exception e) {
+            throw new HttpAuthenticationFailedException(e);
+        } finally {
+            client.getConnectionManager().shutdown();
+        }
 
 
-		if (!isAuthenticated()) {
-			throw new HttpAuthenticationFailedException("Invalid credentials");
-		}
-		
-		return userId;
-	}
+        if (!isAuthenticated()) {
+            throw new HttpAuthenticationFailedException("Invalid credentials");
+        }
 
-	private List<NameValuePair> generateCredentialsForPost(String username, String password) {
-		List<NameValuePair> args = new ArrayList<NameValuePair>();
-		args.add(new BasicNameValuePair("username", username));
-		args.add(new BasicNameValuePair("password", password));
-		return args;
-	}
+        return userId;
+    }
+
+    private List<NameValuePair> generateCredentialsForPost(String username, String password) {
+        List<NameValuePair> args = new ArrayList<NameValuePair>();
+        args.add(new BasicNameValuePair("username", username));
+        args.add(new BasicNameValuePair("password", password));
+        return args;
+    }
 
     public String getCookieSessId() {
         return mCookieSessId;

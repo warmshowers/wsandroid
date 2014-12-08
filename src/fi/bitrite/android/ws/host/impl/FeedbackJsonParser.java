@@ -34,9 +34,7 @@ public class FeedbackJsonParser {
                 JSONObject recommendation = recommendations.getJSONObject(i);
                 feedback.add(Feedback.CREATOR.parse(recommendation.getJSONObject("recommendation")));
             }
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new HttpException(e);
         }
 

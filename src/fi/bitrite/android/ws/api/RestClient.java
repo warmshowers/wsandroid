@@ -34,7 +34,7 @@ public class RestClient extends HttpReader {
 
             int responseCode = response.getStatusLine().getStatusCode();
             if (responseCode == HttpStatus.SC_FORBIDDEN ||
-                responseCode == HttpStatus.SC_UNAUTHORIZED) {
+                    responseCode == HttpStatus.SC_UNAUTHORIZED) {
                 if (!isAuthenticationPerformed()) {
                     authenticate();
                     return post(url, params);
@@ -42,19 +42,14 @@ public class RestClient extends HttpReader {
                     throw new HttpException("Couldn't authenticate user");
                 }
             }
+        } catch (Exception e) {
+            throw new HttpException(e);
+        } finally {
+            client.getConnectionManager().shutdown();
         }
-
-        catch (Exception e) {
-			throw new HttpException(e);
-		}
-
-		finally {
-			client.getConnectionManager().shutdown();
-		}
         if (response.getStatusLine().getStatusCode() == 200) {
             return response;
-        }
-        else {
+        } else {
             throw new HttpException("HTTP Error on service request = " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
         }
     }
@@ -63,16 +58,16 @@ public class RestClient extends HttpReader {
         HttpClient client = HttpUtils.getDefaultClient();
         String json;
 
-		try {
+        try {
             HttpPost post = new HttpPost(url);
             post.setEntity(new UrlEncodedFormEntity(params));
             HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
             HttpResponse response = client.execute(post, httpContext);
-			HttpEntity entity = response.getEntity();
+            HttpEntity entity = response.getEntity();
 
             int responseCode = response.getStatusLine().getStatusCode();
             if (responseCode == HttpStatus.SC_FORBIDDEN ||
-                responseCode == HttpStatus.SC_UNAUTHORIZED) {
+                    responseCode == HttpStatus.SC_UNAUTHORIZED) {
                 if (!isAuthenticationPerformed()) {
                     authenticate();
                     return getJson(url, params);
@@ -83,13 +78,9 @@ public class RestClient extends HttpReader {
 
             json = EntityUtils.toString(entity, "UTF-8");
 
-        }
-
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new HttpException(e.getMessage());
-        }
-
-        finally {
+        } finally {
             client.getConnectionManager().shutdown();
         }
 

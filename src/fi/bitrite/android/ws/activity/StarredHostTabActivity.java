@@ -27,9 +27,11 @@ public class StarredHostTabActivity extends RoboActivity {
     private static final int CONTEXT_MENU_UPDATE = 0;
     private static final int CONTEXT_MENU_DELETE = 1;
 
-    @InjectView(R.id.lstStarredHosts) ListView starredHostsList;
-    @InjectView(R.id.lblNoStarredHosts) TextView noStarredHostsLabel;
-    
+    @InjectView(R.id.lstStarredHosts)
+    ListView starredHostsList;
+    @InjectView(R.id.lblNoStarredHosts)
+    TextView noStarredHostsLabel;
+
     private StarredHostDao starredHostDao = new StarredHostDaoImpl();
     private List<HostBriefInfo> starredHosts;
 
@@ -79,23 +81,23 @@ public class StarredHostTabActivity extends RoboActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         int index = item.getItemId();
         switch (index) {
-        case CONTEXT_MENU_UPDATE:
-            Intent i = new Intent(StarredHostTabActivity.this, HostInformationActivity.class);
-            HostBriefInfo selectedHost = starredHosts.get(info.position);
-            i.putExtra("id", selectedHost.getId());
-            i.putExtra("host", Host.createFromBriefInfo(selectedHost));
-            i.putExtra("update", true);
-            startActivityForResult(i, 0);
-            break;
-        case CONTEXT_MENU_DELETE:
-            HostBriefInfo host = starredHosts.get(info.position);
-            starredHostDao.delete(host.getId(), host.getName());
-            setupStarredHostsList();
-            break;
-        default:
-            break;
+            case CONTEXT_MENU_UPDATE:
+                Intent i = new Intent(StarredHostTabActivity.this, HostInformationActivity.class);
+                HostBriefInfo selectedHost = starredHosts.get(info.position);
+                i.putExtra("id", selectedHost.getId());
+                i.putExtra("host", Host.createFromBriefInfo(selectedHost));
+                i.putExtra("update", true);
+                startActivityForResult(i, 0);
+                break;
+            case CONTEXT_MENU_DELETE:
+                HostBriefInfo host = starredHosts.get(info.position);
+                starredHostDao.delete(host.getId(), host.getName());
+                setupStarredHostsList();
+                break;
+            default:
+                break;
         }
-        
+
         return true;
     }
 

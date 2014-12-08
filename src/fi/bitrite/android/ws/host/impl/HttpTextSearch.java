@@ -24,6 +24,7 @@ public class HttpTextSearch extends RestClient implements Search {
     public HttpTextSearch(String keyword) {
         this.keyword = keyword;
     }
+
     private static final String WARMSHOWERS_HOST_BY_KEYWORD_URL = GlobalInfo.warmshowersBaseUrl + "/services/rest/hosts/by_keyword";
 
     /*
@@ -47,7 +48,7 @@ public class HttpTextSearch extends RestClient implements Search {
         List<HostBriefInfo> list = new ArrayList<HostBriefInfo>();
         JSONObject statusJson = allJson.getJSONObject("status");
         String numDelivered = statusJson.get("delivered").toString();
-        if (Integer.parseInt(numDelivered) > 0){
+        if (Integer.parseInt(numDelivered) > 0) {
             JSONObject hostJson = allJson.getJSONObject("accounts");
 
             for (int i = 0; i < hostJson.names().length(); i++) {

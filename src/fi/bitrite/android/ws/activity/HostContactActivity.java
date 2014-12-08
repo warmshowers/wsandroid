@@ -27,11 +27,14 @@ import roboguice.util.Strings;
  * over the WarmShowers web service.
  */
 public class HostContactActivity extends RoboActivity {
-    
-    @InjectView(R.id.txtContactHostTitle) TextView title;
-    @InjectView(R.id.editContactHostSubject) EditText editSubject;
-    @InjectView(R.id.editContactHostMessage) EditText editMessage;
-    
+
+    @InjectView(R.id.txtContactHostTitle)
+    TextView title;
+    @InjectView(R.id.editContactHostSubject)
+    EditText editSubject;
+    @InjectView(R.id.editContactHostMessage)
+    EditText editMessage;
+
     private Host host;
     private DialogHandler dialogHandler;
     private HostContactTask hostContactTask;
@@ -69,7 +72,7 @@ public class HostContactActivity extends RoboActivity {
         }
 
         dialogHandler.showDialog(DialogHandler.HOST_CONTACT);
-        
+
         hostContactTask = new HostContactTask();
         hostContactTask.execute(subject, message);
     }
@@ -89,24 +92,21 @@ public class HostContactActivity extends RoboActivity {
             try {
                 HostContact contact = new RestHostContact();
                 contact.send(host.getName(), subject, message);
-            }
-
-            catch (Exception e) {
+            } catch (Exception e) {
                 Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 retObj = e;
             }
-            
+
             return retObj;
         }
-        
+
         @Override
         protected void onPostExecute(Object result) {
             dialogHandler.dismiss();
-            
+
             if (result instanceof Exception) {
                 dialogHandler.alert(getResources().getString(R.string.error_sending_message) + " (" + ((Exception) result).getMessage() + ")");
-            }
-            else {
+            } else {
                 showSuccessDialog();
             }
         }

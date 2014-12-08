@@ -12,7 +12,7 @@ import fi.bitrite.android.ws.R;
 
 public class SettingsActivity
         extends PreferenceActivity
-        implements SharedPreferences.OnSharedPreferenceChangeListener{
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class SettingsActivity
     }
 
     void setSummary() {
-        ListPreference pref = (ListPreference)findPreference("distance_unit");
+        ListPreference pref = (ListPreference) findPreference("distance_unit");
         CharSequence title = pref.getEntry();
         pref.setSummary(title);
     }

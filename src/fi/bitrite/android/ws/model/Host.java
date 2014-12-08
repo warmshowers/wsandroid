@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Host extends _Host {
-    
+
     private String mUpdated;
 
     public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
@@ -59,14 +59,14 @@ public class Host extends _Host {
         }
 
         sb.append(getPostalCode()).append(", ").append(getCity()).append(", ").append(getProvince());
-        
+
         if (!Strings.isEmpty(getCountry())) {
             sb.append(", ").append(getCountry().toUpperCase());
         }
-        
+
         sb.append("\nLat: ").append(getLatitude()).append("\n");
         sb.append("Lon: ").append(getLongitude());
-        
+
         return sb.toString();
     }
 
@@ -108,7 +108,7 @@ public class Host extends _Host {
     public void setUpdated(String updated) {
         mUpdated = updated;
     }
-    
+
     public String getMemberSince() {
         return formatDate(getCreated());
     }
@@ -121,7 +121,7 @@ public class Host extends _Host {
         if (Strings.isEmpty(timestamp)) {
             return "";
         }
-        
+
         Date date = new Date(Long.valueOf(timestamp) * 1000);
         DateFormat dateFormat = SimpleDateFormat.getDateInstance();
         return dateFormat.format(date);

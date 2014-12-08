@@ -16,7 +16,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DETAILS = "details";
     public static final String COLUMN_UPDATED = "updated";
     public static final String COLUMN_FEEDBACK = "feedback";
-    
+
     private static final String DATABASE_CREATE = "create table "
             + TABLE_HOSTS + "( " + COLUMN_ID
             + " integer primary key not null, " + COLUMN_NAME
@@ -24,11 +24,11 @@ public class DbHelper extends SQLiteOpenHelper {
             + " text not null, " + COLUMN_UPDATED
             + " text not null, " + COLUMN_FEEDBACK
             + " text not null );";
-    
+
     public DbHelper() {
         super(WSAndroidApplication.getAppContext(), DB_NAME, null, DB_VERSION);
     }
-    
+
     @Override
     public void onCreate(SQLiteDatabase database) {
         database.execSQL(DATABASE_CREATE);

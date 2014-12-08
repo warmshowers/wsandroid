@@ -9,9 +9,7 @@ import com.google.android.gms.analytics.Tracker;
 import java.util.HashMap;
 
 
-
-public class WSAndroidApplication extends Application
-{
+public class WSAndroidApplication extends Application {
 
     public static final String TAG = "WSAndroidApplication";
     private static Context mContext;
@@ -21,6 +19,7 @@ public class WSAndroidApplication extends Application
         APP_TRACKER,
         GLOBAL_TRACKER
     }
+
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
 
     public synchronized Tracker getTracker(TrackerName trackerId) {

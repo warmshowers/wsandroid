@@ -29,13 +29,9 @@ public class MapSearchJsonParser {
             }
 
             return parseHosts(jsonObj);
-        }
-
-        catch (HttpException e) {
+        } catch (HttpException e) {
             throw e;
-        }
-        
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new HttpException(e);
         }
     }
@@ -96,5 +92,5 @@ public class MapSearchJsonParser {
 
         return hostList;
     }
-    
+
 }

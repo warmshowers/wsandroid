@@ -8,7 +8,7 @@ import android.content.DialogInterface;
 
 import fi.bitrite.android.ws.R;
 
-/** 
+/**
  * Helper class for progress dialogs.
  */
 public class DialogHandler {
@@ -21,7 +21,7 @@ public class DialogHandler {
     public static final int MESSAGES = 5;
 
     private static boolean inProgress = false;
-    private static int  currentDialogId = NO_DIALOG;
+    private static int currentDialogId = NO_DIALOG;
 
     private final Activity parentActivity;
     private ProgressDialog progressDialog;
@@ -55,27 +55,25 @@ public class DialogHandler {
                     }
                 });
         AlertDialog alert = builder.create();
-        alert.show();       
+        alert.show();
     }
-    
+
     public void alert(String message) {
         showAlertDialog(message);
     }
-    
+
     public void dismiss() {
         inProgress = false;
 
         try {
             parentActivity.dismissDialog(currentDialogId);
-        } 
-        
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // OK - we assume it has been closed earlier
         }
-        
-        currentDialogId = NO_DIALOG;        
+
+        currentDialogId = NO_DIALOG;
     }
-    
+
     public static boolean inProgress() {
         return inProgress;
     }

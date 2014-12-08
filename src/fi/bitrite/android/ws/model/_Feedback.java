@@ -5,9 +5,10 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/** Automatically generated Parcelable implementation for _Feedback.
- *    DO NOT MODIFY THIS FILE MANUALLY! IT WILL BE OVERWRITTEN THE NEXT TIME
- *    _Feedback's PARCELABLE DESCRIPTION IS CHANGED.
+/**
+ * Automatically generated Parcelable implementation for _Feedback.
+ * DO NOT MODIFY THIS FILE MANUALLY! IT WILL BE OVERWRITTEN THE NEXT TIME
+ * _Feedback's PARCELABLE DESCRIPTION IS CHANGED.
  */
 /* package */ abstract class _Feedback implements Parcelable {
 
@@ -37,25 +38,31 @@ import org.json.JSONObject;
     }
 
     public String getId() {
-         return mId;
+        return mId;
     }
+
     public String getFullname() {
-         return mFullname;
+        return mFullname;
     }
+
     public String getName() {
-         return mName;
+        return mName;
     }
+
     public String getBody() {
-         return mBody;
+        return mBody;
     }
+
     public String getGuestOrHost() {
-         return mGuestOrHost;
+        return mGuestOrHost;
     }
+
     public String getRating() {
-         return mRating;
+        return mRating;
     }
+
     public long getHostingDate() {
-         return mHostingDate;
+        return mHostingDate;
     }
 
 

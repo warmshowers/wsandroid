@@ -5,7 +5,7 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 
 import java.util.List;
-    
+
 public interface StarredHostDao {
 
     public void insert(int id, String name, Host host, List<Feedback> feedback);
@@ -19,10 +19,10 @@ public interface StarredHostDao {
     public void delete(int id, String name);
 
     public void update(int id, String name, Host host, List<Feedback> feedback);
-    
+
     public boolean isHostStarred(int id, String name);
 
     public void open();
-    
+
     public void close();
 }

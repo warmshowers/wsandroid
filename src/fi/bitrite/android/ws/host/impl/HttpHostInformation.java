@@ -16,7 +16,7 @@ public class HttpHostInformation extends HttpReader {
 
     public Host getHostInformation(int uid) {
         String simpleUrl = new StringBuilder().append(GlobalInfo.warmshowersBaseUrl).append("/user/")
-        .append(uid).append("/json").toString();
+                .append(uid).append("/json").toString();
         String json = getPage(simpleUrl);
 
         try {

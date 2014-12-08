@@ -17,7 +17,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
     private String mUsername, mFullName, mStreet, mCity, mProvince, mCountry, mAboutMe, mLatitude, mLongitude;
     private String mUpdated;
     private boolean mNotCurrentlyAvailable;
-    
+
     public HostBriefInfo(int id, String username, String fullName, String street, String city, String province, String country, String aboutMe, boolean notCurrentlyAvailable) {
         mId = id;
         mUsername = username;
@@ -56,7 +56,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
     public String getName() {
         return mUsername;
     }
-    
+
     public String getFullname() {
         return mFullName;
     }
@@ -96,11 +96,11 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
     public LatLng getLatLng() {
         return new LatLng(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
     }
-    
+
     public int describeContents() {
         return 0;
     }
-    
+
     public static final DualCreator<HostBriefInfo> CREATOR = new DualCreator<HostBriefInfo>() {
 
         public HostBriefInfo[] newArray(int size) {
@@ -112,8 +112,8 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
             object.readFromParcel(source);
             return object;
         }
-    };  
-    
+    };
+
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(mId);
         dest.writeString(mUsername);
@@ -125,9 +125,9 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         dest.writeString(mCity);
         dest.writeString(mProvince);
         dest.writeString(mCountry);
-        dest.writeByte((byte)(mNotCurrentlyAvailable ? 1 : 0));
+        dest.writeByte((byte) (mNotCurrentlyAvailable ? 1 : 0));
     }
-    
+
     public void readFromParcel(Parcel src) {
         mId = src.readInt();
         mUsername = src.readString();
@@ -167,6 +167,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         result += mCity + ", " + mProvince.toUpperCase();
         return result;
     }
+
     public boolean getNotCurrentlyAvailable() {
         return mNotCurrentlyAvailable;
     }

@@ -29,7 +29,7 @@ public class WebViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
-        mWebView = (WebView)this.findViewById(R.id.webView);
+        mWebView = (WebView) this.findViewById(R.id.webView);
 
         // Handle the back button so they can get back to the app after following links
         mWebView.setOnKeyListener(new View.OnKeyListener() {

@@ -21,9 +21,7 @@ public class RestUnreadCount extends RestClient {
             m.matches();
             String countStr = m.group(1);
             return Integer.valueOf(countStr);
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new HttpException("Error reading number of unread messages - trying to parse \"" + json + "\"");
         }
     }

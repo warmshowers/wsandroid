@@ -13,6 +13,7 @@ public class HttpHostFeedback extends HttpReader {
 
     /**
      * Given the ID of a WarmShowers user, retrieve feedback about him.
+     *
      * @param id
      * @return ArrayList
      */

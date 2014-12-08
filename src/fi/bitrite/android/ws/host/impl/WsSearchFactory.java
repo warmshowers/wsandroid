@@ -1,4 +1,5 @@
 package fi.bitrite.android.ws.host.impl;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import fi.bitrite.android.ws.host.Search;

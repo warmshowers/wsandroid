@@ -26,9 +26,6 @@ import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.view.FeedbackTable;
-import roboguice.RoboGuice;
-import roboguice.activity.RoboActionBarActivity;
-import roboguice.inject.InjectView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -235,6 +232,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
 
     /**
      * Show host in context on our own Maps2Activity
+     *
      * @param view
      */
     public void showHostOnMap(View view) {
@@ -245,13 +243,14 @@ public class HostInformationActivity extends RoboActionBarActivity {
 
     /**
      * Send a geo intent so that we can view the host on external maps application
+     *
      * @param view
      */
     public void sendGeoIntent(View view) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         String lat = hostInfo.getHost().getLatitude();
         String lng = hostInfo.getHost().getLongitude();
-        String query = Uri.encode(lat + "," + lng + "(" + hostInfo.getHost().getFullname() +")");
+        String query = Uri.encode(lat + "," + lng + "(" + hostInfo.getHost().getFullname() + ")");
         String uri = "geo:" + lat + "," + lng + "?q=" + query;
         intent.setData(Uri.parse(uri));
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -313,6 +312,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
         WebViewActivity.viewOnSite(HostInformationActivity.this, url, host.getFullname());
 
     }
+
     public void leaveFeedback() {
         // This experimental hack at adding the ability to leave feedback is optional. We might
         // just try it and see if it works. I'd rather replace it with a "real" anddroid function,

@@ -36,11 +36,13 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
     public static final String PARAM_INITIAL_AUTHENTICATION = "initialAuthentication";
 
     public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
-    
+
     private AccountManager accountManager;
 
-    @InjectView(R.id.editUsername) EditText editUsername;
-    @InjectView(R.id.editPassword) EditText editPassword;
+    @InjectView(R.id.editUsername)
+    EditText editUsername;
+    @InjectView(R.id.editPassword)
+    EditText editPassword;
 
     private String username;
     private String password;
@@ -68,7 +70,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
         setResult(RESULT_CANCELED, resultIntent);
         finish();
     }
-    
+
     @Override
     public void onBackPressed() {
         cancel(null);
@@ -142,9 +144,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
                 msg.obj = RESULT_OK;
                 msg.arg1 = userId;
                 saveCookieData(userId, authenticator.getCookieSessName(), authenticator.getCookieSessId());
-            }
-
-            catch (Exception e) {
+            } catch (Exception e) {
                 Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 msg.obj = e;
             }

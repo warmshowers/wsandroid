@@ -52,7 +52,7 @@ public class FeedbackTable extends TableLayout {
         StringBuilder sb = new StringBuilder();
 
         sb.append(f.getGuestOrHost());
-        Date d = new Date(f.getHostingDate()*1000L);
+        Date d = new Date(f.getHostingDate() * 1000L);
         String hostedOn = DateFormat.getDateInstance().format(d);
         sb.append(" (");
         sb.append(hostedOn);
@@ -68,6 +68,7 @@ public class FeedbackTable extends TableLayout {
         }
         return name;
     }
+
     private TextView getFeedbackText(String text) {
         TextView row = new TextView(getContext());
         row.setLayoutParams(new TableRow.LayoutParams(
