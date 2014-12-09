@@ -41,6 +41,8 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestMapSearch;
 import fi.bitrite.android.ws.model.Host;
@@ -564,6 +566,7 @@ public class Maps2Activity extends FragmentActivity implements
     }
 
     private class MapSearchTask extends AsyncTask<Search, Void, Object> {
+        private static final String TAG = "MapSearchTask";
 
         @Override
         protected Object doInBackground(Search... params) {
@@ -573,7 +576,7 @@ public class Maps2Activity extends FragmentActivity implements
             try {
                 retObj = search.doSearch();
             } catch (Exception e) {
-                Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
+                Log.e(TAG, e.getMessage(), e);
                 retObj = e;
             }
 
@@ -584,9 +587,7 @@ public class Maps2Activity extends FragmentActivity implements
         @Override
         protected void onPostExecute(Object result) {
             if (result instanceof Exception) {
-                // TODO: Improve error reporting with more specifics
-                int r = (result instanceof HttpException ? R.string.network_error : R.string.error_retrieving_host_information);
-                sendMessage(getResources().getString(r), true);
+                RestClient.reportError(Maps2Activity.this, result);
                 return;
             }
 

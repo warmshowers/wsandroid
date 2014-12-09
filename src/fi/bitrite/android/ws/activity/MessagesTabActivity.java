@@ -16,6 +16,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.messaging.RestUnreadCount;
 import fi.bitrite.android.ws.util.GlobalInfo;
@@ -115,9 +116,7 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
             dialogHandler.dismiss();
 
             if (result instanceof Exception) {
-                // TODO: Improve error reporting with more specifics
-                int r = (result instanceof HttpException ? R.string.network_error : R.string.error_retrieving_messages);
-                dialogHandler.alert(getResources().getString(r));
+                RestClient.reportError(MessagesTabActivity.this, result);
                 return;
             }
 

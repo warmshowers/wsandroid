@@ -15,6 +15,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.host.HostContact;
 import fi.bitrite.android.ws.host.impl.RestHostContact;
 import fi.bitrite.android.ws.model.Host;
@@ -91,7 +92,8 @@ public class HostContactActivity extends RoboActivity {
             Object retObj = null;
             try {
                 HostContact contact = new RestHostContact();
-                contact.send(host.getName(), subject, message);
+                String result = contact.send(host.getName(), subject, message);
+                int x=1;
             } catch (Exception e) {
                 Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 retObj = e;
@@ -103,12 +105,11 @@ public class HostContactActivity extends RoboActivity {
         @Override
         protected void onPostExecute(Object result) {
             dialogHandler.dismiss();
-
             if (result instanceof Exception) {
-                dialogHandler.alert(getResources().getString(R.string.error_sending_message) + " (" + ((Exception) result).getMessage() + ")");
-            } else {
-                showSuccessDialog();
+                RestClient.reportError(HostContactActivity.this, result);
+                return;
             }
+            showSuccessDialog();
         }
     }
 

@@ -18,12 +18,13 @@ public class RestHostContact extends RestClient implements HostContact {
     private static final String WARMSHOWERS_HOST_CONTACT_URL = GlobalInfo.warmshowersBaseUrl + "/services/rest/message/send";
 
     @Override
-    public void send(String name, String subject, String message) {
+    public String send(String name, String subject, String message) {
         List<NameValuePair> args = new ArrayList<NameValuePair>();
         args.add(new BasicNameValuePair("recipients", name));
         args.add(new BasicNameValuePair("subject", subject));
         args.add(new BasicNameValuePair("body", message));
-        post(WARMSHOWERS_HOST_CONTACT_URL, args);
+        String json = getJson(WARMSHOWERS_HOST_CONTACT_URL, args);
+        return json;
     }
 
 }

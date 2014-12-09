@@ -40,7 +40,6 @@ public class HttpTextSearch extends RestClient implements Search {
 
         List<NameValuePair> args = new ArrayList<NameValuePair>();
         args.add(new BasicNameValuePair("keyword", this.keyword));
-        post(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
 
         String json = getJson(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
         JSONObject allJson = new JSONObject(json);

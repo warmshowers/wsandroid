@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 import roboguice.util.Strings;
@@ -19,7 +21,7 @@ public class MapSearchJsonParser {
         this.json = json;
     }
 
-    public List<HostBriefInfo> getHosts() {
+    public List<HostBriefInfo> getHosts() throws HttpAuthenticationFailedException, HttpException {
         try {
             JsonParser parser = new JsonParser();
             JsonObject jsonObj = parser.parse(json).getAsJsonObject();
@@ -29,25 +31,25 @@ public class MapSearchJsonParser {
             }
 
             return parseHosts(jsonObj);
-        } catch (HttpException e) {
-            throw e;
-        } catch (Exception e) {
+        } catch (com.google.gson.JsonIOException e) {
+            throw new HttpException(e);
+        } catch (com.google.gson.JsonSyntaxException e) {
             throw new HttpException(e);
         }
     }
 
-    private boolean isComplete(JsonObject jsonObj) throws Exception {
+    private boolean isComplete(JsonObject jsonObj) {
         String status = jsonObj.getAsJsonObject("status").get("status").getAsString();
         boolean isComplete = status.equals("complete");
         return isComplete;
     }
 
 
-    private int getNumHosts(JsonObject jsonObj) throws Exception {
+    private int getNumHosts(JsonObject jsonObj) {
         return jsonObj.getAsJsonObject("status").get("totalresults").getAsInt();
     }
 
-    private List<HostBriefInfo> parseHosts(JsonObject jsonObj) throws Exception {
+    private List<HostBriefInfo> parseHosts(JsonObject jsonObj) {
         List<HostBriefInfo> hostList = new ArrayList<HostBriefInfo>();
 
         JsonArray hosts = jsonObj.getAsJsonArray("accounts");
