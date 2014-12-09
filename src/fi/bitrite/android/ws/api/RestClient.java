@@ -5,9 +5,14 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
@@ -82,6 +87,7 @@ public class RestClient extends HttpReader {
             } else {
                 // Unexpected error
                 rId = R.string.error_retrieving_host_information;
+                Tools.gaReportException(context, "unexpected_exception", e.toString());
             }
             Toast.makeText(context, rId, Toast.LENGTH_LONG).show();
         }
