@@ -90,7 +90,7 @@ public class HttpAuthenticator {
     /**
      * Returns the user id after logging in or 0 if already logged in.
      */
-    public int authenticate(String username, String password) {
+    public int authenticate(String username, String password) throws HttpAuthenticationFailedException, IOException {
         HttpClient client = HttpUtils.getDefaultClient();
         HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
         int userId = 0;
@@ -125,6 +125,9 @@ public class HttpAuthenticator {
             } else {
                 throw new HttpAuthenticationFailedException(e);
             }
+        } catch (IOException e) {
+            // Rethrow; we want to know this was IO exception
+            throw e;
         } catch (Exception e) {
             throw new HttpAuthenticationFailedException(e);
         } finally {

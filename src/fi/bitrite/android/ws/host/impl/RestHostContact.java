@@ -1,7 +1,6 @@
 package fi.bitrite.android.ws.host.impl;
 
 import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.host.HostContact;
 import fi.bitrite.android.ws.util.GlobalInfo;
 
 import org.apache.http.NameValuePair;
@@ -13,11 +12,11 @@ import java.util.List;
 /**
  * Sends private message to a single host using the REST API.
  */
-public class RestHostContact extends RestClient implements HostContact {
+// TODO: There's no reason for this to be a subclass
+public class RestHostContact extends RestClient {
 
     private static final String WARMSHOWERS_HOST_CONTACT_URL = GlobalInfo.warmshowersBaseUrl + "/services/rest/message/send";
 
-    @Override
     public String send(String name, String subject, String message) {
         List<NameValuePair> args = new ArrayList<NameValuePair>();
         args.add(new BasicNameValuePair("recipients", name));
