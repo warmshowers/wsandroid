@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.api;
 
+import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.util.http.HttpException;
@@ -66,7 +67,7 @@ public class HttpReader {
         return html;
     }
 
-    protected void authenticate() {
+    protected void authenticate() throws NoAccountException {
         HttpAuthenticator authenticator = new HttpAuthenticator();
         authenticator.authenticate();
         setAuthenticationPerformed(true);
