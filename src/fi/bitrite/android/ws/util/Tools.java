@@ -6,9 +6,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.Html;
 import android.text.Spanned;
+
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.model.LatLng;
 
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
 
 /**
  * General simple tools, mostly public methods.
@@ -55,4 +59,24 @@ public class Tools {
         }
         return isConnected;
     }
+
+    /**
+     * Send a report to Google Analytics about  category/action
+     *
+     * @param context
+     * @param category
+     * @param action
+     */
+    static public void gaReportException(Context context, String category, String action) {
+
+        Tracker exceptionTracker = ((WSAndroidApplication) context.getApplicationContext())
+                .getTracker(WSAndroidApplication.TrackerName.APP_TRACKER);
+
+        exceptionTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory(category)
+                        .setAction(action)
+                        .build()
+        );
+    }
+
 }
