@@ -2,14 +2,9 @@ package fi.bitrite.android.ws.api;
 
 import android.accounts.AccountsException;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.util.Tools;
@@ -36,7 +31,7 @@ public class RestClient extends HttpReader {
 
     private static final String TAG = "RestClient";
 
-    protected String getJson(String url, List<NameValuePair> params) throws HttpException {
+    protected String getJson(String url, List<NameValuePair> params) throws HttpException, IOException {
         HttpClient client = HttpUtils.getDefaultClient();
         String json = "";
 
@@ -60,15 +55,7 @@ public class RestClient extends HttpReader {
 
             json = EntityUtils.toString(entity, "UTF-8");
 
-        } catch (IOException e) {
-            throw new HttpException(e.getMessage());
-        } catch (HttpAuthenticationFailedException e) {
-            Log.e(TAG, "HttpAuthenticationFailedException");
-            throw e;
-        } catch (Exception e) {
-            Log.e(TAG, "Unexpected exception:" + e.toString());
-            throw new HttpException(e);
-        } finally {
+        }  finally {
             client.getConnectionManager().shutdown();
         }
 
@@ -83,12 +70,15 @@ public class RestClient extends HttpReader {
             } else if (e instanceof HttpAuthenticationFailedException) {
                 rId = R.string.authentication_failed;
             } else if (e instanceof HttpException) {
-                rId = R.string.network_error;
+                rId = R.string.http_server_access_failure;
+            } else if (e instanceof IOException) {
+                rId = R.string.io_error;
             } else {
                 // Unexpected error
-                rId = R.string.error_retrieving_host_information;
-                Tools.gaReportException(context, "unexpected_exception", e.toString());
+                rId = R.string.http_unexpected_failure;
             }
+            Tools.gaReportException(context, "Exception in RestClient: ", e.toString());
+
             Toast.makeText(context, rId, Toast.LENGTH_LONG).show();
         }
         return;
