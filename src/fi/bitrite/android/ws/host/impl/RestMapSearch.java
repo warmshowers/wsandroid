@@ -6,10 +6,13 @@ import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.http.HttpException;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,12 +27,12 @@ public class RestMapSearch extends RestClient implements Search {
         this.searchArea = MapSearchArea.fromLatLngs(northEast, southWest);
     }
 
-    public List<HostBriefInfo> doSearch() {
+    public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException {
         String json = getHostsJson();
         return new MapSearchJsonParser(json).getHosts();
     }
 
-    private String getHostsJson() {
+    private String getHostsJson() throws JSONException, HttpException, IOException {
         return getJson(WARMSHOWERS_MAP_SEARCH_URL, getSearchParameters());
     }
 

@@ -87,7 +87,7 @@ public class MainActivity extends RoboTabActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == AuthenticatorActivity.RESULT_NO_NETWORK) {
-            Toast.makeText(this, R.string.network_error, Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.io_error, Toast.LENGTH_LONG).show();
             return;
         }
 

@@ -46,8 +46,8 @@
     <string name="host_starred">Host starred. You can now access this information off-line.</string>
     <string name="host_unstarred">Host information deleted from device.</string>
     <string name="performing_search">Performing search …</string>
-    <string name="network_error">No internet access, please check your Internet connection.</string>
-    <string name="error_retrieving_host_information">Could not retrieve host information. Check your credentials and Internet connection.</string>
+    <string name="io_error">Internet access failure, please check your Internet connection.</string>
+    <string name="http_unexpected_failure">Unexpected error accessing server. Check your credentials and Internet connection.</string>
     <string name="subject_hint">Enter subject here</string>
     <string name="message_hint">Enter message here</string>
     <string name="message_validation_error">Both subject and message are required.</string>
@@ -102,4 +102,5 @@
     <string name="star_this_host">Star this host</string>
     <string name="unstar_this_host">Unstar this host</string>
     <string name="no_account"><![CDATA[Account information has not been configured. Settings->Account]]></string>
+    <string name="http_server_access_failure">Failed communicating with server, please check your internet connection</string>
 </resources>
