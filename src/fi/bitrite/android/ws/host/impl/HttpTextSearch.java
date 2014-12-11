@@ -14,6 +14,8 @@ import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +38,10 @@ public class HttpTextSearch extends RestClient implements Search {
      * we should just use the info returned by that service and move on.
      *
      */
-    public List<HostBriefInfo> doSearch() throws JSONException, HttpException {
+    public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException {
 
         List<NameValuePair> args = new ArrayList<NameValuePair>();
         args.add(new BasicNameValuePair("keyword", this.keyword));
-        post(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
 
         String json = getJson(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
         JSONObject allJson = new JSONObject(json);

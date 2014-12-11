@@ -14,6 +14,8 @@ import android.widget.EditText;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 
+import java.io.IOException;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
@@ -36,6 +38,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
     public static final String PARAM_INITIAL_AUTHENTICATION = "initialAuthentication";
 
     public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
+    public static final int RESULT_NO_NETWORK = 101;
 
     private AccountManager accountManager;
 
@@ -103,7 +106,9 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
             Intent resultIntent = new Intent();
             resultIntent.putExtra(PARAM_INITIAL_AUTHENTICATION, initialAuthentication);
 
-            if (obj instanceof Exception) {
+            if (obj instanceof IOException) {
+                setResult(RESULT_NO_NETWORK, resultIntent);
+            } else if (obj instanceof Exception) {
                 setResult(RESULT_AUTHENTICATION_FAILED, resultIntent);
             } else {
                 if (!initialAuthentication) {

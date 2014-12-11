@@ -12,12 +12,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.host.HostContact;
+import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.host.impl.IncompleteResultsException;
 import fi.bitrite.android.ws.host.impl.RestHostContact;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.util.http.HttpException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import roboguice.util.Strings;
@@ -90,8 +94,11 @@ public class HostContactActivity extends RoboActivity {
             String message = params[1];
             Object retObj = null;
             try {
-                HostContact contact = new RestHostContact();
-                contact.send(host.getName(), subject, message);
+                RestHostContact contact = new RestHostContact();
+                String result = contact.send(host.getName(), subject, message);
+                if (!result.equals("[true]")) {
+                    throw new HttpException("Failed to send contact request, inappropriate result: " + result);
+                }
             } catch (Exception e) {
                 Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
                 retObj = e;
@@ -103,12 +110,11 @@ public class HostContactActivity extends RoboActivity {
         @Override
         protected void onPostExecute(Object result) {
             dialogHandler.dismiss();
-
             if (result instanceof Exception) {
-                dialogHandler.alert(getResources().getString(R.string.error_sending_message) + " (" + ((Exception) result).getMessage() + ")");
-            } else {
-                showSuccessDialog();
+                RestClient.reportError(HostContactActivity.this, result);
+                return;
             }
+            showSuccessDialog();
         }
     }
 

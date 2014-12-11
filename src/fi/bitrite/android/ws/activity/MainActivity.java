@@ -86,6 +86,11 @@ public class MainActivity extends RoboTabActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (resultCode == AuthenticatorActivity.RESULT_NO_NETWORK) {
+            Toast.makeText(this, R.string.io_error, Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (initialAccountCreation(intent)) {
             if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(getApplicationContext(), R.string.need_account, Toast.LENGTH_LONG).show();

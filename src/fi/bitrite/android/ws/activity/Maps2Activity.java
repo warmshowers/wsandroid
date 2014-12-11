@@ -33,7 +33,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
-import com.google.inject.Inject;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.algo.PreCachingAlgorithmDecorator;
@@ -41,6 +40,7 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestMapSearch;
 import fi.bitrite.android.ws.model.Host;
@@ -49,7 +49,6 @@ import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.WSNonHierarchicalDistanceBasedAlgorithm;
-import fi.bitrite.android.ws.util.http.HttpException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -465,7 +464,7 @@ public class Maps2Activity extends FragmentActivity implements
 
         // If not connected, we'll switch to offline/starred hosts mode
         if (!Tools.isNetworkConnected(this)) {
-            sendMessage(R.string.network_not_connected, false);
+            sendMessage(R.string.map_network_not_connected, false);
             // If we already knew we were offline, return
             if (mIsOffline) {
                 return;
@@ -564,6 +563,7 @@ public class Maps2Activity extends FragmentActivity implements
     }
 
     private class MapSearchTask extends AsyncTask<Search, Void, Object> {
+        private static final String TAG = "MapSearchTask";
 
         @Override
         protected Object doInBackground(Search... params) {
@@ -573,7 +573,7 @@ public class Maps2Activity extends FragmentActivity implements
             try {
                 retObj = search.doSearch();
             } catch (Exception e) {
-                Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
+                Log.e(TAG, e.getMessage(), e);
                 retObj = e;
             }
 
@@ -584,9 +584,7 @@ public class Maps2Activity extends FragmentActivity implements
         @Override
         protected void onPostExecute(Object result) {
             if (result instanceof Exception) {
-                // TODO: Improve error reporting with more specifics
-                int r = (result instanceof HttpException ? R.string.network_error : R.string.error_retrieving_host_information);
-                sendMessage(getResources().getString(r), true);
+                RestClient.reportError(Maps2Activity.this, result);
                 return;
             }
 

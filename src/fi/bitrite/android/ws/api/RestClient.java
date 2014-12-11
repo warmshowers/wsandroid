@@ -1,6 +1,13 @@
 package fi.bitrite.android.ws.api;
 
+import android.accounts.AccountsException;
+import android.content.Context;
+import android.widget.Toast;
+
+import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
@@ -22,41 +29,11 @@ import java.util.List;
  */
 public class RestClient extends HttpReader {
 
-    protected HttpResponse post(String url, List<NameValuePair> params) {
+    private static final String TAG = "RestClient";
+
+    protected String getJson(String url, List<NameValuePair> params) throws HttpException, IOException {
         HttpClient client = HttpUtils.getDefaultClient();
-        HttpResponse response;
-
-        try {
-            HttpPost post = new HttpPost(url);
-            post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-            HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
-            response = client.execute(post, httpContext);
-
-            int responseCode = response.getStatusLine().getStatusCode();
-            if (responseCode == HttpStatus.SC_FORBIDDEN ||
-                    responseCode == HttpStatus.SC_UNAUTHORIZED) {
-                if (!isAuthenticationPerformed()) {
-                    authenticate();
-                    return post(url, params);
-                } else {
-                    throw new HttpException("Couldn't authenticate user");
-                }
-            }
-        } catch (Exception e) {
-            throw new HttpException(e);
-        } finally {
-            client.getConnectionManager().shutdown();
-        }
-        if (response.getStatusLine().getStatusCode() == 200) {
-            return response;
-        } else {
-            throw new HttpException("HTTP Error on service request = " + response.getStatusLine().getStatusCode() + " " + response.getStatusLine().getReasonPhrase());
-        }
-    }
-
-    protected String getJson(String url, List<NameValuePair> params) {
-        HttpClient client = HttpUtils.getDefaultClient();
-        String json;
+        String json = "";
 
         try {
             HttpPost post = new HttpPost(url);
@@ -78,12 +55,32 @@ public class RestClient extends HttpReader {
 
             json = EntityUtils.toString(entity, "UTF-8");
 
-        } catch (IOException e) {
-            throw new HttpException(e.getMessage());
-        } finally {
+        }  finally {
             client.getConnectionManager().shutdown();
         }
 
         return json;
+    }
+
+    public static void reportError(Context context, Object e) {
+        if (e instanceof Exception) {
+            int rId = 0;
+            if (e instanceof AccountsException) {
+                rId = R.string.no_account;
+            } else if (e instanceof HttpAuthenticationFailedException) {
+                rId = R.string.authentication_failed;
+            } else if (e instanceof HttpException) {
+                rId = R.string.http_server_access_failure;
+            } else if (e instanceof IOException) {
+                rId = R.string.io_error;
+            } else {
+                // Unexpected error
+                rId = R.string.http_unexpected_failure;
+            }
+            Tools.gaReportException(context, "Exception in RestClient: ", e.toString());
+
+            Toast.makeText(context, rId, Toast.LENGTH_LONG).show();
+        }
+        return;
     }
 }

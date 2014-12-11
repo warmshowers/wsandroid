@@ -17,6 +17,7 @@ import android.widget.TextView.OnEditorActionListener;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.SearchFactory;
 import fi.bitrite.android.ws.host.impl.WsSearchFactory;
@@ -173,15 +174,9 @@ public class ListSearchTabActivity extends RoboActivity {
         protected void onPostExecute(Object result) {
             dialogHandler.dismiss();
 
-            if (result instanceof HttpException) {
-                dialogHandler.alert(getResources().getString(R.string.network_error));
+            if (result instanceof Exception) {
+                RestClient.reportError(ListSearchTabActivity.this, result);
                 return;
-            } else if (result instanceof JSONException) {
-                dialogHandler.alert(getResources().getString(R.string.parsing_error));
-                return;
-            } else if (result instanceof Exception) {
-                dialogHandler.alert(getResources().getString(R.string.unknown_exception, result.toString()));
-
             }
 
             listSearchHosts = (ArrayList<HostBriefInfo>) result;
