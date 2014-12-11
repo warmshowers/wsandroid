@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -39,12 +40,14 @@ import java.util.List;
 public class HttpAuthenticator {
 
     private final String wsUserAuthUrl = GlobalInfo.warmshowersBaseUrl + "/services/rest/user/login";
+    private final String wsUserLogoutUrl = GlobalInfo.warmshowersBaseUrl + "/services/rest/user/logout";
     private final String wsUserAuthTestUrl = GlobalInfo.warmshowersBaseUrl + "/search/wsuser";
 
     private String username;
     private String authtoken;
     private String mCookieSessId = "";
     private String mCookieSessName = "";
+    private static final String TAG = "HttpAuthenticator";
 
     /**
      * Load a page in order to see if we are authenticated
@@ -94,6 +97,14 @@ public class HttpAuthenticator {
         HttpClient client = HttpUtils.getDefaultClient();
         HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
         int userId = 0;
+
+        try {
+            HttpPost post = new HttpPost(wsUserLogoutUrl);
+            HttpResponse response = client.execute(post, httpContext);
+        } catch (Exception e) {
+            Log.e(TAG, "Exception on logout: " + e.toString());
+            // We don't care a lot about this, as we were just trying to ensure clean login.
+        }
 
         try {
             List<NameValuePair> credentials = generateCredentialsForPost(username, password);
