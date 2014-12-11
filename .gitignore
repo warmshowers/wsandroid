@@ -1,6 +1,7 @@
 bin/
 gen/
 out/
+classes/
 AndroidManifest.out.xml
 .settings
 *.iml
