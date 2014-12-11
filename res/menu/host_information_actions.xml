@@ -25,7 +25,6 @@
 
             <item
                     android:id="@+id/menuStar"
-                    android:icon="@drawable/ic_action_star_off"
                     android:title="@string/star_this_host"
                     ws:showAsAction="never" />
 
