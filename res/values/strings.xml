@@ -101,6 +101,6 @@
     <string name="save">Save</string>
     <string name="star_this_host">Star this host</string>
     <string name="unstar_this_host">Unstar this host</string>
-    <string name="no_account"><![CDATA[Account information has not been configured. Settings->Account]]></string>
+    <string name="no_account">Account information has not been configured. Settings -> Account</string>
     <string name="http_server_access_failure">Failed communicating with server, please check your internet connection</string>
 </resources>

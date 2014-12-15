@@ -15,10 +15,14 @@ import android.webkit.WebView;
 
 import android.webkit.CookieManager;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import java.net.URI;
 
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.auth.AuthenticationHelper;
+import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.util.GlobalInfo;
 
 public class WebViewActivity extends Activity {
@@ -49,18 +53,17 @@ public class WebViewActivity extends Activity {
         String url = this.getIntent().getDataString();
         setTitle(this.getIntent().getStringExtra("webview_title"));
 
-        SharedPreferences cookieInfo = getSharedPreferences("auth_cookie", 0);
-        if (cookieInfo.contains("cookie_sess_id")) {
-            String sessId = cookieInfo.getString("cookie_sess_id", "");
-            String sessName = cookieInfo.getString("cookie_sess_name", "");
-
-            CookieSyncManager.createInstance(this);
-            CookieManager cookieManager = CookieManager.getInstance();
-
-            String cookieString = sessName + "=" + sessId + "; domain=" + GlobalInfo.warmshowersDomain;
-            cookieManager.setCookie(GlobalInfo.warmshowersBaseUrl, cookieString);
-            CookieSyncManager.getInstance().sync();
+        CookieSyncManager.createInstance(this);
+        CookieManager cookieManager = CookieManager.getInstance();
+        String cookieString = "";
+        try {
+            cookieString = AuthenticationHelper.getAccountCookie();
+        } catch (NoAccountException e) {
+            Toast.makeText(this, R.string.no_account, Toast.LENGTH_SHORT);
+            // We'll continue because they *could* just log in.
         }
+        cookieManager.setCookie(GlobalInfo.warmshowersBaseUrl, cookieString);
+        CookieSyncManager.getInstance().sync();
 
         mWebView.loadUrl(url);
 

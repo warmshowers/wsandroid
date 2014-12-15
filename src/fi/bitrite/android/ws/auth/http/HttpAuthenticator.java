@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
@@ -12,6 +13,7 @@ import com.google.gson.JsonParser;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.AuthenticationService;
+import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
@@ -20,12 +22,10 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -43,14 +43,11 @@ public class HttpAuthenticator {
     private final String wsUserLogoutUrl = GlobalInfo.warmshowersBaseUrl + "/services/rest/user/logout";
     private final String wsUserAuthTestUrl = GlobalInfo.warmshowersBaseUrl + "/search/wsuser";
 
-    private String username;
-    private String authtoken;
-    private String mCookieSessId = "";
-    private String mCookieSessName = "";
     private static final String TAG = "HttpAuthenticator";
 
     /**
      * Load a page in order to see if we are authenticated
+     * TODO: Remove this. It shouldn't be necessary. We should know from the auth response.
      */
     public boolean isAuthenticated() {
         HttpClient client = HttpUtils.getDefaultClient();
@@ -73,27 +70,23 @@ public class HttpAuthenticator {
         return (responseCode == HttpStatus.SC_OK);
     }
 
-    public void authenticate() {
-        try {
-            getCredentialsFromAccount();
-            authenticate(username, authtoken);
-        } catch (Exception e) {
-            throw new HttpAuthenticationFailedException(e);
-        }
-    }
+    private List<NameValuePair> getCredentialsFromAccount() throws OperationCanceledException, AuthenticatorException, IOException {
+        List<NameValuePair> credentials = new ArrayList<NameValuePair>();
 
-    private void getCredentialsFromAccount() throws OperationCanceledException, AuthenticatorException, IOException {
-        AccountManager accountManager = AccountManager.get(WSAndroidApplication.getAppContext());
-        Account account = AuthenticationHelper.getWarmshowersAccount();
+        String username = AuthenticationHelper.getAccountUsername();
+        String password = AuthenticationHelper.getAccountPassword();
 
-        authtoken = accountManager.blockingGetAuthToken(account, AuthenticationService.ACCOUNT_TYPE, true);
-        username = account.name;
+        credentials.add(new BasicNameValuePair("username", username));
+        credentials.add(new BasicNameValuePair("password", password));
+        return credentials;
     }
 
     /**
-     * Returns the user id after logging in or 0 if already logged in.
+     * Returns
+     * - userid
+     * - 0 if already logged in
      */
-    public int authenticate(String username, String password) throws HttpAuthenticationFailedException, IOException {
+    public int authenticate() throws HttpAuthenticationFailedException, IOException {
         HttpClient client = HttpUtils.getDefaultClient();
         HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
         int userId = 0;
@@ -107,7 +100,8 @@ public class HttpAuthenticator {
         }
 
         try {
-            List<NameValuePair> credentials = generateCredentialsForPost(username, password);
+            List<NameValuePair> credentials = getCredentialsFromAccount();
+
             HttpPost post = new HttpPost(wsUserAuthUrl);
             post.setEntity(new UrlEncodedFormEntity(credentials));
             HttpResponse response = client.execute(post, httpContext);
@@ -128,8 +122,11 @@ public class HttpAuthenticator {
             String s = o.get("user").getAsJsonObject().get("uid").getAsString();
             userId = Integer.valueOf(s);
 
-            mCookieSessName = o.get("session_name").getAsString();
-            mCookieSessId = o.get("sessid").getAsString();
+            String cookieSessionName = o.get("session_name").getAsString();
+            String cookieSessionId = o.get("sessid").getAsString();
+
+            AuthenticationHelper.addCookieInfo(cookieSessionName, cookieSessionId, userId);
+
         } catch (ClientProtocolException e) {
             if (e.getCause() instanceof CircularRedirectException) {
                 // If we get this authentication has still been successful, so ignore it
@@ -137,34 +134,25 @@ public class HttpAuthenticator {
                 throw new HttpAuthenticationFailedException(e);
             }
         } catch (IOException e) {
-            // Rethrow; we want to know this was IO exception
+            // Rethrow, prevent the catch below from getting to it. we want to know this was IO exception
             throw e;
         } catch (Exception e) {
+            // We might have had a json parsing or access exception - for example, if the "user" was not there,
+            // Could also have AuthenticatorException or OperationCancelledException here
+            // or if there was something wrong with what the server returned
             throw new HttpAuthenticationFailedException(e);
         } finally {
             client.getConnectionManager().shutdown();
         }
 
 
+        // TODO: We should not have to hit the server to check if it's working
+        // If we get here, then we were able to find the user object
         if (!isAuthenticated()) {
-            throw new HttpAuthenticationFailedException("Invalid credentials");
+            throw new HttpAuthenticationFailedException("Invalid credentials, unable to log in.");
         }
 
         return userId;
     }
 
-    private List<NameValuePair> generateCredentialsForPost(String username, String password) {
-        List<NameValuePair> args = new ArrayList<NameValuePair>();
-        args.add(new BasicNameValuePair("username", username));
-        args.add(new BasicNameValuePair("password", password));
-        return args;
-    }
-
-    public String getCookieSessId() {
-        return mCookieSessId;
-    }
-
-    public String getCookieSessName() {
-        return mCookieSessName;
-    }
 }

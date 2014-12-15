@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,7 +16,6 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import java.io.IOException;
 
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.AuthenticationService;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
@@ -32,11 +30,8 @@ import roboguice.util.Strings;
  */
 public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
-    public static final String PARAM_USERNAME = "username";
-    public static final String KEY_USERID = "userid";
-    public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
     public static final String PARAM_INITIAL_AUTHENTICATION = "initialAuthentication";
-
+    public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
     public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
     public static final int RESULT_NO_NETWORK = 101;
 
@@ -62,8 +57,8 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
         dialogHandler = new DialogHandler(this);
 
         Intent intent = getIntent();
-        username = intent.getStringExtra(PARAM_USERNAME);
-        initialAuthentication = username == null;
+        username = intent.getStringExtra("username");
+        initialAuthentication = (username == null);
         editUsername.setText(username);
     }
 
@@ -84,7 +79,8 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
         password = editPassword.getText().toString();
         if (!Strings.isEmpty(username) && !Strings.isEmpty(password)) {
             dialogHandler.showDialog(DialogHandler.AUTHENTICATE);
-            doAuthentication();
+            Account account = AuthenticationHelper.createNewAccount(username, password);
+            doAuthentication(account);
         }
     }
 
@@ -93,8 +89,8 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
         return dialogHandler.createDialog(id, getResources().getString(R.string.authenticating));
     }
 
-    public void doAuthentication() {
-        new AuthenticationThread(handler).start();
+    public void doAuthentication(Account account) {
+        new AuthenticationThread(handler, account).start();
     }
 
     final Handler handler = new Handler() {
@@ -114,18 +110,12 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
                 if (!initialAuthentication) {
                     deleteOldAccount();
                 }
-                createNewAccount(String.valueOf(msg.arg1));
                 setResult(RESULT_OK, resultIntent);
             }
 
             finish();
         }
 
-        private void createNewAccount(String userId) {
-            Account account = new Account(username, AuthenticationService.ACCOUNT_TYPE);
-            accountManager.addAccountExplicitly(account, password, null);
-            accountManager.setUserData(account, KEY_USERID, userId);
-        }
 
         private void deleteOldAccount() {
             Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
@@ -134,36 +124,30 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
     };
 
     private class AuthenticationThread extends Thread {
-        Handler handler;
+        Handler mHandler;
+        Account mAccount;
+        private static final String TAG = "AuthenticationThread";
 
-        public AuthenticationThread(Handler handler) {
-            this.handler = handler;
+        public AuthenticationThread(Handler handler, Account account) {
+            mHandler = handler;
+            mAccount = account;
         }
 
         public void run() {
-            Message msg = handler.obtainMessage();
+            Message msg = mHandler.obtainMessage();
 
             try {
                 HttpAuthenticator authenticator = new HttpAuthenticator();
-                int userId = authenticator.authenticate(username, password);
+                int userId = authenticator.authenticate();
+
                 msg.obj = RESULT_OK;
                 msg.arg1 = userId;
-                saveCookieData(userId, authenticator.getCookieSessName(), authenticator.getCookieSessId());
             } catch (Exception e) {
-                Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
+                Log.e(TAG, e.getMessage(), e);
                 msg.obj = e;
             }
 
-            handler.sendMessage(msg);
-        }
-
-        public void saveCookieData(int uid, String sess_name, String sess_id) {
-            SharedPreferences settings = getSharedPreferences("auth_cookie", 0);
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putInt("account_uid", uid);
-            editor.putString("cookie_sess_id", sess_id);
-            editor.putString("cookie_sess_name", sess_name);
-            editor.commit();
+            mHandler.sendMessage(msg);
         }
     }
 

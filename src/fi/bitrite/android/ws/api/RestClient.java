@@ -1,10 +1,10 @@
 package fi.bitrite.android.ws.api;
 
-import android.accounts.AccountsException;
 import android.content.Context;
 import android.widget.Toast;
 
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
 import fi.bitrite.android.ws.util.Tools;
@@ -62,22 +62,24 @@ public class RestClient extends HttpReader {
         return json;
     }
 
-    public static void reportError(Context context, Object e) {
-        if (e instanceof Exception) {
+    public static void reportError(Context context, Object obj) {
+        if (obj instanceof Exception) {
             int rId = 0;
-            if (e instanceof AccountsException) {
+            if (obj instanceof NoAccountException) {
                 rId = R.string.no_account;
-            } else if (e instanceof HttpAuthenticationFailedException) {
+            } else if (obj instanceof HttpAuthenticationFailedException) {
                 rId = R.string.authentication_failed;
-            } else if (e instanceof HttpException) {
+            } else if (obj instanceof HttpException) {
                 rId = R.string.http_server_access_failure;
-            } else if (e instanceof IOException) {
+            } else if (obj instanceof IOException) {
                 rId = R.string.io_error;
             } else {
                 // Unexpected error
                 rId = R.string.http_unexpected_failure;
             }
-            Tools.gaReportException(context, "Exception in RestClient: ", e.toString());
+            Exception e = (Exception)obj;
+            String exceptionDescription = e.toString() + " Message:" + e.getMessage() + " Cause: " + e.getCause().toString();
+            Tools.gaReportException(context, "RestClient Exception: ", exceptionDescription);
 
             Toast.makeText(context, rId, Toast.LENGTH_LONG).show();
         }
