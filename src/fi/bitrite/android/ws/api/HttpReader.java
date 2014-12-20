@@ -12,6 +12,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import java.io.IOException;
 
 /**
  * Base class for classes that use GET to either scrape the WS website for information
@@ -33,7 +34,7 @@ public class HttpReader {
         this.authenticationPerformed = authenticationPerformed;
     }
 
-    protected String getPage(String simpleUrl) {
+    protected String getPage(String simpleUrl) throws HttpException {
         HttpClient client = HttpUtils.getDefaultClient();
         String html;
         int responseCode;
@@ -48,26 +49,27 @@ public class HttpReader {
             responseCode = response.getStatusLine().getStatusCode();
 
             html = EntityUtils.toString(entity, "UTF-8");
+
+            if (responseCode == HttpStatus.SC_FORBIDDEN ||
+                    responseCode == HttpStatus.SC_UNAUTHORIZED) {
+                if (!isAuthenticationPerformed()) {
+                    authenticate();
+                    html = getPage(simpleUrl);  // TODO: Remove ugly and unnecessary recursion
+                } else {
+                    throw new HttpException("Couldn't authenticate user");
+                }
+            }
+
         } catch (Exception e) {
             throw new HttpException(e);
         } finally {
             client.getConnectionManager().shutdown();
         }
 
-        if (responseCode == HttpStatus.SC_FORBIDDEN ||
-                responseCode == HttpStatus.SC_UNAUTHORIZED) {
-            if (!isAuthenticationPerformed()) {
-                authenticate();
-                html = getPage(simpleUrl);
-            } else {
-                throw new HttpException("Couldn't authenticate user");
-            }
-        }
-
         return html;
     }
 
-    protected void authenticate() throws NoAccountException {
+    protected void authenticate() throws NoAccountException, IOException {
         HttpAuthenticator authenticator = new HttpAuthenticator();
         authenticator.authenticate();
         setAuthenticationPerformed(true);

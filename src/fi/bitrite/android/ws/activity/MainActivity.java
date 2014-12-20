@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
 import fi.bitrite.android.ws.BuildConfig;
+import fi.bitrite.android.ws.auth.Authenticator;
 import roboguice.activity.RoboTabActivity;
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -26,7 +27,9 @@ import fi.bitrite.android.ws.auth.NoAccountException;
 import java.util.ArrayList;
 
 public class MainActivity extends RoboTabActivity  {
-    
+
+    static public MainActivity mainActivity;
+
     private Dialog splashDialog;
 
     // a host is "stashed" when moving from e.g. the host information activity directly
@@ -40,6 +43,8 @@ public class MainActivity extends RoboTabActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mainActivity = this;
 
         handleFirstRun();
 
@@ -79,16 +84,16 @@ public class MainActivity extends RoboTabActivity  {
     /**
      *
      * @return
-     *   true if we already have an account set up and it's working
+     *   true if we already have an account set up in the AccountManager
      *   false if we have to wait for the auth screen to process
      */
-    private boolean setupCredentials() {
+    public boolean setupCredentials() {
         try {
             AuthenticationHelper.getWarmshowersAccount();
             return true;
         }
         catch (NoAccountException e) {
-            startAuthenticatorActivity(new Intent(MainActivity.this, AuthenticatorActivity.class));
+            startAuthenticatorActivity(new Intent(MainActivity.mainActivity, AuthenticatorActivity.class));
             return false; // Wait to set up tabs until auth is done
         }
     }
@@ -104,10 +109,12 @@ public class MainActivity extends RoboTabActivity  {
         if (resultCode == AuthenticatorActivity.RESULT_NO_NETWORK) {
             Toast.makeText(this, R.string.io_error, Toast.LENGTH_LONG).show();
             finish();
-        }
-
-        if (resultCode == AuthenticatorActivity.RESULT_OK) {
+        } else if (resultCode == AuthenticatorActivity.RESULT_OK) {
             setupTabs();
+            return;
+        } else if (resultCode == AuthenticatorActivity.RESULT_AUTHENTICATION_FAILED) {
+            Toast.makeText(getApplicationContext(), R.string.authentication_failed, Toast.LENGTH_LONG).show();
+            startAuthenticationActivityForExistingAccount();
             return;
         }
 
@@ -118,11 +125,6 @@ public class MainActivity extends RoboTabActivity  {
             } else if (resultCode == AuthenticatorActivity.RESULT_AUTHENTICATION_FAILED) {
                 Toast.makeText(getApplicationContext(), R.string.authentication_failed, Toast.LENGTH_LONG).show();
                 startAuthenticatorActivity(new Intent(MainActivity.this, AuthenticatorActivity.class));
-            }
-        } else {
-            if (resultCode == AuthenticatorActivity.RESULT_AUTHENTICATION_FAILED) {
-                Toast.makeText(getApplicationContext(), R.string.authentication_failed, Toast.LENGTH_LONG).show();
-                startAuthenticationActivityForExistingAccount();
             }
         }
     }
@@ -176,7 +178,7 @@ public class MainActivity extends RoboTabActivity  {
         Intent i = new Intent(MainActivity.this, AuthenticatorActivity.class);
         try {
             Account account = AuthenticationHelper.getWarmshowersAccount();
-            i.putExtra(AuthenticatorActivity.PARAM_USERNAME, account.name);
+            i.putExtra("username", account.name);
         } catch (NoAccountException e) {
             // We have no account, so forget it.
         }

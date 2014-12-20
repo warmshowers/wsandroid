@@ -49,14 +49,8 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
         viewMessagesOnSite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Getting the uid out of the stashed cookie info is pretty sad. Maybe @jstaffans
-                // can show me how to get it from the account object.
-                SharedPreferences authInfo = getSharedPreferences("auth_cookie", 0);
-                if (authInfo.contains("account_uid")) {
-                    int uid = authInfo.getInt("account_uid", 0);
-                    String url = GlobalInfo.warmshowersBaseUrl + "/user/" + uid + "/messages";
-                    WebViewActivity.viewOnSite(MessagesTabActivity.this, url, getString(R.string.messages_on_site));
-                }
+                String url = GlobalInfo.warmshowersBaseUrl + "/user/" + AuthenticationHelper.getAccountUid() + "/messages";
+                WebViewActivity.viewOnSite(MessagesTabActivity.this, url, getString(R.string.messages_on_site));
             }
         });
     }

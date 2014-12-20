@@ -1,5 +1,7 @@
 package fi.bitrite.android.ws;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Application;
 import android.content.Context;
 import android.preference.PreferenceManager;
@@ -7,6 +9,8 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
 import java.util.HashMap;
+
+import fi.bitrite.android.ws.util.GlobalInfo;
 
 
 public class WSAndroidApplication extends Application {
@@ -55,5 +59,6 @@ public class WSAndroidApplication extends Application {
     public static Context getAppContext() {
         return WSAndroidApplication.mContext;
     }
+
 
 }
