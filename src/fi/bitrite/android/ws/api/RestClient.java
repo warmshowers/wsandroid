@@ -78,7 +78,9 @@ public class RestClient extends HttpReader {
                 rId = R.string.http_unexpected_failure;
             }
             Exception e = (Exception)obj;
-            String exceptionDescription = e.toString() + " Message:" + e.getMessage() + " Cause: " + e.getCause().toString();
+            String exceptionDescription = e.toString();
+            if (e.getMessage() != null) exceptionDescription += " Message:" + e.getMessage();
+            if (e.getCause() != null) exceptionDescription += " Cause: " + e.getCause().toString();
             Tools.gaReportException(context, "RestClient Exception: ", exceptionDescription);
 
             Toast.makeText(context, rId, Toast.LENGTH_LONG).show();
