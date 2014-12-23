@@ -102,40 +102,21 @@ public class Maps2Activity extends FragmentActivity implements
 
         setContentView(R.layout.activity_maps);
 
-        mLocationClient = new LocationClient(this, this, this);
+        // Verify that Google Play Services is waiting for us, otherwise this activity won't work.
+        // The dialog won't let them go until they enable or install.
+        int checkGooglePlayServices = GooglePlayServicesUtil
+                .isGooglePlayServicesAvailable(this);
+        if (checkGooglePlayServices != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(checkGooglePlayServices)) {
+                Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(checkGooglePlayServices,
+                        this, 0);
+                if (errorDialog != null) {
+                    errorDialog.show();
+                }
+            }
+        }
 
         setUpMapIfNeeded();
-        mMap.setOnCameraChangeListener(this);
-
-        CameraPosition position = null;
-
-        // If we were launched with an intent asking us to zoom to a member
-        Intent receivedIntent = getIntent();
-        if (receivedIntent.hasExtra("target_map_latlng")) {
-            LatLng targetLatLng = receivedIntent.getParcelableExtra("target_map_latlng");
-            position = new CameraPosition(targetLatLng, getResources().getInteger(R.integer.map_showhost_zoom), 0, 0);
-        }
-
-        if (position == null) {
-            position = getSavedCameraPosition();
-        }
-        if (position != null) {
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-            // The move itself will end up setting the mlastCameraPosition.
-        }
-
-        mClusterManager = new ClusterManager<HostBriefInfo>(this, mMap);
-        mClusterManager.setAlgorithm(new PreCachingAlgorithmDecorator<HostBriefInfo>(new WSNonHierarchicalDistanceBasedAlgorithm<HostBriefInfo>(this)));
-        mMap.setOnMarkerClickListener(mClusterManager);
-        mMap.setOnInfoWindowClickListener(mClusterManager);
-        mClusterManager.setOnClusterClickListener(this);
-        mClusterManager.setOnClusterInfoWindowClickListener(this);
-        mClusterManager.setOnClusterItemClickListener(this);
-        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
-        mClusterManager.setRenderer(new HostRenderer());
-        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
-        mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
-        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleHostInfoWindowAdapter(getLayoutInflater()));
     }
 
     // Immediately handle change to distance unit if requrired
@@ -372,7 +353,9 @@ public class Maps2Activity extends FragmentActivity implements
 
     @Override
     protected void onStop() {
-        mLocationClient.disconnect();
+        if (mLocationClient != null) {
+            mLocationClient.disconnect();
+        }
         if (mLastCameraPosition != null) {
             saveMapLocation(mLastCameraPosition);
         }
@@ -412,7 +395,9 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        mLocationClient.connect();
+        if (mLocationClient != null) {
+            mLocationClient.connect();
+        }
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
@@ -445,8 +430,43 @@ public class Maps2Activity extends FragmentActivity implements
     }
 
     private void setUpMap() {
+
+        mLocationClient = new LocationClient(this, this, this);
+
         // Rotate gestures probably aren't needed here and can be disorienting for some of our users.
         mMap.getUiSettings().setRotateGesturesEnabled(false);
+
+        mMap.setOnCameraChangeListener(this);
+
+        CameraPosition position = null;
+
+        // If we were launched with an intent asking us to zoom to a member
+        Intent receivedIntent = getIntent();
+        if (receivedIntent.hasExtra("target_map_latlng")) {
+            LatLng targetLatLng = receivedIntent.getParcelableExtra("target_map_latlng");
+            position = new CameraPosition(targetLatLng, getResources().getInteger(R.integer.map_showhost_zoom), 0, 0);
+        }
+
+        if (position == null) {
+            position = getSavedCameraPosition();
+        }
+        if (position != null) {
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
+            // The move itself will end up setting the mlastCameraPosition.
+        }
+
+        mClusterManager = new ClusterManager<HostBriefInfo>(this, mMap);
+        mClusterManager.setAlgorithm(new PreCachingAlgorithmDecorator<HostBriefInfo>(new WSNonHierarchicalDistanceBasedAlgorithm<HostBriefInfo>(this)));
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+        mClusterManager.setOnClusterClickListener(this);
+        mClusterManager.setOnClusterInfoWindowClickListener(this);
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+        mClusterManager.setRenderer(new HostRenderer());
+        mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
+        mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
+        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleHostInfoWindowAdapter(getLayoutInflater()));
     }
 
     /**
