@@ -96,7 +96,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:text="Basic information"
+                        android:text="@string/host_info_basic_information"
                         android:textAppearance="?android:attr/textAppearanceMedium"/>
             </LinearLayout>
 
