@@ -193,7 +193,7 @@ public class ListSearchTabActivity extends RoboActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("list_search_hosts", listSearchHosts);
-        if (DialogHandler.inProgress()) {
+        if (DialogHandler.inProgress() && textSearchTask != null) {
             outState.putString("search_text", listSearchEdit.getText().toString());
             textSearchTask.cancel(true);
         }
