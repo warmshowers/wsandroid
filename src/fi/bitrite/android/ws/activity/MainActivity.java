@@ -101,11 +101,15 @@ public class MainActivity extends RoboTabActivity  {
     private void startAuthenticatorActivity(Intent i) {
         i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         overridePendingTransition(0, 0);
-        startActivityForResult(i, 0);
+        startActivityForResult(i, AuthenticatorActivity.REQUEST_TYPE_AUTHENTICATE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        // We don't have a reason here to handle anything that's not a result of authentication request
+        if (requestCode != AuthenticatorActivity.REQUEST_TYPE_AUTHENTICATE || intent == null) {
+            return;
+        }
         if (resultCode == AuthenticatorActivity.RESULT_NO_NETWORK) {
             Toast.makeText(this, R.string.io_error, Toast.LENGTH_LONG).show();
             finish();

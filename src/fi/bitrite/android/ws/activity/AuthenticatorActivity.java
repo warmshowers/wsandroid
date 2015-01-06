@@ -34,6 +34,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
     public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
     public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
     public static final int RESULT_NO_NETWORK = 101;
+    public static final int REQUEST_TYPE_AUTHENTICATE = 201;
 
     private AccountManager accountManager;
 
