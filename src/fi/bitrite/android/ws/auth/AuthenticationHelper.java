@@ -46,8 +46,16 @@ public class AuthenticationHelper {
     public static int getAccountUid() {
         AccountManager accountManager = AccountManager.get(WSAndroidApplication.getAppContext());
         Account account = getWarmshowersAccount();
-        String uid = accountManager.getUserData(account, KEY_USERID);
-        return Integer.parseInt(uid);
+        String sUid = accountManager.getUserData(account, KEY_USERID);
+        int uid = -1;
+        try {
+            uid = Integer.parseInt(sUid);
+        } catch (NumberFormatException e) {
+            // Ignore, and we'll go with -1 for the uid. Doesn't work well, but cheater.
+            // This probably should only be happening on initial 1.4.1 upgrade where account didn't have
+            // the UID stashed in it.
+        }
+        return uid;
     }
 
     public static String getAccountUsername() {
