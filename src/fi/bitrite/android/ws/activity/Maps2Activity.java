@@ -1,7 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -25,12 +24,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
 import com.google.maps.android.clustering.Cluster;
@@ -62,9 +63,10 @@ public class Maps2Activity extends FragmentActivity implements
         ClusterManager.OnClusterItemClickListener<HostBriefInfo>,
         ClusterManager.OnClusterItemInfoWindowClickListener<HostBriefInfo>,
         GoogleMap.OnCameraChangeListener,
-        GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks,
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        OnMapReadyCallback {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapSearchTask searchTask;
@@ -75,7 +77,6 @@ public class Maps2Activity extends FragmentActivity implements
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     private static final String DIALOG_ERROR = "dialog_error";
 
-    LocationClient mLocationClient;
     private boolean mPlayServicesConnectionStatus = false;
     private static final String TAG = "Maps2Activity";
     private CameraPosition mLastCameraPosition = null;
@@ -85,7 +86,7 @@ public class Maps2Activity extends FragmentActivity implements
     private boolean mIsOffline = false;
     StarredHostDao starredHostDao = new StarredHostDaoImpl();
     private List<HostBriefInfo> starredHosts;
-
+    private GoogleApiClient mGoogleApiClient;
     enum ClusterStatus {none, some, all}
 
     @Override
@@ -102,19 +103,12 @@ public class Maps2Activity extends FragmentActivity implements
 
         setContentView(R.layout.activity_maps);
 
-        // Verify that Google Play Services is waiting for us, otherwise this activity won't work.
-        // The dialog won't let them go until they enable or install.
-        int checkGooglePlayServices = GooglePlayServicesUtil
-                .isGooglePlayServicesAvailable(this);
-        if (checkGooglePlayServices != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(checkGooglePlayServices)) {
-                Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(checkGooglePlayServices,
-                        this, 0);
-                if (errorDialog != null) {
-                    errorDialog.show();
-                }
-            }
-        }
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
 
         setUpMapIfNeeded();
     }
@@ -134,14 +128,15 @@ public class Maps2Activity extends FragmentActivity implements
      * is from http://developer.android.com/training/location/retrieve-current.html and I don't actually
      * know how to test it.
      *
-     * @param bundle
+     * @param connectionHint
      */
     @Override
-    public void onConnected(Bundle bundle) {
-        Log.i(TAG, "Connected to location services mLastCameraPosition==" + (mLastCameraPosition != null));
+    public void onConnected(Bundle connectionHint) {
+        Log.i(TAG, "Connected to Google Play services mLastCameraPosition==" + (mLastCameraPosition != null));
+
         mPlayServicesConnectionStatus = true;
 
-        mLastDeviceLocation = mLocationClient.getLastLocation();
+        mLastDeviceLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         // If we are now connected, but still don't have a location, use a bogus default.
         if (mLastDeviceLocation == null) {
@@ -159,15 +154,13 @@ public class Maps2Activity extends FragmentActivity implements
         }
     }
 
-    @Override
-    public void onDisconnected() {
-        Log.i(TAG, "Disconnected from location services");
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "Disconnected from play services");
         mPlayServicesConnectionStatus = false;
         Toast.makeText(this, getString(R.string.disconnected_location_services),
                 Toast.LENGTH_SHORT).show();
     }
 
-    @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         if (connectionResult.hasResolution()) {
             try {
@@ -353,9 +346,6 @@ public class Maps2Activity extends FragmentActivity implements
 
     @Override
     protected void onStop() {
-        if (mLocationClient != null) {
-            mLocationClient.disconnect();
-        }
         if (mLastCameraPosition != null) {
             saveMapLocation(mLastCameraPosition);
         }
@@ -395,9 +385,6 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if (mLocationClient != null) {
-            mLocationClient.connect();
-        }
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
@@ -419,19 +406,18 @@ public class Maps2Activity extends FragmentActivity implements
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
-            // Try to obtain the map from the SupportMapFragment.
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment))
-                    .getMap();
-            // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                setUpMap();
-            }
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map_fragment);
+            mapFragment.getMapAsync(this);
         }
     }
 
-    private void setUpMap() {
+    public void onMapReady(GoogleMap map) {
+        mMap = map;
+        setUpMap();
+    }
 
-        mLocationClient = new LocationClient(this, this, this);
+    private void setUpMap() {
 
         // Rotate gestures probably aren't needed here and can be disorienting for some of our users.
         mMap.getUiSettings().setRotateGesturesEnabled(false);
@@ -661,16 +647,6 @@ public class Maps2Activity extends FragmentActivity implements
     }
 
 
-    /*
-     * Handle results returned to the FragmentActivity
-     * by Google Play services
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CONNECTION_FAILURE_RESOLUTION_REQUEST && resultCode == Activity.RESULT_OK) {
-            mLocationClient.connect();
-        }
-    }
 
     /**
      * InfoWindowAdapter to present info about a single host marker.
