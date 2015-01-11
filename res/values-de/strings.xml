@@ -71,7 +71,7 @@
     <string name="map_default_longitude">-114.011667</string>
     <string name="alert_neutral_button">OK</string>
     <string name="contact_message_to">"Nachricht an %1$s"</string>
-    <string name="disconnected_location_services">Nich mehr Verbunden mit Lokalisierungs-Diensten. Bitte verbinden Sie sich erneut.</string>
+    <string name="disconnected_location_services">Nich mehr Verbunden mit Google Play Services. Bitte verbinden Sie sich erneut.</string>
     <string name="hosts_dont_load">Gastgaber-Orte werden nicht geladen auf diesem Level\nZoomen Sie herein....</string>
     <!-- Distance from current has 2 args, number and units -->
     <string name="distance_from_current">"%1$d %2$s von der aktuellen Position"</string>
