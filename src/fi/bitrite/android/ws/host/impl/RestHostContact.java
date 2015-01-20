@@ -25,7 +25,7 @@ public class RestHostContact extends RestClient {
         args.add(new BasicNameValuePair("recipients", name));
         args.add(new BasicNameValuePair("subject", subject));
         args.add(new BasicNameValuePair("body", message));
-        String json = getJson(WARMSHOWERS_HOST_CONTACT_URL, args);
+        String json = post(WARMSHOWERS_HOST_CONTACT_URL, args);
         return json;
     }
 

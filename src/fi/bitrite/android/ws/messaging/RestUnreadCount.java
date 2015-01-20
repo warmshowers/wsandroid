@@ -17,7 +17,7 @@ public class RestUnreadCount extends RestClient {
     private static final Pattern p = Pattern.compile(".*(\\d+).*");
 
     public int getUnreadCount() throws JSONException, HttpException, IOException {
-        String json = getJson(WARMSHOWERS_UNREAD_COUNT_URL, Collections.<NameValuePair>emptyList());
+        String json = post(WARMSHOWERS_UNREAD_COUNT_URL, Collections.<NameValuePair>emptyList());
         Matcher m = p.matcher(json);
         try {
             m.matches();

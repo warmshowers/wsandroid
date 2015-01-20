@@ -33,7 +33,7 @@ public class RestMapSearch extends RestClient implements Search {
     }
 
     private String getHostsJson() throws JSONException, HttpException, IOException {
-        return getJson(WARMSHOWERS_MAP_SEARCH_URL, getSearchParameters());
+        return post(WARMSHOWERS_MAP_SEARCH_URL, getSearchParameters());
     }
 
     private List<NameValuePair> getSearchParameters() {
