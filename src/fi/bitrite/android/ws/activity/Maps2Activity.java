@@ -108,7 +108,6 @@ public class Maps2Activity extends FragmentActivity implements
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        mGoogleApiClient.connect();
 
         setUpMapIfNeeded();
     }
@@ -147,10 +146,13 @@ public class Maps2Activity extends FragmentActivity implements
             mLastDeviceLocation.setLongitude(Double.parseDouble(getResources().getString(R.string.map_default_longitude)));
         }
 
-        mMap.setMyLocationEnabled(true);
+        // mMap may not yet be initialized in some cases; Connect happens before map setup.
+        if (mMap != null) {
+            mMap.setMyLocationEnabled(true);
 
-        if (getSavedCameraPosition() == null) {
-            setMapToCurrentLocation();
+            if (getSavedCameraPosition() == null) {
+                setMapToCurrentLocation();
+            }
         }
     }
 
@@ -415,6 +417,7 @@ public class Maps2Activity extends FragmentActivity implements
     public void onMapReady(GoogleMap map) {
         mMap = map;
         setUpMap();
+        mGoogleApiClient.connect(); // Can't connect until here because location will need map to act
     }
 
     private void setUpMap() {
