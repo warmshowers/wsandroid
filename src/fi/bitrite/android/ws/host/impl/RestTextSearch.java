@@ -19,11 +19,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HttpTextSearch extends RestClient implements Search {
+public class RestTextSearch extends RestClient implements Search {
 
     private final String keyword;
 
-    public HttpTextSearch(String keyword) {
+    public RestTextSearch(String keyword) {
         this.keyword = keyword;
     }
 
