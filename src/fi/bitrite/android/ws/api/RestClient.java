@@ -21,7 +21,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -44,9 +49,10 @@ public class RestClient {
         this.authenticationPerformed = authenticationPerformed;
     }
 
-    protected String get(String simpleUrl) throws HttpException {
+    protected JSONObject get(String simpleUrl) throws HttpException, JSONException, URISyntaxException, IOException {
         HttpClient client = HttpUtils.getDefaultClient();
         String json;
+        JSONObject jsonObj;
         int responseCode;
 
         try {
@@ -64,30 +70,29 @@ public class RestClient {
                     responseCode == HttpStatus.SC_UNAUTHORIZED) {
                 if (!isAuthenticationPerformed()) {
                     authenticate();
-                    json = get(simpleUrl);  // TODO: Remove ugly and unnecessary recursion
+                    return get(simpleUrl);  // TODO: Remove ugly and unnecessary recursion
                 } else {
                     throw new HttpException("Couldn't authenticate user");
                 }
             }
-
-        } catch (Exception e) {
-            throw new HttpException(e);
+            jsonObj = new JSONObject(json);
         } finally {
             client.getConnectionManager().shutdown();
         }
 
-        return json;
+        return jsonObj;
     }
 
-    protected String post(String url, List<NameValuePair> params) throws HttpException, IOException {
+    protected JSONObject post(String url, List<NameValuePair> params) throws HttpException, IOException, JSONException {
         HttpClient client = HttpUtils.getDefaultClient();
-        String json = "";
+        String jsonString = "";
+        JSONObject jsonObj;
 
         try {
-            HttpPost post = new HttpPost(url);
-            post.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
             HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
-            HttpResponse response = client.execute(post, httpContext);
+            HttpResponse response = client.execute(httpPost, httpContext);
             HttpEntity entity = response.getEntity();
 
             int responseCode = response.getStatusLine().getStatusCode();
@@ -101,13 +106,21 @@ public class RestClient {
                 }
             }
 
-            json = EntityUtils.toString(entity, "UTF-8");
+            jsonString = EntityUtils.toString(entity, "UTF-8");
 
-        }  finally {
+            try {
+                jsonObj = new JSONObject(jsonString);
+            } catch (JSONException e) {  // Assume it might have been an array [true]
+                JSONArray jsonArray = new JSONArray(jsonString);
+                jsonObj = new JSONObject();
+                jsonObj.put("arrayresult", jsonArray);
+            }
+
+        } finally {
             client.getConnectionManager().shutdown();
         }
 
-        return json;
+        return jsonObj;
     }
 
     public static void reportError(Context context, Object obj) {
@@ -121,6 +134,8 @@ public class RestClient {
                 rId = R.string.http_server_access_failure;
             } else if (obj instanceof IOException) {
                 rId = R.string.io_error;
+            } else if (obj instanceof JSONException) {
+                rId = R.string.json_error;
             } else {
                 // Unexpected error
                 rId = R.string.http_unexpected_failure;

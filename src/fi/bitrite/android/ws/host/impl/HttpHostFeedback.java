@@ -1,9 +1,14 @@
 package fi.bitrite.android.ws.host.impl;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.util.GlobalInfo;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**
@@ -17,12 +22,12 @@ public class HttpHostFeedback extends RestClient {
      * @param id
      * @return ArrayList
      */
-    public ArrayList<Feedback> getFeedback(int id) {
+    public ArrayList<Feedback> getFeedback(int id) throws JSONException, URISyntaxException, IOException {
         String simpleUrl = new StringBuilder().append(GlobalInfo.warmshowersBaseUrl).append("/user/")
                 .append(id).append("/json_recommendations").toString();
-        String json = get(simpleUrl);
+        JSONObject jsonObject = get(simpleUrl);
 
-        FeedbackJsonParser parser = new FeedbackJsonParser(json);
+        FeedbackJsonParser parser = new FeedbackJsonParser(jsonObject);
         return parser.getFeedback();
     }
 }

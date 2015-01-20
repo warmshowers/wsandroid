@@ -39,14 +39,13 @@ public class RestTextSearch extends RestClient implements Search {
         List<NameValuePair> args = new ArrayList<NameValuePair>();
         args.add(new BasicNameValuePair("keyword", this.keyword));
 
-        String json = post(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
-        JSONObject allJson = new JSONObject(json);
+        JSONObject jsonObject = post(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
 
         List<HostBriefInfo> list = new ArrayList<HostBriefInfo>();
-        JSONObject statusJson = allJson.getJSONObject("status");
+        JSONObject statusJson = jsonObject.getJSONObject("status");
         String numDelivered = statusJson.get("delivered").toString();
         if (Integer.parseInt(numDelivered) > 0) {
-            JSONObject hostJson = allJson.getJSONObject("accounts");
+            JSONObject hostJson = jsonObject.getJSONObject("accounts");
 
             for (int i = 0; i < hostJson.names().length(); i++) {
                 int uid = hostJson.names().getInt(i);

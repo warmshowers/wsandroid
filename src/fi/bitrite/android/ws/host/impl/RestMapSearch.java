@@ -11,6 +11,7 @@ import fi.bitrite.android.ws.util.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,11 +29,11 @@ public class RestMapSearch extends RestClient implements Search {
     }
 
     public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException {
-        String json = getHostsJson();
+        JSONObject json = getHostsJson();
         return new MapSearchJsonParser(json).getHosts();
     }
 
-    private String getHostsJson() throws JSONException, HttpException, IOException {
+    private JSONObject getHostsJson() throws JSONException, HttpException, IOException {
         return post(WARMSHOWERS_MAP_SEARCH_URL, getSearchParameters());
     }
 

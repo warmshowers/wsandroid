@@ -1,9 +1,14 @@
 package fi.bitrite.android.ws.host.impl;
 
+import android.util.Log;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.model.HostBriefInfo;
@@ -15,77 +20,69 @@ import java.util.List;
 
 public class MapSearchJsonParser {
 
-    private final String json;
+    private static final String TAG = "MapSearchJsonParser";
+    private final JSONObject mJSONObj;
 
-    public MapSearchJsonParser(String json) {
-        this.json = json;
+    public MapSearchJsonParser(JSONObject json) {
+        mJSONObj = json;
     }
 
-    public List<HostBriefInfo> getHosts() throws HttpAuthenticationFailedException, HttpException {
-        try {
-            JsonParser parser = new JsonParser();
-            JsonObject jsonObj = parser.parse(json).getAsJsonObject();
-
-            if (!isComplete(jsonObj)) {
-                throw new IncompleteResultsException("Could not retrieve hosts. Try again.");
-            }
-
-            return parseHosts(jsonObj);
-        } catch (com.google.gson.JsonIOException e) {
-            throw new HttpException(e);
-        } catch (com.google.gson.JsonSyntaxException e) {
-            throw new HttpException(e);
+    public List<HostBriefInfo> getHosts() throws HttpAuthenticationFailedException, HttpException, JSONException {
+        if (!isComplete(mJSONObj)) {
+            throw new IncompleteResultsException("Could not retrieve hosts. Try again.");
         }
+        return parseHosts(mJSONObj);
     }
 
-    private boolean isComplete(JsonObject jsonObj) {
-        String status = jsonObj.getAsJsonObject("status").get("status").getAsString();
+    private boolean isComplete(JSONObject jsonObj) throws JSONException {
+        String status = jsonObj.getJSONObject("status").getString("status");
         boolean isComplete = status.equals("complete");
         return isComplete;
     }
 
 
-    private int getNumHosts(JsonObject jsonObj) {
-        return jsonObj.getAsJsonObject("status").get("totalresults").getAsInt();
+    private int getNumHosts(JSONObject jsonObj) throws JSONException {
+        JSONObject status = jsonObj.getJSONObject("status");
+        return status.getInt("totalresults");
     }
 
-    private List<HostBriefInfo> parseHosts(JsonObject jsonObj) {
+    private List<HostBriefInfo> parseHosts(JSONObject jsonObj) throws JSONException{
         List<HostBriefInfo> hostList = new ArrayList<HostBriefInfo>();
 
-        JsonArray hosts = jsonObj.getAsJsonArray("accounts");
-        for (JsonElement host : hosts) {
-            JsonObject hostObj = host.getAsJsonObject();
+        JSONArray hosts = jsonObj.getJSONArray("accounts");
+        for (int i=0; i < hosts.length(); i++) {
+            JSONObject hostObj = hosts.getJSONObject(i);
 
-            int id = hostObj.get("uid").getAsInt();
+            int id = hostObj.getInt("uid");
 
-            String fullName = hostObj.get("name").getAsString();
+            String fullName = hostObj.getString("name");
             if (Strings.isEmpty(fullName)) {
                 fullName = "(Unknown host)";
             }
 
             StringBuilder location = new StringBuilder();
-            location.append(hostObj.get("street").getAsString());
+            location.append(hostObj.getString("street"));
             if (location.length() > 0) {
                 location.append(", ");
             }
 
-            if (hostObj.get("postal_code").getAsString().length() > 0 && 0 != hostObj.get("postal_code").getAsString().compareToIgnoreCase("none")) {
-                location.append(" " + hostObj.get("postal_code").getAsString());
+            if (hostObj.getString("postal_code").length() > 0 && 0 != hostObj.getString("postal_code").compareToIgnoreCase("none")) {
+                location.append(" " + hostObj.getString("postal_code"));
             }
 
-            String lat = hostObj.get("latitude").getAsString();
-            String lon = hostObj.get("longitude").getAsString();
+            String lat = hostObj.getString("latitude");
+            String lon = hostObj.getString("longitude");
 
             HostBriefInfo h = new HostBriefInfo(
                     id,
                     "",  // No username provided in this feed
                     fullName,
-                    hostObj.get("street").getAsString(),
-                    hostObj.get("city").getAsString(),
-                    hostObj.get("province").getAsString(),
-                    hostObj.get("country").getAsString(),
+                    hostObj.getString("street"),
+                    hostObj.getString("city"),
+                    hostObj.getString("province"),
+                    hostObj.getString("country"),
                     "",   // No about_me provided here
-                    (hostObj.get("notcurrentlyavailable").getAsString().equals("1"))
+                    (hostObj.getString("notcurrentlyavailable").equals("1"))
             );
             h.setLatitude(lat);
             h.setLongitude(lon);

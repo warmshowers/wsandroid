@@ -7,6 +7,10 @@ import fi.bitrite.android.ws.util.http.HttpException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import roboguice.util.Strings;
 
 /**
@@ -14,13 +18,13 @@ import roboguice.util.Strings;
  */
 public class HttpHostInformation extends RestClient {
 
-    public Host getHostInformation(int uid) {
+    public Host getHostInformation(int uid) throws JSONException, IOException, URISyntaxException {
         String simpleUrl = new StringBuilder().append(GlobalInfo.warmshowersBaseUrl).append("/user/")
                 .append(uid).append("/json").toString();
-        String json = get(simpleUrl);
+        JSONObject jsonObject = get(simpleUrl);
 
         try {
-            JSONArray hostJsonArray = new JSONObject(json).getJSONArray("users");
+            JSONArray hostJsonArray = jsonObject.getJSONArray("users");
             JSONObject hostJson = hostJsonArray.getJSONObject(0);
             Host host = Host.CREATOR.parse(hostJson.getJSONObject("user"));
 

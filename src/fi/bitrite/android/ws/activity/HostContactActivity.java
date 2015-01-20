@@ -15,6 +15,9 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
@@ -95,9 +98,12 @@ public class HostContactActivity extends RoboActivity {
             Object retObj = null;
             try {
                 RestHostContact contact = new RestHostContact();
-                String result = contact.send(host.getName(), subject, message);
-                if (!result.equals("[true]")) {
-                    throw new HttpException("Failed to send contact request, inappropriate result: " + result);
+                JSONObject result = contact.send(host.getName(), subject, message);
+
+                JSONArray resultArray = result.getJSONArray("arrayresult");
+
+                if (!resultArray.getBoolean(0)) {
+                    throw new HttpException("Failed to send contact request, inappropriate result: " + resultArray);
                 }
             } catch (Exception e) {
                 Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
