@@ -1,9 +1,9 @@
 <resources>
-        <string name="google_maps_key_instructions" templateMergeStrategy="replace"><!--
+        <string name="google_maps_key_instructions" templateMergeStrategy="replace" translatable="false"><!--
 
 Info on required fingerprint:
     http://developer.android.com/tools/publishing/app-signing.html#debugmode
     --></string>
 
-    <string name="google_maps_key" templateMergeStrategy="preserve">AIzaSyDCE2v0T3GIRk7QFVkq1aW4x6QbGfdEjOg</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDCE2v0T3GIRk7QFVkq1aW4x6QbGfdEjOg</string>
 </resources>
