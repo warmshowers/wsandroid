@@ -1,19 +1,14 @@
 package fi.bitrite.android.ws.auth.http;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
-import fi.bitrite.android.ws.auth.AuthenticationService;
-import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
@@ -29,8 +24,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,31 +42,6 @@ public class HttpAuthenticator {
     private final String wsUserAuthTestUrl = GlobalInfo.warmshowersBaseUrl + "/search/wsuser";
 
     private static final String TAG = "HttpAuthenticator";
-
-    /**
-     * Load a page in order to see if we are authenticated
-     * TODO: Remove this. It shouldn't be necessary. We should know from the auth response.
-     */
-    public boolean isAuthenticated() {
-        HttpClient client = HttpUtils.getDefaultClient();
-        int responseCode;
-        try {
-            String url = HttpUtils.encodeUrl(wsUserAuthTestUrl);
-            HttpGet get = new HttpGet(url);
-            HttpContext context = HttpSessionContainer.INSTANCE.getSessionContext();
-
-            HttpResponse response = client.execute(get, context);
-            HttpEntity entity = response.getEntity();
-            responseCode = response.getStatusLine().getStatusCode();
-            EntityUtils.toString(entity, "UTF-8");
-        } catch (Exception e) {
-            throw new HttpAuthenticationFailedException(e);
-        } finally {
-            client.getConnectionManager().shutdown();
-        }
-
-        return (responseCode == HttpStatus.SC_OK);
-    }
 
     private List<NameValuePair> getCredentialsFromAccount() throws OperationCanceledException, AuthenticatorException, IOException {
         List<NameValuePair> credentials = new ArrayList<NameValuePair>();
@@ -143,13 +116,6 @@ public class HttpAuthenticator {
             throw new HttpAuthenticationFailedException(e);
         } finally {
             client.getConnectionManager().shutdown();
-        }
-
-
-        // TODO: We should not have to hit the server to check if it's working
-        // If we get here, then we were able to find the user object
-        if (!isAuthenticated()) {
-            throw new HttpAuthenticationFailedException("Invalid credentials, unable to log in.");
         }
 
         return userId;

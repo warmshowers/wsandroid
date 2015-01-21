@@ -49,7 +49,7 @@ public class RestClient {
         this.authenticationPerformed = authenticationPerformed;
     }
 
-    protected JSONObject get(String simpleUrl) throws HttpException, JSONException, URISyntaxException, IOException {
+    public JSONObject get(String simpleUrl) throws HttpException, JSONException, URISyntaxException, IOException {
         HttpClient client = HttpUtils.getDefaultClient();
         String json;
         JSONObject jsonObj;
@@ -69,7 +69,7 @@ public class RestClient {
             if (responseCode == HttpStatus.SC_FORBIDDEN ||
                     responseCode == HttpStatus.SC_UNAUTHORIZED) {
                 if (!isAuthenticationPerformed()) {
-                    authenticate();
+                    authenticate();  // TODO: And authenticate() is *also* calling back into here. Yuck. Got to go.
                     return get(simpleUrl);  // TODO: Remove ugly and unnecessary recursion
                 } else {
                     throw new HttpException("Couldn't authenticate user");
