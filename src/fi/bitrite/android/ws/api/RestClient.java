@@ -1,7 +1,7 @@
 package fi.bitrite.android.ws.api;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
 
 import fi.bitrite.android.ws.R;
@@ -29,10 +29,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Base class for classes that use GET to either scrape the WS website for information
@@ -40,19 +37,7 @@ import java.util.ListIterator;
  */
 public class RestClient {
 
-    boolean authenticationPerformed;
-
-    public RestClient() {
-        setAuthenticationPerformed(false);
-    }
-
-    public boolean isAuthenticationPerformed() {
-        return authenticationPerformed;
-    }
-
-    private void setAuthenticationPerformed(boolean authenticationPerformed) {
-        this.authenticationPerformed = authenticationPerformed;
-    }
+    public static final String TAG = "RestClient";
 
     public JSONObject get(String simpleUrl) throws HttpException, JSONException, URISyntaxException, IOException {
         HttpClient client = HttpUtils.getDefaultClient();
@@ -60,76 +45,83 @@ public class RestClient {
         JSONObject jsonObj;
         int responseCode;
 
-        try {
-            String url = HttpUtils.encodeUrl(simpleUrl);
-            HttpGet get = new HttpGet(url);
-            HttpContext context = HttpSessionContainer.INSTANCE.getSessionContext();
+        String url = HttpUtils.encodeUrl(simpleUrl);
+        HttpGet get = new HttpGet(url);
+        HttpContext context = HttpSessionContainer.INSTANCE.getSessionContext();
 
-            HttpResponse response = client.execute(get, context);
-            HttpEntity entity = response.getEntity();
-            responseCode = response.getStatusLine().getStatusCode();
+        HttpResponse response = client.execute(get, context);
+        HttpEntity entity = response.getEntity();
+        responseCode = response.getStatusLine().getStatusCode();
 
-            json = EntityUtils.toString(entity, "UTF-8");
+        json = EntityUtils.toString(entity, "UTF-8");
 
-            if (responseCode == HttpStatus.SC_FORBIDDEN ||
-                    responseCode == HttpStatus.SC_UNAUTHORIZED) {
-                if (!isAuthenticationPerformed()) {
-                    authenticate();  // TODO: And authenticate() is *also* calling back into here. Yuck. Got to go.
-                    return get(simpleUrl);  // TODO: Remove ugly and unnecessary recursion
-                } else {
-                    throw new HttpException("Couldn't authenticate user");
-                }
+        if (responseCode != HttpStatus.SC_OK) {
+            Log.i(TAG, "Non-200 HTTP response(" + Integer.toString(responseCode) + " for URL " + url);
+            switch (responseCode) {
+                case HttpStatus.SC_UNAUTHORIZED:    // 401, typically when not logged in
+                    doRequiredAuth();
+                    return get(url);
+                case HttpStatus.SC_FORBIDDEN:
+                case HttpStatus.SC_NOT_ACCEPTABLE:  // 406, Typically trying to log out when not logged in
+                default:
+                    throw new HttpException(Integer.toString(responseCode));
             }
-            jsonObj = new JSONObject(json);
-        } finally {
-            client.getConnectionManager().shutdown();
         }
+
+        jsonObj = new JSONObject(json);
+        client.getConnectionManager().shutdown();
 
         return jsonObj;
     }
 
     // Bare post with no params
-    public JSONObject post(String url) throws HttpException, IOException, JSONException {
+    public JSONObject post(String url, int recursionLimit) throws HttpException, IOException, JSONException, RestClientRecursionException {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        return post(url, params);
+        return post(url, params, recursionLimit);
     }
 
-    public JSONObject post(String url, List<NameValuePair> params) throws HttpException, IOException, JSONException, HttpAuthenticationFailedException {
+    // Post with params
+    public JSONObject post(String url, List<NameValuePair> params, int recursionLimit) throws HttpException, IOException, JSONException, HttpAuthenticationFailedException, RestClientRecursionException {
         HttpClient client = HttpUtils.getDefaultClient();
         String jsonString = "";
         JSONObject jsonObj;
+        if (recursionLimit < 0) {
+            throw new RestClientRecursionException("Recursion detected");
+        }
+
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
+        HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
+        HttpResponse response = client.execute(httpPost, httpContext);
+        HttpEntity entity = response.getEntity();
+
+        int responseCode = response.getStatusLine().getStatusCode();
+
+        if (responseCode != HttpStatus.SC_OK) {
+            Log.i(TAG, "Non-200 HTTP response(" + Integer.toString(responseCode) + " for URL " + url);
+            switch (responseCode) {
+                case HttpStatus.SC_UNAUTHORIZED:    // 401, typically when not logged in
+                    doRequiredAuth();
+                    return post(url, params, --recursionLimit);
+                case HttpStatus.SC_FORBIDDEN:
+                case HttpStatus.SC_NOT_ACCEPTABLE:  // 406, Typically trying to log out when not logged in
+                default:
+                    throw new HttpException(Integer.toString(responseCode));
+            }
+        }
+
+        jsonString = EntityUtils.toString(entity, "UTF-8");
 
         try {
-            HttpPost httpPost = new HttpPost(url);
-            httpPost.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
-            HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
-            HttpResponse response = client.execute(httpPost, httpContext);
-            HttpEntity entity = response.getEntity();
-
-            int responseCode = response.getStatusLine().getStatusCode();
-            if (responseCode == HttpStatus.SC_UNAUTHORIZED) {
-                throw new HttpAuthenticationFailedException("Failed authentication");
-            }
-            if (responseCode == HttpStatus.SC_FORBIDDEN) {
-                if (!isAuthenticationPerformed()) {
-                    authenticate();
-                    return post(url, params);
-                }
-            }
-
-            jsonString = EntityUtils.toString(entity, "UTF-8");
-
-            try {
-                jsonObj = new JSONObject(jsonString);
-            } catch (JSONException e) {  // Assume it might have been an array [true]
-                JSONArray jsonArray = new JSONArray(jsonString);
-                jsonObj = new JSONObject();
-                jsonObj.put("arrayresult", jsonArray);
-            }
-
-        } finally {
-            client.getConnectionManager().shutdown();
+            jsonObj = new JSONObject(jsonString);
+        } catch (JSONException e) {  // Assume it might have been an array [true]
+            JSONArray jsonArray = new JSONArray(jsonString);
+            jsonObj = new JSONObject();
+            jsonObj.put("arrayresult", jsonArray);
         }
+
+        client.getConnectionManager().shutdown();
+
 
         return jsonObj;
     }
@@ -162,10 +154,22 @@ public class RestClient {
         return;
     }
 
-    protected void authenticate() throws NoAccountException, IOException, JSONException {
+    protected void doRequiredAuth() throws NoAccountException, IOException, JSONException {
         HttpAuthenticator authenticator = new HttpAuthenticator();
         authenticator.authenticate();
-        setAuthenticationPerformed(true);
     }
+
+    public class RestClientRecursionException extends Exception {
+        private static final long serialVersionUID = 1L;
+
+        public RestClientRecursionException(Exception e) {
+            super(e);
+        }
+
+        public RestClientRecursionException(String msg) {
+            super(msg);
+        }
+    }
+
 
 }

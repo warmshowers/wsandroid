@@ -28,13 +28,13 @@ public class RestMapSearch extends RestClient implements Search {
         this.searchArea = MapSearchArea.fromLatLngs(northEast, southWest);
     }
 
-    public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException {
+    public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException, RestClientRecursionException {
         JSONObject json = getHostsJson();
         return new MapSearchJsonParser(json).getHosts();
     }
 
-    private JSONObject getHostsJson() throws JSONException, HttpException, IOException {
-        return post(WARMSHOWERS_MAP_SEARCH_URL, getSearchParameters());
+    private JSONObject getHostsJson() throws JSONException, HttpException, IOException, RestClientRecursionException {
+        return post(WARMSHOWERS_MAP_SEARCH_URL, getSearchParameters(), 1);
     }
 
     private List<NameValuePair> getSearchParameters() {

@@ -41,6 +41,8 @@ public class HttpAuthenticator {
     }
 
     /**
+     * Hits the logout service and then the login.
+     *
      * Returns
      * - userid
      * - 0 if already logged in
@@ -50,7 +52,7 @@ public class HttpAuthenticator {
         int userId = 0;
 
         try {
-            authClient.post(wsUserLogoutUrl);
+            authClient.post(wsUserLogoutUrl, 1);
         } catch (Exception e) {
             Log.e(TAG, "Exception on logout: " + e.toString());
             // We don't care a lot about this, as we were just trying to ensure clean login.
@@ -60,7 +62,7 @@ public class HttpAuthenticator {
         try {
             List<NameValuePair> credentials = getCredentialsFromAccount();
 
-            JSONObject authResult = authClient.post(wsUserAuthUrl, credentials);
+            JSONObject authResult = authClient.post(wsUserAuthUrl, credentials, 1);
 
             userId = authResult.getJSONObject("user").getInt("uid");
             String cookieSessionName = authResult.getString("session_name");

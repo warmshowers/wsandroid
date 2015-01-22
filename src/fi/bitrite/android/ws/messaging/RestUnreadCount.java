@@ -18,8 +18,8 @@ public class RestUnreadCount extends RestClient {
 
     private static final Pattern p = Pattern.compile(".*(\\d+).*");
 
-    public int getUnreadCount() throws JSONException, HttpException, IOException {
-        JSONObject jsonObject = post(WARMSHOWERS_UNREAD_COUNT_URL, Collections.<NameValuePair>emptyList());
+    public int getUnreadCount() throws JSONException, HttpException, IOException, RestClientRecursionException {
+        JSONObject jsonObject = post(WARMSHOWERS_UNREAD_COUNT_URL, Collections.<NameValuePair>emptyList(), 1);
         JSONArray jsonArray = jsonObject.getJSONArray("arrayresult");
         int numMessages = jsonArray.getInt(0);
         return numMessages;

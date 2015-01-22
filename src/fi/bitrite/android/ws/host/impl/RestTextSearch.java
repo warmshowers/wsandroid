@@ -34,12 +34,12 @@ public class RestTextSearch extends RestClient implements Search {
      * we should just use the info returned by that service and move on.
      *
      */
-    public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException {
+    public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException, RestClientRecursionException {
 
         List<NameValuePair> args = new ArrayList<NameValuePair>();
         args.add(new BasicNameValuePair("keyword", this.keyword));
 
-        JSONObject jsonObject = post(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
+        JSONObject jsonObject = post(WARMSHOWERS_HOST_BY_KEYWORD_URL, args, 1);
 
         List<HostBriefInfo> list = new ArrayList<HostBriefInfo>();
         JSONObject statusJson = jsonObject.getJSONObject("status");
