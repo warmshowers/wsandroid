@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.api;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import fi.bitrite.android.ws.R;
@@ -27,7 +28,11 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Base class for classes that use GET to either scrape the WS website for information
@@ -83,7 +88,13 @@ public class RestClient {
         return jsonObj;
     }
 
-    protected JSONObject post(String url, List<NameValuePair> params) throws HttpException, IOException, JSONException {
+    // Bare post with no params
+    public JSONObject post(String url) throws HttpException, IOException, JSONException {
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        return post(url, params);
+    }
+
+    public JSONObject post(String url, List<NameValuePair> params) throws HttpException, IOException, JSONException {
         HttpClient client = HttpUtils.getDefaultClient();
         String jsonString = "";
         JSONObject jsonObj;
@@ -151,7 +162,7 @@ public class RestClient {
         return;
     }
 
-    protected void authenticate() throws NoAccountException, IOException {
+    protected void authenticate() throws NoAccountException, IOException, JSONException {
         HttpAuthenticator authenticator = new HttpAuthenticator();
         authenticator.authenticate();
         setAuthenticationPerformed(true);

@@ -9,6 +9,7 @@ import com.google.gson.JsonParser;
 
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
+import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
@@ -43,7 +44,7 @@ public class HttpAuthenticator {
 
     private static final String TAG = "HttpAuthenticator";
 
-    private List<NameValuePair> getCredentialsFromAccount() throws OperationCanceledException, AuthenticatorException, IOException {
+    private List<NameValuePair> getCredentialsFromAccount() throws OperationCanceledException, AuthenticatorException, IOException, NoAccountException {
         List<NameValuePair> credentials = new ArrayList<NameValuePair>();
 
         String username = AuthenticationHelper.getAccountUsername();
@@ -59,7 +60,16 @@ public class HttpAuthenticator {
      * - userid
      * - 0 if already logged in
      */
-    public int authenticate() throws HttpAuthenticationFailedException, IOException {
+    public int authenticate() throws HttpAuthenticationFailedException, IOException, JSONException, NoAccountException {
+        RestClient authClient = new RestClient();
+
+        try {
+            authClient.post(wsUserLogoutUrl);
+        } catch (Exception e) {
+            Log.e(TAG, "Exception on logout: " + e.toString());
+            // We don't care a lot about this, as we were just trying to ensure clean login.
+        }
+
         HttpClient client = HttpUtils.getDefaultClient();
         HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
         int userId = 0;
@@ -84,10 +94,6 @@ public class HttpAuthenticator {
 
             if (rawJson.contains("Wrong username or password")) {
                 throw new HttpAuthenticationFailedException("Wrong username or password");
-            }
-
-            if (rawJson.contains("Already logged in")) {
-                return 0;
             }
 
             JsonParser parser = new JsonParser();

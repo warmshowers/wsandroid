@@ -58,13 +58,13 @@ public class AuthenticationHelper {
         return uid;
     }
 
-    public static String getAccountUsername() {
+    public static String getAccountUsername() throws NoAccountException {
         Account account = getWarmshowersAccount();
         String username = account.name;
         return username;
     }
 
-    public static String getAccountPassword() throws OperationCanceledException, IOException, AuthenticatorException {
+    public static String getAccountPassword() throws OperationCanceledException, IOException, AuthenticatorException, NoAccountException {
         AccountManager accountManager = AccountManager.get(WSAndroidApplication.getAppContext());
         Account account = getWarmshowersAccount();
 
@@ -74,12 +74,22 @@ public class AuthenticationHelper {
         return password;
     }
 
-    public static void addCookieInfo(String cookieSessionName, String cookieSessionId, int userId) {
+    public static void addCookieInfo(String cookieSessionName, String cookieSessionId, int userId) throws NoAccountException {
         AccountManager accountManager = AccountManager.get(WSAndroidApplication.getAppContext());
         Account account = getWarmshowersAccount();
 
         accountManager.setUserData(account, KEY_SESSION_NAME, cookieSessionName);
         accountManager.setUserData(account, KEY_SESSID, cookieSessionId);
         accountManager.setUserData(account, KEY_USERID, String.valueOf(userId));
+    }
+
+    public static void removeOldAccount() {
+        AccountManager accountManager = AccountManager.get(WSAndroidApplication.getAppContext());
+        try {
+            Account oldAccount = getWarmshowersAccount();
+            accountManager.removeAccount(oldAccount, null, null);
+        } catch (NoAccountException e) {
+            // Ignore - if there wasn't an account we don't care.
+        }
     }
 }
