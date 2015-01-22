@@ -94,7 +94,7 @@ public class RestClient {
         return post(url, params);
     }
 
-    public JSONObject post(String url, List<NameValuePair> params) throws HttpException, IOException, JSONException {
+    public JSONObject post(String url, List<NameValuePair> params) throws HttpException, IOException, JSONException, HttpAuthenticationFailedException {
         HttpClient client = HttpUtils.getDefaultClient();
         String jsonString = "";
         JSONObject jsonObj;
@@ -107,13 +107,13 @@ public class RestClient {
             HttpEntity entity = response.getEntity();
 
             int responseCode = response.getStatusLine().getStatusCode();
-            if (responseCode == HttpStatus.SC_FORBIDDEN ||
-                    responseCode == HttpStatus.SC_UNAUTHORIZED) {
+            if (responseCode == HttpStatus.SC_UNAUTHORIZED) {
+                throw new HttpAuthenticationFailedException("Failed authentication");
+            }
+            if (responseCode == HttpStatus.SC_FORBIDDEN) {
                 if (!isAuthenticationPerformed()) {
                     authenticate();
                     return post(url, params);
-                } else {
-                    throw new HttpException("Couldn't authenticate user");
                 }
             }
 
