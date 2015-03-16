@@ -15,6 +15,6 @@ import fi.bitrite.android.ws.util.http.HttpException;
 
 public interface Search {
 
-    public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException, RestClient.RestClientRecursionException;
+    public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException;
 
 }

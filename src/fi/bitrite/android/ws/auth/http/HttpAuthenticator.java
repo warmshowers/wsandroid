@@ -52,7 +52,7 @@ public class HttpAuthenticator {
         int userId = 0;
 
         try {
-            authClient.post(wsUserLogoutUrl, 1);
+            authClient.authpost(wsUserLogoutUrl);
         } catch (Exception e) {
             Log.e(TAG, "Exception on logout: " + e.toString());
             // We don't care a lot about this, as we were just trying to ensure clean login.
@@ -62,7 +62,7 @@ public class HttpAuthenticator {
         try {
             List<NameValuePair> credentials = getCredentialsFromAccount();
 
-            JSONObject authResult = authClient.post(wsUserAuthUrl, credentials, 1);
+            JSONObject authResult = authClient.authpost(wsUserAuthUrl, credentials);
 
             userId = authResult.getJSONObject("user").getInt("uid");
             String cookieSessionName = authResult.getString("session_name");

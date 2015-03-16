@@ -75,19 +75,16 @@ public class RestClient {
     }
 
     // Bare post with no params
-    public JSONObject post(String url, int recursionLimit) throws HttpException, IOException, JSONException, RestClientRecursionException {
+    public JSONObject post(String url) throws HttpException, IOException, JSONException {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        return post(url, params, recursionLimit);
+        return post(url, params);
     }
 
     // Post with params
-    public JSONObject post(String url, List<NameValuePair> params, int recursionLimit) throws HttpException, IOException, JSONException, HttpAuthenticationFailedException, RestClientRecursionException {
+    public JSONObject post(String url, List<NameValuePair> params) throws HttpException, IOException, JSONException, HttpAuthenticationFailedException {
         HttpClient client = HttpUtils.getDefaultClient();
         String jsonString = "";
         JSONObject jsonObj;
-        if (recursionLimit < 0) {
-            throw new RestClientRecursionException("Recursion detected");
-        }
 
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
@@ -102,7 +99,7 @@ public class RestClient {
             switch (responseCode) {
                 case HttpStatus.SC_UNAUTHORIZED:    // 401, typically when not logged in
                     doRequiredAuth();
-                    return post(url, params, --recursionLimit);
+                    return post(url, params);
                 case HttpStatus.SC_FORBIDDEN:
                 case HttpStatus.SC_NOT_ACCEPTABLE:  // 406, Typically trying to log out when not logged in
                 default:
@@ -124,6 +121,69 @@ public class RestClient {
 
 
         return jsonObj;
+    }
+
+
+    /**
+     * Post for Authentication
+     *
+     * This special method is here because it can be safely called without any kind of recursion
+     * when a problem is encountered with a regular POST.
+     *
+     * It is unfortunately replicated code from post()
+     *
+     * @param url
+     * @param params
+     * @return
+     * @throws HttpException
+     * @throws IOException
+     * @throws JSONException
+     * @throws HttpAuthenticationFailedException
+     */
+    public JSONObject authpost(String url, List<NameValuePair> params) throws HttpException, IOException, JSONException, HttpAuthenticationFailedException {
+        HttpClient client = HttpUtils.getDefaultClient();
+        String jsonString = "";
+        JSONObject jsonObj;
+
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
+        HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
+        HttpResponse response = client.execute(httpPost, httpContext);
+        HttpEntity entity = response.getEntity();
+
+        int responseCode = response.getStatusLine().getStatusCode();
+
+        if (responseCode != HttpStatus.SC_OK) {
+            Log.i(TAG, "authpost() Non-200 HTTP response(" + Integer.toString(responseCode) + " for URL " + url);
+            switch (responseCode) {
+                case HttpStatus.SC_UNAUTHORIZED:    // 401, typically when not logged in
+                case HttpStatus.SC_FORBIDDEN:
+                case HttpStatus.SC_NOT_ACCEPTABLE:  // 406, Typically trying to log out when not logged in
+                default:
+                    throw new HttpException(Integer.toString(responseCode));
+            }
+        }
+
+        jsonString = EntityUtils.toString(entity, "UTF-8");
+
+        try {
+            jsonObj = new JSONObject(jsonString);
+        } catch (JSONException e) {  // Assume it might have been an array [true]
+            JSONArray jsonArray = new JSONArray(jsonString);
+            jsonObj = new JSONObject();
+            jsonObj.put("arrayresult", jsonArray);
+        }
+
+        client.getConnectionManager().shutdown();
+
+
+        return jsonObj;
+    }
+
+    // Bare authpost with no params
+    public JSONObject authpost(String url) throws HttpException, IOException, JSONException {
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        return authpost(url, params);
     }
 
     public static void reportError(Context context, Object obj) {
@@ -158,18 +218,5 @@ public class RestClient {
         HttpAuthenticator authenticator = new HttpAuthenticator();
         authenticator.authenticate();
     }
-
-    public class RestClientRecursionException extends Exception {
-        private static final long serialVersionUID = 1L;
-
-        public RestClientRecursionException(Exception e) {
-            super(e);
-        }
-
-        public RestClientRecursionException(String msg) {
-            super(msg);
-        }
-    }
-
 
 }

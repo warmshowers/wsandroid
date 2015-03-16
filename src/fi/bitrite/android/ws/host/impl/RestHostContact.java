@@ -20,12 +20,12 @@ public class RestHostContact extends RestClient {
 
     private static final String WARMSHOWERS_HOST_CONTACT_URL = GlobalInfo.warmshowersBaseUrl + "/services/rest/message/send";
 
-    public JSONObject send(String name, String subject, String message) throws JSONException, HttpException, IOException, RestClientRecursionException {
+    public JSONObject send(String name, String subject, String message) throws JSONException, HttpException, IOException {
         List<NameValuePair> args = new ArrayList<NameValuePair>();
         args.add(new BasicNameValuePair("recipients", name));
         args.add(new BasicNameValuePair("subject", subject));
         args.add(new BasicNameValuePair("body", message));
-        JSONObject jsonObject = post(WARMSHOWERS_HOST_CONTACT_URL, args, 1);
+        JSONObject jsonObject = post(WARMSHOWERS_HOST_CONTACT_URL, args);
         return jsonObject;
     }
 }
