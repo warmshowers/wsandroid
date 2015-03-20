@@ -19,12 +19,9 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.host.Search;
-import fi.bitrite.android.ws.host.SearchFactory;
-import fi.bitrite.android.ws.host.impl.WsSearchFactory;
+import fi.bitrite.android.ws.host.impl.RestTextSearch;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.util.http.HttpException;
-import org.json.JSONException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -38,8 +35,6 @@ public class ListSearchTabActivity extends RoboActivity {
     ImageView listSearchButton;
     @InjectView(R.id.lstSearchResult)
     ListView listSearchResult;
-
-    SearchFactory searchFactory = new WsSearchFactory();
 
     private ArrayList<HostBriefInfo> listSearchHosts;
 
@@ -147,7 +142,7 @@ public class ListSearchTabActivity extends RoboActivity {
 
     public void doTextSearch(String text) {
         dialogHandler.showDialog(DialogHandler.TEXT_SEARCH);
-        Search search = searchFactory.createTextSearch(text);
+        Search search = new RestTextSearch(text);
         textSearchTask = new TextSearchTask();
         textSearchTask.execute(search);
     }

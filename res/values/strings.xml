@@ -104,4 +104,5 @@
     <string name="no_account">Account information has not been configured. Settings -> Account</string>
     <string name="http_server_access_failure">Failed communicating with server, please check your internet connection</string>
     <string name="host_info_basic_information">Basic information</string>
+    <string name="json_error">Failed to parse json string returned from server</string>
 </resources>

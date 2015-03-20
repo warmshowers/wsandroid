@@ -68,16 +68,8 @@ public class MainActivity extends RoboTabActivity  {
     private void handleFirstRun() {
         boolean firstrun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("v10update", true);
         if (firstrun) {
-            try {
-                AccountManager accountManager = AccountManager.get(this);
-                Account oldAccount = AuthenticationHelper.getWarmshowersAccount();
-                accountManager.removeAccount(oldAccount, null, null);
-            }
-            
-            catch (NoAccountException e) {
-                // OK, so there was no account - fine
-            }
-            getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("v10update", false).commit();            
+            AuthenticationHelper.removeOldAccount();
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("v10update", false).commit();
         }
     }
 
@@ -116,27 +108,15 @@ public class MainActivity extends RoboTabActivity  {
         } else if (resultCode == AuthenticatorActivity.RESULT_OK) {
             setupTabs();
             return;
-        } else if (resultCode == AuthenticatorActivity.RESULT_AUTHENTICATION_FAILED) {
-            Toast.makeText(getApplicationContext(), R.string.authentication_failed, Toast.LENGTH_LONG).show();
-            startAuthenticationActivityForExistingAccount();
-            return;
-        }
-
-        if (initialAccountCreation(intent)) {
-            if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(getApplicationContext(), R.string.need_account, Toast.LENGTH_LONG).show();
+        } else if (resultCode == AuthenticatorActivity.RESULT_CANCELED) {
+            try {
+                Account account = AuthenticationHelper.getWarmshowersAccount();
+            } catch (NoAccountException e) {
+                Toast.makeText(this, R.string.authentication_failed, Toast.LENGTH_SHORT).show();
                 finish();
-            } else if (resultCode == AuthenticatorActivity.RESULT_AUTHENTICATION_FAILED) {
-                Toast.makeText(getApplicationContext(), R.string.authentication_failed, Toast.LENGTH_LONG).show();
-                startAuthenticatorActivity(new Intent(MainActivity.this, AuthenticatorActivity.class));
             }
         }
     }
-        
-    private boolean initialAccountCreation(Intent intent) {
-        return intent.getBooleanExtra(AuthenticatorActivity.PARAM_INITIAL_AUTHENTICATION, true);
-    }
-
 
     private void setupTabs() {
         if (tabsCreated) {
