@@ -8,6 +8,8 @@ import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.http.HttpException;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.ClientProtocolException;
@@ -52,9 +54,10 @@ public class HttpAuthenticator {
         int userId = 0;
 
         try {
+            // Log.i(TAG, "Routine logout attempt");
             authClient.authpost(wsUserLogoutUrl);
         } catch (Exception e) {
-            Log.e(TAG, "Exception on logout: " + e.toString());
+            Log.i(TAG, "Exception on logout - not to worry: " + e.toString());
             // We don't care a lot about this, as we were just trying to ensure clean login.
         }
 
@@ -62,6 +65,7 @@ public class HttpAuthenticator {
         try {
             List<NameValuePair> credentials = getCredentialsFromAccount();
 
+            // Log.i(TAG, "Normal login attempt after logout credentials=" + credentials.toString());
             JSONObject authResult = authClient.authpost(wsUserAuthUrl, credentials);
 
             userId = authResult.getJSONObject("user").getInt("uid");
@@ -83,6 +87,13 @@ public class HttpAuthenticator {
             throw e;
         } catch (NoAccountException e) {
             throw e;
+        } catch (HttpException e) {
+            if (e.getMessage().equals("406")) {
+                Log.i(TAG, "Got error 406 attempting to log in, so ignoring");
+                // This is the case where we hit auth and were already authenticated... but shouldn't have happened.
+            } else {
+                throw e;
+            }
         } catch (Exception e) {
             // We might have had a json parsing or access exception - for example, if the "user" was not there,
             // Could also have AuthenticatorException or OperationCancelledException here
