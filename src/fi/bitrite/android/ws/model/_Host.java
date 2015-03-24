@@ -45,8 +45,9 @@ import android.os.Parcelable;
     protected String mLogin = "";
     protected String mCreated = "";
     protected String mLanguagesSpoken = "";
+    protected String mPicture = "";
 
-    protected _Host(int id, String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude, String login, String created, String languagesSpoken) {
+    protected _Host(int id, String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude, String login, String created, String languagesSpoken, String picture) {
         this();
         mId = id;
         mName = name;
@@ -80,6 +81,7 @@ import android.os.Parcelable;
         mLogin = login;
         mCreated = created;
         mLanguagesSpoken = languagesSpoken;
+        mPicture = picture;
     }
 
     protected _Host() {
@@ -214,6 +216,12 @@ import android.os.Parcelable;
         return mCreated;
     }
 
+    public String getPicture() { return mPicture; }
+
+    public String getLanguagesSpoken() {
+        return mLanguagesSpoken;
+    }
+
     public int describeContents() {
         return 0;
     }
@@ -251,6 +259,7 @@ import android.os.Parcelable;
         parcel.writeString(mCreated);
         parcel.writeInt(mId);
         parcel.writeString(mLanguagesSpoken);
+        parcel.writeString(mPicture);
     }
 
     public void readFromParcel(Parcel source) {
@@ -286,6 +295,7 @@ import android.os.Parcelable;
         mCreated = source.readString();
         mId = source.readInt();
         mLanguagesSpoken = source.readString();
+        mPicture = source.readString();
     }
 
     public void readFromJson(JSONObject json) throws JSONException {
@@ -383,9 +393,10 @@ import android.os.Parcelable;
         if (!json.isNull("languagesspoken")) {
             mLanguagesSpoken = json.optString("languagesspoken");
         }
+        if (!json.isNull("picture")) {
+            mPicture = json.optString("picture");
+        }
+
     }
 
-    public String getLanguagesSpoken() {
-        return mLanguagesSpoken;
-    }
 }

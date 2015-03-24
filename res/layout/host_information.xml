@@ -20,7 +20,16 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-            <TextView
+
+                <ImageView
+                    android:id="@+id/memberPhoto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+
+                    />
+
+                <TextView
                     android:id="@+id/txtHostComments"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"/>
