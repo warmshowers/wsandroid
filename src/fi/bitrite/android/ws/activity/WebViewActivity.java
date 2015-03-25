@@ -1,7 +1,9 @@
 package fi.bitrite.android.ws.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -11,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieSyncManager;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import android.webkit.CookieManager;
@@ -66,6 +69,17 @@ public class WebViewActivity extends Activity {
         CookieSyncManager.getInstance().sync();
 
         mWebView.loadUrl(url);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Leaving app")
+                .setMessage(getString(R.string.embedded_browser_warning))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
 
     }
 
