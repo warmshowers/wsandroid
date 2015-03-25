@@ -20,17 +20,24 @@ import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.messaging.RestUnreadCount;
 import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
 public class MessagesTabActivity extends RoboActivity implements View.OnClickListener {
 
+    @InjectView(R.id.noNetworkWarning)
+    TextView noNetworkWarning;
+
     @InjectView(R.id.unreadCount)
     TextView unreadCount;
 
     @InjectView(R.id.btnUpdateMessages)
     Button updateMessages;
+
+    @InjectView(R.id.btnViewOnSite)
+    Button viewMessagesOnSite;
 
     private DialogHandler dialogHandler;
     private int numUnread;
@@ -41,11 +48,12 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
         setContentView(R.layout.messages_tab);
 
         dialogHandler = new DialogHandler(this);
-        downloadUnreadCount();
+        if (Tools.isNetworkConnected(this)) {
+            downloadUnreadCount();
+        }
 
         updateMessages.setOnClickListener(this);
 
-        Button viewMessagesOnSite = (Button) findViewById(R.id.btnViewOnSite);
         viewMessagesOnSite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +86,19 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (!Tools.isNetworkConnected(this)) {
+            noNetworkWarning.setText(getString(R.string.not_connected_to_network));
+            updateMessages.setEnabled(false);
+            viewMessagesOnSite.setEnabled(false);
+            return;
+        }
+        updateMessages.setEnabled(true);
+        updateMessages.setVisibility(View.VISIBLE);
+        viewMessagesOnSite.setEnabled(true);
+
+        noNetworkWarning.setText("");
+
 
         if (DialogHandler.inProgress()) {
             dialogHandler.dismiss();
