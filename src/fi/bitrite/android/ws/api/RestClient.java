@@ -98,12 +98,16 @@ public class RestClient {
             Log.i(TAG, "Non-200 HTTP response(" + Integer.toString(responseCode) + " for URL " + url);
             switch (responseCode) {
                 case HttpStatus.SC_UNAUTHORIZED:    // 401, typically when not logged in
+                    // If it is *not* an unauth for user 0, it's for a properly auth user, so we have to bail.
+                    if (!response.getStatusLine().getReasonPhrase().contains("denied for user 0")) {
+                        throw new HttpException("401 error " + response.getStatusLine().getReasonPhrase());
+                    }
                     doRequiredAuth();
                     return post(url, params);
                 case HttpStatus.SC_FORBIDDEN:
                 case HttpStatus.SC_NOT_ACCEPTABLE:  // 406, Typically trying to log out when not logged in
                 default:
-                    throw new HttpException(Integer.toString(responseCode));
+                    throw new HttpException(Integer.toString(responseCode) + " " + response.getStatusLine().getReasonPhrase());
             }
         }
 
