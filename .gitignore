@@ -9,3 +9,4 @@ AndroidManifest.out.xml
 build
 .gradle
 local.properties
+wsandroid-release.apk
