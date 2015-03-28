@@ -107,6 +107,8 @@ public class HostInformationActivity extends RoboActionBarActivity {
     TextView bikeShop;
     @InjectView(R.id.txtServices)
     TextView services;
+    @InjectView(R.id.lblMemberName)
+    TextView lblMemberName;
 
     StarredHostDao starredHostDao = new StarredHostDaoImpl();
 
@@ -160,7 +162,9 @@ public class HostInformationActivity extends RoboActionBarActivity {
             updateViewContent();
         }
 
-        getSupportActionBar().setTitle(hostInfo.getHost().getFullname());
+        getSupportActionBar().setTitle(getString(R.string.hostinfo_actiivity_title));
+        lblMemberName.setText(hostInfo.getHost().getFullname());
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
@@ -359,7 +363,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
         String url = "";
 
         if (!basePicture.isEmpty() && parts.length == 2) {
-            url = GlobalInfo.warmshowersBaseUrl + "/" + parts[0] + "/imagecache/profile_picture/" + parts[1];
+            url = GlobalInfo.warmshowersBaseUrl + "/" + parts[0] + "/imagecache/mobile_profile_photo_std/" + parts[1];
         }
         return url;
     }

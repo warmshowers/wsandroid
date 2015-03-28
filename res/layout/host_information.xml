@@ -23,12 +23,19 @@
 
                 <ImageView
                     android:id="@+id/memberPhoto"
-                    android:layout_width="wrap_content"
+                    android:layout_width="400dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
 
                     />
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lblMemberName"
+                    android:textSize="24dip"
+                    android:text="Member Name"
+                    android:gravity="center_horizontal" />
                 <TextView
                     android:id="@+id/txtHostComments"
                     android:layout_width="fill_parent"

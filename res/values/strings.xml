@@ -89,7 +89,6 @@
     <string name="leave_feedback_for">Leave feedback for %1$s</string>
     <string name="viewMessagesOnSite">View messages on site</string>
     <string name="messages_on_site">Messages on site</string>
-
     <string name="ga_property_id">UA-13228014-2</string>
     <string name="prefs_distance_unit">Unit of distance</string>
     <string name="prefs_distance_unit_summary">Do you want distances expressed in kilometers or in miles?</string>
@@ -120,4 +119,6 @@
     <string name="embedded_browser_warning">You have left the app and using an embedded browser to view Warmshowers.org. Use the back button to return to the app.</string>
     <string name="not_connected_to_network">You are not currently connected to the network.</string>
 
+</resources>
+    <string name="hostinfo_actiivity_title">Member Profile</string>
 </resources>
