@@ -234,6 +234,13 @@ public class HostInformationActivity extends RoboActionBarActivity {
         startActivity(i);
     }
 
+    public void sendFeedback(View view) {
+        Intent i = new Intent(HostInformationActivity.this, FeedbackActivity.class);
+        i.putExtra("host", hostInfo.getHost());
+        i.putExtra("id", hostInfo.getId());
+        startActivity(i);
+    }
+
     /**
      * Show host in context on our own Maps2Activity
      *
@@ -314,17 +321,6 @@ public class HostInformationActivity extends RoboActionBarActivity {
         final Host host = hostInfo.getHost();
         String url = GlobalInfo.warmshowersBaseUrl + "/user/" + hostInfo.getId();
         WebViewActivity.viewOnSite(HostInformationActivity.this, url, host.getFullname());
-
-    }
-
-    public void leaveFeedback() {
-        // This experimental hack at adding the ability to leave feedback is optional. We might
-        // just try it and see if it works. I'd rather replace it with a "real" anddroid function,
-        // but it was just sitting here as a freebie as I was working on providing access to the site
-        // via webview. rfay 2014-11-25
-        final Host host = hostInfo.getHost();
-        String url = GlobalInfo.warmshowersBaseUrl + "/node/add/trust-referral?edit%5Bfield_member_i_trust%5D%5B0%5D%5Buid%5D%5Buid%5D=" + host.getName();
-        WebViewActivity.viewOnSite(HostInformationActivity.this, url, getString(R.string.leave_feedback_for, host.getFullname()));
     }
 
     private class HostInformationTask extends AsyncTask<Void, Void, Object> {
@@ -404,7 +400,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
                 sendGeoIntent(null);
                 return true;
             case R.id.menuLeaveFeedback:
-                leaveFeedback();
+                sendFeedback(null);
                 return true;
             case R.id.menuViewOnSite:
                 viewOnSite();
