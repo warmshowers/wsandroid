@@ -22,6 +22,7 @@ import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestTextSearch;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.Tools;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 
 public class ListSearchTabActivity extends RoboActivity {
 
+    @InjectView(R.id.noNetworkWarning)
+    TextView noNetworkWarning;
     @InjectView(R.id.editListSearch)
     EditText listSearchEdit;
     @InjectView(R.id.btnListSearch)
@@ -49,6 +52,7 @@ public class ListSearchTabActivity extends RoboActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_tab);
+
         dialogHandler = new DialogHandler(this);
 
         mSearchEditLayout = (LinearLayout) findViewById(R.id.searchEditLayout);
@@ -193,6 +197,18 @@ public class ListSearchTabActivity extends RoboActivity {
             textSearchTask.cancel(true);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!Tools.isNetworkConnected(this)) {
+            noNetworkWarning.setText(getString(R.string.not_connected_to_network));
+            listSearchEdit.setEnabled(false);
+            return;
+        }
+        listSearchEdit.setEnabled(true);
+        noNetworkWarning.setText("");
     }
 
     @Override

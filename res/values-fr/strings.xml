@@ -102,6 +102,7 @@
     <string name="viewMessagesOnSite">Voir les messages sur le site</string>
     <string name="view_in_maps_app">Voir dans l\'application Maps</string>
     <string name="view_on_map">Voir sur la carte WarmShowers</string>
+</resources>
     <string name="sending_feedback">Sending feedback</string>
     <string name="feedback_hint">Describe your experience with this member.</string>
     <string name="feedback_validation_error">You must enter at least 10 words feedback section.</string>
@@ -114,5 +115,6 @@
     <string name="feedback_how_we_met_error">You must select how you met this member.</string>
     <string name="feedback_overall_experience_error">You must choose a value for overall experience with this member</string>
     <string name="embedded_browser_warning">You have left the app and using an embedded browser to view Warmshowers.org. Click the back button when you want to return to the app.</string>
+    <string name="not_connected_to_network">You are not currently connected to the network.</string>
 
 </resources>
