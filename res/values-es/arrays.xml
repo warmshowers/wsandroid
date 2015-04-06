@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string-array name="distanceUnits">
+        <item name="km">Kilometers</item>
+        <item name="mi">Miles</item>
+    </string-array>
+    
+    <string-array name="distanceUnitValues">
+        <item name="km">km</item>
+        <item name="mi">mi</item>
+    </string-array>
+
+    <!--Translatated values must be in exactly the same positions.-->
+    <string-array name="feedback_how_we_met_options">
+        <item>Host</item>
+        <item>Guest</item>
+        <item>Met Traveling</item>
+        <item>Other</item>
+    </string-array>
+
+    <!--Translatated values must be in exactly the same positions.-->
+    <string-array name="feedback_overall_experience_options">
+        <item>Positive</item>
+        <item>Neutral</item>
+        <item>Negative</item>
+    </string-array>
+
+</resources>
