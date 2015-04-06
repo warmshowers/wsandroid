@@ -2,15 +2,23 @@ package fi.bitrite.android.ws.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Layout;
+import android.text.Spanned;
+import android.text.style.LeadingMarginSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.*;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import fi.bitrite.android.ws.R;
@@ -26,11 +34,13 @@ import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
+import fi.bitrite.android.ws.util.http.HttpUtils;
 import fi.bitrite.android.ws.view.FeedbackTable;
 import roboguice.RoboGuice;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.InjectView;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +75,9 @@ public class HostInformationActivity extends RoboActionBarActivity {
     @InjectView(R.id.tblFeedback)
     FeedbackTable feedbackTable;
 
+    @InjectView(R.id.memberPhoto)
+    ImageView memberPhoto;
+
     @InjectView(R.id.txtHostComments)
     TextView comments;
     @InjectView(R.id.txtMemberSince)
@@ -94,6 +107,8 @@ public class HostInformationActivity extends RoboActionBarActivity {
     TextView bikeShop;
     @InjectView(R.id.txtServices)
     TextView services;
+    @InjectView(R.id.lblMemberName)
+    TextView lblMemberName;
 
     StarredHostDao starredHostDao = new StarredHostDaoImpl();
 
@@ -147,8 +162,11 @@ public class HostInformationActivity extends RoboActionBarActivity {
             updateViewContent();
         }
 
-        getSupportActionBar().setTitle(hostInfo.getHost().getFullname());
+        getSupportActionBar().setTitle(getString(R.string.hostinfo_actiivity_title));
+        lblMemberName.setText(hostInfo.getHost().getFullname());
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
 
@@ -288,8 +306,11 @@ public class HostInformationActivity extends RoboActionBarActivity {
         final Host host = hostInfo.getHost();
 
         String availability = host.getNotCurrentlyAvailable().equals("1") ? getString(R.string.host_not_currently_available) : getString(R.string.host_currently_available);
+
+
         // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
-        comments.setText(Tools.siteHtmlToHtml(host.getComments() + "<br/><br/><b>" + availability + "</b>"));
+        Spanned text = Tools.siteHtmlToHtml(host.getComments() + "<br/><br/><b>" + availability + "</b>");
+        comments.setText(text);
 
         location.setText(host.getLocation());
         memberSince.setText(host.getMemberSince());
@@ -312,8 +333,68 @@ public class HostInformationActivity extends RoboActionBarActivity {
 
         hostDetails.setVisibility(View.VISIBLE);
 
-        if (hostInfo.getHost().isNotCurrentlyAvailable()) {
+        if (host.isNotCurrentlyAvailable()) {
             dialogHandler.alert(getResources().getString(R.string.host_not_available));
+        }
+
+        // If we're connected, get host picture.
+        if (Tools.isNetworkConnected(this)) {
+            String url = profilePicture(host.getPicture());
+            if (!url.isEmpty()) {
+                new DownloadImageTask(memberPhoto)
+                        .execute(url);
+            }
+        }
+
+    }
+
+    /**
+     * Choose the variant of a profile picture to use.
+     * Unfortunately this is dependent on knowing how imagecache is configured on the server.
+     *
+     * @param basePicture
+     *   This is the picture returned by the site, like 'files/pictures/picture-1165.jpg'
+     *
+     * @return
+     *   Either a string with the full URL to the picture or an empty string if no picture exists
+     */
+    public String profilePicture(String basePicture) {
+        String[] parts = basePicture.split("/", 2);
+        String url = "";
+
+        if (!basePicture.isEmpty() && parts.length == 2) {
+            url = GlobalInfo.warmshowersBaseUrl + "/" + parts[0] + "/imagecache/mobile_profile_photo_std/" + parts[1];
+        }
+        return url;
+    }
+
+    /**
+     * Download an image into a bitmap in an AsyncTask
+     *
+     * From http://stackoverflow.com/questions/2471935/how-to-load-an-imageview-by-url-in-android
+     */
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+//                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
         }
     }
 
