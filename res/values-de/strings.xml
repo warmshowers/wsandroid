@@ -115,4 +115,7 @@
     <string name="lbl_feedback_overall_experience">What was your overall experience with %1$s?</string>
     <string name="feedback_how_we_met_error">You must select how you met this member.</string>
     <string name="feedback_overall_experience_error">You must choose a value for overall experience with this member</string>
+    <string name="embedded_browser_warning">You have left the app and using an embedded browser to view Warmshowers.org. Click the back button when you want to return to the app.</string>
+
+
 </resources>
