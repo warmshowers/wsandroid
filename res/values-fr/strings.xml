@@ -102,7 +102,6 @@
     <string name="viewMessagesOnSite">Voir les messages sur le site</string>
     <string name="view_in_maps_app">Voir dans l\'application Maps</string>
     <string name="view_on_map">Voir sur la carte WarmShowers</string>
-</resources>
     <string name="sending_feedback">Sending feedback</string>
     <string name="feedback_hint">Describe your experience with this member.</string>
     <string name="feedback_validation_error">You must enter at least 10 words feedback section.</string>

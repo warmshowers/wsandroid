@@ -118,9 +118,3 @@
     <string name="embedded_browser_warning">You have left the app and using an embedded browser to view Warmshowers.org. Click the back button when you want to return to the app.</string>
     <string name="not_connected_to_network">You are not currently connected to the network.</string>
 </resources>
-
-
-
-</resources>
-    <string name="not_connected_to_network">You are not currently connected to the network.</string>
-</resources>
