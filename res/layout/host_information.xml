@@ -35,11 +35,15 @@
                     android:id="@+id/lblMemberName"
                     android:textSize="24dip"
                     android:text="Member Name"
-                    android:gravity="center_horizontal" />
+                    android:gravity="center_horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp" />
                 <TextView
                     android:id="@+id/txtHostComments"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp" />
 
             <TableLayout
                     xmlns:android="http://schemas.android.com/apk/res/android"
