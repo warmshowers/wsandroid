@@ -1,11 +1,15 @@
 package fi.bitrite.android.ws.model;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Parcel;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.yelp.parcelgen.JsonParser.DualCreator;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import fi.bitrite.android.ws.R;
 import roboguice.util.Strings;
 
 import java.text.DateFormat;
@@ -70,25 +74,26 @@ public class Host extends _Host {
         return sb.toString();
     }
 
-    public String getServices() {
+    public String getServices(Context context) {
         StringBuilder sb = new StringBuilder();
+        Resources r = context.getResources();
 
         if (hasService(getShower()))
-            sb.append("Shower\n");
+            sb.append(r.getString(R.string.host_service_shower) + "\n");
         if (hasService(getFood()))
-            sb.append("Food\n");
+            sb.append(r.getString(R.string.host_services_food) + "\n");
         if (hasService(getBed()))
-            sb.append("Bed\n");
+            sb.append(r.getString(R.string.host_services_bed) + "\n");
         if (hasService(getLaundry()))
-            sb.append("Laundry\n");
+            sb.append(r.getString(R.string.host_service_laundry) + "\n");
         if (hasService(getStorage()))
-            sb.append("Storage\n");
+            sb.append(r.getString(R.string.host_service_storage) + "\n");
         if (hasService(getKitchenUse()))
-            sb.append("Use of kitchen\n");
+            sb.append(r.getString(R.string.host_service_kitchen) + "\n");
         if (hasService(getLawnspace()))
-            sb.append("Lawn space (for camping)\n");
+            sb.append(r.getString(R.string.host_service_tentspace) + "\n");
         if (hasService(getSag()))
-            sb.append("SAG (vehicle support)\n");
+            sb.append(context.getString(R.string.host_service_sag) + "\n");
 
         return sb.toString();
     }

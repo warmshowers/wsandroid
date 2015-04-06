@@ -30,7 +30,7 @@
     <string name="nearest_accomodation"><u>Accommodation:</u></string>
     <string name="campground"><u>Campground:</u></string>
     <string name="bike_shop"><u>Bike shop:</u></string>
-    <string name="services"><u>Can provide:</u></string>
+    <string name="services"><u>May provide:</u></string>
     <string name="home_phone"><u>Home phone:</u></string>
     <string name="work_phone"><u>Work phone:</u></string>
     <string name="update">Update</string>
@@ -119,4 +119,12 @@
     <string name="embedded_browser_warning">You have left the app and using an embedded browser to view Warmshowers.org. Use the back button to return to the app.</string>
     <string name="not_connected_to_network">You are not currently connected to the network.</string>
     <string name="hostinfo_actiivity_title">Member Profile</string>
+    <string name="host_service_shower">Shower</string>
+    <string name="host_services_food">Food</string>
+    <string name="host_services_bed">Bed</string>
+    <string name="host_service_laundry">Laundry</string>
+    <string name="host_service_storage">Storage</string>
+    <string name="host_service_kitchen">Use of kitchen</string>
+    <string name="host_service_tentspace">Lawn space (for camping)</string>
+    <string name="host_service_sag">SAG (vehicle support)</string>
 </resources>

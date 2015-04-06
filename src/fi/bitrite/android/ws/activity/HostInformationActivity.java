@@ -324,7 +324,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
         nearestAccomodation.setText(host.getMotel());
         campground.setText(host.getCampground());
         bikeShop.setText(host.getBikeshop());
-        services.setText(host.getServices());
+        services.setText(host.getServices(this));
 
         List<Feedback> feedback = hostInfo.getFeedback();
         sort(feedback);
