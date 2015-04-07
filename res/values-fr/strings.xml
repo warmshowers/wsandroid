@@ -124,4 +124,5 @@
     <string name="host_service_kitchen">Use of kitchen</string>
     <string name="host_service_tentspace">Lawn space (for camping)</string>
     <string name="host_service_sag">SAG (vehicle support)</string>
+    <string name="json_error">Échec d'analyse de la séquence json retournée par le serveur</string>
 </resources>
