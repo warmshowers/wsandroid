@@ -394,7 +394,9 @@ public class HostInformationActivity extends RoboActionBarActivity {
         }
 
         protected void onPostExecute(Bitmap result) {
+
             bmImage.setImageBitmap(result);
+            Tools.scaleImage(bmImage, bmImage.getWidth());
         }
     }
 
