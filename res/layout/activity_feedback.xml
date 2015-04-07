@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:entries="@array/feedback_overall_experience_options"
-                android:prompt="@string/lbl_feedback_overall_experience" />
+                android:spinnerMode="dropdown" />
 
             <TextView
                 android:id="@+id/txtFeedbackTitle"
@@ -97,7 +97,8 @@
                 android:layout_height="55dp"
                 android:layout_width="match_parent"
                 android:entries="@array/feedback_how_we_met_options"
-                android:prompt="@string/feedback_how_we_met_prompt" />
+                android:prompt="@string/feedback_how_we_met_prompt"
+                android:spinnerMode="dropdown" />
 
             <Button
                 android:id="@+id/btnSubmit"
