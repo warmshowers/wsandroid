@@ -104,7 +104,6 @@
     <string name="http_server_access_failure">Failed communicating with server, please check your internet connection</string>
     <string name="host_info_basic_information">Basic information</string>
     <string name="json_error">Failed to parse json string returned from server</string>
-    <string name="title_activity_feedback">FeedbackActivity</string>
     <string name="sending_feedback">Sending feedback</string>
     <string name="feedback_hint">Describe your experience with this member.</string>
     <string name="feedback_validation_error">You must enter at least 10 words feedback section.</string>
