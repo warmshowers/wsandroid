@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Warm Showers</string>
-    <string name="app_title">"WarmShowers für Android"</string>
+    <string name="app_name">Warmshowers</string>
+    <string name="app_title">"Warmshowers für Android"</string>
     <string name="app_version">Version %1$s</string>
-    <string name="label">WarmShowers für Android</string>
+    <string name="label">Warmshowers für Android</string>
     <string name="authenticating">Authentifizieren...</string>
-    <string name="need_account">Starten der App ohne WarmShowers-Kontodaten nicht möglich</string>
+    <string name="need_account">Starten der App ohne Warmshowers-Kontodaten nicht möglich</string>
     <string name="authentication_failed">Login fehlgeschlagen. Geben Sie Ihre Kontodaten bitte erneut ein (Menu -> Konto).</string>
     <string name="no_starred_hosts">"Sie haben zurzeit keine markierten Gastgeber (Gastgeber, deren Profile offline abrufbar sind). Sie können Gastgeber markieren, indem Sie auf den Stern oben rechts auf deren Profil klicken."</string>
     <string name="list_search_hint">Name oder Stadt</string>
@@ -27,7 +27,7 @@
     <string name="mobile_phone"><u>Mobiltelefon:</u></string>
     <string name="preferred_notice"><u>Bevorzugte Anmeldungsfrist:</u></string>
     <string name="max_guests"><u>Maximale Anzahl Gäste:</u></string>
-    <string name="nearest_accomodation"><u>Naheste Unterkunft:</u></string>
+    <string name="nearest_accomodation"><u>Nächste Unterkunft:</u></string>
     <string name="campground"><u>Nächster Camping-Platz:</u></string>
     <string name="bike_shop"><u>Nächster Fahrradladen:</u></string>
     <string name="services"><u>Kann zur Verfügung stellen:</u></string>
@@ -54,8 +54,8 @@
     <string name="sending_message">Nachricht wird gesendet …</string>
     <string name="error_sending_message">Konnte Nachricht nicht senden. Bitte überprüfen Sie Ihre Kontodaten und Internetverbindung.</string>
     <string name="message_sent">Nachricht erfolgreich versendet.</string>
-    <string name="about_1">"Entwickelt durch Warmshowers.org-Freiwillige, verwaltet durch den ursprünglichen Programmierer Johannes Staffans \nÜbersetzern: Cyril Wendl (Deutsch)</string>
-    <string name="about_2">Diese ist eine open-source-App unter der Apache 2.0-Lizenz. Sie können mithelfen, indem Sie unser repository auf github.com/warmshowers/wsandroid forken \nMelden Sie Probleme auf ebendieser Seite oder via das Warmshowers-Kontaktformular, de.warmshowers.org/contact</string>
+    <string name="about_1">"Entwickelt durch Warmshowers.org-Freiwillige, verwaltet durch den ursprünglichen Programmierer Johannes Staffans \nÜbersetzung: Cyril Wendl (Deutsch)</string>
+    <string name="about_2">Dies ist eine open-source-App unter der Apache 2.0-Lizenz. Sie können mithelfen, indem Sie unser Git-repository auf github.com/warmshowers/wsandroid forken \nMelden Sie Probleme auf ebendieser Seite oder via das Warmshowers-Kontaktformular, de.warmshowers.org/contact</string>
     <string name="feedback">Rückmeldung</string>
     <string name="error_retrieving_messages">Ein Problem ist beim Abrufen der Nachrichten aufgetreten.</string>
     <string name="messages_in_progress">Nachrichten werden abgerufen…</string>
@@ -71,14 +71,14 @@
     <string name="map_default_longitude">-114.011667</string>
     <string name="alert_neutral_button">OK</string>
     <string name="contact_message_to">"Nachricht an %1$s"</string>
-    <string name="disconnected_location_services">Nich mehr Verbunden mit Google Play Services. Bitte verbinden Sie sich erneut.</string>
-    <string name="hosts_dont_load">Gastgaber-Orte werden nicht geladen auf diesem Level\nZoomen Sie herein....</string>
+    <string name="disconnected_location_services">Nich mehr verbunden mit den Google-Play-Diensten. Bitte verbinden Sie sich erneut.</string>
+    <string name="hosts_dont_load">Gastgaber-Orte werden nicht geladen auf dieser Stufe\nZoomen Sie herein....</string>
     <!-- Distance from current has 2 args, number and units -->
     <string name="distance_from_current">"%1$d %2$s von der aktuellen Position"</string>
     <string name="host_not_currently_available">(Zurzeit nicht verfügbar)</string>
     <string name="host_currently_available">(Verfügbar für Beherbergungen)</string>
     <string name="parsing_error">Fehler beim Parsen auf dem Server. Bitte melden Sie diese Suche via das Kontaktformular auf warmshowers.org.</string>
-    <string name="unknown_exception">Unbekannter Fehler, bitte melden Sie dies auf dem warmshowers.org Kontakt-Formular: %1$s</string>
+    <string name="unknown_exception">Unbekannter Fehler, bitte melden Sie dies via das warmshowers.org Kontakt-Formular: %1$s</string>
     <string name="send_message">Nachricht senden</string>
     <string name="view_on_map"> Auf der WarmShowers-Karte sehen</string>
     <string name="view_in_maps_app">In der Karten-App sehen</string>
@@ -104,28 +104,28 @@
     <string name="no_account">Kontoinformationen wurden noch nicht konfiguriert. Einstellungen -> Konto</string>
     <string name="http_server_access_failure">Verbindung zum Server fehlgeschlagen, bitte überprüfen Sie Ihre Internetverbindunging.</string>
     <string name="host_info_basic_information">Basisinformationen</string>
-    <string name="sending_feedback">Sending feedback</string>
-    <string name="feedback_hint">Describe your experience with this member.</string>
-    <string name="feedback_validation_error">You must enter at least 10 words feedback section.</string>
-    <string name="feedback_sent">Your feedback for %1$s has been sent</string>
-    <string name="leaving_feedback">"Leaving feedback for %1$s"</string>
-    <string name="feedback_how_we_met_prompt">How did you meet this member? They were:</string>
-    <string name="feedback_date_we_met">Date we met:</string>
-    <string name="feedback_send">Send feedback</string>
-    <string name="lbl_feedback_overall_experience">What was your overall experience with %1$s?</string>
-    <string name="feedback_how_we_met_error">You must select how you met this member.</string>
-    <string name="feedback_overall_experience_error">You must choose a value for overall experience with this member</string>
-    <string name="embedded_browser_warning">You have left the app and using an embedded browser to view Warmshowers.org. Click the back button when you want to return to the app.</string>
-    <string name="not_connected_to_network">You are not currently connected to the network.</string>
-    <string name="hostinfo_actiivity_title">Member Profile</string>
-    <string name="host_service_shower">Shower</string>
-    <string name="host_services_food">Food</string>
-    <string name="host_services_bed">Bed</string>
-    <string name="host_service_laundry">Laundry</string>
-    <string name="host_service_storage">Storage</string>
-    <string name="host_service_kitchen">Use of kitchen</string>
-    <string name="host_service_tentspace">Lawn space (for camping)</string>
-    <string name="host_service_sag">SAG (vehicle support)</string>
-    <string name="json_error">Failed to parse json string returned from server</string>
+    <string name="sending_feedback">Rückmeldung senden</string>
+    <string name="feedback_hint">Beschreiben Sie Ihre Erfahrungen mit diesem Mitglied.</string>
+    <string name="feedback_validation_error">Sie müssen im Feld "Rückmeldung" mindestens 10 Worte schreiben.</string>
+    <string name="feedback_sent">Ihre Rückmeldung für %1$s wurde versandt</string>
+    <string name="leaving_feedback">"Rückmeldung für %1$s hinterlassen"</string>
+    <string name="feedback_how_we_met_prompt">Wie haben Sie dieses Mitglied getroffen? Sie waren:</string>
+    <string name="feedback_date_we_met">Datum des Treffens:</string>
+    <string name="feedback_send">Rückmeldung senen</string>
+    <string name="lbl_feedback_overall_experience">Wie war Ihr genereller Eindruck von %1$s?</string>
+    <string name="feedback_how_we_met_error">Sie müssen auswählen, wie Sie dieses Mitglied getroffen haben.</string>
+    <string name="feedback_overall_experience_error">Sie müssen einen Wert für die generelle Erfahrung mit diesem Mitglied auswählen</string>
+    <string name="embedded_browser_warning">Sie haben die App verlassen und benutzen einen eingebetteten Browser, um Warmshowers.org anzusehen. Klicken Sie auf "zurück", wenn Sie zur App zurückkehren wollen.</string>
+    <string name="not_connected_to_network">Sie sind zurzeit mit keinem Netzwerk verbunden.</string>
+    <string name="hostinfo_actiivity_title">Mitgliedsprofil</string>
+    <string name="host_service_shower">Dusche</string>
+    <string name="host_services_food">Nahrung</string>
+    <string name="host_services_bed">Bett</string>
+    <string name="host_service_laundry">Waschmaschine</string>
+    <string name="host_service_storage">Fahrradunterstand</string>
+    <string name="host_service_kitchen">Benutzung der Küche</string>
+    <string name="host_service_tentspace">Gartenplatz für Zelt</string>
+    <string name="host_service_sag">Technische Unterstützung (Werkstatt)</string>
+    <string name="json_error">Fehler vom Server bei parsen von json-string</string>
 
 </resources>
