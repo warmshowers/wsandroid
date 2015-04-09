@@ -14,17 +14,17 @@
 
     <!--Translatated values must be in exactly the same positions.-->
     <string-array name="feedback_how_we_met_options">
-        <item>Host</item>
-        <item>Guest</item>
-        <item>Met Traveling</item>
-        <item>Other</item>
+        <item>Gastgeber</item>
+        <item>Gast</item>
+        <item>Beim Reisen getroffen</item>
+        <item>Andere</item>
     </string-array>
 
     <!--Translatated values must be in exactly the same positions.-->
     <string-array name="feedback_overall_experience_options">
-        <item>Positive</item>
+        <item>Positiv</item>
         <item>Neutral</item>
-        <item>Negative</item>
+        <item>Negativ</item>
     </string-array>
 
 </resources>
