@@ -73,7 +73,6 @@
     <string name="view_on_site">Voir sur le site web</string>
     <string name="work_phone"><u>Téléphone travail:</u></string>
     <string name="action_settings">Paramètres</string>
-    <string name="hello_world">Bonjour le monde!</string>
     <string name="host_info_basic_information">Informations de base</string>
     <string name="http_server_access_failure">La communication avec le serveur a échoué, veuillez vérifier votre connexion internet</string>
     <string name="http_unexpected_failure">Une erreur inattendue s\'est produite en accédant au serveur. Vérifiez vos informations de connexion et votre connexion internet</string>
@@ -92,7 +91,6 @@
     <string name="prefs_distance_unit_summary">Voulez-vous afficher la distance en kilomètres ou en miles?</string>
     <string name="prefs_ga_collect_stats_summary">Envoyer des données statistiques à Google Analytics aide les développeurs à comprendre l\'usage de l\'application et à l\'améliorer, mais vous pouvez désactiver cette option.</string>
     <string name="prefs_ga_collect_stats_title">Envoyer des données anonymes</string>
-    <string name="save">Enregistrer</string>
     <string name="send_message">Envoyer un message</string>
     <string name="star_this_host">Ajouter aux hôtes favoris</string>
     <string name="unknown_exception">Erreur inconnue, veuillez signaler dans la formulaire de contact de warmshowers.org: %1$s</string>

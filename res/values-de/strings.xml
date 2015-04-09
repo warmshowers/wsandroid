@@ -82,15 +82,11 @@
     <string name="send_message">Nachricht senden</string>
     <string name="view_on_map"> Auf der WarmShowers-Karte sehen</string>
     <string name="view_in_maps_app">In der Karten-App sehen</string>
-    <string name="title_activity_web_view">WebViewActivity</string>
-    <string name="hello_world">Hallo Welt!</string>
     <string name="action_settings">Einstellungen</string>
     <string name="leave_feedback">Hinterlassen Sie eine Rückmeldung für diesen Gastgeber</string>
     <string name="leave_feedback_for">Hinterlassen Sie eine Rückmeldung für %1$s</string>
     <string name="viewMessagesOnSite">Nachrichten auf der Webseite sehen</string>
     <string name="messages_on_site">Nachrichten auf der Webseite</string>
-
-    <string name="ga_property_id">UA-13228014-2</string>
     <string name="prefs_distance_unit">Längeneinheit</string>
     <string name="prefs_distance_unit_summary">Möchten Sie Distanzen in Kilometern oder Meilen angezeigt?</string>
     <string name="prefs_ga_collect_stats_title">Anonyme Benutzerstatistiken senden</string>
@@ -98,7 +94,6 @@
     <string name="languages_spoken"><u>Gesprochene Sprachen:</u></string>
     <string name="map_network_not_connected">Netzwerk ist nicht verbunden, nur markierte Gastgeber werden angezeigt.</string>
     <string name="open_in_map_application">In Karten-App öffnen</string>
-    <string name="save">Speichern</string>
     <string name="star_this_host">Diesen Gastgeber markieren</string>
     <string name="unstar_this_host">Markierung für diesen Gastgeber entfernen</string>
     <string name="no_account">Kontoinformationen wurden noch nicht konfiguriert. Einstellungen -> Konto</string>
