@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <resources>
 
     <string-array name="distanceUnits">
-        <item name="km">Kilometers</item>
-        <item name="mi">Miles</item>
+        <item name="km">Kilómetros</item>
+        <item name="mi">Millas</item>
     </string-array>
     
     <string-array name="distanceUnitValues">
@@ -14,17 +14,17 @@
 
     <!--Translatated values must be in exactly the same positions.-->
     <string-array name="feedback_how_we_met_options">
-        <item>Host</item>
-        <item>Guest</item>
-        <item>Met Traveling</item>
-        <item>Other</item>
+        <item>Anfitrión</item>
+        <item>Huesped</item>
+        <item>Viajando</item>
+        <item>Otro</item>
     </string-array>
 
     <!--Translatated values must be in exactly the same positions.-->
     <string-array name="feedback_overall_experience_options">
-        <item>Positive</item>
+        <item>Positiva</item>
         <item>Neutral</item>
-        <item>Negative</item>
+        <item>Negativa</item>
     </string-array>
 
 </resources>
