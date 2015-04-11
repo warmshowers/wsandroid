@@ -32,6 +32,13 @@
             android:src="@drawable/send_message" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/noNetworkWarningContact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:textColor="#ffff121a" />
+
     <EditText
         android:id="@+id/editContactHostSubject"
         android:layout_width="fill_parent"

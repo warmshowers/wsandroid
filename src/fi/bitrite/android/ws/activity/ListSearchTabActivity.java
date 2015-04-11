@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 public class ListSearchTabActivity extends RoboActivity {
 
-    @InjectView(R.id.noNetworkWarning)
+    @InjectView(R.id.noNetworkWarningList)
     TextView noNetworkWarning;
     @InjectView(R.id.editListSearch)
     EditText listSearchEdit;
@@ -209,6 +209,7 @@ public class ListSearchTabActivity extends RoboActivity {
         }
         listSearchEdit.setEnabled(true);
         noNetworkWarning.setText("");
+        noNetworkWarning.setVisibility(View.GONE);
     }
 
     @Override

@@ -9,11 +9,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,9 +20,9 @@ import org.json.JSONObject;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.host.impl.IncompleteResultsException;
 import fi.bitrite.android.ws.host.impl.RestHostContact;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
@@ -41,10 +40,26 @@ public class HostContactActivity extends RoboActivity {
     EditText editSubject;
     @InjectView(R.id.editContactHostMessage)
     EditText editMessage;
+    @InjectView(R.id.btnHostContact)
+    ImageView btnHostContact;
+    @InjectView(R.id.noNetworkWarningContact)
+    TextView noNetworkWarning;
 
     private Host host;
     private DialogHandler dialogHandler;
     private HostContactTask hostContactTask;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!Tools.isNetworkConnected(this)) {
+            noNetworkWarning.setText(getString(R.string.not_connected_to_network));
+            btnHostContact.setEnabled(false);
+            return;
+        }
+        btnHostContact.setEnabled(true);
+        noNetworkWarning.setVisibility(View.GONE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

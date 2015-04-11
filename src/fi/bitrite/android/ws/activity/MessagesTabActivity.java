@@ -1,12 +1,8 @@
 package fi.bitrite.android.ws.activity;
 
-import android.accounts.Account;
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,13 +17,12 @@ import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.messaging.RestUnreadCount;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
-import fi.bitrite.android.ws.util.http.HttpException;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
 public class MessagesTabActivity extends RoboActivity implements View.OnClickListener {
 
-    @InjectView(R.id.noNetworkWarning)
+    @InjectView(R.id.noNetworkWarningMessages)
     TextView noNetworkWarning;
 
     @InjectView(R.id.unreadCount)
@@ -98,7 +93,7 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
         viewMessagesOnSite.setEnabled(true);
 
         noNetworkWarning.setText("");
-
+        noNetworkWarning.setVisibility(View.GONE);
 
         if (DialogHandler.inProgress()) {
             dialogHandler.dismiss();

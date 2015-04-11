@@ -44,6 +44,13 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/noNetworkWarningFeedback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:textColor="#ffff121a" />
+
+            <TextView
                 android:id="@+id/lblOverallExperience"
                 android:text="@string/lbl_feedback_overall_experience"
                 android:layout_width="fill_parent"

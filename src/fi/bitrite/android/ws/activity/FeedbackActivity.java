@@ -10,8 +10,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,6 +33,7 @@ import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.Tools;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 
@@ -52,6 +55,12 @@ public class FeedbackActivity extends RoboActivity {
     Spinner feedbackOverallExperience;
     @InjectView(R.id.feedback_how_we_met)
     Spinner howWeMet;
+    @InjectView(R.id.btnSubmit)
+    Button btnSubmit;
+    @InjectView(R.id.btnFeedbackSend)
+    ImageView btnFeedbackSend;
+    @InjectView(R.id.noNetworkWarningFeedback)
+    TextView noNetworkWarning;
 
     // These are unfortunately artificially positional-mapped to the spinners since Android doesn't
     // have separate *value* from *title*
@@ -67,6 +76,21 @@ public class FeedbackActivity extends RoboActivity {
     private Host host;
     private DialogHandler dialogHandler;
     private static final String WARMSHOWERS_FEEDBACK_POST_URL = GlobalInfo.warmshowersBaseUrl + "/services/rest/node";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!Tools.isNetworkConnected(this)) {
+            noNetworkWarning.setText(getString(R.string.not_connected_to_network));
+            btnFeedbackSend.setEnabled(false);
+            btnSubmit.setEnabled(false);
+            return;
+        }
+        btnFeedbackSend.setEnabled(true);
+        btnSubmit.setEnabled(true);
+        noNetworkWarning.setText("");
+        noNetworkWarning.setVisibility(View.GONE);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
