@@ -243,7 +243,7 @@ public class Maps2Activity extends FragmentActivity implements
         }
 
         @Override
-        protected boolean shouldRenderAsCluster(Cluster cluster) {
+        protected boolean shouldRenderAsCluster(Cluster<HostBriefInfo> cluster) {
             // Render as a cluster if all the items are at the exact same location, or if there are more than
             // min_cluster_size in the cluster.
             ClusterStatus status = clusterLocationStatus(cluster);
