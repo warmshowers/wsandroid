@@ -32,6 +32,7 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.util.ArrayTranslator;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import roboguice.activity.RoboActivity;
@@ -62,12 +63,8 @@ public class FeedbackActivity extends RoboActivity {
     @InjectView(R.id.noNetworkWarningFeedback)
     TextView noNetworkWarning;
 
-    // These are unfortunately artificially positional-mapped to the spinners since Android doesn't
-    // have separate *value* from *title*
-    // in the Spinner, and we want translatable spinners. So these must exactly match the names
-    // of the field values on the Feedback form.
-    static private final String[] HOST_GUEST_MAPPING = new String[]{"Host", "Guest", "Met Traveling", "Other"};
-    static private final String[] OVERALL_EXPERIENCE_MAPPING = new String[]{"Positive", "Neutral", "Negative"};
+    ArrayTranslator translator = ArrayTranslator.getInstance();
+
 
     // This value must match the "minimum number of words" in the node submission settings at
     // https://www.warmshowers.org/admin/content/node-type/trust-referral
@@ -169,8 +166,8 @@ public class FeedbackActivity extends RoboActivity {
                 args.add(new BasicNameValuePair("node[type]", "trust_referral"));
                 args.add(new BasicNameValuePair("node[field_member_i_trust][0][uid][uid]", host.getName()));
                 args.add(new BasicNameValuePair("node[body]", feedbackEditText.getText().toString()));
-                args.add(new BasicNameValuePair("node[field_guest_or_host][value]", HOST_GUEST_MAPPING[howWeMet.getSelectedItemPosition()]));
-                args.add(new BasicNameValuePair("node[field_rating][value]", OVERALL_EXPERIENCE_MAPPING[feedbackOverallExperience.getSelectedItemPosition()]));
+                args.add(new BasicNameValuePair("node[field_guest_or_host][value]", translator.translateHostGuest(howWeMet.getSelectedItem().toString())));
+                args.add(new BasicNameValuePair("node[field_rating][value]", translator.translateRating(feedbackOverallExperience.getSelectedItem().toString())));
                 args.add(new BasicNameValuePair("node[field_hosting_date][0][value][year]", Integer.toString(datePicker.getYear())));
                 args.add(new BasicNameValuePair("node[field_hosting_date][0][value][month]", Integer.toString(datePicker.getMonth() + 1)));
 

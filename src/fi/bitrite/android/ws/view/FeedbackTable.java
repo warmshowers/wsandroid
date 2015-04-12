@@ -2,22 +2,34 @@ package fi.bitrite.android.ws.view;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.activity.FeedbackActivity;
 import fi.bitrite.android.ws.model.Feedback;
+import fi.bitrite.android.ws.util.ArrayTranslator;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Custom table that creates rows dynamically.
  */
 public class FeedbackTable extends TableLayout {
+
+    ArrayTranslator translator = ArrayTranslator.getInstance();
+    Context mContext;
+
     public FeedbackTable(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
     }
 
     public void addRows(List<Feedback> feedback) {
@@ -51,13 +63,15 @@ public class FeedbackTable extends TableLayout {
     private String getRowHeaderString(Feedback f) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(f.getGuestOrHost());
-        Date d = new Date(f.getHostingDate() * 1000L);
-        String hostedOn = DateFormat.getDateInstance().format(d);
+        sb.append(translator.translateHostGuest(f.getGuestOrHost()));
+
+        // Present hosted date without DOM because we don't carry that.
+        int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY;
+        String hostedOn = DateUtils.formatDateTime(mContext, f.getHostingDate() * 1000L, flags);
         sb.append(" (");
         sb.append(hostedOn);
         sb.append(") - ");
-        sb.append(f.getRating());
+        sb.append(translator.translateRating(f.getRating()));
         return sb.toString();
     }
 
