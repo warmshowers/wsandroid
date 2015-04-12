@@ -388,15 +388,15 @@ public class HostInformationActivity extends RoboActionBarActivity {
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
-//                e.printStackTrace();
             }
             return mIcon11;
         }
 
         protected void onPostExecute(Bitmap result) {
-
-            bmImage.setImageBitmap(result);
-            Tools.scaleImage(bmImage, bmImage.getWidth());
+            if (result != null) {
+                bmImage.setImageBitmap(result);
+                Tools.scaleImage(bmImage, bmImage.getWidth());
+            }
         }
     }
 
