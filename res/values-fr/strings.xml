@@ -121,4 +121,5 @@
     <string name="host_service_sag">Transport</string>
     <string name="json_error">Échec d\'analyse de la séquence json retournée par le serveur</string>
     <string name="host_service_laundry">Machine à laver</string>
+    <string name="label_feedback_for_this_member">Your feedback for this member</string>
 </resources>

@@ -122,4 +122,5 @@
     <string name="host_service_kitchen">Uso de cocina</string>
     <string name="host_service_tentspace">Terreno (Para acampar)</string>
     <string name="host_service_sag">Coche escoba (vehículo de soporte)</string>
+    <string name="label_feedback_for_this_member">Your feedback for this member</string>
 </resources>
