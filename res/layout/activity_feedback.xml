@@ -14,7 +14,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -54,12 +56,14 @@
                 android:id="@+id/lblOverallExperience"
                 android:text="@string/lbl_feedback_overall_experience"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:textStyle="bold" />
 
             <Spinner
                 android:id="@+id/feedback_overall_experience"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
                 android:entries="@array/feedback_overall_experience_options"
                 android:spinnerMode="dropdown" />
 
@@ -67,7 +71,10 @@
                 android:id="@+id/txtFeedbackTitle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Your feedback for this member" />
+                android:text="@string/label_feedback_for_this_member"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:paddingTop="6dp" />
 
             <EditText
                 android:id="@+id/feedbackEditText"
@@ -85,24 +92,29 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/feedback_date_we_met" />
+                android:text="@string/feedback_date_we_met"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:paddingTop="6dp" />
 
             <DatePicker
                 android:id="@+id/date_picker"
-                android:layout_width="match_parent"
-                android:layout_height="0dip"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:calendarViewShown="false" />
 
             <TextView
                 android:text="@string/feedback_how_we_met_prompt"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:paddingTop="6dp" />
 
             <Spinner
                 android:id="@+id/feedback_how_we_met"
-                android:layout_height="55dp"
-                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_width="wrap_content"
                 android:entries="@array/feedback_how_we_met_options"
                 android:prompt="@string/feedback_how_we_met_prompt"
                 android:spinnerMode="dropdown" />
