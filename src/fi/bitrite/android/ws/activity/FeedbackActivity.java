@@ -166,8 +166,8 @@ public class FeedbackActivity extends RoboActivity {
                 args.add(new BasicNameValuePair("node[type]", "trust_referral"));
                 args.add(new BasicNameValuePair("node[field_member_i_trust][0][uid][uid]", host.getName()));
                 args.add(new BasicNameValuePair("node[body]", feedbackEditText.getText().toString()));
-                args.add(new BasicNameValuePair("node[field_guest_or_host][value]", translator.translateHostGuest(howWeMet.getSelectedItem().toString())));
-                args.add(new BasicNameValuePair("node[field_rating][value]", translator.translateRating(feedbackOverallExperience.getSelectedItem().toString())));
+                args.add(new BasicNameValuePair("node[field_guest_or_host][value]", translator.getEnglishHostGuestOption(howWeMet.getSelectedItemPosition())));
+                args.add(new BasicNameValuePair("node[field_rating][value]", translator.getEnglishRating(feedbackOverallExperience.getSelectedItemPosition())));
                 args.add(new BasicNameValuePair("node[field_hosting_date][0][value][year]", Integer.toString(datePicker.getYear())));
                 args.add(new BasicNameValuePair("node[field_hosting_date][0][value][month]", Integer.toString(datePicker.getMonth() + 1)));
 

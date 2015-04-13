@@ -19,11 +19,12 @@ public class ArrayTranslator {
     Context mContext = WSAndroidApplication.getAppContext();
     HashMap<String, String> ratingTranslator = new HashMap<String, String>();
     HashMap<String, String> hostGuestTranslator = new HashMap<String, String>();
+    String[] englishHostGuestOptions = getEnglishStringArray(R.array.feedback_how_we_met_options);
+    String[] englishRatingOptions = getEnglishStringArray(R.array.feedback_overall_experience_options);
 
     // Private so can only be instantiated here
     private ArrayTranslator() {
         String[] localizedRatingOptions = mContext.getResources().getStringArray(R.array.feedback_overall_experience_options);
-        String[] englishRatingOptions = getEnglishStringArray(R.array.feedback_overall_experience_options);
 
         if (localizedRatingOptions.length == englishRatingOptions.length && localizedRatingOptions.length > 0) {
             for (int i = 0; i < englishRatingOptions.length; i++) {
@@ -34,7 +35,6 @@ public class ArrayTranslator {
         }
 
         String[] localizedHostGuestOptions = mContext.getResources().getStringArray(R.array.feedback_how_we_met_options);
-        String[] englishHostGuestOptions = getEnglishStringArray(R.array.feedback_how_we_met_options);
 
         if (localizedHostGuestOptions.length == englishHostGuestOptions.length && localizedHostGuestOptions.length > 0) {
             for (int i = 0; i < englishHostGuestOptions.length; i++) {
@@ -89,6 +89,20 @@ public class ArrayTranslator {
         else {
             return hostOrGuest;
         }
+    }
+
+    public String getEnglishRating(int position) {
+        if (englishRatingOptions.length > position) {
+            return englishRatingOptions[position];
+        }
+        return "";
+    }
+
+    public String getEnglishHostGuestOption(int position) {
+        if (englishHostGuestOptions.length > position) {
+            return englishHostGuestOptions[position];
+        }
+        return "";
     }
 
 }
