@@ -11,6 +11,15 @@ repositories {
     mavenCentral()
 }
 
+// This stanza will turn on checking for unchecked conversion and deprecation.
+//allprojects {
+//    gradle.projectsEvaluated {
+//        tasks.withType(JavaCompile) {
+//            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+//        }
+//    }
+//}
+
 dependencies {
     compile files('lib/gson-2.1.jar')
     compile files('lib/overlaymanager-1.0.1.jar')
