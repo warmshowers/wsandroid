@@ -111,7 +111,7 @@
     <string name="leaving_feedback">"Rückmeldung für %1$s hinterlassen"</string>
     <string name="feedback_how_we_met_prompt">Wie haben Sie dieses Mitglied getroffen? Sie waren:</string>
     <string name="feedback_date_we_met">Datum des Treffens:</string>
-    <string name="feedback_send">Rückmeldung senen</string>
+    <string name="feedback_send">Rückmeldung senden</string>
     <string name="lbl_feedback_overall_experience">Wie war Ihr genereller Eindruck von %1$s?</string>
     <string name="feedback_how_we_met_error">Sie müssen auswählen, wie Sie dieses Mitglied getroffen haben.</string>
     <string name="feedback_overall_experience_error">Sie müssen einen Wert für die generelle Erfahrung mit diesem Mitglied auswählen</string>
@@ -127,5 +127,4 @@
     <string name="host_service_tentspace">Gartenplatz für Zelt</string>
     <string name="host_service_sag">Technische Unterstützung (Werkstatt)</string>
     <string name="json_error">Fehler vom Server bei parsen von json-string</string>
-
 </resources>
