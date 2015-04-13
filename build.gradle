@@ -62,7 +62,7 @@ android {
         release.setRoot('build-types/release')
     }
     defaultConfig {
-        versionName "1.4.2 beta 4"
-        versionCode 28
+        versionName "1.4.2 beta 5"
+        versionCode 29
     }
 }
