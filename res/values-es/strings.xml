@@ -39,12 +39,12 @@
     <string name="settings">Configuraciones</string>
     <string name="about">Acerca de</string>
     <string name="last_updated">Última actualización: </string>
-    <string name="host_updated">Información de huesped actualizada.</string>
-    <string name="host_not_available">Este usuario no está disponible actualmente. Puedes contactar el usuario pero no como anfitrión.</string>
+    <string name="host_updated">Información de anfitrión actualizada.</string>
+    <string name="host_not_available">Este usuario no está disponible actualmente. Puedes contactar al usuario pero no como anfitrión.</string>
     <string name="host_info_in_progress">Recibiendo información del anfitrión …</string>
     <string name="unstar_host">Remover de destacados</string>
-    <string name="host_starred">Huesped destacado. Ahora puedes acceder a la información sin conexión a internet.</string>
-    <string name="host_unstarred">La información del huesped fue eliminada del dispositivo.</string>
+    <string name="host_starred">Anfitrión destacado. Ahora puedes acceder a la información sin conexión a internet.</string>
+    <string name="host_unstarred">La información del anfitrión fue eliminada del dispositivo.</string>
     <string name="performing_search">Buscando …</string>
     <string name="io_error">Error de acceso a internet, por favor revisa tu conexión.</string>
     <string name="http_unexpected_failure">Error inesperado al acceder al servidor. Revisa tus credenciales y la conexión a internet.</string>
@@ -54,8 +54,8 @@
     <string name="sending_message">Enviando mensaje …</string>
     <string name="error_sending_message">No se pudo enviar tu mensaje. Verifica tus credenciales y la conexión a internet.</string>
     <string name="message_sent">Mensaje enviado.</string>
-    <string name="about_1">"Desarrollado por voluntarios de Warmshowers.org liderados por el autor original Johannes Staffans. Traductor Español: Laura Juliá</string>
-    <string name="about_2">Esta aplicación es de código abierto bajo la licencia Apache 2.0. Contribuye multiplicando nuestro repositorio en github.com/warmshowers/wsandroid\nReport Reporta problemas allí o en el formulario de contacto de Warmshowers, es.warmshowers.org/contact</string>
+    <string name="about_1">"Desarrollado por voluntarios de Warmshowers.org liderados por el autor original Johannes Staffans. \Traductora español: Laura Juliá</string>
+    <string name="about_2">Esta aplicación es de código abierto bajo la licencia Apache 2.0. Contribuye multiplicando nuestro repositorio en github.com/warmshowers/wsandroid\ Reporta problemas allí o en el formulario de contacto de Warmshowers, warmshowers.org/contact</string>
     <string name="feedback">Comentarios</string>
     <string name="error_retrieving_messages">Ocurrió un error al cargar los mensajes.</string>
     <string name="messages_in_progress">Cargando mensajes …</string>
@@ -64,7 +64,7 @@
     <string name="updateMessages">Actualizar</string>
     <string name="loading_hosts">Cargando anfitriones …</string>
     <string name="hosts_at_location">%1$s anfitriones en %2$s</string>
-	<string name="view_on_site">Ver en el sitio web</string>
+    <string name="view_on_site">Ver en el sitio web</string>
     <string name="host_count">%1$d anfitriones en este lugar</string>
     <string name="click_to_view_all"><strong>Clic para verlos todos</strong></string>
     <string name="map_default_latitude">46.8625</string>
@@ -82,18 +82,21 @@
     <string name="send_message">Enviar mensaje</string>
     <string name="view_on_map">Ver en el mapa de WarmShowers</string>
     <string name="view_in_maps_app">Ver en la aplicación de mapa</string>
+    <string name="title_activity_web_view">VerActividadWeb</string>
+    <string name="hello_world">¡Hola a todos!</string>
     <string name="action_settings">Configuraciones</string>
     <string name="leave_feedback">Dejar un comentario para este anfitrión</string>
     <string name="leave_feedback_for">Dejar comentario para %1$s</string>
     <string name="viewMessagesOnSite">Ver los mensajes en el sitio web</string>
-    <string name="messages_on_site">Mensajes en sitio</string>
+    <string name="messages_on_site">Mensajes en la página</string>
+    <string name="ga_property_id">UA-13228014-2</string>
     <string name="prefs_distance_unit">Unidad de distancia</string>
     <string name="prefs_distance_unit_summary">¿Quieres la unidad de distancia en kilómetros o en millas? </string>
     <string name="prefs_ga_collect_stats_title">Enviar estadísticas anónimas </string>
     <string name="prefs_ga_collect_stats_summary">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
     <string name="languages_spoken"><u>Idiomas:</u></string>
     <string name="map_network_not_connected">La red no está conectada, solo se muestran los anfitriones destacados.</string>
-    <string name="open_in_map_application">Ver en la aplicación de mapa</string>
+    <string name="open_in_map_application">Abrir en aplicación de mapas</string>
     <string name="star_this_host">Destacar este anfitrión</string>
     <string name="unstar_this_host">Remover de destacados</string>
     <string name="no_account">La información de la cuenta no ha sido configurada. Configuraciones -> Cuenta</string>
@@ -105,7 +108,7 @@
     <string name="feedback_validation_error">Debes escribir por lo menos 10 palabras en la sección de comentarios.</string>
     <string name="feedback_sent">Tu comentario para %1$s ha sido enviado </string>
     <string name="leaving_feedback">"Dejando comentario para %1$s"</string>
-    <string name="feedback_how_we_met_prompt">¿Como conociste a este miembro? Fue...</string>
+    <string name="feedback_how_we_met_prompt">¿Cómo conociste a este miembro? Fue:</string>
     <string name="feedback_date_we_met">Fecha en que nos conocimos:</string>
     <string name="feedback_send">Enviar comentario </string>
     <string name="lbl_feedback_overall_experience">¿Cómo fue tu experiencia general con %1$s?</string>
@@ -122,5 +125,5 @@
     <string name="host_service_kitchen">Uso de cocina</string>
     <string name="host_service_tentspace">Terreno (Para acampar)</string>
     <string name="host_service_sag">Coche escoba (vehículo de soporte)</string>
-    <string name="label_feedback_for_this_member">Your feedback for this member</string>
+    <string name="label_feedback_for_this_member">Tu comentario para este miembro</string>
 </resources>
