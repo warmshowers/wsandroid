@@ -1,9 +1,10 @@
+
 buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:+'
+        classpath 'com.android.tools.build:gradle:1.1.0'
     }
 }
 apply plugin: 'com.android.application'
@@ -26,16 +27,15 @@ dependencies {
     compile files('lib/parcelgen.jar')
     compile 'org.roboguice:roboguice:3.0.1'
     provided 'org.roboguice:roboblender:3.0.1'
-    compile 'com.google.maps.android:android-maps-utils:0.3+'
+    compile 'com.google.maps.android:android-maps-utils:0.3.4'
     compile 'com.google.guava:guava:18.0'
     compile 'com.google.android.gms:play-services-analytics:7.0.0'
     compile 'com.google.android.gms:play-services-maps:7.0.0'
     compile 'com.google.android.gms:play-services-location:7.0.0'
-    compile 'com.android.support:appcompat-v7:18.0.+'
+    compile 'com.android.support:appcompat-v7:18.0.0'
 }
 
 android {
-    compileSdkVersion 19
     buildToolsVersion "22.0.1"
 
     sourceSets {
@@ -62,7 +62,10 @@ android {
         release.setRoot('build-types/release')
     }
     defaultConfig {
-        versionName "1.4.2"
-        versionCode 30
+        versionName "1.4.3 beta 1"
+        versionCode 31
+        minSdkVersion 10
+        compileSdkVersion 19
+        targetSdkVersion 19
     }
 }
