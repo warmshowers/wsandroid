@@ -28,7 +28,9 @@ import fi.bitrite.android.ws.util.Tools;
 
 import java.util.ArrayList;
 
-public class ListSearchTabActivity extends WSBaseActivity {
+public class ListSearchTabActivity
+        extends WSBaseActivity
+        implements android.widget.AdapterView.OnItemClickListener {
 
     ArrayList<HostBriefInfo> mListSearchHosts;
 
@@ -152,6 +154,11 @@ public class ListSearchTabActivity extends WSBaseActivity {
         Search search = new RestTextSearch(text);
         mTextSearchTask = new TextSearchTask();
         mTextSearchTask.execute(search);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        super.onItemClick(parent, view, position, id);
     }
 
     private class TextSearchTask extends AsyncTask<Search, Void, Object> {

@@ -5,26 +5,38 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.support.v7.widget.*;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import fi.bitrite.android.ws.R;
 
-abstract class WSBaseActivity extends ActionBarActivity {
+abstract class WSBaseActivity extends ActionBarActivity implements android.widget.AdapterView.OnItemClickListener {
     protected Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLeftDrawerList;
-    private ArrayAdapter<String> navigationDrawerAdapter;
-    protected String[] leftSliderData = {"Home", "Android", "Sitemap", "About", "Contact Me"};
+    private ArrayAdapter<String> mNavigationDrawerAdapter;
+    protected String[] mLeftSliderData;
+
+    public static final String TAG = "WSBaseActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLeftSliderData = getResources().getStringArray(R.array.navigation_menu);
+
         initView();
         if (mToolbar != null) {
+            mToolbar.setTitle(""); // Garbage text; seems to be required
             setSupportActionBar(mToolbar);
         }
         initDrawer();
@@ -34,8 +46,10 @@ abstract class WSBaseActivity extends ActionBarActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLeftDrawerList = (ListView) mDrawerLayout.findViewById(R.id.left_drawer);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        navigationDrawerAdapter = new ArrayAdapter<String>(WSBaseActivity.this, android.R.layout.simple_list_item_1, leftSliderData);
-        mLeftDrawerList.setAdapter(navigationDrawerAdapter);
+        mNavigationDrawerAdapter = new ArrayAdapter<String>(WSBaseActivity.this, android.R.layout.simple_list_item_1, mLeftSliderData);
+        mLeftDrawerList.setAdapter(mNavigationDrawerAdapter);
+        mLeftDrawerList.setOnItemClickListener(this);
+
     }
 
     private void initDrawer() {
@@ -68,4 +82,41 @@ abstract class WSBaseActivity extends ActionBarActivity {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i(TAG, "onOptionsItemSelected() fired");
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(Gravity.START | Gravity.LEFT)){
+            mDrawerLayout.closeDrawers();
+            return;
+        }
+        super.onBackPressed();
+    }
+
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        int x=1;
+        mDrawerLayout.closeDrawers();
+        Toast.makeText(this, "onItemClick position=" + Integer.toString(position), Toast.LENGTH_SHORT).show();
+    }
+
+
 }

@@ -27,4 +27,13 @@
         <item>Negative</item>
     </string-array>
 
+    <string-array name="navigation_menu">
+        <item name="map">Map</item>
+        <item name="text_search">Text Search</item>
+        <item name="saved_hosts">Saved Hosts</item>
+        <item name="messages">Messages</item>
+    </string-array>
+
+
+
 </resources>
