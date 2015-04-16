@@ -32,7 +32,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-analytics:7.0.0'
     compile 'com.google.android.gms:play-services-maps:7.0.0'
     compile 'com.google.android.gms:play-services-location:7.0.0'
-    compile 'com.android.support:appcompat-v7:18.0.0'
+    compile 'com.android.support:appcompat-v7:22.0.0'
 }
 
 android {
@@ -65,7 +65,7 @@ android {
         versionName "1.4.3 beta 1"
         versionCode 31
         minSdkVersion 10
-        compileSdkVersion 19
-        targetSdkVersion 19
+        compileSdkVersion 22
+        targetSdkVersion 22
     }
 }

@@ -5,6 +5,10 @@
     android:orientation="vertical" 
     android:id="@+id/listTab"
     android:paddingTop="10dp" >
+
+    <include layout="@layout/toolbar"
+        />
+
     <TextView
         android:id="@+id/noNetworkWarningList"
         android:layout_width="wrap_content"
@@ -65,4 +69,7 @@
 	    android:layout_height="wrap_content"
 	    android:id="@+id/lstSearchResult" 
 	    android:divider="#FF000000" />
+
+    <include layout="@layout/navigation_drawer"  />
+
 </LinearLayout>
