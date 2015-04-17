@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -25,14 +26,14 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLeftDrawerList;
     private ArrayAdapter<String> mNavigationDrawerAdapter;
-    protected String[] mLeftSliderData;
+    protected String[] mNavMenuOptions;
 
     public static final String TAG = "WSBaseActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLeftSliderData = getResources().getStringArray(R.array.navigation_menu);
+        mNavMenuOptions = getResources().getStringArray(R.array.navigation_menu);
 
         initView();
         if (mToolbar != null) {
@@ -46,10 +47,9 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLeftDrawerList = (ListView) mDrawerLayout.findViewById(R.id.left_drawer);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mNavigationDrawerAdapter = new ArrayAdapter<String>(WSBaseActivity.this, android.R.layout.simple_list_item_1, mLeftSliderData);
+        mNavigationDrawerAdapter = new ArrayAdapter<String>(WSBaseActivity.this, android.R.layout.simple_list_item_1, mNavMenuOptions);
         mLeftDrawerList.setAdapter(mNavigationDrawerAdapter);
         mLeftDrawerList.setOnItemClickListener(this);
-
     }
 
     private void initDrawer() {
@@ -112,10 +112,25 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
         super.onBackPressed();
     }
 
+    /**
+     * Handle click from ListView in NavigationDrawer
+     *
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        int x=1;
+        String[] activities = getResources().getStringArray(R.array.navigation_menu_activities);
+        try {
+            Class activityClass =  Class.forName(this.getPackageName() + ".activity." + activities[position]);
+            Intent i = new Intent(this, activityClass);
+            startActivity(i);
+        } catch (ClassNotFoundException e) {
+            Log.i(TAG, "Class not found: " + activities[position]);
+        }
         mDrawerLayout.closeDrawers();
-        Toast.makeText(this, "onItemClick position=" + Integer.toString(position), Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "onItemClick position=" + Integer.toString(position), Toast.LENGTH_SHORT).show();
     }
 
 

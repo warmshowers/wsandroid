@@ -32,8 +32,15 @@
         <item name="text_search">Text Search</item>
         <item name="saved_hosts">Saved Hosts</item>
         <item name="messages">Messages</item>
+        <item name="settings">Settings</item>
     </string-array>
-
+    <string-array name="navigation_menu_activities" translatable="false">
+        <item>Maps2Activity</item>
+        <item>ListSearchTabActivity</item>
+        <item>StarredHostsTabActivity</item>
+        <item>MessagesActivity</item>
+        <item>SettingsActivity</item>
+    </string-array>
 
 
 </resources>
