@@ -28,13 +28,14 @@ import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.util.GlobalInfo;
 
-public class WebViewActivity extends Activity {
+public class WebViewActivity extends WSBaseActivity {
     WebView mWebView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
+        initView();
 
         mWebView = (WebView) this.findViewById(R.id.webView);
 

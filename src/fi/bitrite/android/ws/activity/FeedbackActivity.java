@@ -43,14 +43,12 @@ import fi.bitrite.android.ws.util.Tools;
 public class FeedbackActivity extends WSBaseActivity
         implements android.widget.AdapterView.OnItemClickListener {
 
-    TextView activityTitleView;
     EditText feedbackEditText;
     DatePicker datePicker;
     TextView lblOverallExperience;
     Spinner feedbackOverallExperience;
     Spinner howWeMet;
     Button btnSubmit;
-    ImageView btnFeedbackSend;
     TextView noNetworkWarning;
 
     ArrayTranslator translator = ArrayTranslator.getInstance();
@@ -69,11 +67,9 @@ public class FeedbackActivity extends WSBaseActivity
         super.onResume();
         if (!Tools.isNetworkConnected(this)) {
             noNetworkWarning.setText(getString(R.string.not_connected_to_network));
-            btnFeedbackSend.setEnabled(false);
             btnSubmit.setEnabled(false);
             return;
         }
-        btnFeedbackSend.setEnabled(true);
         btnSubmit.setEnabled(true);
         noNetworkWarning.setText("");
         noNetworkWarning.setVisibility(View.GONE);
@@ -85,14 +81,12 @@ public class FeedbackActivity extends WSBaseActivity
         setContentView(R.layout.activity_feedback);
         initView();
 
-        activityTitleView = (TextView) findViewById(R.id.txtActivityTitle);
         feedbackEditText = (EditText) findViewById(R.id.feedbackEditText);
         datePicker = (DatePicker) findViewById(R.id.date_picker);
         lblOverallExperience = (TextView) findViewById(R.id.lblOverallExperience);
         feedbackOverallExperience = (Spinner) findViewById(R.id.feedback_overall_experience);
         howWeMet = (Spinner) findViewById(R.id.feedback_how_we_met);
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
-        btnFeedbackSend = (ImageView) findViewById(R.id.btnFeedbackSend);
         noNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningFeedback);
 
 
@@ -104,8 +98,6 @@ public class FeedbackActivity extends WSBaseActivity
             Intent i = getIntent();
             host = (Host) i.getParcelableExtra("host");
         }
-
-        activityTitleView.setText(getString(R.string.leaving_feedback, host.getFullname()));
 
         // Set up datepicker
         GregorianCalendar now = new GregorianCalendar();

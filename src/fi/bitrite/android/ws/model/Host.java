@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fi.bitrite.android.ws.R;
-import roboguice.util.Strings;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -54,17 +53,17 @@ public class Host extends _Host {
     public String getLocation() {
         StringBuilder sb = new StringBuilder();
 
-        if (!Strings.isEmpty(getStreet())) {
+        if (!getStreet().isEmpty()) {
             sb.append(getStreet()).append("\n");
         }
 
-        if (!Strings.isEmpty(getAdditional())) {
+        if (!getAdditional().isEmpty()) {
             sb.append(getAdditional()).append("\n");
         }
 
         sb.append(getPostalCode()).append(", ").append(getCity()).append(", ").append(getProvince());
 
-        if (!Strings.isEmpty(getCountry())) {
+        if (!getCountry().isEmpty()) {
             sb.append(", ").append(getCountry().toUpperCase());
         }
 
@@ -99,7 +98,7 @@ public class Host extends _Host {
     }
 
     private boolean hasService(String service) {
-        return !Strings.isEmpty(service) && service.equals("1");
+        return !service.isEmpty() && service.equals("1");
     }
 
     public boolean isNotCurrentlyAvailable() {
@@ -123,7 +122,7 @@ public class Host extends _Host {
     }
 
     private String formatDate(String timestamp) {
-        if (Strings.isEmpty(timestamp)) {
+        if (timestamp.isEmpty()) {
             return "";
         }
 

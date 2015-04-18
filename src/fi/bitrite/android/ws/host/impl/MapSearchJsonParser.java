@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
-import roboguice.util.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,7 @@ public class MapSearchJsonParser {
             int id = hostObj.getInt("uid");
 
             String fullName = hostObj.getString("name");
-            if (Strings.isEmpty(fullName)) {
+            if (fullName.isEmpty()) {
                 fullName = "(Unknown host)";
             }
 

@@ -160,7 +160,7 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
             return true;
         }
         catch (NoAccountException e) {
-            startAuthenticatorActivity(new Intent(MainActivity.mainActivity, AuthenticatorActivity.class));
+            startAuthenticatorActivity(new Intent(this, AuthenticatorActivity.class));
             return false; // Wait to set up tabs until auth is done
         }
     }

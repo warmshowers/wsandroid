@@ -2,9 +2,9 @@ package fi.bitrite.android.ws.activity;
 
 import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.auth.Authenticator;
-import roboguice.activity.RoboTabActivity;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,7 +26,7 @@ import fi.bitrite.android.ws.auth.NoAccountException;
 
 import java.util.ArrayList;
 
-public class MainActivity extends RoboTabActivity  {
+public class MainActivity extends Activity {
 
     static public MainActivity mainActivity;
 
@@ -85,7 +85,7 @@ public class MainActivity extends RoboTabActivity  {
             Toast.makeText(this, R.string.io_error, Toast.LENGTH_LONG).show();
             finish();
         } else if (resultCode == AuthenticatorActivity.RESULT_OK) {
-            setupTabs();
+//            setupTabs();
             return;
         } else if (resultCode == AuthenticatorActivity.RESULT_CANCELED) {
             try {
@@ -97,21 +97,21 @@ public class MainActivity extends RoboTabActivity  {
         }
     }
 
-    private void setupTabs() {
-        if (tabsCreated) {
-            return;
-        }
-        TabHost tabHost = getTabHost();
-        addTab(tabHost, "tab_map", R.drawable.tab_icon_map, new Intent(this, Maps2Activity.class));
-        addTab(tabHost, "tab_list", R.drawable.tab_icon_list, new Intent(this, ListSearchTabActivity.class));
-        addTab(tabHost, "tab_starred", R.drawable.tab_icon_starred, new Intent(this, StarredHostTabActivity.class));
-        addTab(tabHost, "tab_messages", R.drawable.tab_icon_messages, new Intent(this, MessagesTabActivity.class));
-        tabsCreated = true;
-    }
-
-    private void addTab(TabHost tabHost, String tabSpec, int icon, Intent content) {
-        tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator("", getResources().getDrawable(icon)).setContent(content));
-    }
+//    private void setupTabs() {
+//        if (tabsCreated) {
+//            return;
+//        }
+//        TabHost tabHost = getTabHost();
+//        addTab(tabHost, "tab_map", R.drawable.tab_icon_map, new Intent(this, Maps2Activity.class));
+//        addTab(tabHost, "tab_list", R.drawable.tab_icon_list, new Intent(this, ListSearchTabActivity.class));
+//        addTab(tabHost, "tab_starred", R.drawable.tab_icon_starred, new Intent(this, StarredHostTabActivity.class));
+//        addTab(tabHost, "tab_messages", R.drawable.tab_icon_messages, new Intent(this, MessagesTabActivity.class));
+//        tabsCreated = true;
+//    }
+//
+//    private void addTab(TabHost tabHost, String tabSpec, int icon, Intent content) {
+//        tabHost.addTab(tabHost.newTabSpec(tabSpec).setIndicator("", getResources().getDrawable(icon)).setContent(content));
+//    }
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -146,9 +146,9 @@ public class MainActivity extends RoboTabActivity  {
 //        }
     }
 
-    public void switchTab(int tab) {
-        getTabHost().setCurrentTab(tab);
-    }
+//    public void switchTab(int tab) {
+//        getTabHost().setCurrentTab(tab);
+//    }
     
     public void stashHost(Intent data, int stashedFrom) {
         stashedHost = data.getParcelableExtra("host");
