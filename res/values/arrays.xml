@@ -30,7 +30,7 @@
     <string-array name="navigation_menu">
         <item name="map">Map</item>
         <item name="text_search">Text Search</item>
-        <item name="saved_hosts">Saved Hosts</item>
+        <item name="favorites">Favorites</item>
         <item name="messages">Messages</item>
         <item name="settings">Settings</item>
         <item name="authenticate">Log In</item>
