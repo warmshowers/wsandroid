@@ -35,6 +35,8 @@
         <item name="settings">Settings</item>
         <item name="authenticate">Log In</item>
         <item name="logout">Log Out</item>
+        <item name="about">About</item>
+        <item name="legal">Open Source Licenses</item>
     </string-array>
 
     <string-array name="navigation_menu_activities" translatable="false">
@@ -45,6 +47,8 @@
         <item>SettingsActivity</item>
         <item>AuthenticatorActivity</item>
         <item>LogoutActivity</item>
+        <item>AboutActivity</item>
+        <item>LegalActivity</item>
     </string-array>
 
 

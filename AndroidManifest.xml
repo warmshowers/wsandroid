@@ -24,6 +24,7 @@
         android:name=".WSAndroidApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:theme="@style/wsAppTheme"
         android:allowBackup="true">
         <uses-library android:name="com.google.android.maps" />
 
@@ -44,46 +45,46 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/app_name"
-            android:theme="@style/wsAppTheme" />
+             />
         <activity
             android:name=".activity.AuthenticatorActivity"
             android:label="@string/app_name"
-            android:theme="@style/wsAppTheme" />
+             />
         <activity
             android:name=".activity.StarredHostTabActivity"
             android:label="@string/app_name"
-            android:theme="@style/wsAppTheme" />
+             />
         <activity
             android:name=".activity.ListSearchTabActivity"
             android:label="@string/app_name"
-            android:theme="@style/wsAppTheme"
+
             android:exported="true" />
 
         <activity
             android:name=".activity.MessagesTabActivity"
             android:label="@string/app_name"
-            android:theme="@style/wsAppTheme" />
+             />
         <activity
             android:name=".activity.Maps2Activity"
             android:label="@string/app_name"
-            android:theme="@style/wsAppTheme" />
+             />
         <activity
             android:name=".activity.HostInformationActivity"
             android:label="@string/app_name"
-            android:theme="@style/wsAppTheme" />
+             />
         <activity
             android:name=".activity.HostContactActivity"
             android:label="@string/app_name"
-            android:theme="@style/wsAppTheme" />
+             />
         <activity
             android:name=".activity.WebViewActivity"
             android:label="@string/title_activity_web_view"
-            android:theme="@style/wsAppTheme" />
+             />
 
         <activity
             android:name=".activity.FeedbackActivity"
             android:label="@string/title_activity_feedback"
-            android:theme="@style/wsAppTheme" />
+             />
 
         <meta-data
             android:name="com.google.android.gms.version"

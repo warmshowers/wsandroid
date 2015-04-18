@@ -20,6 +20,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+
+import java.util.HashMap;
+
 import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
@@ -32,14 +35,26 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
     private ListView mLeftDrawerList;
     private ArrayAdapter<String> mNavigationDrawerAdapter;
     protected String[] mNavMenuOptions;
+    protected String[] mNavMenuActivities;
 
     public static final String TAG = "WSBaseActivity";
     private Dialog splashDialog;
+    protected HashMap<String, Integer> mActivityNameMap = new HashMap<String, Integer>();
+    protected HashMap<String, String> mActivityClassToFriendly = new HashMap<String, String>();
+    protected String mActivityName = this.getClass().getSimpleName();
+    private String mActivityFriendly;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mNavMenuOptions = getResources().getStringArray(R.array.navigation_menu);
+        mNavMenuActivities = getResources().getStringArray(R.array.navigation_menu_activities);
+        for (int i=0; i<mNavMenuOptions.length; i++) {
+            mActivityNameMap.put(mNavMenuActivities[i], i);
+            mActivityClassToFriendly.put(mNavMenuActivities[i], mNavMenuOptions[i]);
+        }
+        mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
 
     }
 
@@ -52,13 +67,17 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
         mLeftDrawerList.setOnItemClickListener(this);
 
         if (mToolbar != null) {
-            mToolbar.setTitle(""); // Garbage text; seems to be required
+            mToolbar.setTitle(mActivityFriendly);
             setSupportActionBar(mToolbar);
         }
         initDrawer();
     }
 
     private void initDrawer() {
+
+//        ListView leftDrawer = (ListView)findViewById(R.id.left_drawer);
+//        View navItem = (View)leftDrawer.getItemAtPosition(mActivityNameMap.get(mActivityName));
+
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
 

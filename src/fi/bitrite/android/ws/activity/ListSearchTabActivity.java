@@ -64,6 +64,7 @@ public class ListSearchTabActivity
 
         setupListSearch(savedInstanceState);
 
+//        mToolbar.setTitleTextColor(0xffffff);
         mToolbar.setTitle(getString(R.string.text_search_title));
     }
 
