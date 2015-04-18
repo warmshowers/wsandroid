@@ -56,15 +56,15 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            android:theme="@style/myAppTheme" />
         <activity
             android:name=".activity.AuthenticatorActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            android:theme="@style/myAppTheme" />
         <activity
             android:name=".activity.StarredHostTabActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            android:theme="@style/myAppTheme" />
         <activity
             android:name=".activity.ListSearchTabActivity"
             android:label="@string/app_name"
@@ -73,16 +73,16 @@
         <activity
             android:name=".activity.MessagesTabActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            android:theme="@style/myAppTheme" />
         <activity
             android:name=".activity.Maps2Activity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            android:theme="@style/myAppTheme" />
         <activity
             android:name=".activity.HostInformationActivity"
             android:label="@string/app_name"
             android:parentActivityName=".activity.MainActivity"
-            android:theme="@style/Theme.AppCompat" >
+            android:theme="@style/myAppTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
@@ -90,7 +90,7 @@
         <activity
             android:name=".activity.HostContactActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            android:theme="@style/myAppTheme" />
 
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
