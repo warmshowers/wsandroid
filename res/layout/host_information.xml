@@ -1,321 +1,333 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical"
-              android:paddingLeft="4dp"
-              android:paddingRight="4dp"
-              android:paddingTop="10dp">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    >
 
-    <ScrollView
-            android:id="@+id/scrollHostInformation"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:scrollbars="none">
+    <include layout="@layout/toolbar" />
 
-        <LinearLayout
-                android:id="@+id/layoutHostDetails"
+    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/drawer_layout">
+        <!-- activity view -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="#fff"
+            android:layout_height="match_parent">
+
+            <ScrollView
+                android:id="@+id/scrollHostInformation"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:layout_height="fill_parent"
+                android:scrollbars="none">
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="10"
-                android:gravity="center_horizontal">
-
-                <ImageView
-                        android:id="@+id/memberPhoto"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-
-                    android:layout_weight="7" />
-            </LinearLayout>
-
-            <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/lblMemberName"
-                    android:textSize="24dip"
-                    android:text="Member Name"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp" />
-                <TextView
-                    android:id="@+id/txtHostComments"
+                <LinearLayout
+                    android:id="@+id/layoutHostDetails"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp" />
-
-            <TableLayout
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:paddingTop="4dp"
-                    android:shrinkColumns="1">
-
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
-
-                    <TextView
-                            android:id="@+id/lblMemberSince"
-                            android:text="@string/member_since"/>
-
-                    <TextView
-                            android:id="@+id/txtMemberSince"
-                            android:paddingLeft="10dp"/>
-                </TableRow>
-
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
-
-                    <TextView
-                            android:id="@+id/lblLastLogin"
-                            android:text="@string/last_login"/>
-
-                    <TextView
-                            android:id="@+id/txtLastLogin"
-                            android:paddingLeft="10dp"/>
-                </TableRow>
-
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" >
-
-                    <TextView
-                            android:id="@+id/lblLanguagesSpoken"
-                            android:text="@string/languages_spoken"
-                            />
-                    <TextView
-                            android:id="@+id/txtLanguagesSpoken"
-                            android:paddingLeft="10dp"
-                            />
-                </TableRow>
-            </TableLayout>
-
-            <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:clickable="true"
-                    android:onClick="toggleBasicInformation"
-                    android:paddingTop="10dp">
-
-                <ImageView
-                        android:id="@+id/btnToggleBasicInformation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:paddingRight="10dp"
-                        android:src="@drawable/expander_min"/>
-
-                <TextView
-                        android:id="@+id/lblBasicInformation"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="@string/host_info_basic_information"
-                        android:textAppearance="?android:attr/textAppearanceMedium"/>
-            </LinearLayout>
-
-
-            <TableLayout
-                    android:id="@+id/tableBasicInformation"
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:paddingTop="4dp"
-                    android:shrinkColumns="1"
+                    android:orientation="vertical"
                     android:visibility="gone">
 
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="10"
+                        android:gravity="center_horizontal">
+
+                        <ImageView
+                            android:id="@+id/memberPhoto"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+
+                            android:layout_weight="7" />
+                    </LinearLayout>
 
                     <TextView
-                            android:id="@+id/lblHostLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/lblMemberName"
+                        android:textSize="24dip"
+                        android:text="Member Name"
+                        android:gravity="center_horizontal"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp" />
+
+                    <TextView
+                        android:id="@+id/txtHostComments"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp" />
+
+                    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:paddingTop="4dp"
+                        android:shrinkColumns="1">
+
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
+
+                            <TextView
+                                android:id="@+id/lblMemberSince"
+                                android:text="@string/member_since" />
+
+                            <TextView
+                                android:id="@+id/txtMemberSince"
+                                android:paddingLeft="10dp" />
+                        </TableRow>
+
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
+
+                            <TextView
+                                android:id="@+id/lblLastLogin"
+                                android:text="@string/last_login" />
+
+                            <TextView
+                                android:id="@+id/txtLastLogin"
+                                android:paddingLeft="10dp" />
+                        </TableRow>
+
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/lblLanguagesSpoken"
+                                android:text="@string/languages_spoken" />
+
+                            <TextView
+                                android:id="@+id/txtLanguagesSpoken"
+                                android:paddingLeft="10dp" />
+                        </TableRow>
+                    </TableLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:clickable="true"
+                        android:onClick="toggleBasicInformation"
+                        android:paddingTop="10dp">
+
+                        <ImageView
+                            android:id="@+id/btnToggleBasicInformation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/location" />
+                            android:layout_gravity="center_vertical"
+                            android:paddingRight="10dp"
+                            android:src="@drawable/expander_min" />
+
+                        <TextView
+                            android:id="@+id/lblBasicInformation"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/host_info_basic_information"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                    </LinearLayout>
 
 
-                    <TextView
-                            android:id="@+id/txtHostLocation"
-                            android:paddingLeft="10dp"/>
+                    <TableLayout
+                        android:id="@+id/tableBasicInformation"
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:paddingTop="4dp"
+                        android:shrinkColumns="1"
+                        android:visibility="gone">
 
-                </TableRow>
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
+
+                            <TextView
+                                android:id="@+id/lblHostLocation"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/location" />
 
 
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
+                            <TextView
+                                android:id="@+id/txtHostLocation"
+                                android:paddingLeft="10dp" />
 
-                    <TextView
-                            android:id="@+id/lblHostMobilePhone"
-                            android:text="@string/mobile_phone"/>
+                        </TableRow>
 
-                    <TextView
-                            android:id="@+id/txtHostMobilePhone"
-                            android:autoLink="phone"
-                            android:paddingLeft="10dp"
-                            android:textColorLink="#FFAAAAFF"/>
-                </TableRow>
 
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
 
-                    <TextView
-                            android:id="@+id/lblHostHomePhone"
-                            android:text="@string/home_phone"/>
+                            <TextView
+                                android:id="@+id/lblHostMobilePhone"
+                                android:text="@string/mobile_phone" />
 
-                    <TextView
-                            android:id="@+id/txtHostHomePhone"
-                            android:autoLink="phone"
-                            android:paddingLeft="10dp"
-                            android:textColorLink="#FFAAAAFF"/>
-                </TableRow>
+                            <TextView
+                                android:id="@+id/txtHostMobilePhone"
+                                android:autoLink="phone"
+                                android:paddingLeft="10dp"
+                                android:textColorLink="#FFAAAAFF" />
+                        </TableRow>
 
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
 
-                    <TextView
-                            android:id="@+id/lblHostWorkPhone"
-                            android:text="@string/work_phone"/>
+                            <TextView
+                                android:id="@+id/lblHostHomePhone"
+                                android:text="@string/home_phone" />
 
-                    <TextView
-                            android:id="@+id/txtHostWorkPhone"
-                            android:autoLink="phone"
-                            android:paddingLeft="10dp"
-                            android:textColorLink="#FFAAAAFF"/>
-                </TableRow>
+                            <TextView
+                                android:id="@+id/txtHostHomePhone"
+                                android:autoLink="phone"
+                                android:paddingLeft="10dp"
+                                android:textColorLink="#FFAAAAFF" />
+                        </TableRow>
 
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
 
-                    <TextView
-                            android:id="@+id/lblPreferredNotice"
-                            android:text="@string/preferred_notice"/>
+                            <TextView
+                                android:id="@+id/lblHostWorkPhone"
+                                android:text="@string/work_phone" />
 
-                    <TextView
-                            android:id="@+id/txtPreferredNotice"
-                            android:paddingLeft="10dp"/>
-                </TableRow>
+                            <TextView
+                                android:id="@+id/txtHostWorkPhone"
+                                android:autoLink="phone"
+                                android:paddingLeft="10dp"
+                                android:textColorLink="#FFAAAAFF" />
+                        </TableRow>
 
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
 
-                    <TextView
-                            android:id="@+id/lblMaxGuests"
-                            android:text="@string/max_guests"/>
+                            <TextView
+                                android:id="@+id/lblPreferredNotice"
+                                android:text="@string/preferred_notice" />
 
-                    <TextView
-                            android:id="@+id/txtMaxGuests"
-                            android:paddingLeft="10dp"/>
-                </TableRow>
+                            <TextView
+                                android:id="@+id/txtPreferredNotice"
+                                android:paddingLeft="10dp" />
+                        </TableRow>
 
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
 
-                    <TextView
-                            android:id="@+id/lblNearestAccomodation"
-                            android:text="@string/nearest_accomodation"/>
+                            <TextView
+                                android:id="@+id/lblMaxGuests"
+                                android:text="@string/max_guests" />
 
-                    <TextView
-                            android:id="@+id/txtNearestAccomodation"
-                            android:paddingLeft="10dp"/>
-                </TableRow>
+                            <TextView
+                                android:id="@+id/txtMaxGuests"
+                                android:paddingLeft="10dp" />
+                        </TableRow>
 
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
 
-                    <TextView
-                            android:id="@+id/lblCampground"
-                            android:text="@string/campground"/>
+                            <TextView
+                                android:id="@+id/lblNearestAccomodation"
+                                android:text="@string/nearest_accomodation" />
 
-                    <TextView
-                            android:id="@+id/txtCampground"
-                            android:paddingLeft="10dp"/>
-                </TableRow>
+                            <TextView
+                                android:id="@+id/txtNearestAccomodation"
+                                android:paddingLeft="10dp" />
+                        </TableRow>
 
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
 
-                    <TextView
-                            android:id="@+id/lblBikeShop"
-                            android:text="@string/bike_shop"/>
+                            <TextView
+                                android:id="@+id/lblCampground"
+                                android:text="@string/campground" />
 
-                    <TextView
-                            android:id="@+id/txtBikeShop"
-                            android:paddingLeft="10dp"/>
-                </TableRow>
+                            <TextView
+                                android:id="@+id/txtCampground"
+                                android:paddingLeft="10dp" />
+                        </TableRow>
 
-                <TableRow
-                        android:paddingBottom="2dp"
-                        android:paddingTop="2dp">
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
 
-                    <TextView
-                            android:id="@+id/lblServices"
-                            android:text="@string/services"/>
+                            <TextView
+                                android:id="@+id/lblBikeShop"
+                                android:text="@string/bike_shop" />
 
-                    <TextView
-                            android:id="@+id/txtServices"
-                            android:paddingLeft="10dp"/>
-                </TableRow>
-            </TableLayout>
+                            <TextView
+                                android:id="@+id/txtBikeShop"
+                                android:paddingLeft="10dp" />
+                        </TableRow>
 
-            <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:onClick="toggleFeedback"
-                    android:orientation="horizontal"
-                    android:paddingTop="10dp" >
+                        <TableRow
+                            android:paddingBottom="2dp"
+                            android:paddingTop="2dp">
 
-                <ImageView
-                        android:id="@+id/btnToggleFeedback"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:paddingRight="10dp"
-                        android:src="@drawable/expander_min" />
+                            <TextView
+                                android:id="@+id/lblServices"
+                                android:text="@string/services" />
 
-                <TextView
-                        android:id="@+id/lblFeedback"
+                            <TextView
+                                android:id="@+id/txtServices"
+                                android:paddingLeft="10dp" />
+                        </TableRow>
+                    </TableLayout>
+
+                    <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="Feedback"
-                        android:textAppearance="?android:attr/textAppearanceMedium"/>
-            </LinearLayout>
+                        android:clickable="true"
+                        android:onClick="toggleFeedback"
+                        android:orientation="horizontal"
+                        android:paddingTop="10dp">
+
+                        <ImageView
+                            android:id="@+id/btnToggleFeedback"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:paddingRight="10dp"
+                            android:src="@drawable/expander_min" />
+
+                        <TextView
+                            android:id="@+id/lblFeedback"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="Feedback"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                    </LinearLayout>
 
 
-            <fi.bitrite.android.ws.view.FeedbackTable
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/tblFeedback"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:paddingTop="4dp"
-                    android:shrinkColumns="0"
-                    android:visibility="gone">
+                    <fi.bitrite.android.ws.view.FeedbackTable xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:id="@+id/tblFeedback"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:paddingTop="4dp"
+                        android:shrinkColumns="0"
+                        android:visibility="gone">
 
-            </fi.bitrite.android.ws.view.FeedbackTable>
+                    </fi.bitrite.android.ws.view.FeedbackTable>
 
-        </LinearLayout>
-    </ScrollView>
+                </LinearLayout>
+            </ScrollView>
+        </RelativeLayout>
+
+        <include layout="@layout/navigation_drawer" />
+    </android.support.v4.widget.DrawerLayout>
 
 </LinearLayout>

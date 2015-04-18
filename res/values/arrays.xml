@@ -39,7 +39,7 @@
     <string-array name="navigation_menu_activities" translatable="false">
         <item>Maps2Activity</item>
         <item>ListSearchTabActivity</item>
-        <item>StarredHostsTabActivity</item>
+        <item>StarredHostTabActivity</item>
         <item>MessagesTabActivity</item>
         <item>SettingsActivity</item>
         <item>LogoutActivity</item>

@@ -4,23 +4,20 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.Layout;
 import android.text.Spanned;
-import android.text.style.LeadingMarginSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.*;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.activity.model.HostInformation;
@@ -33,13 +30,7 @@ import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
-import fi.bitrite.android.ws.util.http.HttpException;
-import fi.bitrite.android.ws.util.http.HttpUtils;
 import fi.bitrite.android.ws.view.FeedbackTable;
-import roboguice.RoboGuice;
-import roboguice.activity.RoboActionBarActivity;
-import roboguice.inject.InjectView;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,63 +42,35 @@ import static java.util.Collections.sort;
  * The information is retrieved either from the device storage (for starred hosts)
  * or downloaded from the WarmShowers web service.
  */
-public class HostInformationActivity extends RoboActionBarActivity {
+public class HostInformationActivity extends WSBaseActivity
+        implements android.widget.AdapterView.OnItemClickListener {
 
     public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
 
     Menu optionsMenu;
 
-    @InjectView(R.id.layoutHostDetails)
     LinearLayout hostDetails;
-
-    @InjectView(R.id.scrollHostInformation)
     ScrollView hostInformationScroller;
-
-    @InjectView(R.id.btnToggleBasicInformation)
     ImageView basicInformationExpander;
-    @InjectView(R.id.tableBasicInformation)
     TableLayout basicInformation;
-
-    @InjectView(R.id.lblFeedback)
     TextView feedbackLabel;
-    @InjectView(R.id.btnToggleFeedback)
     ImageView feedbackExpander;
-    @InjectView(R.id.tblFeedback)
     FeedbackTable feedbackTable;
-
-    @InjectView(R.id.memberPhoto)
     ImageView memberPhoto;
-
-    @InjectView(R.id.txtHostComments)
     TextView comments;
-    @InjectView(R.id.txtMemberSince)
     TextView memberSince;
-    @InjectView(R.id.txtLastLogin)
     TextView lastLogin;
-    @InjectView(R.id.txtLanguagesSpoken)
     TextView languagesSpoken;
-
-    @InjectView(R.id.txtHostLocation)
     TextView location;
-    @InjectView(R.id.txtHostMobilePhone)
     TextView mobilePhone;
-    @InjectView(R.id.txtHostHomePhone)
     TextView homePhone;
-    @InjectView(R.id.txtHostWorkPhone)
     TextView workPhone;
-    @InjectView(R.id.txtPreferredNotice)
     TextView preferredNotice;
-    @InjectView(R.id.txtMaxGuests)
     TextView maxGuests;
-    @InjectView(R.id.txtNearestAccomodation)
     TextView nearestAccomodation;
-    @InjectView(R.id.txtCampground)
     TextView campground;
-    @InjectView(R.id.txtBikeShop)
     TextView bikeShop;
-    @InjectView(R.id.txtServices)
     TextView services;
-    @InjectView(R.id.lblMemberName)
     TextView lblMemberName;
 
     StarredHostDao starredHostDao = new StarredHostDaoImpl();
@@ -119,8 +82,33 @@ public class HostInformationActivity extends RoboActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.host_information);
+        super.onCreate(savedInstanceState);
+
+
+        hostDetails = (LinearLayout) findViewById(R.id.layoutHostDetails);
+        hostInformationScroller = (ScrollView) findViewById(R.id.scrollHostInformation);
+        basicInformationExpander = (ImageView) findViewById(R.id.btnToggleBasicInformation);
+        basicInformation = (TableLayout) findViewById(R.id.tableBasicInformation);
+        feedbackLabel = (TextView) findViewById(R.id.lblFeedback);
+        feedbackExpander = (ImageView) findViewById(R.id.btnToggleFeedback);
+        feedbackTable = (FeedbackTable) findViewById(R.id.tblFeedback);
+        memberPhoto = (ImageView) findViewById(R.id.memberPhoto);
+        comments = (TextView) findViewById(R.id.txtHostComments);
+        memberSince = (TextView) findViewById(R.id.txtMemberSince);
+        lastLogin = (TextView) findViewById(R.id.txtLastLogin);
+        languagesSpoken = (TextView) findViewById(R.id.txtLanguagesSpoken);
+        location = (TextView) findViewById(R.id.txtHostLocation);
+        mobilePhone = (TextView) findViewById(R.id.txtHostMobilePhone);
+        homePhone = (TextView) findViewById(R.id.txtHostHomePhone);
+        workPhone = (TextView) findViewById(R.id.txtHostWorkPhone);
+        preferredNotice = (TextView) findViewById(R.id.txtPreferredNotice);
+        maxGuests = (TextView) findViewById(R.id.txtMaxGuests);
+        nearestAccomodation = (TextView) findViewById(R.id.txtNearestAccomodation);
+        campground = (TextView) findViewById(R.id.txtCampground);
+        bikeShop = (TextView) findViewById(R.id.txtBikeShop);
+        services = (TextView) findViewById(R.id.txtServices);
+        lblMemberName = (TextView) findViewById(R.id.lblMemberName);
 
         dialogHandler = new DialogHandler(HostInformationActivity.this);
         boolean inProgress = DialogHandler.inProgress();
@@ -169,12 +157,6 @@ public class HostInformationActivity extends RoboActionBarActivity {
 
     }
 
-
-    @Override
-    public void setContentView(int layoutResID) {
-        super.setContentView(layoutResID);
-        RoboGuice.getInjector(this).injectViewMembers(this);
-    }
 
     private boolean intentProvidesFullHostInfo(Intent i) {
         return i.getBooleanExtra("full_info", false);
@@ -352,11 +334,8 @@ public class HostInformationActivity extends RoboActionBarActivity {
      * Choose the variant of a profile picture to use.
      * Unfortunately this is dependent on knowing how imagecache is configured on the server.
      *
-     * @param basePicture
-     *   This is the picture returned by the site, like 'files/pictures/picture-1165.jpg'
-     *
-     * @return
-     *   Either a string with the full URL to the picture or an empty string if no picture exists
+     * @param basePicture This is the picture returned by the site, like 'files/pictures/picture-1165.jpg'
+     * @return Either a string with the full URL to the picture or an empty string if no picture exists
      */
     public String profilePicture(String basePicture) {
         String[] parts = basePicture.split("/", 2);
@@ -370,7 +349,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
 
     /**
      * Download an image into a bitmap in an AsyncTask
-     *
+     * <p/>
      * From http://stackoverflow.com/questions/2471935/how-to-load-an-imageview-by-url-in-android
      */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

@@ -17,19 +17,16 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
 
 import java.util.List;
 
-public class StarredHostTabActivity extends RoboActivity {
+public class StarredHostTabActivity extends WSBaseActivity
+        implements android.widget.AdapterView.OnItemClickListener {
 
     private static final int CONTEXT_MENU_UPDATE = 0;
     private static final int CONTEXT_MENU_DELETE = 1;
 
-    @InjectView(R.id.lstStarredHosts)
     ListView starredHostsList;
-    @InjectView(R.id.lblNoStarredHosts)
     TextView noStarredHostsLabel;
 
     private StarredHostDao starredHostDao = new StarredHostDaoImpl();
@@ -37,8 +34,12 @@ public class StarredHostTabActivity extends RoboActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.starred_hosts_tab);
+        super.onCreate(savedInstanceState);
+
+        starredHostsList = (ListView)findViewById(R.id.lstStarredHosts);
+        noStarredHostsLabel = (TextView)findViewById(R.id.lblNoStarredHosts);
+
         registerForContextMenu(starredHostsList);
     }
 
