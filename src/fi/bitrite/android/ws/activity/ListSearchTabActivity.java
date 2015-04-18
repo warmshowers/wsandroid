@@ -47,10 +47,9 @@ public class ListSearchTabActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.list_tab);
-
-        // Because the parent class accesses R.id.* we have to have a view before calling super.onCreate()
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.list_tab);
+        initView();
 
         mDialogHandler = new DialogHandler(this);
 

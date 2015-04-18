@@ -41,21 +41,21 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
         super.onCreate(savedInstanceState);
         mNavMenuOptions = getResources().getStringArray(R.array.navigation_menu);
 
-        initView();
-        if (mToolbar != null) {
-            mToolbar.setTitle(""); // Garbage text; seems to be required
-            setSupportActionBar(mToolbar);
-        }
-        initDrawer();
     }
 
-    private void initView() {
+    protected void initView() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLeftDrawerList = (ListView) mDrawerLayout.findViewById(R.id.left_drawer);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mNavigationDrawerAdapter = new ArrayAdapter<String>(WSBaseActivity.this, android.R.layout.simple_list_item_1, mNavMenuOptions);
         mLeftDrawerList.setAdapter(mNavigationDrawerAdapter);
         mLeftDrawerList.setOnItemClickListener(this);
+
+        if (mToolbar != null) {
+            mToolbar.setTitle(""); // Garbage text; seems to be required
+            setSupportActionBar(mToolbar);
+        }
+        initDrawer();
     }
 
     private void initDrawer() {

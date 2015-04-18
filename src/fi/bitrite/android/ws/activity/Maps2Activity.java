@@ -30,7 +30,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
@@ -57,7 +56,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class Maps2Activity extends FragmentActivity implements
+public class Maps2Activity extends WSBaseActivity implements
         ClusterManager.OnClusterClickListener<HostBriefInfo>,
         ClusterManager.OnClusterInfoWindowClickListener<HostBriefInfo>,
         ClusterManager.OnClusterItemClickListener<HostBriefInfo>,
@@ -92,6 +91,9 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+
+        initView();
 
         // Google analytics tracker
         ((WSAndroidApplication) getApplication()).getTracker(WSAndroidApplication.TrackerName.APP_TRACKER);
@@ -101,7 +103,6 @@ public class Maps2Activity extends FragmentActivity implements
         mDistanceUnit = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString("distance_unit", "km");
 
-        setContentView(R.layout.activity_maps);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)

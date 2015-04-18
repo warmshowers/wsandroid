@@ -1,12 +1,12 @@
 package fi.bitrite.android.ws.activity;
 
 import android.accounts.Account;
+import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,18 +19,14 @@ import java.io.IOException;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
-import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
-import roboguice.activity.RoboAccountAuthenticatorActivity;
-import roboguice.inject.InjectView;
-import roboguice.util.Strings;
 
 /**
  * The activity responsible for getting WarmShowers credentials from the user,
  * verifying them against the WarmShowers web service and storing and storing
  * them on the device using Android's custom account facilities.
  */
-public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
+public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
     public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
@@ -39,9 +35,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
     private AccountManager accountManager;
 
-    @InjectView(R.id.editUsername)
     EditText editUsername;
-    @InjectView(R.id.editPassword)
     EditText editPassword;
 
     private String username;
@@ -53,6 +47,9 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.credentials);
+
+        editUsername = (EditText) findViewById(R.id.editUsername);
+        editPassword = (EditText) findViewById(R.id.editPassword);
 
         accountManager = AccountManager.get(this);
         dialogHandler = new DialogHandler(this);
@@ -78,7 +75,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
         username = editUsername.getText().toString();
         password = editPassword.getText().toString();
-        if (!Strings.isEmpty(username) && !Strings.isEmpty(password)) {
+        if (!username.isEmpty() && !password.isEmpty()) {
             dialogHandler.showDialog(DialogHandler.AUTHENTICATE);
             Account account = AuthenticationHelper.createNewAccount(username, password);
             AuthenticationTask authTask = new AuthenticationTask();

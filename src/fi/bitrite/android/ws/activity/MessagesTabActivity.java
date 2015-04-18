@@ -32,8 +32,9 @@ public class MessagesTabActivity extends WSBaseActivity implements android.widge
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.messages_tab);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.messages_tab);
+        initView();
 
         mNoNetworkWarning = (TextView)findViewById(R.id.noNetworkWarningMessages);
         mUnreadCount = (TextView)findViewById(R.id.unreadCount);

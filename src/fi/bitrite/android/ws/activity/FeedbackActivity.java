@@ -35,32 +35,22 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.ArrayTranslator;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
 
 /**
  * Responsible for letting the user type in a message and then sending it to a host
  * over the WarmShowers web service.
  */
-public class FeedbackActivity extends RoboActivity {
+public class FeedbackActivity extends WSBaseActivity
+        implements android.widget.AdapterView.OnItemClickListener {
 
-    @InjectView(R.id.txtActivityTitle)
     TextView activityTitleView;
-    @InjectView(R.id.feedbackEditText)
     EditText feedbackEditText;
-    @InjectView(R.id.date_picker)
     DatePicker datePicker;
-    @InjectView(R.id.lblOverallExperience)
     TextView lblOverallExperience;
-    @InjectView(R.id.feedback_overall_experience)
     Spinner feedbackOverallExperience;
-    @InjectView(R.id.feedback_how_we_met)
     Spinner howWeMet;
-    @InjectView(R.id.btnSubmit)
     Button btnSubmit;
-    @InjectView(R.id.btnFeedbackSend)
     ImageView btnFeedbackSend;
-    @InjectView(R.id.noNetworkWarningFeedback)
     TextView noNetworkWarning;
 
     ArrayTranslator translator = ArrayTranslator.getInstance();
@@ -93,6 +83,18 @@ public class FeedbackActivity extends RoboActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
+        initView();
+
+        activityTitleView = (TextView) findViewById(R.id.txtActivityTitle);
+        feedbackEditText = (EditText) findViewById(R.id.feedbackEditText);
+        datePicker = (DatePicker) findViewById(R.id.date_picker);
+        lblOverallExperience = (TextView) findViewById(R.id.lblOverallExperience);
+        feedbackOverallExperience = (Spinner) findViewById(R.id.feedback_overall_experience);
+        howWeMet = (Spinner) findViewById(R.id.feedback_how_we_met);
+        btnSubmit = (Button) findViewById(R.id.btnSubmit);
+        btnFeedbackSend = (ImageView) findViewById(R.id.btnFeedbackSend);
+        noNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningFeedback);
+
 
         dialogHandler = new DialogHandler(this);
 
@@ -108,7 +110,7 @@ public class FeedbackActivity extends RoboActivity {
         // Set up datepicker
         GregorianCalendar now = new GregorianCalendar();
         datePicker.findViewById(Resources.getSystem().getIdentifier("day", "id", "android")).setVisibility(View.GONE);
-        datePicker.init(now.get( Calendar.YEAR), now.get( Calendar.MONTH), now.get( Calendar.DAY_OF_MONTH), null);
+        datePicker.init(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), null);
 
         lblOverallExperience.setText(getString(R.string.lbl_feedback_overall_experience, host.getFullname()));
     }

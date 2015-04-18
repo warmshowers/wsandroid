@@ -82,9 +82,9 @@ public class HostInformationActivity extends WSBaseActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.host_information);
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.host_information);
+        initView();
 
         hostDetails = (LinearLayout) findViewById(R.id.layoutHostDetails);
         hostInformationScroller = (ScrollView) findViewById(R.id.scrollHostInformation);
