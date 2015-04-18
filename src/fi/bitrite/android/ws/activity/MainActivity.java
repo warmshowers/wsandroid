@@ -30,7 +30,6 @@ public class MainActivity extends RoboTabActivity  {
 
     static public MainActivity mainActivity;
 
-    private Dialog splashDialog;
 
     // a host is "stashed" when moving from e.g. the host information activity directly
     // to the map ("Show host on map") and back again.
@@ -49,16 +48,16 @@ public class MainActivity extends RoboTabActivity  {
         handleFirstRun();
 
         setContentView(R.layout.main);
-        if (setupCredentials()) {
-            setupTabs();  // If creds already there, set up tabs now, else wait until login
-        }
-
-        if (savedInstanceState != null) {
-            boolean splash = savedInstanceState.getBoolean("splash", false);
-            if (splash) {
-                showAboutDialog();
-            }
-        }
+//        if (setupCredentials()) {
+//            setupTabs();  // If creds already there, set up tabs now, else wait until login
+//        }
+//
+//        if (savedInstanceState != null) {
+//            boolean splash = savedInstanceState.getBoolean("splash", false);
+//            if (splash) {
+//                showAboutDialog();
+//            }
+//        }
     }
     
     /**
@@ -73,28 +72,8 @@ public class MainActivity extends RoboTabActivity  {
         }
     }
 
-    /**
-     *
-     * @return
-     *   true if we already have an account set up in the AccountManager
-     *   false if we have to wait for the auth screen to process
-     */
-    public boolean setupCredentials() {
-        try {
-            AuthenticationHelper.getWarmshowersAccount();
-            return true;
-        }
-        catch (NoAccountException e) {
-            startAuthenticatorActivity(new Intent(MainActivity.mainActivity, AuthenticatorActivity.class));
-            return false; // Wait to set up tabs until auth is done
-        }
-    }
+
     
-    private void startAuthenticatorActivity(Intent i) {
-        i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        overridePendingTransition(0, 0);
-        startActivityForResult(i, AuthenticatorActivity.REQUEST_TYPE_AUTHENTICATE);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -142,61 +121,29 @@ public class MainActivity extends RoboTabActivity  {
     }   
     
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.menuAccount:
-            startAuthenticationActivityForExistingAccount();
-            return true;
-        case R.id.menuSettings:
-            startSettingsActivity();
-            return true;
-        case R.id.menuAbout:
-            showAboutDialog();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//        case R.id.menuAccount:
+//            startAuthenticationActivityForExistingAccount();
+//            return true;
+//        case R.id.menuSettings:
+//            startSettingsActivity();
+//            return true;
+//        case R.id.menuAbout:
+//            showAboutDialog();
+//            return true;
+//        default:
+//            return super.onOptionsItemSelected(item);
+//        }
+//    }
 
-    private void startAuthenticationActivityForExistingAccount() {
-        Intent i = new Intent(MainActivity.this, AuthenticatorActivity.class);
-        try {
-            Account account = AuthenticationHelper.getWarmshowersAccount();
-            i.putExtra("username", account.name);
-        } catch (NoAccountException e) {
-            // We have no account, so forget it.
-        }
-        startAuthenticatorActivity(i);
-    }
 
-    private void startSettingsActivity() {
-        Intent i = new Intent(MainActivity.this, SettingsActivity.class);
-        startActivity(i);
-    }
 
-    private void showAboutDialog() {
-        splashDialog = new Dialog(this, R.style.about_dialog);
-        splashDialog.setContentView(R.layout.about);
-        TextView versionTextView = (TextView)splashDialog.findViewById(R.id.app_version);
-        versionTextView.setText(getString(R.string.app_version, BuildConfig.VERSION_NAME));
-        TextView googleDetails = (TextView)splashDialog.findViewById(R.id.txtAboutDetailsGoogle);
-        String licenseInfo = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this);
-        if (licenseInfo != null) {
-            // licenseInfo is a bit of a mess (coming directly from google)
-            // Change the multi-\n to <br/>, then change single \n perhaps followed by whitespace to a space
-            // then change the <br/> back to \n
-            licenseInfo = licenseInfo.replaceAll("\n\n+", "<br/>").replaceAll("\n[ \t]*", " ").replace("<br/>", "\n");
-            googleDetails.setText(licenseInfo);
-        }
-        splashDialog.show();
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (splashDialog != null && splashDialog.isShowing()) {
-            outState.putBoolean("splash", true);
-        }
+//        if (splashDialog != null && splashDialog.isShowing()) {
+//            outState.putBoolean("splash", true);
+//        }
     }
 
     public void switchTab(int tab) {

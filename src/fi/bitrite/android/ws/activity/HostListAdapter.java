@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,8 @@ import java.util.List;
 
 public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
-    private int[] colors = new int[]{0xFF000000, 0xFF222222};
+    private int[] colors;
+
 
     private int resource;
     private Context mContext;
@@ -27,6 +29,9 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
         super(context, resource, hosts);
         mContext = context;
         this.resource = resource;
+        int primaryColor = context.getResources().getColor(R.color.primaryColor);
+        int primaryColorDark = context.getResources().getColor(R.color.primaryColorDark);
+        colors = new int[]{primaryColorDark, primaryColor};
     }
 
     @Override

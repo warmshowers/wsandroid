@@ -33,6 +33,7 @@
         <item name="saved_hosts">Saved Hosts</item>
         <item name="messages">Messages</item>
         <item name="settings">Settings</item>
+        <item name="authenticate">Log In</item>
         <item name="logout">Log Out</item>
     </string-array>
 
@@ -42,6 +43,7 @@
         <item>StarredHostTabActivity</item>
         <item>MessagesTabActivity</item>
         <item>SettingsActivity</item>
+        <item>AuthenticatorActivity</item>
         <item>LogoutActivity</item>
     </string-array>
 

@@ -1,5 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
+import android.accounts.Account;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -16,9 +18,12 @@ import android.support.v7.widget.*;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-
+import android.widget.TextView;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.auth.AuthenticationHelper;
+import fi.bitrite.android.ws.auth.NoAccountException;
 
 abstract class WSBaseActivity extends ActionBarActivity implements android.widget.AdapterView.OnItemClickListener {
     protected Toolbar mToolbar;
@@ -29,6 +34,7 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
     protected String[] mNavMenuOptions;
 
     public static final String TAG = "WSBaseActivity";
+    private Dialog splashDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,15 +98,19 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i(TAG, "onOptionsItemSelected() fired");
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.menuAccount:
+                startAuthenticationActivityForExistingAccount();
+                return true;
+            case R.id.menuSettings:
+                startSettingsActivity();
+                return true;
+            case R.id.menuAbout:
+                showAboutDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -133,5 +143,58 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
         // Toast.makeText(this, "onItemClick position=" + Integer.toString(position), Toast.LENGTH_SHORT).show();
     }
 
+    private void startAuthenticatorActivity(Intent i) {
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        overridePendingTransition(0, 0);
+        startActivityForResult(i, AuthenticatorActivity.REQUEST_TYPE_AUTHENTICATE);
+    }
+    /**
+     *
+     * @return
+     *   true if we already have an account set up in the AccountManager
+     *   false if we have to wait for the auth screen to process
+     */
+    public boolean setupCredentials() {
+        try {
+            AuthenticationHelper.getWarmshowersAccount();
+            return true;
+        }
+        catch (NoAccountException e) {
+            startAuthenticatorActivity(new Intent(MainActivity.mainActivity, AuthenticatorActivity.class));
+            return false; // Wait to set up tabs until auth is done
+        }
+    }
+
+    private void startAuthenticationActivityForExistingAccount() {
+        Intent i = new Intent(this, AuthenticatorActivity.class);
+        try {
+            Account account = AuthenticationHelper.getWarmshowersAccount();
+            i.putExtra("username", account.name);
+        } catch (NoAccountException e) {
+            // We have no account, so forget it.
+        }
+        startAuthenticatorActivity(i);
+    }
+    private void startSettingsActivity() {
+        Intent i = new Intent(this, SettingsActivity.class);
+        startActivity(i);
+    }
+
+    private void showAboutDialog() {
+        splashDialog = new Dialog(this, R.style.about_dialog);
+        splashDialog.setContentView(R.layout.about);
+        TextView versionTextView = (TextView)splashDialog.findViewById(R.id.app_version);
+        versionTextView.setText(getString(R.string.app_version, BuildConfig.VERSION_NAME));
+        TextView googleDetails = (TextView)splashDialog.findViewById(R.id.txtAboutDetailsGoogle);
+        String licenseInfo = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this);
+        if (licenseInfo != null) {
+            // licenseInfo is a bit of a mess (coming directly from google)
+            // Change the multi-\n to <br/>, then change single \n perhaps followed by whitespace to a space
+            // then change the <br/> back to \n
+            licenseInfo = licenseInfo.replaceAll("\n\n+", "<br/>").replaceAll("\n[ \t]*", " ").replace("<br/>", "\n");
+            googleDetails.setText(licenseInfo);
+        }
+        splashDialog.show();
+    }
 
 }
