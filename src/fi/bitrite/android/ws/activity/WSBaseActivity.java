@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,43 +17,51 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v7.widget.*;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
+import fi.bitrite.android.ws.model.NavRow;
 
 abstract class WSBaseActivity extends ActionBarActivity implements android.widget.AdapterView.OnItemClickListener {
     protected Toolbar mToolbar;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLeftDrawerList;
-    private ArrayAdapter<String> mNavigationDrawerAdapter;
-    protected String[] mNavMenuOptions;
-    protected String[] mNavMenuActivities;
+    private NavDrawerListAdapter mNavDrawerListAdapter;
 
     public static final String TAG = "WSBaseActivity";
     private Dialog splashDialog;
-    protected HashMap<String, Integer> mActivityNameMap = new HashMap<String, Integer>();
-    protected HashMap<String, String> mActivityClassToFriendly = new HashMap<String, String>();
     protected String mActivityName = this.getClass().getSimpleName();
-    private String mActivityFriendly;
+    protected ArrayList<NavRow> mNavRowList = new ArrayList<NavRow>();
+    String mActivityFriendly;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mNavMenuOptions = getResources().getStringArray(R.array.navigation_menu);
-        mNavMenuActivities = getResources().getStringArray(R.array.navigation_menu_activities);
-        for (int i=0; i<mNavMenuOptions.length; i++) {
-            mActivityNameMap.put(mNavMenuActivities[i], i);
-            mActivityClassToFriendly.put(mNavMenuActivities[i], mNavMenuOptions[i]);
+
+        String[] navMenuOptions = getResources().getStringArray(R.array.nav_menu_options);
+        String[] navMeuActivities = getResources().getStringArray(R.array.nav_menu_activities);
+        HashMap<String, String> mActivityClassToFriendly = new HashMap<String, String>();
+
+        TypedArray icons = getResources().obtainTypedArray(R.array.nav_menu_icons);
+        for (int i=0; i<navMenuOptions.length; i++) {
+            mActivityClassToFriendly.put(navMeuActivities[i], navMenuOptions[i]);
+
+            // TODO: Fix the default icon, implement the action management
+            int icon = icons.getResourceId(i, R.drawable.ic_action_email);
+            NavRow row = new NavRow(icon, navMenuOptions[i], navMeuActivities[i]);
+            mNavRowList.add(row);
+//            mActivityNameMap.put(mNavMenuActivities[i], i);
+//            mActivityClassToFriendly.put(mNavMenuActivities[i], mNavMenuOptions[i]);
         }
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
 
@@ -62,8 +71,8 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLeftDrawerList = (ListView) mDrawerLayout.findViewById(R.id.left_drawer);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mNavigationDrawerAdapter = new ArrayAdapter<String>(WSBaseActivity.this, android.R.layout.simple_list_item_1, mNavMenuOptions);
-        mLeftDrawerList.setAdapter(mNavigationDrawerAdapter);
+        mNavDrawerListAdapter = new NavDrawerListAdapter(this, mNavRowList);
+        mLeftDrawerList.setAdapter(mNavDrawerListAdapter);
         mLeftDrawerList.setOnItemClickListener(this);
 
         if (mToolbar != null) {
@@ -150,7 +159,7 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
      * @param id
      */
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String[] activities = getResources().getStringArray(R.array.navigation_menu_activities);
+        String[] activities = getResources().getStringArray(R.array.nav_menu_activities);
         try {
             Class activityClass =  Class.forName(this.getPackageName() + ".activity." + activities[position]);
             Intent i = new Intent(this, activityClass);

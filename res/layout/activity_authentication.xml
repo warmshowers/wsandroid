@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar" />
+
+    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/drawer_layout">
+        <!-- activity view -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:background="#fff"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/lblCredentials"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:text="@string/enter_credentials" />
+
+            <EditText
+                android:id="@+id/editUsername"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="@string/username_hint">
+
+                <requestFocus />
+            </EditText>
+
+            <EditText
+                android:id="@+id/editPassword"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:hint="@string/password_hint" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/okButton"
+                    android:layout_width="fill_parent"
+                    android:layout_weight="1.0"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ok"
+                    android:onClick="applyCredentials" />
+
+                <Button
+                    android:id="@+id/cancelButton"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.0"
+                    android:text="@string/cancel"
+                    android:onClick="cancel" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/lblAboutCredentials"
+                android:layout_width="wrap_content"
+                android:layout_height="0dip"
+                android:layout_weight="1.0"
+                android:paddingTop="10dp"
+                android:text="@string/about_credentials" />
+
+        </LinearLayout>
+
+        <include layout="@layout/navigation_drawer" />
+    </android.support.v4.widget.DrawerLayout>
+
+
+</LinearLayout>

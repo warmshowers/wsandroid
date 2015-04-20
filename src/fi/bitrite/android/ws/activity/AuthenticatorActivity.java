@@ -1,7 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
 import android.accounts.Account;
-import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
@@ -26,7 +25,7 @@ import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
  * verifying them against the WarmShowers web service and storing and storing
  * them on the device using Android's custom account facilities.
  */
-public class AuthenticatorActivity extends AccountAuthenticatorActivity {
+public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity {
 
     public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
     public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
@@ -46,7 +45,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.credentials);
+        setContentView(R.layout.activity_authentication);
+        initView();
 
         editUsername = (EditText) findViewById(R.id.editUsername);
         editPassword = (EditText) findViewById(R.id.editPassword);

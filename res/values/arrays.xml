@@ -27,29 +27,39 @@
         <item>Negative</item>
     </string-array>
 
-    <string-array name="navigation_menu">
-        <item name="map">Map</item>
-        <item name="text_search">Text Search</item>
-        <item name="favorites">Favorites</item>
-        <item name="messages">Messages</item>
-        <item name="settings">Settings</item>
-        <item name="authenticate">Log In</item>
-        <item name="logout">Log Out</item>
-        <item name="about">About</item>
-        <item name="legal">Open Source Licenses</item>
+    <!-- Translatable text of Navigation Drawer Menu -->
+    <string-array name="nav_menu_options">
+        <item >Map</item>
+        <item >Text Search</item>
+        <item >Favorites</item>
+        <item >Messages</item>
+        <item >Settings</item>
+        <item >Account/LogIn</item>
+        <item >About</item>
+        <item >Open Source Licenses</item>
     </string-array>
 
-    <string-array name="navigation_menu_activities" translatable="false">
+    <string-array name="nav_menu_activities" translatable="false">
         <item>Maps2Activity</item>
         <item>ListSearchTabActivity</item>
         <item>StarredHostTabActivity</item>
         <item>MessagesTabActivity</item>
         <item>SettingsActivity</item>
         <item>AuthenticatorActivity</item>
-        <item>LogoutActivity</item>
         <item>AboutActivity</item>
         <item>LegalActivity</item>
     </string-array>
 
+    <string-array name="nav_menu_icons" translatable="false">
+        <item>@drawable/ic_list_on</item>
+        <item>@drawable/ic_list_off</item>
+        <item>@drawable/ic_action_star_on</item>
+        <item>@drawable/ic_list_on</item>
+        <item>@drawable/ic_list_off</item>
+        <item>@drawable/ic_action_star_on</item>
+        <item>@drawable/ic_list_on</item>
+        <item>@drawable/ic_list_off</item>
+        <item>@drawable/ic_action_star_on</item>
+    </string-array>
 
 </resources>
