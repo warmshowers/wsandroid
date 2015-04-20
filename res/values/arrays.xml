@@ -33,8 +33,9 @@
         <item >Text Search</item>
         <item >Favorites</item>
         <item >Messages</item>
-        <item >Settings</item>
         <item >Account/LogIn</item>
+        <item >Settings</item>
+        <item>Help &amp; Feedback</item>
         <item >About</item>
         <item >Open Source Licenses</item>
     </string-array>
@@ -44,22 +45,23 @@
         <item>ListSearchTabActivity</item>
         <item>StarredHostTabActivity</item>
         <item>MessagesTabActivity</item>
-        <item>SettingsActivity</item>
         <item>AuthenticatorActivity</item>
+        <item>SettingsActivity</item>
+        <item>HelpActivity</item>
         <item>AboutActivity</item>
         <item>LegalActivity</item>
     </string-array>
 
     <string-array name="nav_menu_icons" translatable="false">
-        <item>@drawable/ic_list_on</item>
-        <item>@drawable/ic_list_off</item>
-        <item>@drawable/ic_action_star_on</item>
-        <item>@drawable/ic_list_on</item>
-        <item>@drawable/ic_list_off</item>
-        <item>@drawable/ic_action_star_on</item>
-        <item>@drawable/ic_list_on</item>
-        <item>@drawable/ic_list_off</item>
-        <item>@drawable/ic_action_star_on</item>
+        <item>@drawable/ic_action_search</item>
+        <item>@drawable/ic_action_search</item>
+        <item>@drawable/ic_action_search</item>
+        <item>@drawable/ic_action_search</item>
+        <item>@drawable/ic_action_search</item>
+        <item>@drawable/ic_action_search</item>
+        <item>@drawable/ic_action_search</item>
+        <item>@drawable/ic_action_search</item>
+        <item>@drawable/ic_action_search</item>
     </string-array>
 
 </resources>
