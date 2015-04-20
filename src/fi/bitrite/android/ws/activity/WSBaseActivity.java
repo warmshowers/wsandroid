@@ -172,8 +172,6 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
     }
 
     private void startAuthenticatorActivity(Intent i) {
-        i.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        overridePendingTransition(0, 0);
         startActivityForResult(i, AuthenticatorActivity.REQUEST_TYPE_AUTHENTICATE);
     }
     /**
