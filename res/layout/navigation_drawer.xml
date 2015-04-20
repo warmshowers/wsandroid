@@ -1,19 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?><!-- navigation drawer -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- navigation drawer -->
+
     <RelativeLayout
         android:layout_gravity="left|start"
         android:layout_width="match_parent"
         android:background="#fff"
         android:layout_height="match_parent">
 
-        <ListView
-            android:id="@+id/left_drawer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
 
-            android:background="#fff"
-             />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Warm Showers"
+                    android:id="@+id/AppLabel"
+                    android:layout_marginLeft="32dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You are not logged in. Use the Account/Login selection below."
+                    android:id="@+id/lblNotLoggedIn"
+                    android:layout_marginLeft="32dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Username"
+                    android:id="@+id/lblUsername"
+                    android:layout_marginLeft="32dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Some other text"
+                    android:id="@+id/textView2"
+                    android:layout_marginLeft="32dp" />
+            </LinearLayout>
+
+
+            <ListView
+                android:id="@+id/left_drawer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:background="#fff" />
+        </LinearLayout>
+
     </RelativeLayout>
 </merge>

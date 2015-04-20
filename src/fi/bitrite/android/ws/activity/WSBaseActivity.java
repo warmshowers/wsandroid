@@ -60,8 +60,6 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
             int icon = icons.getResourceId(i, R.drawable.ic_action_email);
             NavRow row = new NavRow(icon, navMenuOptions[i], navMeuActivities[i]);
             mNavRowList.add(row);
-//            mActivityNameMap.put(mNavMenuActivities[i], i);
-//            mActivityClassToFriendly.put(mNavMenuActivities[i], mNavMenuOptions[i]);
         }
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
 
@@ -84,7 +82,7 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
 
     private void initDrawer() {
 
-//        ListView leftDrawer = (ListView)findViewById(R.id.left_drawer);
+        ListView leftDrawer = (ListView)findViewById(R.id.left_drawer);
 //        View navItem = (View)leftDrawer.getItemAtPosition(mActivityNameMap.get(mActivityName));
 
 
@@ -103,6 +101,21 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        // Initialize the account info
+//        if (!setupCredentials()) {
+//            return;
+//        }
+        TextView lblUsername = (TextView) mDrawerLayout.findViewById(R.id.lblUsername);
+        TextView lblNotLoggedIn = (TextView) mDrawerLayout.findViewById(R.id.lblNotLoggedIn);
+        try {
+            String username = AuthenticationHelper.getAccountUsername();
+            lblUsername.setText(username);
+        } catch (NoAccountException e) {
+            lblNotLoggedIn.setVisibility(View.VISIBLE);
+            lblUsername.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -174,6 +187,7 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
     private void startAuthenticatorActivity(Intent i) {
         startActivityForResult(i, AuthenticatorActivity.REQUEST_TYPE_AUTHENTICATE);
     }
+
     /**
      *
      * @return
@@ -187,7 +201,7 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
         }
         catch (NoAccountException e) {
             startAuthenticatorActivity(new Intent(this, AuthenticatorActivity.class));
-            return false; // Wait to set up tabs until auth is done
+            return false;
         }
     }
 
