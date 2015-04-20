@@ -14,15 +14,16 @@
             android:id="@id/icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="32dp"
-            android:src="@drawable/ic_drawer_listennow" />
+            android:src="@drawable/ic_search_grey600_24dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Menu Text"
             android:id="@+id/menu_text"
-            android:textAppearance="?android:textAppearanceMedium" />
+            android:textColor="#000000"
+            android:textStyle="normal"
+            android:layout_marginLeft="32dp"
+            android:alpha="0.87" />
     </LinearLayout>
 </LinearLayout>

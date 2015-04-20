@@ -12,8 +12,8 @@
             android:id="@+id/left_drawer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="#eee"
+
             android:background="#fff"
-            android:dividerHeight="1dp" />
+             />
     </RelativeLayout>
 </merge>
