@@ -59,7 +59,9 @@ public class RestTextSearch extends RestClient implements Search {
                         account.get("province").toString(),
                         account.get("country").toString(),
                         account.get("comments").toString(),
-                        (account.get("notcurrentlyavailable").toString().equals("1"))
+                        (account.get("notcurrentlyavailable").toString().equals("1")),
+                        account.getString("access"),
+                        account.getString("created")
                 );
                 list.add(bi);
             }
