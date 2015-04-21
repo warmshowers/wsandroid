@@ -57,8 +57,9 @@
                 android:id="@+id/left_drawer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
-                android:background="#fff" />
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0dp"
+                android:background="#ffffff" />
         </LinearLayout>
 
     </RelativeLayout>
