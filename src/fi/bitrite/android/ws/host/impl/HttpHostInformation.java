@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 public class HttpHostInformation extends RestClient {
 
     public Host getHostInformation(int uid) throws JSONException, IOException, URISyntaxException {
+        // TODO: This usage is DEPRECATED. We're supposed to use services/rest/user/<uid>
         String simpleUrl = GlobalInfo.warmshowersBaseUrl + "/user/" + Integer.toString(uid) + "/json";
         JSONObject jsonObject = get(simpleUrl);
 
