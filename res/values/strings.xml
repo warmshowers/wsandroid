@@ -135,5 +135,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_hint">Host name or city/town</string>
     <string name="action_search">Host search</string>
+    <string name="contact_host">Contact Member</string>
 
 </resources>

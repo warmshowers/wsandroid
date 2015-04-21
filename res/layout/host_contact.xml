@@ -11,38 +11,17 @@
         android:layout_height="match_parent"
         android:id="@+id/drawer_layout">
         <!-- activity view -->
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:background="#fff"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="fill_parent"
+            <TextView
+                android:id="@+id/txtContactHostTitle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="10dp"
-                android:paddingTop="5dp">
-
-                <TextView
-                    android:id="@+id/txtContactHostTitle"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="Message to "
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                <ImageView
-                    android:id="@+id/btnHostContact"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:clickable="true"
-                    android:onClick="sendMessageToHost"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="2dp"
-                    android:src="@drawable/send_message" />
-            </LinearLayout>
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
                 android:id="@+id/noNetworkWarningContact"
@@ -69,7 +48,15 @@
                 android:gravity="top"
                 android:hint="@string/message_hint"
                 android:inputType="textMultiLine|textCapSentences" />
-        </RelativeLayout>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/send_message"
+                android:onClick="sendMessageToHost"
+                android:id="@+id/btnHostContact" />
+
+        </LinearLayout>
 
         <include layout="@layout/navigation_drawer" />
     </android.support.v4.widget.DrawerLayout>

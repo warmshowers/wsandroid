@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,7 +36,7 @@ public class HostContactActivity extends WSBaseActivity
     TextView title;
     EditText editSubject;
     EditText editMessage;
-    ImageView btnHostContact;
+    Button btnHostContact;
     TextView noNetworkWarning;
 
     private Host host;
@@ -63,7 +64,7 @@ public class HostContactActivity extends WSBaseActivity
         title = (TextView) findViewById(R.id.txtContactHostTitle);
         editSubject = (EditText) findViewById(R.id.editContactHostSubject);
         editMessage = (EditText) findViewById(R.id.editContactHostSubject);
-        btnHostContact = (ImageView) findViewById(R.id.btnHostContact);
+        btnHostContact = (Button) findViewById(R.id.btnHostContact);
         noNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningContact);
 
         dialogHandler = new DialogHandler(this);

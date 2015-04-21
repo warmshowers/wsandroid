@@ -186,7 +186,6 @@ public class HostInformationActivity extends WSBaseActivity
 
     private void setHostStarredInUI() {
         optionsMenu.findItem(R.id.menuStarIcon).setIcon(hostInfo.isStarred() ? R.drawable.ic_action_star_on : R.drawable.ic_action_star_off);
-        optionsMenu.findItem(R.id.menuStar).setTitle(getResources().getString(hostInfo.isStarred() ? R.string.unstar_this_host : R.string.star_this_host));
     }
 
     private void toggleHostStarredOnDevice() {
@@ -437,7 +436,7 @@ public class HostInformationActivity extends WSBaseActivity
         inflater.inflate(R.menu.host_information_actions, menu);
         optionsMenu = menu;
         setHostStarredInUI();
-        return super.onCreateOptionsMenu(menu);
+        return true; // Do not call super, as we don't want the default options menu...
     }
 
     @Override
@@ -447,11 +446,9 @@ public class HostInformationActivity extends WSBaseActivity
                 onBackPressed();
                 return true;
             case R.id.menuSendMessageIcon:
-            case R.id.menuSendMessage:
                 contactHost(null);
                 return true;
             case R.id.menuStarIcon:
-            case R.id.menuStar:
                 toggleHostStarred();
                 showStarHostToast(null);
                 return true;
