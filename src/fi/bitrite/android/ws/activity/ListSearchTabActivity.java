@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -54,36 +55,10 @@ public class ListSearchTabActivity
         mDialogHandler = new DialogHandler(this);
 
         mNoNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningList);
-        mListSearchEdit = (EditText) findViewById(R.id.editListSearch);
-        mListSearchButton = (ImageView) findViewById(R.id.btnListSearch);
         mListSearchResult = (ListView) findViewById(R.id.lstSearchResult);
-        mSearchEditLayout = (LinearLayout) findViewById(R.id.searchEditLayout);
         mSearchResultsLayout = (LinearLayout) findViewById(R.id.listSummaryLayout);
         mMultipleHostsAddress = (TextView) findViewById(R.id.multipleHostAddress);
         mHostsAtAddress = (TextView) findViewById(R.id.hostsAtAddress);
-
-        setupListSearch(savedInstanceState);
-
-//        mToolbar.setTitleTextColor(0xffffff);
-        mToolbar.setTitle(getString(R.string.text_search_title));
-    }
-
-    private void setupListSearch(Bundle savedInstanceState) {
-        mListSearchEdit.setOnEditorActionListener(new OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    startSearchUsingEditFieldInput();
-                }
-
-                return true;
-            }
-        });
-
-        mListSearchButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startSearchUsingEditFieldInput();
-            }
-        });
 
         mListSearchResult.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -96,13 +71,30 @@ public class ListSearchTabActivity
             }
         });
 
-        // Hide the SearchResults header by default
-        mSearchResultsLayout.setVisibility(View.INVISIBLE);
-        mSearchResultsLayout.getLayoutParams().height = 0;
+        if (savedInstanceState != null) {
+            mListSearchHosts = savedInstanceState.getParcelableArrayList("list_search_hosts");
+        }
 
-        Intent receivedIntent = getIntent();
-        if (receivedIntent.hasExtra("search_results")) {
-            mListSearchHosts = receivedIntent.getParcelableArrayListExtra("search_results");
+        handleIntent(getIntent());
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        handleIntent(intent);
+    }
+
+    void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            doTextSearch(query);
+        } else if (intent.hasExtra("search_results")) {
+            // TODO: What is search_results used for, why is it passed this way?
+            // It may be an obsolete attempt to show cluster members from maps2activity
+            mListSearchHosts = intent.getParcelableArrayListExtra("search_results");
             if (!mListSearchHosts.isEmpty()) {
                 // Hide the SearchEdit
                 mSearchEditLayout.setVisibility(View.INVISIBLE);
@@ -114,30 +106,26 @@ public class ListSearchTabActivity
                 mMultipleHostsAddress.setText(mListSearchHosts.get(0).getLocation());
                 mHostsAtAddress.setText(getString(R.string.host_count, mListSearchHosts.size()));
             }
-        } else if (savedInstanceState != null) {
-            mListSearchHosts = savedInstanceState.getParcelableArrayList("list_search_hosts");
-        }
-        boolean inProgress = DialogHandler.inProgress();
-        if (mListSearchHosts != null) {
-            mListSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
-                    R.layout.host_list_item, mListSearchHosts));
-        }
-
-        if (inProgress) {
-            mDialogHandler.dismiss();
-            doTextSearch(savedInstanceState.getString("search_text"));
         }
     }
 
-    protected void startSearchUsingEditFieldInput() {
-        hideKeyboard();
-        doTextSearch(mListSearchEdit.getText().toString());
-    }
-
-    private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mListSearchEdit.getWindowToken(), 0);
-    }
+    // TODO: Remove this
+//    private void setupListSearch(Bundle savedInstanceState) {
+//
+//        // Hide the SearchResults header by default
+//        mSearchResultsLayout.setVisibility(View.GONE);
+//
+//        boolean inProgress = DialogHandler.inProgress();
+//        if (mListSearchHosts != null) {
+//            mListSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
+//                    R.layout.host_list_item, mListSearchHosts));
+//        }
+//
+//        if (inProgress) {
+//            mDialogHandler.dismiss();
+//            doTextSearch(savedInstanceState.getString("search_text"));
+//        }
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -203,7 +191,6 @@ public class ListSearchTabActivity
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("list_search_hosts", mListSearchHosts);
         if (DialogHandler.inProgress() && mTextSearchTask != null) {
-            outState.putString("search_text", mListSearchEdit.getText().toString());
             mTextSearchTask.cancel(true);
         }
         super.onSaveInstanceState(outState);
@@ -214,10 +201,8 @@ public class ListSearchTabActivity
         super.onResume();
         if (!Tools.isNetworkConnected(this)) {
             mNoNetworkWarning.setText(getString(R.string.not_connected_to_network));
-            mListSearchEdit.setEnabled(false);
             return;
         }
-        mListSearchEdit.setEnabled(true);
         mNoNetworkWarning.setText("");
         mNoNetworkWarning.setVisibility(View.GONE);
     }
@@ -225,7 +210,6 @@ public class ListSearchTabActivity
     @Override
     protected void onPause() {
         super.onPause();
-        hideKeyboard();
     }
 
     @Override
