@@ -53,7 +53,7 @@ public class StarredHostTabActivity extends WSBaseActivity
             noStarredHostsLabel.setVisibility(View.GONE);
             starredHostList.setVisibility(View.VISIBLE);
 
-            starredHostList.setAdapter(new HostListAdapter(this, R.layout.host_list_item, starredHosts));
+            starredHostList.setAdapter(new HostListAdapter(this, R.layout.host_list_item, null, starredHosts));
 
             starredHostList.setOnItemClickListener(new OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

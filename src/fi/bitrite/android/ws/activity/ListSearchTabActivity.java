@@ -34,10 +34,9 @@ public class ListSearchTabActivity
         implements android.widget.AdapterView.OnItemClickListener {
 
     ArrayList<HostBriefInfo> mListSearchHosts;
+    String mQuery = "";
 
     TextView mNoNetworkWarning;
-    EditText mListSearchEdit;
-    ImageView mListSearchButton;
     ListView mListSearchResult;
     DialogHandler mDialogHandler;
     TextSearchTask mTextSearchTask;
@@ -89,8 +88,8 @@ public class ListSearchTabActivity
     void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            doTextSearch(query);
+            mQuery = intent.getStringExtra(SearchManager.QUERY);
+            doTextSearch(mQuery);
         } else if (intent.hasExtra("search_results")) {
             // TODO: What is search_results used for, why is it passed this way?
             // It may be an obsolete attempt to show cluster members from maps2activity
@@ -109,23 +108,6 @@ public class ListSearchTabActivity
         }
     }
 
-    // TODO: Remove this
-//    private void setupListSearch(Bundle savedInstanceState) {
-//
-//        // Hide the SearchResults header by default
-//        mSearchResultsLayout.setVisibility(View.GONE);
-//
-//        boolean inProgress = DialogHandler.inProgress();
-//        if (mListSearchHosts != null) {
-//            mListSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
-//                    R.layout.host_list_item, mListSearchHosts));
-//        }
-//
-//        if (inProgress) {
-//            mDialogHandler.dismiss();
-//            doTextSearch(savedInstanceState.getString("search_text"));
-//        }
-//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -178,7 +160,7 @@ public class ListSearchTabActivity
 
             mListSearchHosts = (ArrayList<HostBriefInfo>) result;
             mListSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
-                    R.layout.host_list_item, mListSearchHosts));
+                    R.layout.host_list_item, mQuery, mListSearchHosts));
 
             if (mListSearchHosts.isEmpty()) {
                 mDialogHandler.alert(getResources().getString(R.string.no_results));
