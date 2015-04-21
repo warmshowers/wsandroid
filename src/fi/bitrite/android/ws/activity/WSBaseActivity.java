@@ -130,29 +130,6 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = new MenuInflater(this);
-        inflater.inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menuAccount:
-                startAuthenticationActivityForExistingAccount();
-                return true;
-            case R.id.menuSettings:
-                startSettingsActivity();
-                return true;
-            case R.id.menuAbout:
-                showAboutDialog();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     public void onBackPressed() {
