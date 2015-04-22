@@ -257,7 +257,6 @@ public class HostInformationActivity extends WSBaseActivity
             iconAvailableStatus.setAlpha(1.0f);
         }
 
-        DateFormat simpleDate = DateFormat.getDateInstance();
         String activeDate = host.getLastLogin();
         String createdDate = host.getMemberSince();
 

@@ -9,6 +9,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.util.ArrayTranslator;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,7 +66,9 @@ public class FeedbackTable extends TableLayout {
 
             // Present hosted date without DOM because we don't carry that.
             int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY;
-            String hostedOn = DateUtils.formatDateTime(mContext, f.getHostingDate() * 1000L, flags);
+            Date d;
+
+            String hostedOn = SimpleDateFormat.getDateInstance().format(f.getHostingDate());
             sb.append(" (");
             sb.append(hostedOn);
             sb.append(") - ");
