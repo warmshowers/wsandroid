@@ -34,9 +34,8 @@ public class FeedbackTable extends TableLayout {
 
         int i = 0;
         for (Feedback f : feedback) {
-            int bgColor = (i++ % 2 == 0) ? 0 : 0xFF222222;
 
-            TableRow tr = getFeedbackRow(bgColor);
+            TableRow tr = getFeedbackRow();
             TextView rating = getFeedbackText(getRowHeaderString(f));
             rating.setTypeface(null, Typeface.ITALIC);
             rating.setTextSize(16);
@@ -44,13 +43,13 @@ public class FeedbackTable extends TableLayout {
             tr.addView(rating);
             addView(tr);
 
-            tr = getFeedbackRow(bgColor);
+            tr = getFeedbackRow();
             TextView meta = getFeedbackText(getAuthorString(f));
             meta.setTypeface(null, Typeface.ITALIC);
             tr.addView(meta);
             addView(tr);
 
-            tr = getFeedbackRow(bgColor);
+            tr = getFeedbackRow();
             TextView body = getFeedbackText(f.getBody());
             body.setPadding(0, 0, 0, 5);
             tr.addView(body);
@@ -88,20 +87,19 @@ public class FeedbackTable extends TableLayout {
     private TextView getFeedbackText(String text) {
         TextView row = new TextView(getContext());
         row.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.FILL_PARENT,
+                TableRow.LayoutParams.MATCH_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT
         ));
         row.setText(text);
         return row;
     }
 
-    private TableRow getFeedbackRow(int bgColor) {
+    private TableRow getFeedbackRow() {
         TableRow tr = new TableRow(getContext());
         tr.setLayoutParams(new TableRow.LayoutParams(
-                TableRow.LayoutParams.FILL_PARENT,
+                TableRow.LayoutParams.MATCH_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT
         ));
-        tr.setBackgroundColor(bgColor);
         return tr;
     }
 }

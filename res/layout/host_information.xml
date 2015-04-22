@@ -16,7 +16,7 @@
                 android:id="@+id/scrollHostInformation"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:scrollbars="none">
+                android:scrollbars="vertical">
 
                 <LinearLayout
                     android:id="@+id/layoutHostDetails"
@@ -307,7 +307,8 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
                             android:paddingTop="4dp"
-                            android:shrinkColumns="0">
+                            android:shrinkColumns="0"
+                            android:layout_marginLeft="56dp">
 
                         </fi.bitrite.android.ws.view.FeedbackTable>
                     </LinearLayout>
