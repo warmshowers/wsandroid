@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -318,12 +319,16 @@ public class HostInformationActivity extends WSBaseActivity
             dialogHandler.alert(getResources().getString(R.string.host_not_available));
         }
 
-        // If we're connected, get host picture.
+        // If we're connected and there is a picture, get host picture.
         if (Tools.isNetworkConnected(this)) {
             String url = profilePicture(host.getPicture());
             if (!url.isEmpty()) {
                 new DownloadImageTask(memberPhoto)
                         .execute(url);
+            } else {
+                memberPhoto.setVisibility(View.GONE);
+                lblMemberName.setTextColor(Color.BLACK);
+                lblMemberName.setTextSize(24);
             }
         }
 
@@ -341,7 +346,7 @@ public class HostInformationActivity extends WSBaseActivity
         String url = "";
 
         if (!basePicture.isEmpty() && parts.length == 2) {
-            url = GlobalInfo.warmshowersBaseUrl + "/" + parts[0] + "/imagecache/mobile_profile_photo_std/" + parts[1];
+            url = GlobalInfo.warmshowersBaseUrl + "/" + parts[0] + "/imagecache/mobile_photo_4x3/" + parts[1];
         }
         return url;
     }
@@ -374,6 +379,8 @@ public class HostInformationActivity extends WSBaseActivity
             if (result != null) {
                 bmImage.setImageBitmap(result);
                 Tools.scaleImage(bmImage, bmImage.getWidth());
+                // Attempt to now force the name on top of the picture
+                lblMemberName.setTextColor(Color.WHITE);
             }
         }
     }
