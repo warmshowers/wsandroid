@@ -272,13 +272,13 @@ public class HostInformationActivity extends WSBaseActivity
         txtHostLocation.setText(host.getLocation());
         String phones = "";
         if (!host.getMobilePhone().isEmpty()) {
-            phones += getString(R.string.mobile_phone_abbrev, host.getMobilePhone());
+            phones += getString(R.string.mobile_phone_abbrev, host.getMobilePhone()) + " ";
         }
         if (!host.getHomePhone().isEmpty()) {
-            phones += getString(R.string.home_phone_abbrev, host.getHomePhone());
+            phones += getString(R.string.home_phone_abbrev, host.getHomePhone())  + " ";
         }
         if (!host.getWorkPhone().isEmpty()) {
-            phones += getString(R.string.work_phone_abbrev, host.getWorkPhone());
+            phones += getString(R.string.work_phone_abbrev, host.getWorkPhone())  + " ";
         }
         if (!phones.isEmpty()) {
             txtPhone.setText(phones);
