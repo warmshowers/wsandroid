@@ -315,10 +315,6 @@ public class HostInformationActivity extends WSBaseActivity
 
         hostDetails.setVisibility(View.VISIBLE);
 
-        if (host.isNotCurrentlyAvailable()) {
-            dialogHandler.alert(getResources().getString(R.string.host_not_available));
-        }
-
         // If we're connected and there is a picture, get host picture.
         if (Tools.isNetworkConnected(this)) {
             String url = profilePicture(host.getPicture());

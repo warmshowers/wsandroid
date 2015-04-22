@@ -29,7 +29,7 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
     public HostListAdapter(Context context, int resource, String query, List<HostBriefInfo> hosts) {
         super(context, resource, hosts);
         mContext = context;
-        mQuery = query.toLowerCase();
+        mQuery = (query != null && !query.isEmpty()) ? query.toLowerCase() : null;
         mResource = resource;
     }
 
