@@ -56,6 +56,9 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
             icon.setImageResource(R.drawable.ic_home_variant_grey600_24dp);
             icon.setAlpha(0.5f);
             hostFullname += " " + mContext.getString(R.string.host_not_currently_available);
+        } else {
+            icon.setImageResource(R.drawable.ic_home_variant_black_24dp);
+            icon.setAlpha(1.0f);
         }
 
         DateFormat simpleDate = DateFormat.getDateInstance();
