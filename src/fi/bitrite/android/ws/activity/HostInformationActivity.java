@@ -132,7 +132,7 @@ public class HostInformationActivity extends WSBaseActivity
             updateViewContent();
         }
 
-        getSupportActionBar().setTitle(getString(R.string.hostinfo_actiivity_title));
+        getSupportActionBar().setTitle(getString(R.string.hostinfo_activity_title));
 
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -240,6 +240,8 @@ public class HostInformationActivity extends WSBaseActivity
 
         String fullname = hostInfo.getHost().getFullname();
         lblMemberName.setText(fullname);
+        getSupportActionBar().setTitle(fullname);
+
 
         // Host Availability:
         // TODO: Copied from HostListAdapter.java, needs to be refactored

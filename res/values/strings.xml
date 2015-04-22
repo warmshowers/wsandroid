@@ -116,7 +116,7 @@
     <string name="feedback_overall_experience_error">You must choose a value for overall experience with this member</string>
     <string name="embedded_browser_warning">You have left the app and using an embedded browser to view Warmshowers.org. Use the back button to return to the app.</string>
     <string name="not_connected_to_network">You are not currently connected to the network.</string>
-    <string name="hostinfo_actiivity_title">Member Profile</string>
+    <string name="hostinfo_activity_title">Member Profile</string>
     <string name="host_service_shower">Shower</string>
     <string name="host_services_food">Food</string>
     <string name="host_services_bed">Bed</string>

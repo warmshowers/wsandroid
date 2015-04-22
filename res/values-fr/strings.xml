@@ -111,7 +111,7 @@
     <string name="feedback_overall_experience_error">Vous devez définir votre expérience avec ce membre</string>
     <string name="embedded_browser_warning">Vous avez quitté l\'application et vous utilisez un navigateur intégré pour naviguez sur Warmshowers.org. Utilisez le bouton retour pour revenir à l\'application.</string>
     <string name="not_connected_to_network">Vous n\'êtes présentement pas connecté au réseau</string>
-    <string name="hostinfo_actiivity_title">Profil du membre</string>
+    <string name="hostinfo_activity_title">Profil du membre</string>
     <string name="host_service_shower">Douche</string>
     <string name="host_services_food">Nourriture</string>
     <string name="host_services_bed">Lit</string>

@@ -112,7 +112,7 @@
     <string name="feedback_overall_experience_error">Sie müssen einen Wert für die generelle Erfahrung mit diesem Mitglied auswählen</string>
     <string name="embedded_browser_warning">Sie haben die App verlassen und benutzen einen eingebetteten Browser, um Warmshowers.org anzusehen. Klicken Sie auf "zurück", wenn Sie zur App zurückkehren wollen.</string>
     <string name="not_connected_to_network">Sie sind zurzeit mit keinem Netzwerk verbunden.</string>
-    <string name="hostinfo_actiivity_title">Mitgliedsprofil</string>
+    <string name="hostinfo_activity_title">Mitgliedsprofil</string>
     <string name="host_service_shower">Dusche</string>
     <string name="host_services_food">Nahrung</string>
     <string name="host_services_bed">Bett</string>

@@ -79,7 +79,7 @@
                             android:id="@+id/txtLoginInfo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:singleLine="true"
+                            android:singleLine="false"
                             android:text="Member since 2005, Last login January 1, 2015"
                             android:layout_marginLeft="56dp" />
 

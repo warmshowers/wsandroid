@@ -113,7 +113,7 @@
     <string name="feedback_overall_experience_error">Debes escoger un valor para la experiencia general con este usuario</string>
     <string name="embedded_browser_warning">Has salido de la aplicación usando un navegador para ver Warmshowers.org. Usa el botón “Regresar” para volver a la aplicación.</string>
     <string name="not_connected_to_network">No estás conectado a la red actualmente.</string>
-    <string name="hostinfo_actiivity_title">Perfil de usuario </string>
+    <string name="hostinfo_activity_title">Perfil de usuario </string>
     <string name="host_service_shower">Ducha</string>
     <string name="host_services_food">Comida</string>
     <string name="host_services_bed">Sitio para dormir</string>
