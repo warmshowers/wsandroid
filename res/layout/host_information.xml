@@ -11,11 +11,6 @@
         android:layout_height="match_parent"
         android:id="@+id/drawer_layout">
         <!-- activity view -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:background="#fff"
-            android:orientation="vertical"
-            android:layout_height="match_parent">
 
             <ScrollView
                 android:id="@+id/scrollHostInformation"
@@ -27,8 +22,7 @@
                     android:id="@+id/layoutHostDetails"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:orientation="vertical">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -37,274 +31,372 @@
                         <ImageView
                             android:id="@+id/memberPhoto"
                             android:layout_width="match_parent"
-                            android:layout_height="200dp" />
+                            android:layout_height="match_parent"
+                            android:src="@drawable/sample_hostinfo_profile_pic" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:id="@+id/lblMemberName"
                             android:textSize="36dp"
-                            android:text="Member Name"
                             android:gravity="center_horizontal"
                             android:layout_alignParentBottom="true"
                             android:layout_marginBottom="40dp" />
                     </RelativeLayout>
 
-                    <TextView
-                        android:id="@+id/txtHostComments"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp" />
-
-                    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:paddingTop="4dp"
-                        android:shrinkColumns="1">
+                        android:orientation="vertical"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/availability"
+                        android:paddingTop="8dp" >
 
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblMemberSince"
-                                android:text="@string/member_since" />
-
-                            <TextView
-                                android:id="@+id/txtMemberSince"
-                                android:paddingLeft="10dp" />
-                        </TableRow>
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblLastLogin"
-                                android:text="@string/last_login" />
-
-                            <TextView
-                                android:id="@+id/txtLastLogin"
-                                android:paddingLeft="10dp" />
-                        </TableRow>
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:id="@+id/lblLanguagesSpoken"
-                                android:text="@string/languages_spoken" />
-
-                            <TextView
-                                android:id="@+id/txtLanguagesSpoken"
-                                android:paddingLeft="10dp" />
-                        </TableRow>
-                    </TableLayout>
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:clickable="true"
-                        android:onClick="toggleBasicInformation"
-                        android:paddingTop="10dp">
-
-                        <ImageView
-                            android:id="@+id/btnToggleBasicInformation"
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:paddingRight="10dp"
-                            android:src="@drawable/expander_min" />
+                            android:layout_gravity="center_horizontal" >
 
-                        <TextView
-                            android:id="@+id/lblBasicInformation"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:text="@string/host_info_basic_information"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
-                    </LinearLayout>
-
-
-                    <TableLayout
-                        android:id="@+id/tableBasicInformation"
-                        xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:paddingTop="4dp"
-                        android:shrinkColumns="1"
-                        android:visibility="gone">
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
+                            <ImageView
+                                android:id="@+id/iconAvailableStatus"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_home_variant_black_24dp"
+                                android:layout_gravity="center_vertical" />
 
                             <TextView
-                                android:id="@+id/lblHostLocation"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/location" />
-
-
-                            <TextView
-                                android:id="@+id/txtHostLocation"
-                                android:paddingLeft="10dp" />
-
-                        </TableRow>
-
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblHostMobilePhone"
-                                android:text="@string/mobile_phone" />
-
-                            <TextView
-                                android:id="@+id/txtHostMobilePhone"
-                                android:autoLink="phone"
-                                android:paddingLeft="10dp"
-                                android:textColorLink="#FFAAAAFF" />
-                        </TableRow>
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblHostHomePhone"
-                                android:text="@string/home_phone" />
-
-                            <TextView
-                                android:id="@+id/txtHostHomePhone"
-                                android:autoLink="phone"
-                                android:paddingLeft="10dp"
-                                android:textColorLink="#FFAAAAFF" />
-                        </TableRow>
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblHostWorkPhone"
-                                android:text="@string/work_phone" />
-
-                            <TextView
-                                android:id="@+id/txtHostWorkPhone"
-                                android:autoLink="phone"
-                                android:paddingLeft="10dp"
-                                android:textColorLink="#FFAAAAFF" />
-                        </TableRow>
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblPreferredNotice"
-                                android:text="@string/preferred_notice" />
-
-                            <TextView
-                                android:id="@+id/txtPreferredNotice"
-                                android:paddingLeft="10dp" />
-                        </TableRow>
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblMaxGuests"
-                                android:text="@string/max_guests" />
-
-                            <TextView
-                                android:id="@+id/txtMaxGuests"
-                                android:paddingLeft="10dp" />
-                        </TableRow>
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblNearestAccomodation"
-                                android:text="@string/nearest_accomodation" />
-
-                            <TextView
-                                android:id="@+id/txtNearestAccomodation"
-                                android:paddingLeft="10dp" />
-                        </TableRow>
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblCampground"
-                                android:text="@string/campground" />
-
-                            <TextView
-                                android:id="@+id/txtCampground"
-                                android:paddingLeft="10dp" />
-                        </TableRow>
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblBikeShop"
-                                android:text="@string/bike_shop" />
-
-                            <TextView
-                                android:id="@+id/txtBikeShop"
-                                android:paddingLeft="10dp" />
-                        </TableRow>
-
-                        <TableRow
-                            android:paddingBottom="2dp"
-                            android:paddingTop="2dp">
-
-                            <TextView
-                                android:id="@+id/lblServices"
-                                android:text="@string/services" />
-
-                            <TextView
-                                android:id="@+id/txtServices"
-                                android:paddingLeft="10dp" />
-                        </TableRow>
-                    </TableLayout>
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:onClick="toggleFeedback"
-                        android:orientation="horizontal"
-                        android:paddingTop="10dp">
-
-                        <ImageView
-                            android:id="@+id/btnToggleFeedback"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:paddingRight="10dp"
-                            android:src="@drawable/expander_min" />
+                                android:text="Currently Available"
+                                android:id="@+id/txtAvailability"
+                                android:textColor="#000000"
+                                android:textStyle="normal"
+                                android:layout_marginLeft="32dp"
+                                android:layout_gravity="center_vertical" />
+                        </LinearLayout>
 
                         <TextView
-                            android:id="@+id/lblFeedback"
-                            android:layout_width="fill_parent"
+                            android:id="@+id/txtLoginInfo"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:text="Feedback"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="Member since 2005, Last login January 1, 2015"
+                            android:layout_marginLeft="56dp" />
+
+                        <TextView
+                            android:id="@+id/hostLimitations"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:singleLine="false"
+                            android:text="Max guests: 3, Languages: English, Spanish"
+                            android:layout_marginLeft="56dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/favorite"
+                        android:paddingTop="8dp">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal" >
+
+                            <ImageView
+                                android:id="@+id/icon"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_action_favorite_outline"
+                                android:layout_gravity="center_vertical" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Favorite Host"
+                                android:id="@+id/textView"
+                                android:textColor="#000000"
+                                android:textStyle="normal"
+                                android:layout_marginLeft="32dp"
+                                android:layout_gravity="center_vertical" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="Gunnison, Co, USA"
+                            android:layout_marginLeft="56dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/address"
+                        android:paddingTop="8dp" >
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal" >
+
+                            <ImageView
+                                android:id="@+id/"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_action_place"
+                                android:layout_gravity="center_vertical" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="848 Montclair Drive\nPalisade, CO 81526 USA"
+                                android:id="@+id/txtHostLocation"
+                                android:textColor="#000000"
+                                android:textStyle="normal"
+                                android:layout_marginLeft="32dp"
+                                android:layout_gravity="center_vertical" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/profile"
+                        android:paddingTop="8dp" >
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal" >
+
+                            <ImageView
+                                android:id="@+id/imageView"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_action_info_outline"
+                                android:layout_gravity="center_vertical" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Profile"
+                                android:id="@+id/"
+                                android:textColor="#000000"
+                                android:textStyle="normal"
+                                android:layout_marginLeft="32dp"
+                                android:layout_gravity="center_vertical" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/txtHostComments"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:singleLine="false"
+                            android:text="I&apos;m the Webmaster of Warmshowers.org and now the Executive Director as well, the first paid staff for our great organization. "
+                            android:layout_marginLeft="56dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/details"
+                        android:paddingTop="8dp" >
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal" >
+
+                            <ImageView
+                                android:id="@+id/imageView2"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_action_list"
+                                android:layout_gravity="center_vertical" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Details"
+                                android:id="@+id/textView5"
+                                android:textColor="#000000"
+                                android:textStyle="normal"
+                                android:layout_marginLeft="32dp"
+                                android:layout_gravity="center_vertical" />
+
+                        </LinearLayout>
+
+                        <TableLayout
+                            android:id="@+id/tableBasicInformation"
+                            xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:paddingTop="4dp"
+                            android:shrinkColumns="1"
+                            android:visibility="gone">
+
+
+                            <TableRow
+                                android:paddingBottom="2dp"
+                                android:paddingTop="2dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/lblLanguagesSpoken"
+                                    android:text="@string/languages_spoken" />
+
+                                <TextView
+                                    android:id="@+id/txtLanguagesSpoken"
+                                    android:paddingLeft="10dp" />
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingBottom="2dp"
+                                android:paddingTop="2dp">
+
+                                <TextView
+                                    android:id="@+id/lblHostMobilePhone"
+                                    android:text="@string/mobile_phone" />
+
+                                <TextView
+                                    android:id="@+id/txtHostMobilePhone"
+                                    android:autoLink="phone"
+                                    android:paddingLeft="10dp"
+                                    android:textColorLink="#FFAAAAFF" />
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingBottom="2dp"
+                                android:paddingTop="2dp">
+
+                                <TextView
+                                    android:id="@+id/lblHostHomePhone"
+                                    android:text="@string/home_phone" />
+
+                                <TextView
+                                    android:id="@+id/txtHostHomePhone"
+                                    android:autoLink="phone"
+                                    android:paddingLeft="10dp"
+                                    android:textColorLink="#FFAAAAFF" />
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingBottom="2dp"
+                                android:paddingTop="2dp">
+
+                                <TextView
+                                    android:id="@+id/lblHostWorkPhone"
+                                    android:text="@string/work_phone" />
+
+                                <TextView
+                                    android:id="@+id/txtHostWorkPhone"
+                                    android:autoLink="phone"
+                                    android:paddingLeft="10dp"
+                                    android:textColorLink="#FFAAAAFF" />
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingBottom="2dp"
+                                android:paddingTop="2dp">
+
+                                <TextView
+                                    android:id="@+id/lblPreferredNotice"
+                                    android:text="@string/preferred_notice" />
+
+                                <TextView
+                                    android:id="@+id/txtPreferredNotice"
+                                    android:paddingLeft="10dp" />
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingBottom="2dp"
+                                android:paddingTop="2dp">
+
+                                <TextView
+                                    android:id="@+id/lblMaxGuests"
+                                    android:text="@string/max_guests" />
+
+                                <TextView
+                                    android:id="@+id/txtMaxGuests"
+                                    android:paddingLeft="10dp" />
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingBottom="2dp"
+                                android:paddingTop="2dp">
+
+                                <TextView
+                                    android:id="@+id/lblNearestAccomodation"
+                                    android:text="@string/nearest_accomodation" />
+
+                                <TextView
+                                    android:id="@+id/txtNearestAccomodation"
+                                    android:paddingLeft="10dp" />
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingBottom="2dp"
+                                android:paddingTop="2dp">
+
+                                <TextView
+                                    android:id="@+id/lblCampground"
+                                    android:text="@string/campground" />
+
+                                <TextView
+                                    android:id="@+id/txtCampground"
+                                    android:paddingLeft="10dp" />
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingBottom="2dp"
+                                android:paddingTop="2dp">
+
+                                <TextView
+                                    android:id="@+id/lblBikeShop"
+                                    android:text="@string/bike_shop" />
+
+                                <TextView
+                                    android:id="@+id/txtBikeShop"
+                                    android:paddingLeft="10dp" />
+                            </TableRow>
+
+                            <TableRow
+                                android:paddingBottom="2dp"
+                                android:paddingTop="2dp">
+
+                                <TextView
+                                    android:id="@+id/lblServices"
+                                    android:text="@string/services" />
+
+                                <TextView
+                                    android:id="@+id/txtServices"
+                                    android:paddingLeft="10dp" />
+                            </TableRow>
+                        </TableLayout>
+
                     </LinearLayout>
 
 
@@ -320,7 +412,6 @@
 
                 </LinearLayout>
             </ScrollView>
-        </LinearLayout>
 
         <include layout="@layout/navigation_drawer" />
     </android.support.v4.widget.DrawerLayout>

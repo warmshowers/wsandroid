@@ -24,12 +24,15 @@ import java.util.List;
  */
 public class FeedbackTable extends TableLayout {
 
-    ArrayTranslator translator = ArrayTranslator.getInstance();
+    ArrayTranslator translator;
     Context mContext;
 
     public FeedbackTable(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
+        if (!isInEditMode()) {
+            translator = ArrayTranslator.getInstance();
+        }
     }
 
     public void addRows(List<Feedback> feedback) {
@@ -63,15 +66,17 @@ public class FeedbackTable extends TableLayout {
     private String getRowHeaderString(Feedback f) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(translator.translateHostGuest(f.getGuestOrHost()));
+        if (!isInEditMode()) {
+            sb.append(translator.translateHostGuest(f.getGuestOrHost()));
 
-        // Present hosted date without DOM because we don't carry that.
-        int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY;
-        String hostedOn = DateUtils.formatDateTime(mContext, f.getHostingDate() * 1000L, flags);
-        sb.append(" (");
-        sb.append(hostedOn);
-        sb.append(") - ");
-        sb.append(translator.translateRating(f.getRating()));
+            // Present hosted date without DOM because we don't carry that.
+            int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY;
+            String hostedOn = DateUtils.formatDateTime(mContext, f.getHostingDate() * 1000L, flags);
+            sb.append(" (");
+            sb.append(hostedOn);
+            sb.append(") - ");
+            sb.append(translator.translateRating(f.getRating()));
+        }
         return sb.toString();
     }
 
