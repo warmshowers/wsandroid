@@ -22,10 +22,10 @@
 
     <application
         android:name=".WSAndroidApplication"
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/wsAppTheme"
-        android:allowBackup="true">
+        android:theme="@style/wsAppTheme">
         <uses-library android:name="com.google.android.maps" />
         <meta-data
             android:name="android.app.default_searchable"
@@ -71,11 +71,10 @@
         <activity
             android:name=".activity.Maps2Activity"
             android:label="@string/app_name">
-
-            <!--<meta-data-->
-                <!--android:name="android.app.default_searchable"-->
-                <!--android:value=".activity.ListSearchTabActivity" />-->
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activity.HostInformationActivity"

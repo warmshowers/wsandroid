@@ -51,48 +51,63 @@ public class Host extends _Host {
     };
 
     public String getLocation() {
-        StringBuilder sb = new StringBuilder();
 
+        String location = "";
         if (!getStreet().isEmpty()) {
-            sb.append(getStreet()).append("\n");
+            location += getStreet() + "\n";
         }
 
         if (!getAdditional().isEmpty()) {
-            sb.append(getAdditional()).append("\n");
+            location += getAdditional() + "\n";
         }
-
-        sb.append(getPostalCode()).append(", ").append(getCity()).append(", ").append(getProvince());
+        location += getCity() + ", " + getProvince().toUpperCase();
+        if (!getPostalCode().isEmpty()) {
+            location += " " + getPostalCode();
+        }
 
         if (!getCountry().isEmpty()) {
-            sb.append(", ").append(getCountry().toUpperCase());
+            location += ", " + getCountry().toUpperCase();
         }
 
-        sb.append("\nLat: ").append(getLatitude()).append("\n");
-        sb.append("Lon: ").append(getLongitude());
-
-        return sb.toString();
+        return location;
     }
 
-    public String getServices(Context context) {
+    public String getNearbyServices(Context context) {
+        Resources r = context.getResources();
+
+        String nearbyServices = "";
+        if (!getMotel().isEmpty()) {
+            nearbyServices += r.getString(R.string.nearby_service_accommodation) + ": " + getMotel() + ", ";
+        }
+        if (!getBikeshop().isEmpty()) {
+            nearbyServices += r.getString(R.string.nearby_service_bikeshop) + ": " +getBikeshop() + ", ";
+        }
+        if (!getCampground().isEmpty()) {
+            nearbyServices += r.getString(R.string.nearby_service_campground) + ": " +getCampground() + ", ";
+        }
+
+        return nearbyServices;
+    }
+    public String getHostServices(Context context) {
         StringBuilder sb = new StringBuilder();
         Resources r = context.getResources();
 
         if (hasService(getShower()))
-            sb.append(r.getString(R.string.host_service_shower) + "\n");
+            sb.append(r.getString(R.string.host_service_shower) + ", ");
         if (hasService(getFood()))
-            sb.append(r.getString(R.string.host_services_food) + "\n");
+            sb.append(r.getString(R.string.host_services_food) + ", ");
         if (hasService(getBed()))
-            sb.append(r.getString(R.string.host_services_bed) + "\n");
+            sb.append(r.getString(R.string.host_services_bed) + ", ");
         if (hasService(getLaundry()))
-            sb.append(r.getString(R.string.host_service_laundry) + "\n");
+            sb.append(r.getString(R.string.host_service_laundry) + ", ");
         if (hasService(getStorage()))
-            sb.append(r.getString(R.string.host_service_storage) + "\n");
+            sb.append(r.getString(R.string.host_service_storage) + ", ");
         if (hasService(getKitchenUse()))
-            sb.append(r.getString(R.string.host_service_kitchen) + "\n");
+            sb.append(r.getString(R.string.host_service_kitchen) + ", ");
         if (hasService(getLawnspace()))
-            sb.append(r.getString(R.string.host_service_tentspace) + "\n");
+            sb.append(r.getString(R.string.host_service_tentspace) + ", ");
         if (hasService(getSag()))
-            sb.append(context.getString(R.string.host_service_sag) + "\n");
+            sb.append(context.getString(R.string.host_service_sag));
 
         return sb.toString();
     }

@@ -7,16 +7,8 @@ import android.util.AttributeSet;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
-import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.activity.FeedbackActivity;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.util.ArrayTranslator;
-
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 /**

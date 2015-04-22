@@ -56,7 +56,7 @@
     <string name="message_sent">Nachricht erfolgreich versendet.</string>
     <string name="about_1">"Entwickelt durch Warmshowers.org-Freiwillige, verwaltet durch den ursprünglichen Programmierer Johannes Staffans \nÜbersetzung: Cyril Wendl (Deutsch)</string>
     <string name="about_2">Dies ist eine open-source-App unter der Apache 2.0-Lizenz. Sie können mithelfen, indem Sie unser Git-repository auf github.com/warmshowers/wsandroid forken \nMelden Sie Probleme auf ebendieser Seite oder via das Warmshowers-Kontaktformular, de.warmshowers.org/contact</string>
-    <string name="feedback">Rückmeldung</string>
+    <string name="feedback">Rückmeldung (%1 $d)</string>
     <string name="error_retrieving_messages">Ein Problem ist beim Abrufen der Nachrichten aufgetreten.</string>
     <string name="messages_in_progress">Nachrichten werden abgerufen…</string>
     <string name="no_unread_messages">Sie haben keine ungelesenen Nachrichten.</string>

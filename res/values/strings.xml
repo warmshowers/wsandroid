@@ -56,7 +56,7 @@
     <string name="message_sent">Message sent successfully.</string>
     <string name="about_1">"Developed by Warmshowers.org volunteers led by original author Johannes Staffans.</string>
     <string name="about_2">This application is open source under the Apache 2.0 license. Contribute by forking our repository at github.com/warmshowers/wsandroid\nReport problems there or via the Warmshowers contact form, warmshowers.org/contact</string>
-    <string name="feedback">Feedback</string>
+    <string name="feedback">Feedback (%1$d)</string>
     <string name="error_retrieving_messages">An error occurred while retrieving messages.</string>
     <string name="messages_in_progress">Retrieving messages …</string>
     <string name="no_unread_messages">You have no unread messages.</string>
@@ -126,16 +126,25 @@
     <string name="host_service_tentspace">Lawn space (for camping)</string>
     <string name="host_service_sag">SAG (vehicle support)</string>
     <string name="label_feedback_for_this_member">Your feedback for this member</string>
-    <!-- Beginning of new strings for 1.4.3+ -->
+
+    <!-- Beginning of new strings for 1.5.0+ -->
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
     <string name="text_search_title">Text Search</string>
-
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_hint">Host name or city/town</string>
     <string name="action_search">Host search</string>
     <string name="contact_host">Contact Member</string>
     <string name="search_host_summary">Member since %1$s, last active %2$s</string>
+    <string name="host_limitations">Max guests %1$s, Languages spoken %2$s</string>
+    <string name="favorite_host">Favorite Host</string>
+    <string name="no_feedback_yet">No feedback yet</string>
+    <string name="mobile_phone_abbrev">Mobile: %1$s</string>
+    <string name="home_phone_abbrev">Home: %1$s</string>
+    <string name="work_phone_abbrev">Work: %1$s</string>
+    <string name="host_services_description">Services this host may offer: %1$s</string>
+    <string name="nearby_service_accommodation">Accommodation</string>
+    <string name="nearby_service_bikeshop">Bikeshop</string>
+    <string name="nearby_services_description">Nearby services: %1$s</string>
+    <string name="nearby_service_campground">Campground</string>
 
 </resources>

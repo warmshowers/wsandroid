@@ -8,12 +8,6 @@
         ws:showAsAction="always" />
 
     <item
-        android:id="@+id/menuStarIcon"
-        android:icon="@drawable/ic_action_star_off"
-        android:title="@string/star_this_host"
-        ws:showAsAction="always" />
-
-    <item
         android:id="@+id/menuMap"
         android:title="@string/view_on_map"
         ws:showAsAction="never" />
@@ -32,6 +26,5 @@
         android:id="@+id/menuLeaveFeedback"
         android:title="@string/leave_feedback"
         ws:showAsAction="never" />
-
 
 </menu>
