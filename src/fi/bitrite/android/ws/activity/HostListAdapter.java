@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +29,7 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
     public HostListAdapter(Context context, int resource, String query, List<HostBriefInfo> hosts) {
         super(context, resource, hosts);
         mContext = context;
-        mQuery = query;
+        mQuery = query.toLowerCase();
         mResource = resource;
     }
 
@@ -44,14 +45,19 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
         TextView memberInfo = (TextView) hostListItem.findViewById(R.id.txtMemberInfo);
 
         String hostFullname = host.getFullname();
+
+        // Emphasize the location if it's a match on the search
         if (mQuery != null) {
-            if (host.getCity().contains(mQuery)) {
-                location.setTextColor(0xffffff);
-                location.setTypeface(null, Typeface.BOLD);
+            if (host.getCity().toLowerCase().contains(mQuery)) {
+                location.setTextColor(Color.BLACK);
+                // location.setTypeface(null, Typeface.BOLD);
             } else {
+                 location.setTextColor(Color.GRAY);
                 // fullname.setTypeface(null, Typeface.BOLD);
             }
         }
+
+        // Set the host icon to black if they're available, otherwise gray
         if (host.getNotCurrentlyAvailable()) {
             icon.setImageResource(R.drawable.ic_home_variant_grey600_24dp);
             icon.setAlpha(0.5f);
