@@ -11,6 +11,7 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -87,7 +88,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
         }
     }
 
-    public List<Feedback> getFeedback(int id, String name) {
+    public ArrayList<Feedback> getFeedback(int id, String name) {
         Cursor cursor;
 
         if (id > 0) {
@@ -104,19 +105,19 @@ public class StarredHostDaoImpl implements StarredHostDao {
         }
 
         cursor.moveToFirst();
-        List<Feedback> feedback = cursorToFeedback(cursor);
+        ArrayList<Feedback> feedback = cursorToFeedback(cursor);
 
         cursor.close();
         return feedback;
     }
 
-    private List<Feedback> cursorToFeedback(Cursor cursor) {
+    private ArrayList<Feedback> cursorToFeedback(Cursor cursor) {
         String json = cursor.getString(0);
         Gson gson = new Gson();
         try {
             Type listType = new TypeToken<List<Feedback>>() {
             }.getType();
-            List<Feedback> feedback = gson.fromJson(json, listType);
+            ArrayList<Feedback> feedback = gson.fromJson(json, listType);
             return feedback;
         } catch (Exception e) {
             throw new PersistenceException("Could not load host feedback");
