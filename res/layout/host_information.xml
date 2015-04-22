@@ -400,15 +400,48 @@
                     </LinearLayout>
 
 
-                    <fi.bitrite.android.ws.view.FeedbackTable xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:id="@+id/tblFeedback"
+                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:paddingTop="4dp"
-                        android:shrinkColumns="0"
-                        android:visibility="gone">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="16dp"
+                        android:id="@+id/feedback"
+                        android:paddingTop="8dp" >
 
-                    </fi.bitrite.android.ws.view.FeedbackTable>
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal" >
+
+                            <ImageView
+                                android:id="@+id/imageView3"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_action_people"
+                                android:layout_gravity="center_vertical" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Feedback"
+                                android:id="@+id/textView4"
+                                android:textColor="#000000"
+                                android:textStyle="normal"
+                                android:layout_marginLeft="32dp"
+                                android:layout_gravity="center_vertical" />
+                        </LinearLayout>
+
+                        <fi.bitrite.android.ws.view.FeedbackTable xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:id="@+id/tblFeedback"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:paddingTop="4dp"
+                            android:shrinkColumns="0"
+                            android:visibility="gone">
+
+                        </fi.bitrite.android.ws.view.FeedbackTable>
+                    </LinearLayout>
 
                 </LinearLayout>
             </ScrollView>
