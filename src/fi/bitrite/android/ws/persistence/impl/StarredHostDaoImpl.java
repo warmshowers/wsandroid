@@ -81,7 +81,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
         Gson gson = new Gson();
         try {
             Host host = gson.fromJson(json, Host.class);
-            host.setUpdated(cursor.getString(2));
+            host.setUpdated(cursor.getLong(2));
             return host;
         } catch (Exception e) {
             throw new PersistenceException("Could not load starred host details");

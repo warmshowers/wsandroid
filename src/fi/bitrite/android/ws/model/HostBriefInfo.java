@@ -20,6 +20,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
     private String mLogin;
     private boolean mNotCurrentlyAvailable;
     private String mCreated;
+    private long mUpdated;
 
     public HostBriefInfo(int id, String username, String fullName, String street, String city, String province, String country, String aboutMe, boolean notCurrentlyAvailable, String login, String created) {
         mId = id;
@@ -33,6 +34,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mLogin = login;
         mNotCurrentlyAvailable = notCurrentlyAvailable;
         mCreated = created;
+        mUpdated = 0;
     }
 
     public HostBriefInfo(int id, Host host) {
@@ -50,6 +52,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mLogin = host.getLastLogin();
         mNotCurrentlyAvailable = host.getNotCurrentlyAvailable().equals("1");
         mCreated = host.getCreated();
+        mUpdated = host.getUpdated();
     }
 
     public HostBriefInfo() {
@@ -181,6 +184,9 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
     public boolean getNotCurrentlyAvailable() {
         return mNotCurrentlyAvailable;
     }
+    public int getNotCurrentlyAvailableAsInt() {
+        return mNotCurrentlyAvailable ? 1 : 0;
+    }
 
     public String getCreated() {
         return mCreated;
@@ -201,5 +207,9 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         }
         Date d = new Date((long)intDate * 1000);
         return d;
+    }
+
+    public long getmUpdated() {
+        return mUpdated;
     }
 }

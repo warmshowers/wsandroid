@@ -17,7 +17,7 @@ import java.util.Date;
 
 public class Host extends _Host {
 
-    private String mUpdated;
+    private long mUpdated;
 
     public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
         Host host = new Host();
@@ -120,11 +120,11 @@ public class Host extends _Host {
         return getNotCurrentlyAvailable().equals("1");
     }
 
-    public String getUpdated() {
+    public long getUpdated() {
         return mUpdated;
     }
 
-    public void setUpdated(String updated) {
+    public void setUpdated(long updated) {
         mUpdated = updated;
     }
 

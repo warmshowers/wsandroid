@@ -17,6 +17,9 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
+
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class StarredHostTabActivity extends WSBaseActivity
@@ -45,6 +48,12 @@ public class StarredHostTabActivity extends WSBaseActivity
 
     private void setupStarredHostsList() {
         starredHosts = starredHostDao.getAllBrief();
+        // Sort in order of recently saved
+        Collections.sort(starredHosts, new Comparator<HostBriefInfo>() {
+            public int compare(HostBriefInfo h1, HostBriefInfo h2) {
+                return (int)(h2.getmUpdated() - h1.getmUpdated());
+            }
+        });
 
         if (starredHosts.size() == 0) {
             noStarredHostsLabel.setVisibility(View.VISIBLE);

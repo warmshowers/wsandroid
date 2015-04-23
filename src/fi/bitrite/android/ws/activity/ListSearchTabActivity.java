@@ -28,6 +28,8 @@ import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.Tools;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ListSearchTabActivity
         extends WSBaseActivity
@@ -159,6 +161,13 @@ public class ListSearchTabActivity
             }
 
             mListSearchHosts = (ArrayList<HostBriefInfo>) result;
+            // Sort so that available hosts come up first
+            Collections.sort(mListSearchHosts, new Comparator<HostBriefInfo>() {
+                public int compare(HostBriefInfo h1, HostBriefInfo h2) {
+                    return h1.getNotCurrentlyAvailableAsInt() - h2.getNotCurrentlyAvailableAsInt();
+                }
+            });
+
             mListSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
                     R.layout.host_list_item, mQuery, mListSearchHosts));
 
