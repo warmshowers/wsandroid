@@ -29,8 +29,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-analytics:7.0.0'
     compile 'com.google.android.gms:play-services-maps:7.0.0'
     compile 'com.google.android.gms:play-services-location:7.0.0'
-    compile 'com.android.support:appcompat-v7:22.0.0'
-    compile 'com.android.support:support-v4:22.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.0'
+    compile 'com.android.support:support-v4:22.1.0'
 }
 
 android {
