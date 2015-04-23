@@ -65,9 +65,8 @@ public class FeedbackTable extends TableLayout {
 
             // Present hosted date without DOM because we don't carry that.
             int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY;
-            Date d;
+            String hostedOn = DateUtils.formatDateTime(mContext, f.getHostingDate().getTime(), flags);
 
-            String hostedOn = SimpleDateFormat.getDateInstance().format(f.getHostingDate());
             sb.append(" (");
             sb.append(hostedOn);
             sb.append(") - ");

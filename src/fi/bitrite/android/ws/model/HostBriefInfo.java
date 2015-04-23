@@ -17,11 +17,11 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
 
     private int mId;
     private String mUsername, mFullName, mStreet, mCity, mProvince, mCountry, mAboutMe, mLatitude, mLongitude;
-    private String mAccess;
+    private String mLogin;
     private boolean mNotCurrentlyAvailable;
     private String mCreated;
 
-    public HostBriefInfo(int id, String username, String fullName, String street, String city, String province, String country, String aboutMe, boolean notCurrentlyAvailable, String access, String created) {
+    public HostBriefInfo(int id, String username, String fullName, String street, String city, String province, String country, String aboutMe, boolean notCurrentlyAvailable, String login, String created) {
         mId = id;
         mUsername = username;
         mFullName = fullName;
@@ -30,7 +30,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mProvince = province;
         mCountry = country;
         mAboutMe = aboutMe;
-        mAccess = access;
+        mLogin = login;
         mNotCurrentlyAvailable = notCurrentlyAvailable;
         mCreated = created;
     }
@@ -47,7 +47,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mLongitude = host.getLongitude();
 
         mAboutMe = host.getComments();
-        mAccess = host.getUpdated();
+        mLogin = host.getLastLogin();
         mNotCurrentlyAvailable = host.getNotCurrentlyAvailable().equals("1");
         mCreated = host.getCreated();
     }
@@ -95,8 +95,8 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         this.mLatitude = mLatitude;
     }
 
-    public String getAccess() {
-        return mAccess;
+    public String getLastLogin() {
+        return mLogin;
     }
 
     public LatLng getLatLng() {
@@ -132,7 +132,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         dest.writeString(mProvince);
         dest.writeString(mCountry);
         dest.writeByte((byte) (mNotCurrentlyAvailable ? 1 : 0));
-        dest.writeString(mAccess);
+        dest.writeString(mLogin);
         dest.writeString(mCreated);
     }
 
@@ -148,7 +148,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mProvince = src.readString();
         mCountry = src.readString();
         mNotCurrentlyAvailable = src.readByte() != 0;
-        mAccess = src.readString();
+        mLogin = src.readString();
         mCreated = src.readString();
     }
 
@@ -188,11 +188,17 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
     public Date getCreatedAsDate() {
         return stringToDate(mCreated);
     }
-    public Date getAccessAsDate() {
-        return stringToDate(mAccess);
+    public Date getLastLoginAsDate() {
+        return stringToDate(mLogin);
     }
     protected Date stringToDate(String s) {
-        int intDate = Integer.parseInt(s);
+
+        int intDate = 0;
+        try {
+            intDate = Integer.parseInt(s);
+        } catch (Exception e) {
+            // Ignore
+        }
         Date d = new Date((long)intDate * 1000);
         return d;
     }

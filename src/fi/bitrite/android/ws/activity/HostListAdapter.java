@@ -68,7 +68,7 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
         }
 
         DateFormat simpleDate = DateFormat.getDateInstance();
-        String activeDate = simpleDate.format(host.getAccessAsDate());
+        String activeDate = simpleDate.format(host.getLastLoginAsDate());
         String createdDate = new SimpleDateFormat("yyyy").format(host.getCreatedAsDate());
 
         String memberString = mContext.getString(R.string.search_host_summary, createdDate, activeDate);

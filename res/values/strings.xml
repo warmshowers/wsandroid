@@ -7,7 +7,7 @@
     <string name="authenticating">Authenticating …</string>
     <string name="need_account">Cannot run without WarmShowers credentials</string>
     <string name="authentication_failed">Authentication failed. Re-enter your credentials (Menu -> Account).</string>
-    <string name="no_starred_hosts">"You currently have no starred hosts (hosts whose profiles are available offline). You can star hosts on the host information page by clicking the star icon."</string>
+    <string name="no_starred_hosts">"You currently have no favorited hosts (hosts whose profiles are available offline). You can favorite hosts on the host information page."</string>
     <string name="list_search_hint">Name or city</string>
     <string name="no_results">Your search yielded no results.</string>
     <string name="enter_credentials">Please enter your username (or email) and password:</string>
@@ -42,9 +42,9 @@
     <string name="host_updated">Host information updated.</string>
     <string name="host_not_available">This member is marked as not currently available. You may still contact the member, but not for hosting.</string>
     <string name="host_info_in_progress">Retrieving host information …</string>
-    <string name="unstar_host">Un-star this host?</string>
-    <string name="host_starred">Host starred. You can now access this information off-line.</string>
-    <string name="host_unstarred">Host information deleted from device.</string>
+    <string name="unstar_host">Un-favorite this host?</string>
+    <string name="host_starred">Member favorited. You can now access this information offline.</string>
+    <string name="host_unstarred">Member un-favorited.</string>
     <string name="performing_search">Performing search …</string>
     <string name="io_error">Internet access failure, please check your Internet connection.</string>
     <string name="http_unexpected_failure">Unexpected error accessing server. Check your credentials and Internet connection.</string>
@@ -128,6 +128,9 @@
     <string name="label_feedback_for_this_member">Your feedback for this member</string>
 
     <!-- Beginning of new strings for 1.5.0+ -->
+    <!-- Notes:
+      * Please check for anything using the idea "Starred" as we're using "Favorited" now. Especially host_starred and host_unstarred
+    -->
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
     <string name="text_search_title">Text Search</string>

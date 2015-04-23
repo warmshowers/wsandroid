@@ -127,7 +127,7 @@
                             <CheckBox
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:id="@+id/favoriteCheckbox"
+                                android:id="@+id/checkBoxFavorite"
                                 android:layout_weight=".2" />
                         </LinearLayout>
 

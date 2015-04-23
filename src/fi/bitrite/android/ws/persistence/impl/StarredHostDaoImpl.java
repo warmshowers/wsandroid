@@ -41,7 +41,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
         ContentValues values = new ContentValues();
         values.put(DbHelper.COLUMN_ID, id);
         values.put(DbHelper.COLUMN_NAME, name);
-        values.put(DbHelper.COLUMN_UPDATED, DateFormat.getDateInstance().format(new Date()));
+        values.put(DbHelper.COLUMN_UPDATED, System.currentTimeMillis() / 1000L); // As expected to be used later
 
         Gson gson = new Gson();
         String details = gson.toJson(host);

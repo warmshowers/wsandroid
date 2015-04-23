@@ -31,9 +31,11 @@ import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.view.FeedbackTable;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import static java.util.Collections.sort;
 
 /**
@@ -52,6 +54,9 @@ public class HostInformationActivity extends WSBaseActivity
     TextView txtAvailability;
     TextView txtLoginInfo;
     TextView txtHostLimitations;
+
+    CheckBox checkBoxFavorite;
+    ImageView iconFavorite;
     TextView txtHostLocation;
     TextView txtPhone;
     TextView txtHostComments;
@@ -78,27 +83,44 @@ public class HostInformationActivity extends WSBaseActivity
 
         imgMemberPhoto = (ImageView) findViewById(R.id.memberPhoto);
         lblMemberName = (TextView) findViewById(R.id.lblMemberName);
-        iconAvailableStatus = (ImageView)findViewById(R.id.iconAvailableStatus);
-        txtAvailability = (TextView)findViewById(R.id.txtAvailability);
-        txtLoginInfo = (TextView)findViewById(R.id.txtLoginInfo);
-        txtHostLimitations = (TextView)findViewById(R.id.txtHostLimitations);
+        iconAvailableStatus = (ImageView) findViewById(R.id.iconAvailableStatus);
+        txtAvailability = (TextView) findViewById(R.id.txtAvailability);
+        txtLoginInfo = (TextView) findViewById(R.id.txtLoginInfo);
+        txtHostLimitations = (TextView) findViewById(R.id.txtHostLimitations);
 
-        txtHostLocation = (TextView)findViewById(R.id.txtHostLocation);
-        txtPhone = (TextView)findViewById(R.id.txtPhone);
+        checkBoxFavorite = (CheckBox) findViewById(R.id.checkBoxFavorite);
+        iconFavorite = (ImageView) findViewById(R.id.iconFavorite);
 
-        txtHostComments = (TextView)findViewById(R.id.txtHostComments);
+        txtHostLocation = (TextView) findViewById(R.id.txtHostLocation);
+        txtPhone = (TextView) findViewById(R.id.txtPhone);
 
+        txtHostComments = (TextView) findViewById(R.id.txtHostComments);
 
-        txtFeedbackLabel = (TextView)findViewById(R.id.txtFeedbackLabel);
+        txtFeedbackLabel = (TextView) findViewById(R.id.txtFeedbackLabel);
         feedbackTable = (FeedbackTable) findViewById(R.id.tblFeedback);
         comments = (TextView) findViewById(R.id.txtHostComments);
         txtHostServices = (TextView) findViewById(R.id.txtHostServices);
-        txtNearbyServices = (TextView)findViewById(R.id.txtNearbyServices);
+        txtNearbyServices = (TextView) findViewById(R.id.txtNearbyServices);
 
         dialogHandler = new DialogHandler(HostInformationActivity.this);
         boolean inProgress = DialogHandler.inProgress();
         boolean shouldDownloadHostInfo;
         forceUpdate = false;
+
+        checkBoxFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                                        @Override
+                                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                            if (isChecked && !hostInfo.getStarred()) {
+                                                                setStarredHost(true);
+                                                                showStarredHostToast();
+                                                            } else if (!isChecked) {
+                                                                setStarredHost(false);
+                                                            }
+                                                            iconFavorite.setAlpha(isChecked ? 1.0f : 0.3f);
+                                                        }
+                                                    }
+        );
 
         starredHostDao.close();
         starredHostDao.open();
@@ -134,8 +156,6 @@ public class HostInformationActivity extends WSBaseActivity
         } else {
             updateViewContent();
         }
-
-        getSupportActionBar().setTitle(getString(R.string.hostinfo_activity_title));
     }
 
 
@@ -155,25 +175,21 @@ public class HostInformationActivity extends WSBaseActivity
         super.onSaveInstanceState(outState);
     }
 
-    public void showStarHostToast(View view) {
+    public void showStarredHostToast() {
         int msgId = (hostInfo.isStarred() ? R.string.host_starred : R.string.host_unstarred);
-        Toast.makeText(this, getResources().getString(msgId), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getResources().getString(msgId), Toast.LENGTH_SHORT).show();
     }
 
-    protected void toggleHostStarred() {
-        toggleHostStarredOnDevice();
-    }
-
-    private void toggleHostStarredOnDevice() {
+    private void setStarredHost(boolean saveHost) {
         starredHostDao.open();
 
-        if (starredHostDao.isHostStarred(hostInfo.getId(), hostInfo.getHost().getName())) {
+        if (!saveHost && starredHostDao.isHostStarred(hostInfo.getId(), hostInfo.getHost().getName())) {
             starredHostDao.delete(hostInfo.getId(), hostInfo.getHost().getName());
         } else {
             starredHostDao.insert(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost(), hostInfo.getFeedback());
         }
 
-        hostInfo.toggleStarred();
+        hostInfo.setStarred(saveHost);
         starredHostDao.close();
     }
 
@@ -242,6 +258,8 @@ public class HostInformationActivity extends WSBaseActivity
         lblMemberName.setText(fullname);
         getSupportActionBar().setTitle(fullname);
 
+        checkBoxFavorite.setChecked(hostInfo.getStarred());
+        iconFavorite.setAlpha(hostInfo.getStarred() ? 1.0f : 0.3f);
 
         // Host Availability:
         // TODO: Copied from HostListAdapter.java, needs to be refactored
@@ -249,7 +267,6 @@ public class HostInformationActivity extends WSBaseActivity
         if (host.isNotCurrentlyAvailable()) {
             iconAvailableStatus.setImageResource(R.drawable.ic_home_variant_grey600_24dp);
             iconAvailableStatus.setAlpha(0.5f);
-            fullname += " " + getString(R.string.host_not_currently_available);
             txtAvailability.setText(R.string.not_currently_available);
         } else {
             iconAvailableStatus.setImageResource(R.drawable.ic_home_variant_black_24dp);
@@ -274,10 +291,10 @@ public class HostInformationActivity extends WSBaseActivity
             phones += getString(R.string.mobile_phone_abbrev, host.getMobilePhone()) + " ";
         }
         if (!host.getHomePhone().isEmpty()) {
-            phones += getString(R.string.home_phone_abbrev, host.getHomePhone())  + " ";
+            phones += getString(R.string.home_phone_abbrev, host.getHomePhone()) + " ";
         }
         if (!host.getWorkPhone().isEmpty()) {
-            phones += getString(R.string.work_phone_abbrev, host.getWorkPhone())  + " ";
+            phones += getString(R.string.work_phone_abbrev, host.getWorkPhone()) + " ";
         }
         if (!phones.isEmpty()) {
             txtPhone.setText(phones);
@@ -423,11 +440,10 @@ public class HostInformationActivity extends WSBaseActivity
 
             updateViewContent();
 
-            if (hostInfo.isStarred() && forceUpdate) {
+            if (hostInfo.isStarred()) {
                 starredHostDao.open();
                 starredHostDao.update(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost(), hostInfo.getFeedback());
                 starredHostDao.close();
-                dialogHandler.alert(getResources().getString(R.string.host_updated));
             }
 
         }
