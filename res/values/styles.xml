@@ -6,7 +6,7 @@
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
         <item name="colorAccent">@color/accent_material_dark</item>
         <item name="android:statusBarColor">@color/primaryColorDark</item>
-        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 
@@ -16,6 +16,12 @@
         <item name="actionBarStyle">@style/WsActionBar</item>
     </style>
 
+    <!-- Below is required as of appcompat v22.1 to avoid a crash, see http://stackoverflow.com/questions/29790070/upgraded-to-appcompat-v22-1-0-and-now-getting-illegalargumentexception-appcompa -->
+    <style name="wsAppTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">
+        <!-- Both of these are needed -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
     <style name="WsActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:titleTextStyle">@style/WsTitleTextStyle</item>

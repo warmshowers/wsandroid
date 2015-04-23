@@ -170,7 +170,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:singleLine="false"
-                            android:text="txtPhone"
                             android:layout_marginLeft="56dp" />
 
                     </LinearLayout>

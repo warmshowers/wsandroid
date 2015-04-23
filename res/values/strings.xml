@@ -146,5 +146,7 @@
     <string name="nearby_service_bikeshop">Bikeshop</string>
     <string name="nearby_services_description">Nearby services: %1$s</string>
     <string name="nearby_service_campground">Campground</string>
+    <string name="not_currently_available">Not Currently Available</string>
+    <string name="currently_available">Currently Available</string>
 
 </resources>

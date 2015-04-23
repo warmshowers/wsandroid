@@ -48,6 +48,8 @@ public class HostInformationActivity extends WSBaseActivity
 
     ImageView imgMemberPhoto;
     TextView lblMemberName;
+
+    TextView txtAvailability;
     TextView txtLoginInfo;
     TextView txtHostLimitations;
     TextView txtHostLocation;
@@ -77,6 +79,7 @@ public class HostInformationActivity extends WSBaseActivity
         imgMemberPhoto = (ImageView) findViewById(R.id.memberPhoto);
         lblMemberName = (TextView) findViewById(R.id.lblMemberName);
         iconAvailableStatus = (ImageView)findViewById(R.id.iconAvailableStatus);
+        txtAvailability = (TextView)findViewById(R.id.txtAvailability);
         txtLoginInfo = (TextView)findViewById(R.id.txtLoginInfo);
         txtHostLimitations = (TextView)findViewById(R.id.txtHostLimitations);
 
@@ -133,9 +136,6 @@ public class HostInformationActivity extends WSBaseActivity
         }
 
         getSupportActionBar().setTitle(getString(R.string.hostinfo_activity_title));
-
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
 
@@ -250,9 +250,11 @@ public class HostInformationActivity extends WSBaseActivity
             iconAvailableStatus.setImageResource(R.drawable.ic_home_variant_grey600_24dp);
             iconAvailableStatus.setAlpha(0.5f);
             fullname += " " + getString(R.string.host_not_currently_available);
+            txtAvailability.setText(R.string.not_currently_available);
         } else {
             iconAvailableStatus.setImageResource(R.drawable.ic_home_variant_black_24dp);
             iconAvailableStatus.setAlpha(1.0f);
+            txtAvailability.setText(R.string.currently_available);
         }
 
         String activeDate = host.getLastLogin();
@@ -280,6 +282,8 @@ public class HostInformationActivity extends WSBaseActivity
         if (!phones.isEmpty()) {
             txtPhone.setText(phones);
             Linkify.addLinks(txtPhone, Linkify.ALL);
+        } else {
+            txtPhone.setVisibility(View.GONE);
         }
 
         // Profile/Comments section
