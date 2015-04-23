@@ -101,8 +101,13 @@ public class FeedbackActivity extends WSBaseActivity
 
         // Set up datepicker
         GregorianCalendar now = new GregorianCalendar();
-        datePicker.findViewById(Resources.getSystem().getIdentifier("day", "id", "android")).setVisibility(View.GONE);
         datePicker.init(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), null);
+        View dayView = datePicker.findViewById(Resources.getSystem().getIdentifier("day", "id", "android"));
+        // This doesn't seem to be there in API21+ of Android, so just ignore if not found.
+        // TODO: This whole datepicker is way too big in API21+ for inline inclusion, and it doesn't seem to work well.
+        if (dayView != null) {
+            dayView.setVisibility(View.GONE);
+        }
 
         lblOverallExperience.setText(getString(R.string.lbl_feedback_overall_experience, host.getFullname()));
     }
