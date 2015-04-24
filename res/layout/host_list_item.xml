@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:layout_height="fill_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical"
     android:layout_marginLeft="16dp"
     >
@@ -33,9 +35,6 @@
 	    android:id="@+id/txtHostLocation"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-
-	    android:ellipsize="end"
-        android:singleLine="true"
         android:text="Gunnison, Co, USA"
         android:layout_marginLeft="56dp" />
 
@@ -43,9 +42,8 @@
         android:id="@+id/txtMemberInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="false"
         android:text="Member since January 1, 2015. Last active 3 weeks ago."
+        android:textColor="@android:color/darker_gray"
         android:layout_marginLeft="56dp" />
 
 </LinearLayout>

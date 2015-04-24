@@ -33,6 +33,8 @@ import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.view.FeedbackTable;
 
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -274,8 +276,9 @@ public class HostInformationActivity extends WSBaseActivity
             txtAvailability.setText(R.string.currently_available);
         }
 
-        String activeDate = host.getLastLogin();
-        String createdDate = host.getMemberSince();
+        DateFormat simpleDate = DateFormat.getDateInstance();
+        String activeDate = simpleDate.format(host.getLastLoginAsDate());
+        String createdDate = new SimpleDateFormat("yyyy").format(host.getCreatedAsDate());
 
         String memberString = getString(R.string.search_host_summary, createdDate, activeDate);
         txtLoginInfo.setText(memberString);

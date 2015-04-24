@@ -50,10 +50,8 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
         if (mQuery != null) {
             if (host.getCity().toLowerCase().contains(mQuery)) {
                 location.setTextColor(Color.BLACK);
-                // location.setTypeface(null, Typeface.BOLD);
             } else {
                  location.setTextColor(Color.GRAY);
-                // fullname.setTypeface(null, Typeface.BOLD);
             }
         }
 

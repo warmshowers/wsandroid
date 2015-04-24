@@ -136,6 +136,25 @@ public class Host extends _Host {
         return formatDate(getLogin());
     }
 
+    public Date getCreatedAsDate() {
+        return stringToDate(mCreated);
+    }
+    public Date getLastLoginAsDate() {
+        return stringToDate(mLogin);
+    }
+    protected Date stringToDate(String s) {
+
+        int intDate = 0;
+        try {
+            intDate = Integer.parseInt(s);
+        } catch (Exception e) {
+            // Ignore
+        }
+        Date d = new Date((long)intDate * 1000);
+        return d;
+    }
+
+
     private String formatDate(String timestamp) {
         if (timestamp.isEmpty()) {
             return "";
