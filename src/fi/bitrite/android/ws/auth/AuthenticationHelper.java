@@ -89,7 +89,7 @@ public class AuthenticationHelper {
             Account oldAccount = getWarmshowersAccount();
             accountManager.removeAccount(oldAccount, null, null);
         } catch (NoAccountException e) {
-            // Ignore - if there wasn't an account we don't care.
+            // No action
         }
     }
 }

@@ -86,9 +86,6 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
     private void initDrawer() {
 
         ListView leftDrawer = (ListView)findViewById(R.id.left_drawer);
-//        View navItem = (View)leftDrawer.getItemAtPosition(mActivityNameMap.get(mActivityName));
-
-
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
 
             @Override
@@ -105,12 +102,14 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        // Initialize the account info
-//        if (!setupCredentials()) {
-//            return;
-//        }
+        // Make sure we have an active account, or go to authentication screen
+        if (!setupCredentials()) {
+            return;
+        }
+
         TextView lblUsername = (TextView) mDrawerLayout.findViewById(R.id.lblUsername);
         TextView lblNotLoggedIn = (TextView) mDrawerLayout.findViewById(R.id.lblNotLoggedIn);
+
         try {
             String username = AuthenticationHelper.getAccountUsername();
             lblUsername.setText(username);
@@ -197,7 +196,10 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
             return true;
         }
         catch (NoAccountException e) {
-            startAuthenticatorActivity(new Intent(this, AuthenticatorActivity.class));
+
+            if (this.getClass() != AuthenticatorActivity.class) {  // Would be circular, so don't do it.
+                startAuthenticatorActivity(new Intent(this, AuthenticatorActivity.class));
+            }
             return false;
         }
     }

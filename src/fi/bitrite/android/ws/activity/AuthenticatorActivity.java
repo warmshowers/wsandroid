@@ -29,8 +29,6 @@ import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
 public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity {
 
     public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
-    public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
-    public static final int RESULT_NO_NETWORK = 101;
     public static final int REQUEST_TYPE_AUTHENTICATE = 201;
 
     View loggedInLayout;
@@ -59,25 +57,32 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
     }
 
     public void updateView() {
+        try {
+            String username = AuthenticationHelper.getAccountUsername();
+            updateLoggedInView(username);
+        } catch (NoAccountException e) {
+            updateLoggedOutView();
+        }
+    }
+
+    void updateLoggedInView(String username) {
+        notLoggedInLayout.setVisibility(View.GONE);
+        loggedInLayout.setVisibility(View.VISIBLE);
+        txtLoggedInStatus.setText(getString(R.string.current_login_status, username));
+
+        findViewById(android.R.id.content).invalidate();
+    }
+    void updateLoggedOutView() {
         notLoggedInLayout.setVisibility(View.VISIBLE);
         loggedInLayout.setVisibility(View.GONE);
-
-        try {
-            String loggedInUsername = AuthenticationHelper.getAccountUsername();
-            notLoggedInLayout.setVisibility(View.GONE);
-            loggedInLayout.setVisibility(View.VISIBLE);
-            txtLoggedInStatus.setText(getString(R.string.current_login_status, loggedInUsername));
-        } catch (NoAccountException e) {
-            // No action
-        }
-
+        findViewById(android.R.id.content).invalidate();
     }
 
 
     public void logout(View unusedArg) {
         AuthenticationHelper.removeOldAccount();
         // TODO: Actually perform a logout operation
-        updateView();
+        updateLoggedOutView();
     }
 
     public void cancel(View view) {
@@ -92,7 +97,6 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
     }
 
     public void applyCredentials(View view) {
-        AuthenticationHelper.removeOldAccount();
 
         String username = editUsername.getText().toString();
         String password = editPassword.getText().toString();
