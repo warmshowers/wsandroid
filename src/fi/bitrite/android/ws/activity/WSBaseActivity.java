@@ -41,7 +41,6 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
     private NavDrawerListAdapter mNavDrawerListAdapter;
 
     public static final String TAG = "WSBaseActivity";
-    private Dialog splashDialog;
     protected String mActivityName = this.getClass().getSimpleName();
     protected ArrayList<NavRow> mNavRowList = new ArrayList<NavRow>();
     String mActivityFriendly;
@@ -202,23 +201,6 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
             }
             return false;
         }
-    }
-
-    private void showAboutDialog() {
-        splashDialog = new Dialog(this, R.style.about_dialog);
-        splashDialog.setContentView(R.layout.about);
-        TextView versionTextView = (TextView)splashDialog.findViewById(R.id.app_version);
-        versionTextView.setText(getString(R.string.app_version, BuildConfig.VERSION_NAME));
-        TextView googleDetails = (TextView)splashDialog.findViewById(R.id.txtAboutDetailsGoogle);
-        String licenseInfo = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this);
-        if (licenseInfo != null) {
-            // licenseInfo is a bit of a mess (coming directly from google)
-            // Change the multi-\n to <br/>, then change single \n perhaps followed by whitespace to a space
-            // then change the <br/> back to \n
-            licenseInfo = licenseInfo.replaceAll("\n\n+", "<br/>").replaceAll("\n[ \t]*", " ").replace("<br/>", "\n");
-            googleDetails.setText(licenseInfo);
-        }
-        splashDialog.show();
     }
 
 }
