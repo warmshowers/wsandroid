@@ -16,23 +16,38 @@ import fi.bitrite.android.ws.R;
 /**
  * This fragment approach is thanks to http://stackoverflow.com/a/26564401/215713
  */
-public class WsPreferenceFragment extends PreferenceFragment {
+public class WsPreferenceFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+
 
     @Override
     public void onCreate(final Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        setSummary();
     }
-//    void setSummary() {
-//        ListPreference pref = (ListPreference) findPreference("distance_unit");
-//        CharSequence title = pref.getEntry();
-//        pref.setSummary(title);
-//    }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        setSummary();
+    }
+    void setSummary() {
+        ListPreference pref = (ListPreference) findPreference("distance_unit");
+        CharSequence title = pref.getEntry();
+        pref.setSummary(title);
+    }
 
-//    @Override
-//    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-//        setSummary();
-//    }
+    @Override
+    public void onPause() {
+        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+    }
+
 
 }
