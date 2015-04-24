@@ -93,6 +93,10 @@
             android:name=".activity.AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
+        <activity
+            android:name=".activity.LegalNoticesActivity"
+            android:label="@string/open_source_licenses" >
+        </activity>
 
         <meta-data
             android:name="com.google.android.gms.version"

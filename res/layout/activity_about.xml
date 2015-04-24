@@ -23,7 +23,6 @@
                 android:orientation="vertical"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-
                 >
 
                 <ImageView
@@ -74,16 +73,9 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:background="#c0c0c0"
                     android:paddingBottom="5dp"
                     android:paddingTop="5dp" />
 
-                <TextView
-                    android:id="@+id/txtAboutDetailsGoogle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:autoLink="web"
-                    android:text="Some dummy text" />
             </LinearLayout>
         </ScrollView>
 

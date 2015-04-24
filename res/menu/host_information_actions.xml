@@ -1,5 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ws="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_search"
+        android:title="@string/action_search"
+        android:icon="@drawable/ic_search_white_24dp"
+        ws:showAsAction="ifRoom|collapseActionView"
+        ws:actionViewClass="android.widget.SearchView" />
 
     <item
         android:id="@+id/menuSendMessageIcon"

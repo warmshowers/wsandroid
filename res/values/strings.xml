@@ -152,5 +152,6 @@
     <string name="currently_available">Currently Available</string>
     <string name="current_login_status">You are currently logged in as %1$s</string>
     <string name="title_activity_about">About Warm Showers</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
 
 </resources>

@@ -19,15 +19,6 @@ public class AboutActivity extends WSBaseActivity {
 
         TextView versionTextView = (TextView) findViewById(R.id.app_version);
         versionTextView.setText(getString(R.string.app_version, BuildConfig.VERSION_NAME));
-        TextView googleDetails = (TextView) findViewById(R.id.txtAboutDetailsGoogle);
-        String licenseInfo = GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(this);
-        if (licenseInfo != null) {
-            // licenseInfo is a bit of a mess (coming directly from google)
-            // Change the multi-\n to <br/>, then change single \n perhaps followed by whitespace to a space
-            // then change the <br/> back to \n
-            licenseInfo = licenseInfo.replaceAll("\n\n+", "<br/>").replaceAll("\n[ \t]*", " ").replace("<br/>", "\n");
-            googleDetails.setText(licenseInfo);
-        }
 
     }
 
