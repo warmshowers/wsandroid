@@ -11,7 +11,6 @@
     <string name="list_search_hint">Nombre o ciudad </string>
     <string name="no_results">Tu búsqueda no produjo resultados.</string>
     <string name="enter_credentials">Por favor, ingresa tu nombre de usuario (o email) y contraseña:</string>
-    <string name="about_credentials">Tu información será almacenada como una cuenta en tu dispositivo. Puedes eliminar la cuenta en cualquier momento ingresando a las Configuraciones de Android / Menú de Cuentas.</string>
     <string name="view_details">Ver detalles </string>
     <string name="star">Estrella</string>
     <string name="close">Cerrar</string>

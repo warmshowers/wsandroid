@@ -1,13 +1,13 @@
 package fi.bitrite.android.ws.activity;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
+import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
 
 /**
@@ -32,15 +33,13 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
     public static final int RESULT_NO_NETWORK = 101;
     public static final int REQUEST_TYPE_AUTHENTICATE = 201;
 
-    private AccountManager accountManager;
-
+    View loggedInLayout;
+    View notLoggedInLayout;
     EditText editUsername;
     EditText editPassword;
+    TextView txtLoggedInStatus;
 
-    private String username;
-    private String password;
-
-    private DialogHandler dialogHandler;
+    private DialogHandler mDialogHandler;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -48,15 +47,37 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
         setContentView(R.layout.activity_authentication);
         initView();
 
+        loggedInLayout = findViewById(R.id.loggedInLayout);
+        notLoggedInLayout = findViewById(R.id.notLoggedInLayout);
+        txtLoggedInStatus = (TextView)findViewById(R.id.txtLoggedInStatus);
         editUsername = (EditText) findViewById(R.id.editUsername);
         editPassword = (EditText) findViewById(R.id.editPassword);
 
-        accountManager = AccountManager.get(this);
-        dialogHandler = new DialogHandler(this);
+        mDialogHandler = new DialogHandler(this);
 
-        Intent intent = getIntent();
-        username = intent.getStringExtra("username");
-        editUsername.setText(username);
+        updateView();
+    }
+
+    public void updateView() {
+        notLoggedInLayout.setVisibility(View.VISIBLE);
+        loggedInLayout.setVisibility(View.GONE);
+
+        try {
+            String loggedInUsername = AuthenticationHelper.getAccountUsername();
+            notLoggedInLayout.setVisibility(View.GONE);
+            loggedInLayout.setVisibility(View.VISIBLE);
+            txtLoggedInStatus.setText(getString(R.string.current_login_status, loggedInUsername));
+        } catch (NoAccountException e) {
+            // No action
+        }
+
+    }
+
+
+    public void logout(View unusedArg) {
+        AuthenticationHelper.removeOldAccount();
+        // TODO: Actually perform a logout operation
+        updateView();
     }
 
     public void cancel(View view) {
@@ -73,10 +94,10 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
     public void applyCredentials(View view) {
         AuthenticationHelper.removeOldAccount();
 
-        username = editUsername.getText().toString();
-        password = editPassword.getText().toString();
+        String username = editUsername.getText().toString();
+        String password = editPassword.getText().toString();
         if (!username.isEmpty() && !password.isEmpty()) {
-            dialogHandler.showDialog(DialogHandler.AUTHENTICATE);
+            mDialogHandler.showDialog(DialogHandler.AUTHENTICATE);
             Account account = AuthenticationHelper.createNewAccount(username, password);
             AuthenticationTask authTask = new AuthenticationTask();
             authTask.execute();
@@ -85,7 +106,7 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
 
     @Override
     protected Dialog onCreateDialog(int id, Bundle args) {
-        return dialogHandler.createDialog(id, getResources().getString(R.string.authenticating));
+        return mDialogHandler.createDialog(id, getResources().getString(R.string.authenticating));
     }
 
     private class AuthenticationTask extends AsyncTask<Void, Void, Void> {
@@ -108,7 +129,7 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
         }
 
         protected void onPostExecute(Void v) {
-            dialogHandler.dismiss();
+            mDialogHandler.dismiss();
 
             if (mUID < 1) {
                 if (mNetworkError) {

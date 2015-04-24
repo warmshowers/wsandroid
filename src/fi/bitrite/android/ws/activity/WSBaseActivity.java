@@ -202,21 +202,6 @@ abstract class WSBaseActivity extends ActionBarActivity implements android.widge
         }
     }
 
-    private void startAuthenticationActivityForExistingAccount() {
-        Intent i = new Intent(this, AuthenticatorActivity.class);
-        try {
-            Account account = AuthenticationHelper.getWarmshowersAccount();
-            i.putExtra("username", account.name);
-        } catch (NoAccountException e) {
-            // We have no account, so forget it.
-        }
-        startAuthenticatorActivity(i);
-    }
-    private void startSettingsActivity() {
-        Intent i = new Intent(this, SettingsActivity.class);
-        startActivity(i);
-    }
-
     private void showAboutDialog() {
         splashDialog = new Dialog(this, R.style.about_dialog);
         splashDialog.setContentView(R.layout.about);

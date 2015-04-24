@@ -11,7 +11,6 @@
     <string name="list_search_hint">Name or city</string>
     <string name="no_results">Your search yielded no results.</string>
     <string name="enter_credentials">Please enter your username (or email) and password:</string>
-    <string name="about_credentials">These will be stored in an account on your device. You can delete the account at any time using the Android Settings / Account menu.</string>
     <string name="view_details">View details</string>
     <string name="star">Star</string>
     <string name="close">Close</string>
@@ -151,5 +150,6 @@
     <string name="nearby_service_campground">Campground</string>
     <string name="not_currently_available">Not Currently Available</string>
     <string name="currently_available">Currently Available</string>
+    <string name="current_login_status">You are currently logged in as %1$s</string>
 
 </resources>
