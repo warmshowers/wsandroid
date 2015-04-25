@@ -42,8 +42,8 @@
     <string name="host_not_available">Dieses Mitglied ist als zurzeit nicht verfügbar markiert. Sie können das Mitglied trotzdem kontaktieren, jedoch nicht für Beherbergung.</string>
     <string name="host_info_in_progress">Gastgeber-Informationen werden abgerufen…</string>
     <string name="unstar_host">Markierung entfernen?</string>
-    <string name="host_starred">Gastgeber markiert. Sie können nun auf dessen Kontoinformationen offline zugreifen.</string>
-    <string name="host_unstarred">Gastgeber-Informationen von Gerät gelöscht.</string>
+    <string name="host_starred">Gastgeber als Favorit markiert. Sie können nun auf dessen Kontoinformationen offline zugreifen.</string>
+    <string name="host_unstarred">Gastgeber-Favorit von Gerät gelöscht.</string>
     <string name="performing_search">Suche wird ausgeführt …</string>
     <string name="io_error">Internet-Zugang fehlgeschlagen. Bitte überprüfen Sie Ihre Internet-Verbindung.</string>
     <string name="http_unexpected_failure">Ein unerwarteter Fehler ist beim Kontaktieren des Servers aufgetreten. Bitte überprüfen Sie Ihre Kontodaten und Internetverbindung.</string>
@@ -113,7 +113,7 @@
     <string name="not_connected_to_network">Sie sind zurzeit mit keinem Netzwerk verbunden.</string>
     <string name="hostinfo_activity_title">Mitgliedsprofil</string>
     <string name="host_service_shower">Dusche</string>
-    <string name="host_services_food">Nahrung</string>
+    <string name="host_services_food">Essen</string>
     <string name="host_services_bed">Bett</string>
     <string name="host_service_laundry">Waschmaschine</string>
     <string name="host_service_storage">Fahrradunterstand</string>
@@ -129,28 +129,28 @@
       * enter_credentials should be changed to say "Your Warmshowers.org username or email"
 
     -->
-    <string name="drawer_open">open</string>
-    <string name="drawer_close">close</string>
-    <string name="text_search_title">Text Search</string>
-    <string name="search_hint">Host name or city/town</string>
-    <string name="action_search">Host search</string>
-    <string name="contact_host">Contact Member</string>
-    <string name="search_host_summary">Member since %1$s, last active %2$s</string>
-    <string name="host_limitations">Max guests %1$s, Languages spoken %2$s</string>
-    <string name="favorite_host">Favorite Host</string>
-    <string name="no_feedback_yet">No feedback yet</string>
-    <string name="mobile_phone_abbrev">Mobile: %1$s</string>
-    <string name="home_phone_abbrev">Home: %1$s</string>
-    <string name="work_phone_abbrev">Work: %1$s</string>
-    <string name="host_services_description">Services this host may offer: %1$s</string>
-    <string name="nearby_service_accommodation">Accommodation</string>
-    <string name="nearby_service_bikeshop">Bikeshop</string>
-    <string name="nearby_services_description">Nearby services: %1$s</string>
-    <string name="nearby_service_campground">Campground</string>
-    <string name="not_currently_available">Not Currently Available</string>
-    <string name="currently_available">Currently Available</string>
-    <string name="current_login_status">You are currently logged in as %1$s</string>
-    <string name="title_activity_about">About Warm Showers</string>
-    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="drawer_open">offen</string>
+    <string name="drawer_close">geschlossen</string>
+    <string name="text_search_title">Textsuche</string>
+    <string name="search_hint">Name oder Stadt des Mitglieds</string>
+    <string name="action_search">Suche nach Gastgeber</string>
+    <string name="contact_host">Mitglied kontaktieren</string>
+    <string name="search_host_summary">Mitglied seit %1$s, zuletzt aktiv am %2$s</string>
+    <string name="host_limitations">Maximale Gäste %1$s, gesprochene Sprachen %2$s</string>
+    <string name="favorite_host">Favoriten</string>
+    <string name="no_feedback_yet">Noch keine Rückmeldungen</string>
+    <string name="mobile_phone_abbrev">Mobil: %1$s</string>
+    <string name="home_phone_abbrev">Privat: %1$s</string>
+    <string name="work_phone_abbrev">Arbeit: %1$s</string>
+    <string name="host_services_description">Dienste, die dieser Gastgeber anbieten kann: %1$s</string>
+    <string name="nearby_service_accommodation">Unterkunft</string>
+    <string name="nearby_service_bikeshop">Fahrradwerkstatt</string>
+    <string name="nearby_services_description">Nahgelegene Dienstleistungen: %1$s</string>
+    <string name="nearby_service_campground">Zeltplatz</string>
+    <string name="not_currently_available">Zurzeit nicht verfügbar</string>
+    <string name="currently_available">Zurzeit verfügbar</string>
+    <string name="current_login_status">Sie sind zurzeit als %1$s eingeloggt</string>
+    <string name="title_activity_about">Über Warmshowers</string>
+    <string name="open_source_licenses">Open-Source-Lizenzen</string>
 
 </resources>
