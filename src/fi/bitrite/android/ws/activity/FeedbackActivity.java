@@ -35,32 +35,20 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.ArrayTranslator;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
 
 /**
  * Responsible for letting the user type in a message and then sending it to a host
  * over the WarmShowers web service.
  */
-public class FeedbackActivity extends RoboActivity {
+public class FeedbackActivity extends WSBaseActivity
+        implements android.widget.AdapterView.OnItemClickListener {
 
-    @InjectView(R.id.txtActivityTitle)
-    TextView activityTitleView;
-    @InjectView(R.id.feedbackEditText)
     EditText feedbackEditText;
-    @InjectView(R.id.date_picker)
     DatePicker datePicker;
-    @InjectView(R.id.lblOverallExperience)
     TextView lblOverallExperience;
-    @InjectView(R.id.feedback_overall_experience)
     Spinner feedbackOverallExperience;
-    @InjectView(R.id.feedback_how_we_met)
     Spinner howWeMet;
-    @InjectView(R.id.btnSubmit)
     Button btnSubmit;
-    @InjectView(R.id.btnFeedbackSend)
-    ImageView btnFeedbackSend;
-    @InjectView(R.id.noNetworkWarningFeedback)
     TextView noNetworkWarning;
 
     ArrayTranslator translator = ArrayTranslator.getInstance();
@@ -79,11 +67,9 @@ public class FeedbackActivity extends RoboActivity {
         super.onResume();
         if (!Tools.isNetworkConnected(this)) {
             noNetworkWarning.setText(getString(R.string.not_connected_to_network));
-            btnFeedbackSend.setEnabled(false);
             btnSubmit.setEnabled(false);
             return;
         }
-        btnFeedbackSend.setEnabled(true);
         btnSubmit.setEnabled(true);
         noNetworkWarning.setText("");
         noNetworkWarning.setVisibility(View.GONE);
@@ -93,6 +79,16 @@ public class FeedbackActivity extends RoboActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
+        initView();
+
+        feedbackEditText = (EditText) findViewById(R.id.feedbackEditText);
+        datePicker = (DatePicker) findViewById(R.id.date_picker);
+        lblOverallExperience = (TextView) findViewById(R.id.lblOverallExperience);
+        feedbackOverallExperience = (Spinner) findViewById(R.id.feedback_overall_experience);
+        howWeMet = (Spinner) findViewById(R.id.feedback_how_we_met);
+        btnSubmit = (Button) findViewById(R.id.btnSubmit);
+        noNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningFeedback);
+
 
         dialogHandler = new DialogHandler(this);
 
@@ -103,12 +99,15 @@ public class FeedbackActivity extends RoboActivity {
             host = (Host) i.getParcelableExtra("host");
         }
 
-        activityTitleView.setText(getString(R.string.leaving_feedback, host.getFullname()));
-
         // Set up datepicker
         GregorianCalendar now = new GregorianCalendar();
-        datePicker.findViewById(Resources.getSystem().getIdentifier("day", "id", "android")).setVisibility(View.GONE);
-        datePicker.init(now.get( Calendar.YEAR), now.get( Calendar.MONTH), now.get( Calendar.DAY_OF_MONTH), null);
+        datePicker.init(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), null);
+        View dayView = datePicker.findViewById(Resources.getSystem().getIdentifier("day", "id", "android"));
+        // This doesn't seem to be there in API21+ of Android, so just ignore if not found.
+        // TODO: This whole datepicker is way too big in API21+ for inline inclusion, and it doesn't seem to work well.
+        if (dayView != null) {
+            dayView.setVisibility(View.GONE);
+        }
 
         lblOverallExperience.setText(getString(R.string.lbl_feedback_overall_experience, host.getFullname()));
     }

@@ -27,4 +27,17 @@
         <item>Negativa</item>
     </string-array>
 
+    <!-- Translatable text of Navigation Drawer Menu -->
+    <string-array name="nav_menu_options">
+        <item >Map</item>
+        <item >Search</item>
+        <item >Favorites</item>
+        <item >Messages</item>
+        <item >Account/LogIn</item>
+        <item >Settings</item>
+        <item>Help &amp; Feedback</item>
+        <item >About</item>
+    </string-array>
+
+
 </resources>

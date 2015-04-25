@@ -17,22 +17,15 @@ import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.messaging.RestUnreadCount;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
 
-public class MessagesTabActivity extends RoboActivity implements View.OnClickListener {
 
-    @InjectView(R.id.noNetworkWarningMessages)
-    TextView noNetworkWarning;
 
-    @InjectView(R.id.unreadCount)
-    TextView unreadCount;
+public class MessagesTabActivity extends WSBaseActivity implements android.widget.AdapterView.OnItemClickListener, View.OnClickListener {
 
-    @InjectView(R.id.btnUpdateMessages)
-    Button updateMessages;
-
-    @InjectView(R.id.btnViewOnSite)
-    Button viewMessagesOnSite;
+    TextView mNoNetworkWarning;
+    TextView mUnreadCount;
+    Button mUpdateMessages;
+    Button mViewMessagesOnSite;
 
     private DialogHandler dialogHandler;
     private int numUnread;
@@ -41,15 +34,21 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.messages_tab);
+        initView();
+
+        mNoNetworkWarning = (TextView)findViewById(R.id.noNetworkWarningMessages);
+        mUnreadCount = (TextView)findViewById(R.id.unreadCount);
+        mUpdateMessages = (Button)findViewById(R.id.btnUpdateMessages);
+        mViewMessagesOnSite = (Button)findViewById(R.id.btnViewOnSite);
 
         dialogHandler = new DialogHandler(this);
         if (Tools.isNetworkConnected(this)) {
             downloadUnreadCount();
         }
 
-        updateMessages.setOnClickListener(this);
+        mUpdateMessages.setOnClickListener(this);
 
-        viewMessagesOnSite.setOnClickListener(new View.OnClickListener() {
+        mViewMessagesOnSite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String url = GlobalInfo.warmshowersBaseUrl + "/user/" + AuthenticationHelper.getAccountUid() + "/messages";
@@ -73,32 +72,33 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        downloadUnreadCount();
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
 
         if (!Tools.isNetworkConnected(this)) {
-            noNetworkWarning.setText(getString(R.string.not_connected_to_network));
-            updateMessages.setEnabled(false);
-            viewMessagesOnSite.setEnabled(false);
+            mNoNetworkWarning.setText(getString(R.string.not_connected_to_network));
+            mUpdateMessages.setEnabled(false);
+            mViewMessagesOnSite.setEnabled(false);
             return;
         }
-        updateMessages.setEnabled(true);
-        updateMessages.setVisibility(View.VISIBLE);
-        viewMessagesOnSite.setEnabled(true);
+        mUpdateMessages.setEnabled(true);
+        mUpdateMessages.setVisibility(View.VISIBLE);
+        mViewMessagesOnSite.setEnabled(true);
 
-        noNetworkWarning.setText("");
-        noNetworkWarning.setVisibility(View.GONE);
+        mNoNetworkWarning.setText("");
+        mNoNetworkWarning.setVisibility(View.GONE);
 
         if (DialogHandler.inProgress()) {
             dialogHandler.dismiss();
             dialogHandler.showDialog(DialogHandler.MESSAGES);
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        downloadUnreadCount();
     }
 
     private class MessagesTask extends AsyncTask<Void, Void, Object> {
@@ -144,8 +144,8 @@ public class MessagesTabActivity extends RoboActivity implements View.OnClickLis
             text = getResources().getString(R.string.no_unread_messages);
         }
 
-        unreadCount.setText(text);
-        updateMessages.setVisibility(View.VISIBLE);
+        mUnreadCount.setText(text);
+        mUpdateMessages.setVisibility(View.VISIBLE);
     }
 
     @Override

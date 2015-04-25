@@ -11,7 +11,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import roboguice.util.Strings;
 
 /**
  * Gets host information based on host ID.
@@ -19,8 +18,8 @@ import roboguice.util.Strings;
 public class HttpHostInformation extends RestClient {
 
     public Host getHostInformation(int uid) throws JSONException, IOException, URISyntaxException {
-        String simpleUrl = new StringBuilder().append(GlobalInfo.warmshowersBaseUrl).append("/user/")
-                .append(uid).append("/json").toString();
+        // TODO: This usage is DEPRECATED. We're supposed to use services/rest/user/<uid>
+        String simpleUrl = GlobalInfo.warmshowersBaseUrl + "/user/" + Integer.toString(uid) + "/json";
         JSONObject jsonObject = get(simpleUrl);
 
         try {
@@ -28,7 +27,7 @@ public class HttpHostInformation extends RestClient {
             JSONObject hostJson = hostJsonArray.getJSONObject(0);
             Host host = Host.CREATOR.parse(hostJson.getJSONObject("user"));
 
-            if (Strings.isEmpty(host.getFullname())) {
+            if (host.getFullname().isEmpty()) {
                 throw new HttpException("Could not parse JSON");
             }
 

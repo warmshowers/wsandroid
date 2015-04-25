@@ -16,8 +16,8 @@ public class HostInformation {
     public static final int NO_ID = 0;
 
     private Host host;
-    private boolean starred;
-    private List<Feedback> feedback;
+    private boolean starred = false;
+    private List<Feedback> feedback = new ArrayList<Feedback>();
 
     private final int id;
 
@@ -76,6 +76,9 @@ public class HostInformation {
         starred = !starred;
     }
 
+    public void setStarred(boolean newStatus) {
+        starred = newStatus;
+    }
     public void saveInIntent(Intent resultIntent) {
         resultIntent.putExtra("host", host);
         resultIntent.putExtra("id", id);
@@ -84,5 +87,9 @@ public class HostInformation {
 
     public void setFeedback(List<Feedback> feedback) {
         this.feedback = feedback;
+    }
+
+    public boolean getStarred() {
+        return starred;
     }
 }

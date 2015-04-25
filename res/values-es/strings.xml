@@ -11,7 +11,6 @@
     <string name="list_search_hint">Nombre o ciudad </string>
     <string name="no_results">Tu búsqueda no produjo resultados.</string>
     <string name="enter_credentials">Por favor, ingresa tu nombre de usuario (o email) y contraseña:</string>
-    <string name="about_credentials">Tu información será almacenada como una cuenta en tu dispositivo. Puedes eliminar la cuenta en cualquier momento ingresando a las Configuraciones de Android / Menú de Cuentas.</string>
     <string name="view_details">Ver detalles </string>
     <string name="star">Estrella</string>
     <string name="close">Cerrar</string>
@@ -56,7 +55,7 @@
     <string name="message_sent">Mensaje enviado.</string>
     <string name="about_1">"Desarrollado por voluntarios de Warmshowers.org liderados por el autor original Johannes Staffans. \Traductora español: Laura Juliá</string>
     <string name="about_2">Esta aplicación es de código abierto bajo la licencia Apache 2.0. Contribuye multiplicando nuestro repositorio en github.com/warmshowers/wsandroid\ Reporta problemas allí o en el formulario de contacto de Warmshowers, warmshowers.org/contact</string>
-    <string name="feedback">Comentarios</string>
+    <string name="feedback">Comentarios (%1 $d)</string>
     <string name="error_retrieving_messages">Ocurrió un error al cargar los mensajes.</string>
     <string name="messages_in_progress">Cargando mensajes …</string>
     <string name="no_unread_messages">-No tienes mensajes sin leer.</string>
@@ -113,7 +112,7 @@
     <string name="feedback_overall_experience_error">Debes escoger un valor para la experiencia general con este usuario</string>
     <string name="embedded_browser_warning">Has salido de la aplicación usando un navegador para ver Warmshowers.org. Usa el botón “Regresar” para volver a la aplicación.</string>
     <string name="not_connected_to_network">No estás conectado a la red actualmente.</string>
-    <string name="hostinfo_actiivity_title">Perfil de usuario </string>
+    <string name="hostinfo_activity_title">Perfil de usuario </string>
     <string name="host_service_shower">Ducha</string>
     <string name="host_services_food">Comida</string>
     <string name="host_services_bed">Sitio para dormir</string>
@@ -123,4 +122,35 @@
     <string name="host_service_tentspace">Terreno (Para acampar)</string>
     <string name="host_service_sag">Coche escoba (vehículo de soporte)</string>
     <string name="label_feedback_for_this_member">Tu comentario para este miembro</string>
+
+    <!-- Beginning of new strings for 1.5.0+ -->
+    <!-- Notes:
+      * Please check for anything using the idea "Starred" as we're using "Favorited" now. Especially host_starred and host_unstarred
+      * enter_credentials should be changed to say "Your Warmshowers.org username or email"
+
+    -->
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+    <string name="text_search_title">Text Search</string>
+    <string name="search_hint">Host name or city/town</string>
+    <string name="action_search">Host search</string>
+    <string name="contact_host">Contact Member</string>
+    <string name="search_host_summary">Member since %1$s, last active %2$s</string>
+    <string name="host_limitations">Max guests %1$s, Languages spoken %2$s</string>
+    <string name="favorite_host">Favorite Host</string>
+    <string name="no_feedback_yet">No feedback yet</string>
+    <string name="mobile_phone_abbrev">Mobile: %1$s</string>
+    <string name="home_phone_abbrev">Home: %1$s</string>
+    <string name="work_phone_abbrev">Work: %1$s</string>
+    <string name="host_services_description">Services this host may offer: %1$s</string>
+    <string name="nearby_service_accommodation">Accommodation</string>
+    <string name="nearby_service_bikeshop">Bikeshop</string>
+    <string name="nearby_services_description">Nearby services: %1$s</string>
+    <string name="nearby_service_campground">Campground</string>
+    <string name="not_currently_available">Not Currently Available</string>
+    <string name="currently_available">Currently Available</string>
+    <string name="current_login_status">You are currently logged in as %1$s</string>
+    <string name="title_activity_about">About Warm Showers</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
+
 </resources>

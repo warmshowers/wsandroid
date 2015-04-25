@@ -30,6 +30,6 @@ public class Feedback extends _Feedback implements Comparable<Feedback> {
 
     @Override
     public int compareTo(Feedback other) {
-        return (int) ((other.getHostingDate() - this.getHostingDate()));
+        return (int) (other.getHostingDate().compareTo(this.getHostingDate()));
     }
 }

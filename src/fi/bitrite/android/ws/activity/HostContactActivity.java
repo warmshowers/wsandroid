@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,25 +25,18 @@ import fi.bitrite.android.ws.host.impl.RestHostContact;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
-import roboguice.util.Strings;
 
 /**
  * Responsible for letting the user type in a message and then sending it to a host
  * over the WarmShowers web service.
  */
-public class HostContactActivity extends RoboActivity {
+public class HostContactActivity extends WSBaseActivity
+        implements android.widget.AdapterView.OnItemClickListener {
 
-    @InjectView(R.id.txtContactHostTitle)
     TextView title;
-    @InjectView(R.id.editContactHostSubject)
     EditText editSubject;
-    @InjectView(R.id.editContactHostMessage)
     EditText editMessage;
-    @InjectView(R.id.btnHostContact)
-    ImageView btnHostContact;
-    @InjectView(R.id.noNetworkWarningContact)
+    Button btnHostContact;
     TextView noNetworkWarning;
 
     private Host host;
@@ -65,6 +59,13 @@ public class HostContactActivity extends RoboActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.host_contact);
+        initView();
+
+        title = (TextView) findViewById(R.id.txtContactHostTitle);
+        editSubject = (EditText) findViewById(R.id.editContactHostSubject);
+        editMessage = (EditText) findViewById(R.id.editContactHostSubject);
+        btnHostContact = (Button) findViewById(R.id.btnHostContact);
+        noNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningContact);
 
         dialogHandler = new DialogHandler(this);
 
@@ -88,7 +89,7 @@ public class HostContactActivity extends RoboActivity {
         String subject = editSubject.getText().toString();
         String message = editMessage.getText().toString();
 
-        if (Strings.isEmpty(subject) || Strings.isEmpty(message)) {
+        if (subject.isEmpty() || message.isEmpty()) {
             dialogHandler.alert(getResources().getString(R.string.message_validation_error));
             return;
         }

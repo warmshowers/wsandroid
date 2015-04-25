@@ -5,6 +5,8 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 /**
  * Automatically generated Parcelable implementation for _Feedback.
  * DO NOT MODIFY THIS FILE MANUALLY! IT WILL BE OVERWRITTEN THE NEXT TIME
@@ -61,10 +63,10 @@ import org.json.JSONObject;
         return mRating;
     }
 
-    public long getHostingDate() {
-        return mHostingDate;
+    public Date getHostingDate() {
+        Date d = new Date((long)mHostingDate * 1000);
+        return d;
     }
-
 
     public int describeContents() {
         return 0;

@@ -1,63 +1,80 @@
 package fi.bitrite.android.ws.activity;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.util.Tools;
 
+import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
-    private int[] colors = new int[]{0xFF000000, 0xFF222222};
-
-    private int resource;
+    private int mResource;
     private Context mContext;
+    private String mQuery;
 
-    public HostListAdapter(Context context, int resource, List<HostBriefInfo> hosts) {
+    public HostListAdapter(Context context, int resource, String query, List<HostBriefInfo> hosts) {
         super(context, resource, hosts);
         mContext = context;
-        this.resource = resource;
+        mQuery = (query != null && !query.isEmpty()) ? query.toLowerCase() : null;
+        mResource = resource;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LinearLayout hostListItem = inflateView(convertView);
 
-        int colorPos = position % colors.length;
-        hostListItem.setBackgroundColor(colors[colorPos]);
-
         HostBriefInfo host = getItem(position);
 
         TextView fullname = (TextView) hostListItem.findViewById(R.id.txtHostFullname);
         TextView location = (TextView) hostListItem.findViewById(R.id.txtHostLocation);
-        TextView comments = (TextView) hostListItem.findViewById(R.id.txtHostComments);
-        TextView updated = (TextView) hostListItem.findViewById(R.id.txtHostUpdated);
+        ImageView icon = (ImageView) hostListItem.findViewById(R.id.icon);
+        TextView memberInfo = (TextView) hostListItem.findViewById(R.id.txtMemberInfo);
 
-        fullname.setText(host.getFullname());
-        location.setText(host.getLocation());
+        String hostFullname = host.getFullname();
 
-        String availability = host.getNotCurrentlyAvailable() ? mContext.getString(R.string.host_not_currently_available) : mContext.getString(R.string.host_currently_available);
-
-        // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
-        comments.setText(Tools.siteHtmlToHtml(availability + " " + host.getAboutMe()));
-
-        if (host.getUpdated() != null) {
-            updated.setText(getContext().getResources().getString(R.string.last_updated) + " " + host.getUpdated());
-            updated.setVisibility(View.VISIBLE);
-        } else {
-            updated.setVisibility(View.GONE);
-
+        // Emphasize the location if it's a match on the search
+        if (mQuery != null) {
+            if (host.getCity().toLowerCase().contains(mQuery)) {
+                location.setTextColor(Color.BLACK);
+            } else {
+                 location.setTextColor(Color.GRAY);
+            }
         }
+
+        // Set the host icon to black if they're available, otherwise gray
+        if (host.getNotCurrentlyAvailable()) {
+            icon.setImageResource(R.drawable.ic_home_variant_grey600_24dp);
+            icon.setAlpha(0.5f);
+            hostFullname += " " + mContext.getString(R.string.host_not_currently_available);
+        } else {
+            icon.setImageResource(R.drawable.ic_home_variant_black_24dp);
+            icon.setAlpha(1.0f);
+        }
+
+        DateFormat simpleDate = DateFormat.getDateInstance();
+        String activeDate = simpleDate.format(host.getLastLoginAsDate());
+        String createdDate = new SimpleDateFormat("yyyy").format(host.getCreatedAsDate());
+
+        String memberString = mContext.getString(R.string.search_host_summary, createdDate, activeDate);
+        memberInfo.setText(memberString);
+
+
+        fullname.setText(hostFullname);
+        location.setText(host.getLocation());
 
         return hostListItem;
     }
@@ -69,7 +86,7 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
             view = new LinearLayout(getContext());
             String inflater = Context.LAYOUT_INFLATER_SERVICE;
             LayoutInflater vi = (LayoutInflater) getContext().getSystemService(inflater);
-            vi.inflate(resource, view, true);
+            vi.inflate(mResource, view, true);
         } else {
             view = (LinearLayout) convertView;
         }

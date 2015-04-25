@@ -11,29 +11,18 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import fi.bitrite.android.ws.R;
 
 public class SettingsActivity
-        extends PreferenceActivity
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
+        extends WSBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
+        setContentView(R.layout.activity_settings);
+        initView();
 
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
-        setSummary();
+        // Fragment approach thanks to http://stackoverflow.com/a/26564401/215713
+        getFragmentManager().beginTransaction().replace(R.id.content_frame, new WsPreferenceFragment()).commit();
     }
 
-    void setSummary() {
-        ListPreference pref = (ListPreference) findPreference("distance_unit");
-        CharSequence title = pref.getEntry();
-        pref.setSummary(title);
-    }
-
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        setSummary();
-    }
 
     @Override
     protected void onStop() {

@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -14,7 +15,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
@@ -23,67 +26,45 @@ import fi.bitrite.android.ws.host.impl.RestTextSearch;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.Tools;
-import roboguice.activity.RoboActivity;
-import roboguice.inject.InjectView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
-public class ListSearchTabActivity extends RoboActivity {
+public class ListSearchTabActivity
+        extends WSBaseActivity
+        implements android.widget.AdapterView.OnItemClickListener {
 
-    @InjectView(R.id.noNetworkWarningList)
-    TextView noNetworkWarning;
-    @InjectView(R.id.editListSearch)
-    EditText listSearchEdit;
-    @InjectView(R.id.btnListSearch)
-    ImageView listSearchButton;
-    @InjectView(R.id.lstSearchResult)
-    ListView listSearchResult;
+    ArrayList<HostBriefInfo> mListSearchHosts;
+    String mQuery = "";
 
-    private ArrayList<HostBriefInfo> listSearchHosts;
-
-    private DialogHandler dialogHandler;
-    private TextSearchTask textSearchTask;
-    private LinearLayout mSearchEditLayout;
-    private LinearLayout mSearchResultsLayout;
-    private TextView mMultipleHostsAddress;
-    private TextView mHostsAtAddress;
+    TextView mNoNetworkWarning;
+    ListView mListSearchResult;
+    DialogHandler mDialogHandler;
+    TextSearchTask mTextSearchTask;
+    LinearLayout mSearchEditLayout;
+    LinearLayout mSearchResultsLayout;
+    TextView mMultipleHostsAddress;
+    TextView mHostsAtAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_tab);
+        initView();
 
-        dialogHandler = new DialogHandler(this);
+        mDialogHandler = new DialogHandler(this);
 
-        mSearchEditLayout = (LinearLayout) findViewById(R.id.searchEditLayout);
+        mNoNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningList);
+        mListSearchResult = (ListView) findViewById(R.id.lstSearchResult);
         mSearchResultsLayout = (LinearLayout) findViewById(R.id.listSummaryLayout);
         mMultipleHostsAddress = (TextView) findViewById(R.id.multipleHostAddress);
         mHostsAtAddress = (TextView) findViewById(R.id.hostsAtAddress);
 
-        setupListSearch(savedInstanceState);
-    }
-
-    private void setupListSearch(Bundle savedInstanceState) {
-        listSearchEdit.setOnEditorActionListener(new OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    startSearchUsingEditFieldInput();
-                }
-
-                return true;
-            }
-        });
-
-        listSearchButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                startSearchUsingEditFieldInput();
-            }
-        });
-
-        listSearchResult.setOnItemClickListener(new OnItemClickListener() {
+        mListSearchResult.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(ListSearchTabActivity.this, HostInformationActivity.class);
-                HostBriefInfo briefInfo = (HostBriefInfo) listSearchResult.getItemAtPosition(position);
+                HostBriefInfo briefInfo = (HostBriefInfo) mListSearchResult.getItemAtPosition(position);
                 Host host = Host.createFromBriefInfo(briefInfo);
                 i.putExtra("host", host);
                 i.putExtra("id", briefInfo.getId());
@@ -91,14 +72,31 @@ public class ListSearchTabActivity extends RoboActivity {
             }
         });
 
-        // Hide the SearchResults header by default
-        mSearchResultsLayout.setVisibility(View.INVISIBLE);
-        mSearchResultsLayout.getLayoutParams().height = 0;
+        if (savedInstanceState != null) {
+            mListSearchHosts = savedInstanceState.getParcelableArrayList("list_search_hosts");
+        }
 
-        Intent receivedIntent = getIntent();
-        if (receivedIntent.hasExtra("search_results")) {
-            listSearchHosts = receivedIntent.getParcelableArrayListExtra("search_results");
-            if (!listSearchHosts.isEmpty()) {
+        handleIntent(getIntent());
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        handleIntent(intent);
+    }
+
+    void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            mQuery = intent.getStringExtra(SearchManager.QUERY);
+            doTextSearch(mQuery);
+        } else if (intent.hasExtra("search_results")) {
+            // TODO: What is search_results used for, why is it passed this way?
+            // It may be an obsolete attempt to show cluster members from maps2activity
+            mListSearchHosts = intent.getParcelableArrayListExtra("search_results");
+            if (!mListSearchHosts.isEmpty()) {
                 // Hide the SearchEdit
                 mSearchEditLayout.setVisibility(View.INVISIBLE);
                 mSearchEditLayout.getLayoutParams().height = 0;
@@ -106,33 +104,12 @@ public class ListSearchTabActivity extends RoboActivity {
                 mSearchResultsLayout.setVisibility(View.VISIBLE);
                 mSearchResultsLayout.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
 
-                mMultipleHostsAddress.setText(listSearchHosts.get(0).getLocation());
-                mHostsAtAddress.setText(getString(R.string.host_count, listSearchHosts.size()));
+                mMultipleHostsAddress.setText(mListSearchHosts.get(0).getLocation());
+                mHostsAtAddress.setText(getString(R.string.host_count, mListSearchHosts.size()));
             }
-        } else if (savedInstanceState != null) {
-            listSearchHosts = savedInstanceState.getParcelableArrayList("list_search_hosts");
-        }
-        boolean inProgress = DialogHandler.inProgress();
-        if (listSearchHosts != null) {
-            listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
-                    R.layout.host_list_item, listSearchHosts));
-        }
-
-        if (inProgress) {
-            dialogHandler.dismiss();
-            doTextSearch(savedInstanceState.getString("search_text"));
         }
     }
 
-    protected void startSearchUsingEditFieldInput() {
-        hideKeyboard();
-        doTextSearch(listSearchEdit.getText().toString());
-    }
-
-    private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(listSearchEdit.getWindowToken(), 0);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -141,14 +118,19 @@ public class ListSearchTabActivity extends RoboActivity {
 
     @Override
     protected Dialog onCreateDialog(int id, Bundle args) {
-        return dialogHandler.createDialog(id, getResources().getString(R.string.performing_search));
+        return mDialogHandler.createDialog(id, getResources().getString(R.string.performing_search));
     }
 
     public void doTextSearch(String text) {
-        dialogHandler.showDialog(DialogHandler.TEXT_SEARCH);
+        mDialogHandler.showDialog(DialogHandler.TEXT_SEARCH);
         Search search = new RestTextSearch(text);
-        textSearchTask = new TextSearchTask();
-        textSearchTask.execute(search);
+        mTextSearchTask = new TextSearchTask();
+        mTextSearchTask.execute(search);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        super.onItemClick(parent, view, position, id);
     }
 
     private class TextSearchTask extends AsyncTask<Search, Void, Object> {
@@ -171,19 +153,26 @@ public class ListSearchTabActivity extends RoboActivity {
         @SuppressWarnings("unchecked")
         @Override
         protected void onPostExecute(Object result) {
-            dialogHandler.dismiss();
+            mDialogHandler.dismiss();
 
             if (result instanceof Exception) {
                 RestClient.reportError(ListSearchTabActivity.this, result);
                 return;
             }
 
-            listSearchHosts = (ArrayList<HostBriefInfo>) result;
-            listSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
-                    R.layout.host_list_item, listSearchHosts));
+            mListSearchHosts = (ArrayList<HostBriefInfo>) result;
+            // Sort so that available hosts come up first
+            Collections.sort(mListSearchHosts, new Comparator<HostBriefInfo>() {
+                public int compare(HostBriefInfo h1, HostBriefInfo h2) {
+                    return h1.getNotCurrentlyAvailableAsInt() - h2.getNotCurrentlyAvailableAsInt();
+                }
+            });
 
-            if (listSearchHosts.isEmpty()) {
-                dialogHandler.alert(getResources().getString(R.string.no_results));
+            mListSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
+                    R.layout.host_list_item, mQuery, mListSearchHosts));
+
+            if (mListSearchHosts.isEmpty()) {
+                mDialogHandler.alert(getResources().getString(R.string.no_results));
             }
         }
 
@@ -191,10 +180,9 @@ public class ListSearchTabActivity extends RoboActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("list_search_hosts", listSearchHosts);
-        if (DialogHandler.inProgress() && textSearchTask != null) {
-            outState.putString("search_text", listSearchEdit.getText().toString());
-            textSearchTask.cancel(true);
+        outState.putParcelableArrayList("list_search_hosts", mListSearchHosts);
+        if (DialogHandler.inProgress() && mTextSearchTask != null) {
+            mTextSearchTask.cancel(true);
         }
         super.onSaveInstanceState(outState);
     }
@@ -203,19 +191,16 @@ public class ListSearchTabActivity extends RoboActivity {
     protected void onResume() {
         super.onResume();
         if (!Tools.isNetworkConnected(this)) {
-            noNetworkWarning.setText(getString(R.string.not_connected_to_network));
-            listSearchEdit.setEnabled(false);
+            mNoNetworkWarning.setText(getString(R.string.not_connected_to_network));
             return;
         }
-        listSearchEdit.setEnabled(true);
-        noNetworkWarning.setText("");
-        noNetworkWarning.setVisibility(View.GONE);
+        mNoNetworkWarning.setText("");
+        mNoNetworkWarning.setVisibility(View.GONE);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        hideKeyboard();
     }
 
     @Override

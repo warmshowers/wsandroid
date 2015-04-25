@@ -13,6 +13,7 @@ import android.text.Spanned;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -124,7 +125,7 @@ public class Tools {
         view.setImageDrawable(result);
 
         // Now change ImageView's dimensions to match the scaled image
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view.getLayoutParams();
         params.width = width;
         params.height = height;
         view.setLayoutParams(params);

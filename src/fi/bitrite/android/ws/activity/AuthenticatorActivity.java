@@ -1,14 +1,13 @@
 package fi.bitrite.android.ws.activity;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -21,45 +20,69 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
-import roboguice.activity.RoboAccountAuthenticatorActivity;
-import roboguice.inject.InjectView;
-import roboguice.util.Strings;
 
 /**
  * The activity responsible for getting WarmShowers credentials from the user,
  * verifying them against the WarmShowers web service and storing and storing
  * them on the device using Android's custom account facilities.
  */
-public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
+public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity {
 
     public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
-    public static final int RESULT_AUTHENTICATION_FAILED = RESULT_FIRST_USER + 1;
-    public static final int RESULT_NO_NETWORK = 101;
     public static final int REQUEST_TYPE_AUTHENTICATE = 201;
 
-    private AccountManager accountManager;
-
-    @InjectView(R.id.editUsername)
+    View loggedInLayout;
+    View notLoggedInLayout;
     EditText editUsername;
-    @InjectView(R.id.editPassword)
     EditText editPassword;
+    TextView txtLoggedInStatus;
 
-    private String username;
-    private String password;
-
-    private DialogHandler dialogHandler;
+    private DialogHandler mDialogHandler;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.credentials);
+        setContentView(R.layout.activity_authentication);
+        initView();
 
-        accountManager = AccountManager.get(this);
-        dialogHandler = new DialogHandler(this);
+        loggedInLayout = findViewById(R.id.loggedInLayout);
+        notLoggedInLayout = findViewById(R.id.notLoggedInLayout);
+        txtLoggedInStatus = (TextView)findViewById(R.id.txtLoggedInStatus);
+        editUsername = (EditText) findViewById(R.id.editUsername);
+        editPassword = (EditText) findViewById(R.id.editPassword);
 
-        Intent intent = getIntent();
-        username = intent.getStringExtra("username");
-        editUsername.setText(username);
+        mDialogHandler = new DialogHandler(this);
+
+        updateView();
+    }
+
+    public void updateView() {
+        try {
+            String username = AuthenticationHelper.getAccountUsername();
+            updateLoggedInView(username);
+        } catch (NoAccountException e) {
+            updateLoggedOutView();
+        }
+    }
+
+    void updateLoggedInView(String username) {
+        notLoggedInLayout.setVisibility(View.GONE);
+        loggedInLayout.setVisibility(View.VISIBLE);
+        txtLoggedInStatus.setText(getString(R.string.current_login_status, username));
+
+        findViewById(android.R.id.content).invalidate();
+    }
+    void updateLoggedOutView() {
+        notLoggedInLayout.setVisibility(View.VISIBLE);
+        loggedInLayout.setVisibility(View.GONE);
+        findViewById(android.R.id.content).invalidate();
+    }
+
+
+    public void logout(View unusedArg) {
+        AuthenticationHelper.removeOldAccount();
+        // TODO: Actually perform a logout operation
+        updateLoggedOutView();
     }
 
     public void cancel(View view) {
@@ -74,12 +97,11 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
     }
 
     public void applyCredentials(View view) {
-        AuthenticationHelper.removeOldAccount();
 
-        username = editUsername.getText().toString();
-        password = editPassword.getText().toString();
-        if (!Strings.isEmpty(username) && !Strings.isEmpty(password)) {
-            dialogHandler.showDialog(DialogHandler.AUTHENTICATE);
+        String username = editUsername.getText().toString();
+        String password = editPassword.getText().toString();
+        if (!username.isEmpty() && !password.isEmpty()) {
+            mDialogHandler.showDialog(DialogHandler.AUTHENTICATE);
             Account account = AuthenticationHelper.createNewAccount(username, password);
             AuthenticationTask authTask = new AuthenticationTask();
             authTask.execute();
@@ -88,7 +110,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
 
     @Override
     protected Dialog onCreateDialog(int id, Bundle args) {
-        return dialogHandler.createDialog(id, getResources().getString(R.string.authenticating));
+        return mDialogHandler.createDialog(id, getResources().getString(R.string.authenticating));
     }
 
     private class AuthenticationTask extends AsyncTask<Void, Void, Void> {
@@ -111,7 +133,7 @@ public class AuthenticatorActivity extends RoboAccountAuthenticatorActivity {
         }
 
         protected void onPostExecute(Void v) {
-            dialogHandler.dismiss();
+            mDialogHandler.dismiss();
 
             if (mUID < 1) {
                 if (mNetworkError) {

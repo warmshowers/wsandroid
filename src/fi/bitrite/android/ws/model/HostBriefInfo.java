@@ -7,6 +7,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 import com.yelp.parcelgen.JsonParser.DualCreator;
 
+import java.util.Date;
+
 
 /**
  * Used for passing search results. More in-depth information is handled by the Host object.
@@ -15,10 +17,12 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
 
     private int mId;
     private String mUsername, mFullName, mStreet, mCity, mProvince, mCountry, mAboutMe, mLatitude, mLongitude;
-    private String mUpdated;
+    private String mLogin;
     private boolean mNotCurrentlyAvailable;
+    private String mCreated;
+    private long mUpdated;
 
-    public HostBriefInfo(int id, String username, String fullName, String street, String city, String province, String country, String aboutMe, boolean notCurrentlyAvailable) {
+    public HostBriefInfo(int id, String username, String fullName, String street, String city, String province, String country, String aboutMe, boolean notCurrentlyAvailable, String login, String created) {
         mId = id;
         mUsername = username;
         mFullName = fullName;
@@ -27,7 +31,10 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mProvince = province;
         mCountry = country;
         mAboutMe = aboutMe;
+        mLogin = login;
         mNotCurrentlyAvailable = notCurrentlyAvailable;
+        mCreated = created;
+        mUpdated = 0;
     }
 
     public HostBriefInfo(int id, Host host) {
@@ -42,8 +49,10 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mLongitude = host.getLongitude();
 
         mAboutMe = host.getComments();
-        mUpdated = host.getUpdated();
+        mLogin = host.getLastLogin();
         mNotCurrentlyAvailable = host.getNotCurrentlyAvailable().equals("1");
+        mCreated = host.getCreated();
+        mUpdated = host.getUpdated();
     }
 
     public HostBriefInfo() {
@@ -89,8 +98,8 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         this.mLatitude = mLatitude;
     }
 
-    public String getUpdated() {
-        return mUpdated;
+    public String getLastLogin() {
+        return mLogin;
     }
 
     public LatLng getLatLng() {
@@ -126,6 +135,8 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         dest.writeString(mProvince);
         dest.writeString(mCountry);
         dest.writeByte((byte) (mNotCurrentlyAvailable ? 1 : 0));
+        dest.writeString(mLogin);
+        dest.writeString(mCreated);
     }
 
     public void readFromParcel(Parcel src) {
@@ -140,6 +151,8 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mProvince = src.readString();
         mCountry = src.readString();
         mNotCurrentlyAvailable = src.readByte() != 0;
+        mLogin = src.readString();
+        mCreated = src.readString();
     }
 
     @Override
@@ -170,5 +183,33 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
 
     public boolean getNotCurrentlyAvailable() {
         return mNotCurrentlyAvailable;
+    }
+    public int getNotCurrentlyAvailableAsInt() {
+        return mNotCurrentlyAvailable ? 1 : 0;
+    }
+
+    public String getCreated() {
+        return mCreated;
+    }
+    public Date getCreatedAsDate() {
+        return stringToDate(mCreated);
+    }
+    public Date getLastLoginAsDate() {
+        return stringToDate(mLogin);
+    }
+    protected Date stringToDate(String s) {
+
+        int intDate = 0;
+        try {
+            intDate = Integer.parseInt(s);
+        } catch (Exception e) {
+            // Ignore
+        }
+        Date d = new Date((long)intDate * 1000);
+        return d;
+    }
+
+    public long getmUpdated() {
+        return mUpdated;
     }
 }

@@ -3,6 +3,8 @@ package fi.bitrite.android.ws.activity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -12,13 +14,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +35,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.*;
@@ -57,7 +61,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-public class Maps2Activity extends FragmentActivity implements
+public class Maps2Activity extends WSBaseActivity implements
         ClusterManager.OnClusterClickListener<HostBriefInfo>,
         ClusterManager.OnClusterInfoWindowClickListener<HostBriefInfo>,
         ClusterManager.OnClusterItemClickListener<HostBriefInfo>,
@@ -92,6 +96,9 @@ public class Maps2Activity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+
+        initView();
 
         // Google analytics tracker
         ((WSAndroidApplication) getApplication()).getTracker(WSAndroidApplication.TrackerName.APP_TRACKER);
@@ -101,7 +108,6 @@ public class Maps2Activity extends FragmentActivity implements
         mDistanceUnit = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString("distance_unit", "km");
 
-        setContentView(R.layout.activity_maps);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -743,6 +749,31 @@ public class Maps2Activity extends FragmentActivity implements
         lastToast = toast;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.map_actions, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        android.widget.SearchView searchView = (android.widget.SearchView) menu.findItem(R.id.action_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.legal) {
+            startActivity(new Intent(this, LegalNoticesActivity.class));
+
+            return(true);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 }
 

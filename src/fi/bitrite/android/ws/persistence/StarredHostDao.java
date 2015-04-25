@@ -4,6 +4,7 @@ import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface StarredHostDao {
@@ -12,7 +13,7 @@ public interface StarredHostDao {
 
     public Host getHost(int id);
 
-    public List<Feedback> getFeedback(int id, String name);
+    public ArrayList<Feedback> getFeedback(int id, String name);
 
     public List<HostBriefInfo> getAllBrief();
 

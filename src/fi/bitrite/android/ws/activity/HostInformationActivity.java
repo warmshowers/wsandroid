@@ -4,21 +4,18 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.Layout;
 import android.text.Spanned;
-import android.text.style.LeadingMarginSpan;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.*;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import fi.bitrite.android.ws.R;
@@ -33,14 +30,11 @@ import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
-import fi.bitrite.android.ws.util.http.HttpException;
-import fi.bitrite.android.ws.util.http.HttpUtils;
 import fi.bitrite.android.ws.view.FeedbackTable;
-import roboguice.RoboGuice;
-import roboguice.activity.RoboActionBarActivity;
-import roboguice.inject.InjectView;
 
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,64 +45,30 @@ import static java.util.Collections.sort;
  * The information is retrieved either from the device storage (for starred hosts)
  * or downloaded from the WarmShowers web service.
  */
-public class HostInformationActivity extends RoboActionBarActivity {
+public class HostInformationActivity extends WSBaseActivity
+        implements android.widget.AdapterView.OnItemClickListener {
 
     public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
 
-    Menu optionsMenu;
-
-    @InjectView(R.id.layoutHostDetails)
-    LinearLayout hostDetails;
-
-    @InjectView(R.id.scrollHostInformation)
-    ScrollView hostInformationScroller;
-
-    @InjectView(R.id.btnToggleBasicInformation)
-    ImageView basicInformationExpander;
-    @InjectView(R.id.tableBasicInformation)
-    TableLayout basicInformation;
-
-    @InjectView(R.id.lblFeedback)
-    TextView feedbackLabel;
-    @InjectView(R.id.btnToggleFeedback)
-    ImageView feedbackExpander;
-    @InjectView(R.id.tblFeedback)
-    FeedbackTable feedbackTable;
-
-    @InjectView(R.id.memberPhoto)
-    ImageView memberPhoto;
-
-    @InjectView(R.id.txtHostComments)
-    TextView comments;
-    @InjectView(R.id.txtMemberSince)
-    TextView memberSince;
-    @InjectView(R.id.txtLastLogin)
-    TextView lastLogin;
-    @InjectView(R.id.txtLanguagesSpoken)
-    TextView languagesSpoken;
-
-    @InjectView(R.id.txtHostLocation)
-    TextView location;
-    @InjectView(R.id.txtHostMobilePhone)
-    TextView mobilePhone;
-    @InjectView(R.id.txtHostHomePhone)
-    TextView homePhone;
-    @InjectView(R.id.txtHostWorkPhone)
-    TextView workPhone;
-    @InjectView(R.id.txtPreferredNotice)
-    TextView preferredNotice;
-    @InjectView(R.id.txtMaxGuests)
-    TextView maxGuests;
-    @InjectView(R.id.txtNearestAccomodation)
-    TextView nearestAccomodation;
-    @InjectView(R.id.txtCampground)
-    TextView campground;
-    @InjectView(R.id.txtBikeShop)
-    TextView bikeShop;
-    @InjectView(R.id.txtServices)
-    TextView services;
-    @InjectView(R.id.lblMemberName)
+    ImageView imgMemberPhoto;
     TextView lblMemberName;
+
+    TextView txtAvailability;
+    TextView txtLoginInfo;
+    TextView txtHostLimitations;
+
+    CheckBox checkBoxFavorite;
+    ImageView iconFavorite;
+    TextView txtHostLocation;
+    TextView txtPhone;
+    TextView txtHostComments;
+    TextView txtFeedbackLabel;
+
+    ImageView iconAvailableStatus;
+    FeedbackTable feedbackTable;
+    TextView comments;
+    TextView txtHostServices;
+    TextView txtNearbyServices;
 
     StarredHostDao starredHostDao = new StarredHostDaoImpl();
 
@@ -121,11 +81,48 @@ public class HostInformationActivity extends RoboActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.host_information);
+        initView();
+
+        imgMemberPhoto = (ImageView) findViewById(R.id.memberPhoto);
+        lblMemberName = (TextView) findViewById(R.id.lblMemberName);
+        iconAvailableStatus = (ImageView) findViewById(R.id.iconAvailableStatus);
+        txtAvailability = (TextView) findViewById(R.id.txtAvailability);
+        txtLoginInfo = (TextView) findViewById(R.id.txtLoginInfo);
+        txtHostLimitations = (TextView) findViewById(R.id.txtHostLimitations);
+
+        checkBoxFavorite = (CheckBox) findViewById(R.id.checkBoxFavorite);
+        iconFavorite = (ImageView) findViewById(R.id.iconFavorite);
+
+        txtHostLocation = (TextView) findViewById(R.id.txtHostLocation);
+        txtPhone = (TextView) findViewById(R.id.txtPhone);
+
+        txtHostComments = (TextView) findViewById(R.id.txtHostComments);
+
+        txtFeedbackLabel = (TextView) findViewById(R.id.txtFeedbackLabel);
+        feedbackTable = (FeedbackTable) findViewById(R.id.tblFeedback);
+        comments = (TextView) findViewById(R.id.txtHostComments);
+        txtHostServices = (TextView) findViewById(R.id.txtHostServices);
+        txtNearbyServices = (TextView) findViewById(R.id.txtNearbyServices);
 
         dialogHandler = new DialogHandler(HostInformationActivity.this);
         boolean inProgress = DialogHandler.inProgress();
         boolean shouldDownloadHostInfo;
         forceUpdate = false;
+
+        checkBoxFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                                        @Override
+                                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                            if (isChecked && !hostInfo.getStarred()) {
+                                                                setStarredHost(true);
+                                                                showStarredHostToast();
+                                                            } else if (!isChecked) {
+                                                                setStarredHost(false);
+                                                            }
+                                                            iconFavorite.setAlpha(isChecked ? 1.0f : 0.3f);
+                                                        }
+                                                    }
+        );
 
         starredHostDao.close();
         starredHostDao.open();
@@ -161,20 +158,8 @@ public class HostInformationActivity extends RoboActionBarActivity {
         } else {
             updateViewContent();
         }
-
-        getSupportActionBar().setTitle(getString(R.string.hostinfo_actiivity_title));
-        lblMemberName.setText(hostInfo.getHost().getFullname());
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
-
-    @Override
-    public void setContentView(int layoutResID) {
-        super.setContentView(layoutResID);
-        RoboGuice.getInjector(this).injectViewMembers(this);
-    }
 
     private boolean intentProvidesFullHostInfo(Intent i) {
         return i.getBooleanExtra("full_info", false);
@@ -192,58 +177,24 @@ public class HostInformationActivity extends RoboActionBarActivity {
         super.onSaveInstanceState(outState);
     }
 
-    public void showStarHostToast(View view) {
+    public void showStarredHostToast() {
         int msgId = (hostInfo.isStarred() ? R.string.host_starred : R.string.host_unstarred);
-        Toast.makeText(this, getResources().getString(msgId), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getResources().getString(msgId), Toast.LENGTH_SHORT).show();
     }
 
-    protected void toggleHostStarred() {
-        toggleHostStarredOnDevice();
-        setHostStarredInUI();
-    }
-
-    private void setHostStarredInUI() {
-        optionsMenu.findItem(R.id.menuStarIcon).setIcon(hostInfo.isStarred() ? R.drawable.ic_action_star_on : R.drawable.ic_action_star_off);
-        optionsMenu.findItem(R.id.menuStar).setTitle(getResources().getString(hostInfo.isStarred() ? R.string.unstar_this_host : R.string.star_this_host));
-    }
-
-    private void toggleHostStarredOnDevice() {
+    private void setStarredHost(boolean saveHost) {
         starredHostDao.open();
 
-        if (starredHostDao.isHostStarred(hostInfo.getId(), hostInfo.getHost().getName())) {
+        if (!saveHost && starredHostDao.isHostStarred(hostInfo.getId(), hostInfo.getHost().getName())) {
             starredHostDao.delete(hostInfo.getId(), hostInfo.getHost().getName());
         } else {
             starredHostDao.insert(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost(), hostInfo.getFeedback());
         }
 
-        hostInfo.toggleStarred();
+        hostInfo.setStarred(saveHost);
         starredHostDao.close();
     }
 
-    public void toggleBasicInformation(View view) {
-        if (basicInformation.getVisibility() == View.GONE) {
-            basicInformation.setVisibility(View.VISIBLE);
-            basicInformationExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_max));
-        } else {
-            basicInformation.setVisibility(View.GONE);
-            basicInformationExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_min));
-        }
-    }
-
-    public void toggleFeedback(View view) {
-        if (feedbackTable.getVisibility() != View.GONE) {
-            feedbackTable.setVisibility(View.GONE);
-            feedbackExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_min));
-        } else {
-            feedbackTable.setVisibility(View.VISIBLE);
-            feedbackExpander.setImageDrawable(getResources().getDrawable(R.drawable.expander_max));
-            hostInformationScroller.post(new Runnable() {
-                public void run() {
-                    hostInformationScroller.scrollTo(0, hostInformationScroller.getBottom());
-                }
-            });
-        }
-    }
 
     public void contactHost(View view) {
         Intent i = new Intent(HostInformationActivity.this, HostContactActivity.class);
@@ -305,44 +256,97 @@ public class HostInformationActivity extends RoboActionBarActivity {
     private void updateViewContent() {
         final Host host = hostInfo.getHost();
 
-        String availability = host.getNotCurrentlyAvailable().equals("1") ? getString(R.string.host_not_currently_available) : getString(R.string.host_currently_available);
+        String fullname = hostInfo.getHost().getFullname();
+        lblMemberName.setText(fullname);
+        getSupportActionBar().setTitle(fullname);
+
+        checkBoxFavorite.setChecked(hostInfo.getStarred());
+        iconFavorite.setAlpha(hostInfo.getStarred() ? 1.0f : 0.3f);
+
+        // Host Availability:
+        // TODO: Copied from HostListAdapter.java, needs to be refactored
+        // Set the host icon to black if they're available, otherwise gray
+        if (host.isNotCurrentlyAvailable()) {
+            iconAvailableStatus.setImageResource(R.drawable.ic_home_variant_grey600_24dp);
+            iconAvailableStatus.setAlpha(0.5f);
+            txtAvailability.setText(R.string.not_currently_available);
+        } else {
+            iconAvailableStatus.setImageResource(R.drawable.ic_home_variant_black_24dp);
+            iconAvailableStatus.setAlpha(1.0f);
+            txtAvailability.setText(R.string.currently_available);
+        }
+
+        DateFormat simpleDate = DateFormat.getDateInstance();
+        String activeDate = simpleDate.format(host.getLastLoginAsDate());
+        String createdDate = new SimpleDateFormat("yyyy").format(host.getCreatedAsDate());
+
+        String memberString = getString(R.string.search_host_summary, createdDate, activeDate);
+        txtLoginInfo.setText(memberString);
+
+        String limitations = getString(R.string.host_limitations, host.getMaxCyclists(), host.getLanguagesSpoken());
+        txtHostLimitations.setText(limitations);
 
 
+        // Host location section
+        txtHostLocation.setText(host.getLocation());
+        String phones = "";
+        if (!host.getMobilePhone().isEmpty()) {
+            phones += getString(R.string.mobile_phone_abbrev, host.getMobilePhone()) + " ";
+        }
+        if (!host.getHomePhone().isEmpty()) {
+            phones += getString(R.string.home_phone_abbrev, host.getHomePhone()) + " ";
+        }
+        if (!host.getWorkPhone().isEmpty()) {
+            phones += getString(R.string.work_phone_abbrev, host.getWorkPhone()) + " ";
+        }
+        if (!phones.isEmpty()) {
+            txtPhone.setText(phones);
+            Linkify.addLinks(txtPhone, Linkify.ALL);
+        } else {
+            txtPhone.setVisibility(View.GONE);
+        }
+
+        // Profile/Comments section
         // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
-        Spanned text = Tools.siteHtmlToHtml(host.getComments() + "<br/><br/><b>" + availability + "</b>");
-        comments.setText(text);
+        Spanned comments = Tools.siteHtmlToHtml(host.getComments());
+        txtHostComments.setText(comments);
 
-        location.setText(host.getLocation());
-        memberSince.setText(host.getMemberSince());
-        lastLogin.setText(host.getLastLogin());
-        languagesSpoken.setText(host.getLanguagesSpoken());
-        mobilePhone.setText(host.getMobilePhone());
-        homePhone.setText(host.getHomePhone());
-        workPhone.setText(host.getWorkPhone());
-        preferredNotice.setText(host.getPreferredNotice());
-        maxGuests.setText(host.getMaxCyclists());
-        nearestAccomodation.setText(host.getMotel());
-        campground.setText(host.getCampground());
-        bikeShop.setText(host.getBikeshop());
-        services.setText(host.getServices(this));
+        // Host Services
+        String hostServices = host.getHostServices(this);
+        if (!hostServices.isEmpty()) {
+            txtHostServices.setText(getString(R.string.host_services_description, hostServices));
+        } else {
+            txtHostServices.setVisibility(View.GONE);
+        }
+
+        // Nearby Services
+        String nearbyServices = host.getNearbyServices(this);
+        if (!nearbyServices.isEmpty()) {
+            txtNearbyServices.setText(getString(R.string.nearby_services_description, nearbyServices));
+        } else {
+            txtNearbyServices.setVisibility(View.GONE);
+        }
 
         List<Feedback> feedback = hostInfo.getFeedback();
         sort(feedback);
         feedbackTable.addRows(feedback);
-        feedbackLabel.setText(getResources().getString(R.string.feedback) + " (" + feedback.size() + ")");
-
-        hostDetails.setVisibility(View.VISIBLE);
-
-        if (host.isNotCurrentlyAvailable()) {
-            dialogHandler.alert(getResources().getString(R.string.host_not_available));
+        if (feedback.size() > 0) {
+            txtFeedbackLabel.setText(getString(R.string.feedback, feedback.size()));
+        } else {
+            txtFeedbackLabel.setText(R.string.no_feedback_yet);
         }
 
-        // If we're connected, get host picture.
+        // If we're connected and there is a picture, get host picture.
+        // TODO: Consider saving the picture in the db.
         if (Tools.isNetworkConnected(this)) {
             String url = profilePicture(host.getPicture());
             if (!url.isEmpty()) {
-                new DownloadImageTask(memberPhoto)
+                new DownloadImageTask(imgMemberPhoto)
                         .execute(url);
+            } else {
+                imgMemberPhoto.setVisibility(View.GONE);
+                lblMemberName.setTextColor(Color.BLACK);
+                lblMemberName.setTextSize(24);
             }
         }
 
@@ -352,25 +356,22 @@ public class HostInformationActivity extends RoboActionBarActivity {
      * Choose the variant of a profile picture to use.
      * Unfortunately this is dependent on knowing how imagecache is configured on the server.
      *
-     * @param basePicture
-     *   This is the picture returned by the site, like 'files/pictures/picture-1165.jpg'
-     *
-     * @return
-     *   Either a string with the full URL to the picture or an empty string if no picture exists
+     * @param basePicture This is the picture returned by the site, like 'files/pictures/picture-1165.jpg'
+     * @return Either a string with the full URL to the picture or an empty string if no picture exists
      */
     public String profilePicture(String basePicture) {
         String[] parts = basePicture.split("/", 2);
         String url = "";
 
         if (!basePicture.isEmpty() && parts.length == 2) {
-            url = GlobalInfo.warmshowersBaseUrl + "/" + parts[0] + "/imagecache/mobile_profile_photo_std/" + parts[1];
+            url = GlobalInfo.warmshowersBaseUrl + "/" + parts[0] + "/imagecache/mobile_photo_4x3/" + parts[1];
         }
         return url;
     }
 
     /**
      * Download an image into a bitmap in an AsyncTask
-     *
+     * <p/>
      * From http://stackoverflow.com/questions/2471935/how-to-load-an-imageview-by-url-in-android
      */
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -396,6 +397,8 @@ public class HostInformationActivity extends RoboActionBarActivity {
             if (result != null) {
                 bmImage.setImageBitmap(result);
                 Tools.scaleImage(bmImage, bmImage.getWidth());
+                // Attempt to now force the name on top of the picture
+                lblMemberName.setTextColor(Color.WHITE);
             }
         }
     }
@@ -440,11 +443,10 @@ public class HostInformationActivity extends RoboActionBarActivity {
 
             updateViewContent();
 
-            if (hostInfo.isStarred() && forceUpdate) {
+            if (hostInfo.isStarred()) {
                 starredHostDao.open();
                 starredHostDao.update(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost(), hostInfo.getFeedback());
                 starredHostDao.close();
-                dialogHandler.alert(getResources().getString(R.string.host_updated));
             }
 
         }
@@ -456,9 +458,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.host_information_actions, menu);
-        optionsMenu = menu;
-        setHostStarredInUI();
-        return super.onCreateOptionsMenu(menu);
+        return true; // Do not call super, as we don't want the default options menu...
     }
 
     @Override
@@ -468,13 +468,7 @@ public class HostInformationActivity extends RoboActionBarActivity {
                 onBackPressed();
                 return true;
             case R.id.menuSendMessageIcon:
-            case R.id.menuSendMessage:
                 contactHost(null);
-                return true;
-            case R.id.menuStarIcon:
-            case R.id.menuStar:
-                toggleHostStarred();
-                showStarHostToast(null);
                 return true;
             case R.id.menuMap:
                 showHostOnMap(null);

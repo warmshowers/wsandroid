@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fi.bitrite.android.ws.R;
-import roboguice.util.Strings;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,7 +17,7 @@ import java.util.Date;
 
 public class Host extends _Host {
 
-    private String mUpdated;
+    private long mUpdated;
 
     public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
         Host host = new Host();
@@ -52,65 +51,80 @@ public class Host extends _Host {
     };
 
     public String getLocation() {
-        StringBuilder sb = new StringBuilder();
 
-        if (!Strings.isEmpty(getStreet())) {
-            sb.append(getStreet()).append("\n");
+        String location = "";
+        if (!getStreet().isEmpty()) {
+            location += getStreet() + "\n";
         }
 
-        if (!Strings.isEmpty(getAdditional())) {
-            sb.append(getAdditional()).append("\n");
+        if (!getAdditional().isEmpty()) {
+            location += getAdditional() + "\n";
+        }
+        location += getCity() + ", " + getProvince().toUpperCase();
+        if (!getPostalCode().isEmpty()) {
+            location += " " + getPostalCode();
         }
 
-        sb.append(getPostalCode()).append(", ").append(getCity()).append(", ").append(getProvince());
-
-        if (!Strings.isEmpty(getCountry())) {
-            sb.append(", ").append(getCountry().toUpperCase());
+        if (!getCountry().isEmpty()) {
+            location += ", " + getCountry().toUpperCase();
         }
 
-        sb.append("\nLat: ").append(getLatitude()).append("\n");
-        sb.append("Lon: ").append(getLongitude());
-
-        return sb.toString();
+        return location;
     }
 
-    public String getServices(Context context) {
+    public String getNearbyServices(Context context) {
+        Resources r = context.getResources();
+
+        String nearbyServices = "";
+        if (!getMotel().isEmpty()) {
+            nearbyServices += r.getString(R.string.nearby_service_accommodation) + ": " + getMotel() + ", ";
+        }
+        if (!getBikeshop().isEmpty()) {
+            nearbyServices += r.getString(R.string.nearby_service_bikeshop) + ": " +getBikeshop() + ", ";
+        }
+        if (!getCampground().isEmpty()) {
+            nearbyServices += r.getString(R.string.nearby_service_campground) + ": " +getCampground() + ", ";
+        }
+
+        return nearbyServices;
+    }
+    public String getHostServices(Context context) {
         StringBuilder sb = new StringBuilder();
         Resources r = context.getResources();
 
         if (hasService(getShower()))
-            sb.append(r.getString(R.string.host_service_shower) + "\n");
+            sb.append(r.getString(R.string.host_service_shower) + ", ");
         if (hasService(getFood()))
-            sb.append(r.getString(R.string.host_services_food) + "\n");
+            sb.append(r.getString(R.string.host_services_food) + ", ");
         if (hasService(getBed()))
-            sb.append(r.getString(R.string.host_services_bed) + "\n");
+            sb.append(r.getString(R.string.host_services_bed) + ", ");
         if (hasService(getLaundry()))
-            sb.append(r.getString(R.string.host_service_laundry) + "\n");
+            sb.append(r.getString(R.string.host_service_laundry) + ", ");
         if (hasService(getStorage()))
-            sb.append(r.getString(R.string.host_service_storage) + "\n");
+            sb.append(r.getString(R.string.host_service_storage) + ", ");
         if (hasService(getKitchenUse()))
-            sb.append(r.getString(R.string.host_service_kitchen) + "\n");
+            sb.append(r.getString(R.string.host_service_kitchen) + ", ");
         if (hasService(getLawnspace()))
-            sb.append(r.getString(R.string.host_service_tentspace) + "\n");
+            sb.append(r.getString(R.string.host_service_tentspace) + ", ");
         if (hasService(getSag()))
-            sb.append(context.getString(R.string.host_service_sag) + "\n");
+            sb.append(context.getString(R.string.host_service_sag));
 
         return sb.toString();
     }
 
     private boolean hasService(String service) {
-        return !Strings.isEmpty(service) && service.equals("1");
+        return !service.isEmpty() && service.equals("1");
     }
 
     public boolean isNotCurrentlyAvailable() {
         return getNotCurrentlyAvailable().equals("1");
     }
 
-    public String getUpdated() {
+    public long getUpdated() {
         return mUpdated;
     }
 
-    public void setUpdated(String updated) {
+    public void setUpdated(long updated) {
         mUpdated = updated;
     }
 
@@ -122,8 +136,27 @@ public class Host extends _Host {
         return formatDate(getLogin());
     }
 
+    public Date getCreatedAsDate() {
+        return stringToDate(mCreated);
+    }
+    public Date getLastLoginAsDate() {
+        return stringToDate(mLogin);
+    }
+    protected Date stringToDate(String s) {
+
+        int intDate = 0;
+        try {
+            intDate = Integer.parseInt(s);
+        } catch (Exception e) {
+            // Ignore
+        }
+        Date d = new Date((long)intDate * 1000);
+        return d;
+    }
+
+
     private String formatDate(String timestamp) {
-        if (Strings.isEmpty(timestamp)) {
+        if (timestamp.isEmpty()) {
             return "";
         }
 
