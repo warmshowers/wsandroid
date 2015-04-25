@@ -10,7 +10,7 @@
     <string name="no_starred_hosts">"You currently have no favorited hosts (hosts whose profiles are available offline). You can favorite hosts on the host information page."</string>
     <string name="list_search_hint">Name or city</string>
     <string name="no_results">Your search yielded no results.</string>
-    <string name="enter_credentials">Please enter your username (or email) and password:</string>
+    <string name="enter_credentials">Please enter your Warmshowers.org username (or email) and password:</string>
     <string name="view_details">View details</string>
     <string name="star">Star</string>
     <string name="close">Close</string>
@@ -129,6 +129,7 @@
     <!-- Beginning of new strings for 1.5.0+ -->
     <!-- Notes:
       * Please check for anything using the idea "Starred" as we're using "Favorited" now. Especially host_starred and host_unstarred
+      * enter_credentials should be changed to say "Your Warmshowers.org username or email"
     -->
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>

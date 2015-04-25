@@ -126,6 +126,8 @@
     <!-- Beginning of new strings for 1.5.0+ -->
     <!-- Notes:
       * Please check for anything using the idea "Starred" as we're using "Favorited" now. Especially host_starred and host_unstarred
+      * enter_credentials should be changed to say "Your Warmshowers.org username or email"
+
     -->
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
