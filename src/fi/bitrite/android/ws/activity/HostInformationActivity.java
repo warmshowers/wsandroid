@@ -50,6 +50,7 @@ public class HostInformationActivity extends WSBaseActivity
 
     public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
 
+    LinearLayout layoutHostDetails;
     ImageView imgMemberPhoto;
     TextView lblMemberName;
 
@@ -83,6 +84,7 @@ public class HostInformationActivity extends WSBaseActivity
         setContentView(R.layout.host_information);
         initView();
 
+        layoutHostDetails = (LinearLayout)findViewById(R.id.layoutHostDetails);
         imgMemberPhoto = (ImageView) findViewById(R.id.memberPhoto);
         lblMemberName = (TextView) findViewById(R.id.lblMemberName);
         iconAvailableStatus = (ImageView) findViewById(R.id.iconAvailableStatus);
@@ -347,6 +349,7 @@ public class HostInformationActivity extends WSBaseActivity
                 imgMemberPhoto.setVisibility(View.GONE);
                 lblMemberName.setTextColor(Color.BLACK);
                 lblMemberName.setTextSize(24);
+                layoutHostDetails.setVisibility(View.VISIBLE);
             }
         }
 
@@ -399,6 +402,7 @@ public class HostInformationActivity extends WSBaseActivity
                 Tools.scaleImage(bmImage, bmImage.getWidth());
                 // Attempt to now force the name on top of the picture
                 lblMemberName.setTextColor(Color.WHITE);
+                layoutHostDetails.setVisibility(View.VISIBLE);
             }
         }
     }
