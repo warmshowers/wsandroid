@@ -59,7 +59,7 @@
     <string name="error_retrieving_messages">Ein Problem ist beim Abrufen der Nachrichten aufgetreten.</string>
     <string name="messages_in_progress">Nachrichten werden abgerufen…</string>
     <string name="no_unread_messages">Sie haben keine ungelesenen Nachrichten.</string>
-    <string name="unread_messages">Sie haben %d ungelesene Nachrichten!</string>
+    <string name="unread_messages">Sie haben %d ungelesene Nachrichten.</string>
     <string name="updateMessages">Aktualisieren</string>
     <string name="loading_hosts">Gastgeber werden geladen…</string>
     <string name="hosts_at_location">%1$s Gastgeber bei %2$s</string>

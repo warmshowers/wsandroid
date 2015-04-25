@@ -15,14 +15,17 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:background="#fff"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            >
 
             <TextView
                 android:id="@+id/lblNoStarredHosts"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/no_starred_hosts"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp" />
 
             <ListView
                 android:layout_width="fill_parent"

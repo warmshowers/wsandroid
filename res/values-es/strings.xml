@@ -59,7 +59,7 @@
     <string name="error_retrieving_messages">Ocurrió un error al cargar los mensajes.</string>
     <string name="messages_in_progress">Cargando mensajes …</string>
     <string name="no_unread_messages">-No tienes mensajes sin leer.</string>
-    <string name="unread_messages">¡Tienes %d mensaje(s) sin leer!</string>
+    <string name="unread_messages">Tienes %d mensaje(s) sin leer.</string>
     <string name="updateMessages">Actualizar</string>
     <string name="loading_hosts">Cargando anfitriones …</string>
     <string name="hosts_at_location">%1$s anfitriones en %2$s</string>

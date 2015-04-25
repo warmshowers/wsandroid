@@ -63,7 +63,7 @@
     <string name="settings">Paramètres</string>
     <string name="star">Favori</string>
     <string name="subject_hint">Entrez le sujet ici</string>
-    <string name="unread_messages">Vous avez %d message(s) non-lu(s)!</string>
+    <string name="unread_messages">Vous avez %d message(s) non-lu(s).</string>
     <string name="unstar_host">Enlever des favoris?</string>
     <string name="update">Mise à jour</string>
     <string name="updateMessages">Rafraichir</string>
