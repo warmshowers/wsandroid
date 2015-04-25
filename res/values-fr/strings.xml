@@ -121,4 +121,33 @@
     <string name="json_error">Échec d\'analyse de la séquence json retournée par le serveur</string>
     <string name="host_service_laundry">Machine à laver</string>
     <string name="label_feedback_for_this_member">Your feedback for this member</string>
+
+    <!-- Beginning of new strings for 1.5.0+ -->
+    <!-- Notes:
+      * Please check for anything using the idea "Starred" as we're using "Favorited" now. Especially host_starred and host_unstarred
+    -->
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+    <string name="text_search_title">Text Search</string>
+    <string name="search_hint">Host name or city/town</string>
+    <string name="action_search">Host search</string>
+    <string name="contact_host">Contact Member</string>
+    <string name="search_host_summary">Member since %1$s, last active %2$s</string>
+    <string name="host_limitations">Max guests %1$s, Languages spoken %2$s</string>
+    <string name="favorite_host">Favorite Host</string>
+    <string name="no_feedback_yet">No feedback yet</string>
+    <string name="mobile_phone_abbrev">Mobile: %1$s</string>
+    <string name="home_phone_abbrev">Home: %1$s</string>
+    <string name="work_phone_abbrev">Work: %1$s</string>
+    <string name="host_services_description">Services this host may offer: %1$s</string>
+    <string name="nearby_service_accommodation">Accommodation</string>
+    <string name="nearby_service_bikeshop">Bikeshop</string>
+    <string name="nearby_services_description">Nearby services: %1$s</string>
+    <string name="nearby_service_campground">Campground</string>
+    <string name="not_currently_available">Not Currently Available</string>
+    <string name="currently_available">Currently Available</string>
+    <string name="current_login_status">You are currently logged in as %1$s</string>
+    <string name="title_activity_about">About Warm Showers</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
+
 </resources>
