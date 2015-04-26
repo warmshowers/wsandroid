@@ -1,19 +1,19 @@
 package fi.bitrite.android.ws.activity;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -25,7 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.List;
 
 import fi.bitrite.android.ws.R;
@@ -41,17 +41,21 @@ import fi.bitrite.android.ws.util.Tools;
  * over the WarmShowers web service.
  */
 public class FeedbackActivity extends WSBaseActivity
-        implements android.widget.AdapterView.OnItemClickListener {
+        implements android.widget.AdapterView.OnItemClickListener, View.OnClickListener {
 
     EditText feedbackEditText;
-    DatePicker datePicker;
+    EditText txtDateWeMet;
     TextView lblOverallExperience;
     Spinner feedbackOverallExperience;
     Spinner howWeMet;
     Button btnSubmit;
     TextView noNetworkWarning;
+    int dateWeMetMonth;
+    int dateWeMetYear;
 
+    DatePickerDialog datePickerDialog;
     ArrayTranslator translator = ArrayTranslator.getInstance();
+
 
 
     // This value must match the "minimum number of words" in the node submission settings at
@@ -61,6 +65,40 @@ public class FeedbackActivity extends WSBaseActivity
     private Host host;
     private DialogHandler dialogHandler;
     private static final String WARMSHOWERS_FEEDBACK_POST_URL = GlobalInfo.warmshowersBaseUrl + "/services/rest/node";
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_feedback);
+        initView();
+
+        feedbackEditText = (EditText) findViewById(R.id.feedbackEditText);
+        txtDateWeMet = (EditText)findViewById(R.id.txtDateWeMet);
+
+        lblOverallExperience = (TextView) findViewById(R.id.lblOverallExperience);
+        feedbackOverallExperience = (Spinner) findViewById(R.id.feedback_overall_experience);
+        howWeMet = (Spinner) findViewById(R.id.feedback_how_we_met);
+        btnSubmit = (Button) findViewById(R.id.btnSubmit);
+        noNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningFeedback);
+
+        // Set txtDateWeMet to current date for default
+        String hostedOn = Tools.getDateAsMY(this, Calendar.getInstance().getTimeInMillis());
+        txtDateWeMet.setText(hostedOn);
+
+        dialogHandler = new DialogHandler(this);
+
+        if (savedInstanceState != null) {
+            host = savedInstanceState.getParcelable("host");
+        } else {
+            Intent i = getIntent();
+            host = (Host) i.getParcelableExtra("host");
+        }
+
+        setDateTimeField();
+
+        lblOverallExperience.setText(getString(R.string.lbl_feedback_overall_experience, host.getFullname()));
+    }
 
     @Override
     protected void onResume() {
@@ -74,44 +112,6 @@ public class FeedbackActivity extends WSBaseActivity
         noNetworkWarning.setText("");
         noNetworkWarning.setVisibility(View.GONE);
     }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feedback);
-        initView();
-
-        feedbackEditText = (EditText) findViewById(R.id.feedbackEditText);
-        datePicker = (DatePicker) findViewById(R.id.date_picker);
-        lblOverallExperience = (TextView) findViewById(R.id.lblOverallExperience);
-        feedbackOverallExperience = (Spinner) findViewById(R.id.feedback_overall_experience);
-        howWeMet = (Spinner) findViewById(R.id.feedback_how_we_met);
-        btnSubmit = (Button) findViewById(R.id.btnSubmit);
-        noNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningFeedback);
-
-
-        dialogHandler = new DialogHandler(this);
-
-        if (savedInstanceState != null) {
-            host = savedInstanceState.getParcelable("host");
-        } else {
-            Intent i = getIntent();
-            host = (Host) i.getParcelableExtra("host");
-        }
-
-        // Set up datepicker
-        GregorianCalendar now = new GregorianCalendar();
-        datePicker.init(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), null);
-        View dayView = datePicker.findViewById(Resources.getSystem().getIdentifier("day", "id", "android"));
-        // This doesn't seem to be there in API21+ of Android, so just ignore if not found.
-        // TODO: This whole datepicker is way too big in API21+ for inline inclusion, and it doesn't seem to work well.
-        if (dayView != null) {
-            dayView.setVisibility(View.GONE);
-        }
-
-        lblOverallExperience.setText(getString(R.string.lbl_feedback_overall_experience, host.getFullname()));
-    }
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -153,6 +153,14 @@ public class FeedbackActivity extends WSBaseActivity
         return dialogHandler.createDialog(id, getResources().getString(R.string.sending_feedback));
     }
 
+    @Override
+    public void onClick(View view) {
+        if(view == txtDateWeMet) {
+            datePickerDialog.show();
+        }
+    }
+
+
     private class SendFeedbackTask extends AsyncTask<Void, Void, Object> {
 
         @Override
@@ -167,8 +175,8 @@ public class FeedbackActivity extends WSBaseActivity
                 args.add(new BasicNameValuePair("node[body]", feedbackEditText.getText().toString()));
                 args.add(new BasicNameValuePair("node[field_guest_or_host][value]", translator.getEnglishHostGuestOption(howWeMet.getSelectedItemPosition())));
                 args.add(new BasicNameValuePair("node[field_rating][value]", translator.getEnglishRating(feedbackOverallExperience.getSelectedItemPosition())));
-                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][year]", Integer.toString(datePicker.getYear())));
-                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][month]", Integer.toString(datePicker.getMonth() + 1)));
+                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][year]", Integer.toString(dateWeMetYear)));
+                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][month]", Integer.toString(dateWeMetMonth + 1)));
 
                 RestClient restClient = new RestClient();
                 JSONObject result = restClient.post(WARMSHOWERS_FEEDBACK_POST_URL, args);
@@ -214,6 +222,25 @@ public class FeedbackActivity extends WSBaseActivity
     protected void onStart() {
         super.onStart();
         GoogleAnalytics.getInstance(this).reportActivityStart(this);
+    }
+
+    // Thanks to http://androidopentutorials.com/android-datepickerdialog-on-edittext-click-event/
+    private void setDateTimeField() {
+        txtDateWeMet.setOnClickListener(this);
+
+        Calendar newCalendar = Calendar.getInstance();
+        datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                dateWeMetMonth = monthOfYear;
+                dateWeMetYear = year;
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                txtDateWeMet.setText(Tools.getDateAsMY(FeedbackActivity.this, newDate.getTimeInMillis()));
+            }
+
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
     }
 
 }

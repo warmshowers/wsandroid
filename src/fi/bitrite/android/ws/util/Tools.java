@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,8 +20,11 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Calendar;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.activity.FeedbackActivity;
 
 /**
  * General simple tools, mostly public methods.
@@ -60,7 +64,7 @@ public class Tools {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
-        boolean simulateDisconnected = context.getResources().getBoolean(R.integer.simulate_network_disconnected);
+        boolean simulateDisconnected = context.getResources().getBoolean(R.bool.simulate_network_disconnected);
 
         if (simulateDisconnected) {
             return false;
@@ -131,4 +135,16 @@ public class Tools {
         view.setLayoutParams(params);
     }
 
+    /**
+     * Get locale-sensitive date string in format Month Year
+     *
+     * @param context
+     * @param timeInMillis
+     * @return
+     */
+    public static String getDateAsMY(Context context, long timeInMillis) {
+        int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NO_MONTH_DAY;
+        String result = DateUtils.formatDateTime(context, timeInMillis, flags);
+        return result;
+    }
 }

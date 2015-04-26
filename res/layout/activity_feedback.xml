@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include layout="@layout/toolbar" />
 
     <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/drawer_layout">
+        android:layout_height="match_parent">
         <!-- activity view -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:background="#fff"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#fff">
 
             <ScrollView
                 android:id="@+id/scrollFeedbackActivity"
@@ -26,7 +26,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    >
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp">
 
                     <TextView
                         android:id="@+id/noNetworkWarningFeedback"
@@ -37,9 +38,9 @@
 
                     <TextView
                         android:id="@+id/lblOverallExperience"
-                        android:text="@string/lbl_feedback_overall_experience"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:text="@string/lbl_feedback_overall_experience"
                         android:textSize="16dp"
                         android:textStyle="bold" />
 
@@ -54,50 +55,61 @@
                         android:id="@+id/txtFeedbackTitle"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:paddingTop="6dp"
                         android:text="@string/label_feedback_for_this_member"
-                        android:textStyle="bold"
                         android:textSize="16dp"
-                        android:paddingTop="6dp" />
+                        android:textStyle="bold" />
 
                     <EditText
                         android:id="@+id/feedbackEditText"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/feedback_hint"
-                        android:enabled="true"
-                        android:minLines="3"
-                        android:visibility="visible"
                         android:editable="true"
+                        android:enabled="true"
                         android:focusable="true"
-                        android:inputType="text|textMultiLine" />
+                        android:hint="@string/feedback_hint"
+                        android:inputType="text|textMultiLine"
+                        android:minLines="3"
+                        android:visibility="visible" />
 
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="6dp"
+                            android:text="@string/feedback_date_we_met"
+                            android:focusable="false"
+                            android:textStyle="bold"
+                            />
+
+                        <EditText
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingTop="6dp"
+                            android:id="@+id/txtDateWeMet"
+                            android:focusable="false"
+
+                            />
+
+                    </LinearLayout>
 
                     <TextView
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/feedback_date_we_met"
-                        android:textSize="16dp"
-                        android:textStyle="bold"
-                        android:paddingTop="6dp" />
-
-                    <DatePicker
-                        android:id="@+id/date_picker"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:calendarViewShown="false" />
-
-                    <TextView
+                        android:paddingTop="6dp"
                         android:text="@string/feedback_how_we_met_prompt"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:textStyle="bold"
                         android:textSize="16dp"
-                        android:paddingTop="6dp" />
+                        android:textStyle="bold" />
 
                     <Spinner
                         android:id="@+id/feedback_how_we_met"
-                        android:layout_height="40dp"
                         android:layout_width="wrap_content"
+                        android:layout_height="40dp"
                         android:entries="@array/feedback_how_we_met_options"
                         android:prompt="@string/feedback_how_we_met_prompt"
                         android:spinnerMode="dropdown" />

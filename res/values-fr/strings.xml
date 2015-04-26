@@ -120,7 +120,6 @@
     <string name="host_service_sag">Transport</string>
     <string name="json_error">Échec d\'analyse de la séquence json retournée par le serveur</string>
     <string name="host_service_laundry">Machine à laver</string>
-    <string name="label_feedback_for_this_member">Your feedback for this member</string>
 
     <!-- Beginning of new strings for 1.5.0+ -->
     <!-- Notes:
@@ -128,6 +127,7 @@
       * enter_credentials should be changed to say "Your Warmshowers.org username or email"
 
     -->
+    <string name="label_feedback_for_this_member">Your feedback for this member:</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
     <string name="text_search_title">Text Search</string>
@@ -151,5 +151,8 @@
     <string name="current_login_status">You are currently logged in as %1$s</string>
     <string name="title_activity_about">About Warm Showers</string>
     <string name="open_source_licenses">Open Source Licenses</string>
+
+    <!-- new strings from 1.5.0beta3+ -->
+    <string name="title_activity_feedback">Leaving Feedback</string>
 
 </resources>

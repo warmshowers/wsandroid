@@ -121,7 +121,7 @@
     <string name="host_service_tentspace">Gartenplatz für Zelt</string>
     <string name="host_service_sag">Technische Unterstützung (Werkstatt)</string>
     <string name="json_error">Fehler vom Server bei parsen von json-string</string>
-    <string name="label_feedback_for_this_member">Ihre Rückmeldung für dieses Mitglied</string>
+    <string name="label_feedback_for_this_member">Ihre Rückmeldung für dieses Mitglied:</string>
 
     <!-- Beginning of new strings for 1.5.0+ -->
     <!-- Notes:
@@ -152,5 +152,8 @@
     <string name="current_login_status">Sie sind zurzeit als %1$s eingeloggt</string>
     <string name="title_activity_about">Über Warmshowers</string>
     <string name="open_source_licenses">Open-Source-Lizenzen</string>
+
+    <!-- new strings from 1.5.0beta3+ -->
+    <string name="title_activity_feedback">Leaving Feedback</string>
 
 </resources>

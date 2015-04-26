@@ -20,5 +20,5 @@
     <integer name="map_algo_max_distance_at_zoom">80</integer>
 
     <!-- The AVD cannot work/stay connected if no network, so this is a workaround for debugging -->
-    <integer name="simulate_network_disconnected">0</integer>
+    <bool name="simulate_network_disconnected">false</bool>
 </resources>

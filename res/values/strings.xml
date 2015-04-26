@@ -101,14 +101,13 @@
     <string name="http_server_access_failure">Failed communicating with server, please check your internet connection</string>
     <string name="host_info_basic_information">Basic information</string>
     <string name="json_error">Failed to parse json string returned from server</string>
-    <string name="title_activity_feedback" translatable="false">FeedbackActivity</string>
     <string name="sending_feedback">Sending feedback</string>
     <string name="feedback_hint">Describe your experience with this member.</string>
     <string name="feedback_validation_error">You must enter at least 10 words feedback section.</string>
     <string name="feedback_sent">Your feedback for %1$s has been sent</string>
     <string name="leaving_feedback">"Leaving feedback for %1$s"</string>
     <string name="feedback_how_we_met_prompt">How did you meet this member? They were:</string>
-    <string name="feedback_date_we_met">Date we met:</string>
+    <string name="feedback_date_we_met">When we met:</string>
     <string name="feedback_send">Send feedback</string>
     <string name="lbl_feedback_overall_experience">What was your overall experience with %1$s?</string>
     <string name="feedback_how_we_met_error">You must select how you met this member.</string>
@@ -124,7 +123,7 @@
     <string name="host_service_kitchen">Use of kitchen</string>
     <string name="host_service_tentspace">Lawn space (for camping)</string>
     <string name="host_service_sag">SAG (vehicle support)</string>
-    <string name="label_feedback_for_this_member">Your feedback for this member</string>
+    <string name="label_feedback_for_this_member">Your feedback for this member:</string>
 
     <!-- Beginning of new strings for 1.5.0+ -->
     <!-- Notes:
@@ -154,5 +153,8 @@
     <string name="current_login_status">You are currently logged in as %1$s</string>
     <string name="title_activity_about">About Warm Showers</string>
     <string name="open_source_licenses">Open Source Licenses</string>
+
+    <!-- new strings from 1.5.0beta3+ -->
+    <string name="title_activity_feedback">Leaving Feedback</string>
 
 </resources>
