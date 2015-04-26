@@ -73,7 +73,6 @@ public class HostInformationActivity extends WSBaseActivity
     StarredHostDao starredHostDao = new StarredHostDaoImpl();
 
     private HostInformation hostInfo;
-    private boolean forceUpdate;
     private HostInformationTask hostInfoTask;
     private DialogHandler dialogHandler;
 
@@ -107,8 +106,7 @@ public class HostInformationActivity extends WSBaseActivity
 
         dialogHandler = new DialogHandler(HostInformationActivity.this);
         boolean inProgress = DialogHandler.inProgress();
-        boolean shouldDownloadHostInfo;
-        forceUpdate = false;
+        boolean shouldDownloadHostInfo = true;
 
         checkBoxFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -128,10 +126,10 @@ public class HostInformationActivity extends WSBaseActivity
         starredHostDao.close();
         starredHostDao.open();
 
+        shouldDownloadHostInfo = true;
         if (savedInstanceState != null) {
             // recovering from e.g. screen rotation change
             hostInfo = HostInformation.fromSavedInstanceState(savedInstanceState, starredHostDao);
-            forceUpdate = savedInstanceState.getBoolean("force_update");
             shouldDownloadHostInfo = inProgress;
         } else {
             // returning from another activity
@@ -139,16 +137,14 @@ public class HostInformationActivity extends WSBaseActivity
             hostInfo = HostInformation.fromIntent(i, starredHostDao);
 
             if (intentProvidesFullHostInfo(i)) {
-                shouldDownloadHostInfo = false;
-            } else {
                 if (hostInfo.isStarred()) {
                     hostInfo.setHost(starredHostDao.getHost(hostInfo.getId()));
                     hostInfo.setFeedback(starredHostDao.getFeedback(hostInfo.getId(), hostInfo.getHost().getName()));
-                    forceUpdate = i.getBooleanExtra("update", false);
-                    shouldDownloadHostInfo = forceUpdate;
-                } else {
-                    shouldDownloadHostInfo = true;
                 }
+            }
+            // If we have the network, then go ahead and download/update regardless of whether starred
+            if (!Tools.isNetworkConnected(this)) {
+                shouldDownloadHostInfo = false;
             }
         }
 
@@ -169,7 +165,6 @@ public class HostInformationActivity extends WSBaseActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         hostInfo.onSaveInstanceState(outState);
-        outState.putBoolean("force_update", forceUpdate);
 
         if (hostInfoTask != null) {
             hostInfoTask.cancel(false);
@@ -424,10 +419,11 @@ public class HostInformationActivity extends WSBaseActivity
                 HttpHostInformation httpHostInfo = new HttpHostInformation();
                 HttpHostFeedback hostFeedback = new HttpHostFeedback();
                 int uid = hostInfo.getId();
+                boolean starred = hostInfo.getStarred();
 
                 Host host = httpHostInfo.getHostInformation(uid);
                 ArrayList<Feedback> feedback = hostFeedback.getFeedback(uid);
-                hostInfo = new HostInformation(host, feedback, uid, false);
+                hostInfo = new HostInformation(host, feedback, uid, starred);
 
             } catch (Exception e) {
                 Log.e(WSAndroidApplication.TAG, e.getMessage(), e);

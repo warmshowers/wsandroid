@@ -17,10 +17,10 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
 
     private int mId;
     private String mUsername, mFullName, mStreet, mCity, mProvince, mCountry, mAboutMe, mLatitude, mLongitude;
-    private String mLogin;
+    private long mLogin = 0;  // String representation of number
+    private long mCreated = 0;
+    private long mUpdated = 0;
     private boolean mNotCurrentlyAvailable;
-    private String mCreated;
-    private long mUpdated;
 
     public HostBriefInfo(int id, String username, String fullName, String street, String city, String province, String country, String aboutMe, boolean notCurrentlyAvailable, String login, String created) {
         mId = id;
@@ -31,10 +31,9 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mProvince = province;
         mCountry = country;
         mAboutMe = aboutMe;
-        mLogin = login;
+        mLogin = Integer.parseInt(login);
         mNotCurrentlyAvailable = notCurrentlyAvailable;
-        mCreated = created;
-        mUpdated = 0;
+        mCreated = Integer.parseInt(created);
     }
 
     public HostBriefInfo(int id, Host host) {
@@ -49,10 +48,14 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mLongitude = host.getLongitude();
 
         mAboutMe = host.getComments();
-        mLogin = host.getLastLogin();
         mNotCurrentlyAvailable = host.getNotCurrentlyAvailable().equals("1");
-        mCreated = host.getCreated();
-        mUpdated = host.getUpdated();
+        try {
+            mCreated = Integer.parseInt(host.getCreated());
+            mUpdated = host.getUpdated();
+            mLogin = Integer.parseInt(host.getLastLogin());
+        } catch (NumberFormatException e) {
+            // Use default values; this should help with existing DAO entries that are in there as strings
+        }
     }
 
     public HostBriefInfo() {
@@ -98,7 +101,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         this.mLatitude = mLatitude;
     }
 
-    public String getLastLogin() {
+    public long getLastLogin() {
         return mLogin;
     }
 
@@ -135,8 +138,8 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         dest.writeString(mProvince);
         dest.writeString(mCountry);
         dest.writeByte((byte) (mNotCurrentlyAvailable ? 1 : 0));
-        dest.writeString(mLogin);
-        dest.writeString(mCreated);
+        dest.writeLong(mLogin);
+        dest.writeLong(mCreated);
     }
 
     public void readFromParcel(Parcel src) {
@@ -151,8 +154,8 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         mProvince = src.readString();
         mCountry = src.readString();
         mNotCurrentlyAvailable = src.readByte() != 0;
-        mLogin = src.readString();
-        mCreated = src.readString();
+        mLogin = src.readLong();
+        mCreated = src.readLong();
     }
 
     @Override
@@ -188,25 +191,14 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         return mNotCurrentlyAvailable ? 1 : 0;
     }
 
-    public String getCreated() {
+    public long getCreated() {
         return mCreated;
     }
     public Date getCreatedAsDate() {
-        return stringToDate(mCreated);
+        return new Date((mCreated * 1000L));
     }
     public Date getLastLoginAsDate() {
-        return stringToDate(mLogin);
-    }
-    protected Date stringToDate(String s) {
-
-        int intDate = 0;
-        try {
-            intDate = Integer.parseInt(s);
-        } catch (Exception e) {
-            // Ignore
-        }
-        Date d = new Date((long)intDate * 1000);
-        return d;
+        return new Date(mLogin * 1000L);
     }
 
     public long getmUpdated() {

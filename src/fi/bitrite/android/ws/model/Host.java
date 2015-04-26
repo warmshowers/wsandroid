@@ -133,7 +133,7 @@ public class Host extends _Host {
     }
 
     public String getLastLogin() {
-        return formatDate(getLogin());
+        return getLogin();
     }
 
     public Date getCreatedAsDate() {
