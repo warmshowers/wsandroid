@@ -6,24 +6,18 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.support.v7.widget.*;
 import android.widget.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
@@ -47,16 +41,16 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
 
 
         String[] navMenuOptions = getResources().getStringArray(R.array.nav_menu_options);
-        String[] navMeuActivities = getResources().getStringArray(R.array.nav_menu_activities);
+        String[] navMenuActivities = getResources().getStringArray(R.array.nav_menu_activities);
         HashMap<String, String> mActivityClassToFriendly = new HashMap<String, String>();
 
         TypedArray icons = getResources().obtainTypedArray(R.array.nav_menu_icons);
         for (int i=0; i<navMenuOptions.length; i++) {
-            mActivityClassToFriendly.put(navMeuActivities[i], navMenuOptions[i]);
+            mActivityClassToFriendly.put(navMenuActivities[i], navMenuOptions[i]);
 
             // TODO: Fix the default icon, implement the action management
             int icon = icons.getResourceId(i, R.drawable.ic_action_email);
-            NavRow row = new NavRow(icon, navMenuOptions[i], navMeuActivities[i]);
+            NavRow row = new NavRow(icon, navMenuOptions[i], navMenuActivities[i]);
             mNavRowList.add(row);
         }
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
@@ -161,8 +155,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.search_actions, menu);
+        getMenuInflater().inflate(R.menu.search_actions, menu);
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);

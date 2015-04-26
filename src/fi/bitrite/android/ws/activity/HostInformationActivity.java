@@ -13,7 +13,6 @@ import android.text.Spanned;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
@@ -351,6 +350,8 @@ public class HostInformationActivity extends WSBaseActivity
                 lblMemberName.setTextSize(24);
                 layoutHostDetails.setVisibility(View.VISIBLE);
             }
+        } else {
+            layoutHostDetails.setVisibility(View.VISIBLE);
         }
 
     }
@@ -459,22 +460,18 @@ public class HostInformationActivity extends WSBaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.host_information_actions, menu);
-        return true; // Do not call super, as we don't want the default options menu...
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.host_information_actions, menu);
+        return true; // Causes menu to be displayed
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case R.id.menuSendMessageIcon:
+            case R.id.menuSendMessage:
                 contactHost(null);
                 return true;
-            case R.id.menuMap:
+            case R.id.menuViewOnMap:
                 showHostOnMap(null);
                 return true;
             case R.id.menuMapApplication:
