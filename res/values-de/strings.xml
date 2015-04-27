@@ -154,6 +154,6 @@
     <string name="open_source_licenses">Open-Source-Lizenzen</string>
 
     <!-- new strings from 1.5.0beta3+ -->
-    <string name="title_activity_feedback">Leaving Feedback</string>
+    <string name="title_activity_feedback">Rückmeldung hinterlassen</string>
 
 </resources>
