@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -118,7 +119,7 @@ public class HostInformationActivity extends WSBaseActivity
                                                             } else if (!isChecked) {
                                                                 setStarredHost(false);
                                                             }
-                                                            iconFavorite.setAlpha(isChecked ? 1.0f : 0.3f);
+                                                            updateStarredHostIcon(isChecked);
                                                         }
                                                     }
         );
@@ -155,6 +156,9 @@ public class HostInformationActivity extends WSBaseActivity
         } else {
             updateViewContent();
         }
+
+        // set HostDetails to INVISIBLE to reduce 'pop in' effect
+        layoutHostDetails.setVisibility(View.INVISIBLE);
     }
 
 
@@ -171,6 +175,14 @@ public class HostInformationActivity extends WSBaseActivity
         }
 
         super.onSaveInstanceState(outState);
+    }
+
+    // Starred Host
+    // I tried to put variables here to access them only once, but it crashes the app
+    //private int StarredHost_normalColor = getResources().getColor(R.color.primaryTextColor);
+    //private int StarredHost_starredColor = getResources().getColor(R.color.primaryColorAccent);
+    private void updateStarredHostIcon(boolean isStarred) {
+        iconFavorite.setColorFilter(isStarred ? getResources().getColor(R.color.primaryColorAccent) : getResources().getColor(R.color.primaryTextColor), PorterDuff.Mode.SRC_ATOP);
     }
 
     public void showStarredHostToast() {
@@ -257,7 +269,7 @@ public class HostInformationActivity extends WSBaseActivity
         getSupportActionBar().setTitle(fullname);
 
         checkBoxFavorite.setChecked(hostInfo.getStarred());
-        iconFavorite.setAlpha(hostInfo.getStarred() ? 1.0f : 0.3f);
+        updateStarredHostIcon(hostInfo.getStarred());
 
         // Host Availability:
         // TODO: Copied from HostListAdapter.java, needs to be refactored
@@ -290,14 +302,15 @@ public class HostInformationActivity extends WSBaseActivity
             phones += getString(R.string.mobile_phone_abbrev, host.getMobilePhone()) + " ";
         }
         if (!host.getHomePhone().isEmpty()) {
-            phones += getString(R.string.home_phone_abbrev, host.getHomePhone()) + " ";
+            phones += "\n" + getString(R.string.home_phone_abbrev, host.getHomePhone()) + " ";
         }
         if (!host.getWorkPhone().isEmpty()) {
-            phones += getString(R.string.work_phone_abbrev, host.getWorkPhone()) + " ";
+            phones += "\n" + getString(R.string.work_phone_abbrev, host.getWorkPhone()) + " ";
         }
         if (!phones.isEmpty()) {
             txtPhone.setText(phones);
             Linkify.addLinks(txtPhone, Linkify.ALL);
+            txtPhone.setVisibility(View.VISIBLE);
         } else {
             txtPhone.setVisibility(View.GONE);
         }
@@ -340,15 +353,9 @@ public class HostInformationActivity extends WSBaseActivity
                 new DownloadImageTask(imgMemberPhoto)
                         .execute(url);
             } else {
-                imgMemberPhoto.setVisibility(View.GONE);
-                lblMemberName.setTextColor(Color.BLACK);
-                lblMemberName.setTextSize(24);
                 layoutHostDetails.setVisibility(View.VISIBLE);
             }
-        } else {
-            layoutHostDetails.setVisibility(View.VISIBLE);
         }
-
     }
 
     /**
