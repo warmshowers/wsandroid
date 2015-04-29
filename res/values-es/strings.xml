@@ -1,4 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿
+Hi Randy,
+
+    I made the changes according to the comments and translated the last strings and arrays, you'll find them at the end of this email (just to avoid confusion with formats).
+
+    Please let me know your comments.
+
+    Have a good night!
+
+    Laura Juliá
+
+
+    Strings:
+
+
 <resources>
     <string name="app_name">Warm Showers</string>
     <string name="app_title">"Warm Showers"</string>
@@ -7,12 +21,12 @@
     <string name="authenticating">Autenticando …</string>
     <string name="need_account">No puede ejecutarse sin las credenciales de WarmShowers</string>
     <string name="authentication_failed">Falla de autenticación. Ingresa nuevamente tus credenciales (Menú -> Cuenta).</string>
-    <string name="no_starred_hosts">"No has destacado anfitriones (el perfil del anfitrión aparecerá sin conexión a internet). Puedes destacar anfitriones en la página de información del anfitrón presionando el ícono de estrella."</string>
+    <string name="no_starred_hosts">"No has agregado anfitriones a Favoritos (el perfil del anfitrión aparecerá sin conexión a internet). Puedes agregar anfitriones a Favoritos en la página de información del anfitrión presionando el ícono de estrella."</string>
     <string name="list_search_hint">Nombre o ciudad </string>
     <string name="no_results">Tu búsqueda no produjo resultados.</string>
     <string name="enter_credentials">Por favor, ingresa tu nombre de usuario (o email) y contraseña:</string>
     <string name="view_details">Ver detalles </string>
-    <string name="star">Estrella</string>
+    <string name="star">Favoritos</string>
     <string name="close">Cerrar</string>
     <string name="username_hint">Usuario o Email</string>
     <string name="password_hint">Contraseña</string>
@@ -41,8 +55,8 @@
     <string name="host_updated">Información de anfitrión actualizada.</string>
     <string name="host_not_available">Este usuario no está disponible actualmente. Puedes contactar al usuario pero no como anfitrión.</string>
     <string name="host_info_in_progress">Recibiendo información del anfitrión …</string>
-    <string name="unstar_host">Remover de destacados</string>
-    <string name="host_starred">Anfitrión destacado. Ahora puedes acceder a la información sin conexión a internet.</string>
+    <string name="unstar_host">Remover de Favoritos</string>
+    <string name="host_starred">Anfitrión en Favoritos. Ahora puedes acceder a la información sin conexión a internet.</string>
     <string name="host_unstarred">La información del anfitrión fue eliminada del dispositivo.</string>
     <string name="performing_search">Buscando …</string>
     <string name="io_error">Error de acceso a internet, por favor revisa tu conexión.</string>
@@ -53,7 +67,7 @@
     <string name="sending_message">Enviando mensaje …</string>
     <string name="error_sending_message">No se pudo enviar tu mensaje. Verifica tus credenciales y la conexión a internet.</string>
     <string name="message_sent">Mensaje enviado.</string>
-    <string name="about_1">"Desarrollado por voluntarios de Warmshowers.org liderados por el autor original Johannes Staffans. \Traductora español: Laura Juliá</string>
+    <string name="about_1">"Desarrollado por voluntarios de Warmshowers.org liderados por el autor original Johannes Staffans. \Traductora al español: lejuliaf@gmail.com</string>
     <string name="about_2">Esta aplicación es de código abierto bajo la licencia Apache 2.0. Contribuye multiplicando nuestro repositorio en github.com/warmshowers/wsandroid\ Reporta problemas allí o en el formulario de contacto de Warmshowers, warmshowers.org/contact</string>
     <string name="feedback">Comentarios (%1$d)</string>
     <string name="error_retrieving_messages">Ocurrió un error al cargar los mensajes.</string>
@@ -69,7 +83,7 @@
     <string name="map_default_latitude">46.8625</string>
     <string name="map_default_longitude">-114.011667</string>
     <string name="alert_neutral_button">OK</string>
-    <string name="contact_message_to">"Mensaje a %1$s"</string>
+    <string name="contact_message_to">"Mensaje para %1$s"</string>
     <string name="disconnected_location_services">Desconectado de Google Play services. Conéctate nuevamente por favor.</string>
     <string name="hosts_dont_load">Las ubicaciones de los anfitriones no cargan en este nivel de zoom\nZoom in....</string>
     <!-- Distance from current has 2 args, number and units -->
@@ -87,14 +101,14 @@
     <string name="viewMessagesOnSite">Ver los mensajes en el sitio web</string>
     <string name="messages_on_site">Mensajes en la página</string>
     <string name="prefs_distance_unit">Unidad de distancia</string>
-    <string name="prefs_distance_unit_summary">¿Quieres la unidad de distancia en kilómetros o en millas? </string>
+    <string name="prefs_distance_unit_summary">¿Quieres la unidad de distancia en Kilómetros o en Millas? </string>
     <string name="prefs_ga_collect_stats_title">Enviar estadísticas anónimas </string>
     <string name="prefs_ga_collect_stats_summary">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
     <string name="languages_spoken"><u>Idiomas:</u></string>
-    <string name="map_network_not_connected">La red no está conectada, solo se muestran los anfitriones destacados.</string>
+    <string name="map_network_not_connected">La red no está conectada, sólo se muestran los anfitriones destacados.</string>
     <string name="open_in_map_application">Abrir en aplicación de mapas</string>
-    <string name="star_this_host">Destacar este anfitrión</string>
-    <string name="unstar_this_host">Remover de destacados</string>
+    <string name="star_this_host">Añadir este anfitrión a Favoritos</string>
+    <string name="unstar_this_host">Remover de Favoritos</string>
     <string name="no_account">La información de la cuenta no ha sido configurada. Configuraciones -> Cuenta</string>
     <string name="http_server_access_failure">Falla al comunicarnos con el servidor, por favor revisa tu conexión de internet </string>
     <string name="host_info_basic_information">Información básica</string>
@@ -123,37 +137,38 @@
     <string name="host_service_sag">Coche escoba (vehículo de soporte)</string>
     <string name="label_feedback_for_this_member">Tu comentario para este miembro:</string>
 
+
     <!-- Beginning of new strings for 1.5.0+ -->
     <!-- Notes:
       * Please check for anything using the idea "Starred" as we're using "Favorited" now. Especially host_starred and host_unstarred
       * enter_credentials should be changed to say "Your Warmshowers.org username or email"
-
+ 
     -->
-    <string name="drawer_open">open</string>
-    <string name="drawer_close">close</string>
-    <string name="text_search_title">Text Search</string>
-    <string name="search_hint">Host name or city/town</string>
-    <string name="action_search">Host search</string>
-    <string name="contact_host">Contact Member</string>
-    <string name="search_host_summary">Member since %1$s, last active %2$s</string>
-    <string name="host_limitations">Max guests %1$s, Languages spoken %2$s</string>
-    <string name="favorite_host">Favorite Host</string>
-    <string name="no_feedback_yet">No feedback yet</string>
-    <string name="mobile_phone_abbrev">Mobile: %1$s</string>
-    <string name="home_phone_abbrev">Home: %1$s</string>
-    <string name="work_phone_abbrev">Work: %1$s</string>
-    <string name="host_services_description">Services this host may offer: %1$s</string>
-    <string name="nearby_service_accommodation">Accommodation</string>
-    <string name="nearby_service_bikeshop">Bikeshop</string>
-    <string name="nearby_services_description">Nearby services: %1$s</string>
-    <string name="nearby_service_campground">Campground</string>
-    <string name="not_currently_available">Not Currently Available</string>
-    <string name="currently_available">Currently Available</string>
-    <string name="current_login_status">You are currently logged in as %1$s</string>
-    <string name="title_activity_about">About Warm Showers</string>
-    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="drawer_open">abrir</string>
+    <string name="drawer_close">cerrar</string>
+    <string name="text_search_title">Búsqueda de texto</string>
+    <string name="search_hint">Nombre del anfitrión o ciudad/municipio</string>
+    <string name="action_search">Búsqueda de anfitrión</string>
+    <string name="contact_host">Contactar a este miembro</string>
+    <string name="search_host_summary">Miembro desde hace %1$s, última actividad %2$s</string>
+    <string name="host_limitations">Nº máximo de huéspedes %1$s, Idiomas %2$s</string>
+    <string name="favorite_host">Agregar Anfitrión a Favoritos</string>
+    <string name="no_feedback_yet">Sin comentarios aún</string>
+    <string name="mobile_phone_abbrev">Teléfono Móvil: %1$s</string>
+    <string name="home_phone_abbrev">Casa: %1$s</string>
+    <string name="work_phone_abbrev">Trabajo: %1$s</string>
+    <string name="host_services_description">Servicios que este anfitrión ofrece: %1$s</string>
+    <string name="nearby_service_accommodation">Hospedaje</string>
+    <string name="nearby_service_bikeshop">Tienda de bicicletas</string>
+    <string name="nearby_services_description">Servicios cercanos: %1$s</string>
+    <string name="nearby_service_campground">Sitio para acampar</string>
+    <string name="not_currently_available">No Disponible Actualmente</string>
+    <string name="currently_available">Disponible Actualmente</string>
+    <string name="current_login_status">Has iniciado sesión como %1$s</string>
+    <string name="title_activity_about">Sobre Warm Showers</string>
+    <string name="open_source_licenses">Licencias de Código Abierto</string>
+
 
     <!-- new strings from 1.5.0beta3+ -->
-    <string name="title_activity_feedback">Leaving Feedback</string>
-
-</resources>
+    <string name="title_activity_feedback">Dejando Comentario </string>
+    </resources>
