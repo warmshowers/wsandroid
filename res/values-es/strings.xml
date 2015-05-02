@@ -1,18 +1,4 @@
-﻿
-Hi Randy,
-
-    I made the changes according to the comments and translated the last strings and arrays, you'll find them at the end of this email (just to avoid confusion with formats).
-
-    Please let me know your comments.
-
-    Have a good night!
-
-    Laura Juliá
-
-
-    Strings:
-
-
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Warm Showers</string>
     <string name="app_title">"Warm Showers"</string>
@@ -136,14 +122,6 @@ Hi Randy,
     <string name="host_service_tentspace">Terreno (Para acampar)</string>
     <string name="host_service_sag">Coche escoba (vehículo de soporte)</string>
     <string name="label_feedback_for_this_member">Tu comentario para este miembro:</string>
-
-
-    <!-- Beginning of new strings for 1.5.0+ -->
-    <!-- Notes:
-      * Please check for anything using the idea "Starred" as we're using "Favorited" now. Especially host_starred and host_unstarred
-      * enter_credentials should be changed to say "Your Warmshowers.org username or email"
- 
-    -->
     <string name="drawer_open">abrir</string>
     <string name="drawer_close">cerrar</string>
     <string name="text_search_title">Búsqueda de texto</string>
@@ -167,8 +145,5 @@ Hi Randy,
     <string name="current_login_status">Has iniciado sesión como %1$s</string>
     <string name="title_activity_about">Sobre Warm Showers</string>
     <string name="open_source_licenses">Licencias de Código Abierto</string>
-
-
-    <!-- new strings from 1.5.0beta3+ -->
     <string name="title_activity_feedback">Dejando Comentario </string>
     </resources>
