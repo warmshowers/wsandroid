@@ -63,7 +63,7 @@ public class HostContactActivity extends WSBaseActivity
 
         title = (TextView) findViewById(R.id.txtContactHostTitle);
         editSubject = (EditText) findViewById(R.id.editContactHostSubject);
-        editMessage = (EditText) findViewById(R.id.editContactHostSubject);
+        editMessage = (EditText) findViewById(R.id.editContactHostMessage);
         btnHostContact = (Button) findViewById(R.id.btnHostContact);
         noNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningContact);
 
