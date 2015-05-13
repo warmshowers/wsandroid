@@ -1,12 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<resources>
+﻿<resources>
 
     <string-array name="distanceUnits">
         <item name="km">Kilómetros</item>
         <item name="mi">Millas</item>
     </string-array>
-    
+
     <string-array name="distanceUnitValues">
         <item name="km">km</item>
         <item name="mi">mi</item>
@@ -29,14 +27,14 @@
 
     <!-- Translatable text of Navigation Drawer Menu -->
     <string-array name="nav_menu_options">
-        <item >Map</item>
-        <item >Search</item>
-        <item >Favorites</item>
-        <item >Messages</item>
-        <item >Account/LogIn</item>
-        <item >Settings</item>
-        <item>Help &amp; Feedback</item>
-        <item >About</item>
+        <item>Mapa</item>
+        <item>Búsqueda</item>
+        <item>Favoritos</item>
+        <item>Mensajes</item>
+        <item>Cuenta/Iniciar Sesión</item>
+        <item>Configuraciones</item>
+        <item>Ayuda &amp; Comentarios</item>
+        <item>Sobre</item>
     </string-array>
 
 
