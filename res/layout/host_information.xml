@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:layout_height="fill_parent">
+    <!-- activity view -->
 
-    <include layout="@layout/toolbar" />
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
-    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/drawer_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
-        <!-- activity view -->
+        <include layout="@layout/toolbar" />
 
         <ScrollView
             android:id="@+id/scrollHostInformation"
@@ -377,10 +376,10 @@
 
             </LinearLayout>
         </ScrollView>
+    </LinearLayout>
 
 
 
-        <include layout="@layout/navigation_drawer" />
-    </android.support.v4.widget.DrawerLayout>
+    <include layout="@layout/navigation_drawer" />
 
-</LinearLayout>
+</android.support.v4.widget.DrawerLayout>
