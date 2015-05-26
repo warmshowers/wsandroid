@@ -38,7 +38,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         String[] navMenuOptions = getResources().getStringArray(R.array.nav_menu_options);
         String[] navMenuActivities = getResources().getStringArray(R.array.nav_menu_activities);
         HashMap<String, String> mActivityClassToFriendly = new HashMap<String, String>();
@@ -47,7 +46,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         for (int i=0; i<navMenuOptions.length; i++) {
             mActivityClassToFriendly.put(navMenuActivities[i], navMenuOptions[i]);
 
-            // TODO: Fix the default icon, implement the action management
             int icon = icons.getResourceId(i, R.drawable.ic_action_email);
             NavRow row = new NavRow(icon, navMenuOptions[i], navMenuActivities[i]);
             mNavRowList.add(row);
@@ -55,10 +53,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             if (navMenuActivities[i].equals(mActivityName)) currentActivity = i;
         }
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
-
-
-        //Toast.makeText(this, "WSBaseActivity onCreate = " + mActivityFriendly + " - " + mActivityName, Toast.LENGTH_SHORT).show();
-
     }
 
     protected void initView() {
@@ -89,9 +83,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-
-                // TODO: This need to go onPostCreate or similar, but I always get an 'findViewById on null object' error
-                setDrawerSelect(currentActivity);
+                showDrawerSelection(currentActivity);
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -169,21 +161,17 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     }
 
 
-    public void setDrawerSelect (int position) {
-        for (int i = 0; i < mLeftDrawerList.getCount(); i++) {
-            View rowView = mLeftDrawerList.getChildAt(i);
-            if (rowView == null) return;
-            TextView rowText = (TextView) rowView.findViewById(R.id.menu_text);
-            ImageView rowIcon = (ImageView) rowView.findViewById(R.id.icon);
+    /**
+     * Highlight the text and icon in the selected item on the nav drawer
+     *
+     * @param position
+     */
+    public void showDrawerSelection(int position) {
+        View rowView = mLeftDrawerList.getChildAt(position);
+        int accentColor = getResources().getColor(R.color.primaryColorAccent);
 
-            if (i == position) {
-                rowText.setTextColor(getResources().getColor(R.color.primaryColorAccent));
-                rowIcon.setColorFilter(getResources().getColor(R.color.primaryColorAccent));
-            } else {
-                rowText.setTextColor(getResources().getColor(R.color.primaryTextColor));
-                rowIcon.setColorFilter(null);
-            }
-        }
+        ((TextView)rowView.findViewById(R.id.menu_text)).setTextColor(accentColor);
+        ((ImageView)rowView.findViewById(R.id.icon)).setColorFilter(accentColor);
     }
 
 
