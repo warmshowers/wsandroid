@@ -53,6 +53,11 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
             } else {
                  location.setTextColor(Color.GRAY);
             }
+        // Divider
+        if (position == 0) {
+            hostListItem.findViewById(R.id.divider).setVisibility(View.GONE);
+        } else {
+            hostListItem.findViewById(R.id.divider).setVisibility(View.VISIBLE);
         }
 
         // Set the host icon to black if they're available, otherwise gray

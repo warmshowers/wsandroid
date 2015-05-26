@@ -17,7 +17,8 @@
             android:id="@+id/scrollHostInformation"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:scrollbars="vertical">
+            android:scrollbars="vertical"
+            android:background="@color/primaryWhite">
 
             <LinearLayout
                 android:id="@+id/layoutHostDetails"
@@ -124,7 +125,8 @@
                     <View
                         android:layout_height="1dp"
                         android:layout_width="match_parent"
-                        android:background="#d9dbdc"
+                        android:background="@color/primaryTextColorLight"
+                        android:alpha="0.2"
                         android:layout_marginBottom="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginLeft="72dp"
@@ -223,7 +225,8 @@
                     <View
                         android:layout_height="1dp"
                         android:layout_width="match_parent"
-                        android:background="#d9dbdc"
+                        android:background="@color/primaryTextColorLight"
+                        android:alpha="0.2"
                         android:layout_marginBottom="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginLeft="72dp"
@@ -323,7 +326,8 @@
                     <View
                         android:layout_height="1dp"
                         android:layout_width="match_parent"
-                        android:background="#d9dbdc"
+                        android:background="@color/primaryTextColorLight"
+                        android:alpha="0.2"
                         android:layout_marginBottom="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginLeft="72dp"
