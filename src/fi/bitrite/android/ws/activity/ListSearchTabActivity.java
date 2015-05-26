@@ -78,6 +78,10 @@ public class ListSearchTabActivity
 
         handleIntent(getIntent());
 
+        if (mQuery != null) {
+            getSupportActionBar().setTitle(getSupportActionBar().getTitle() + ": \"" + mQuery + "\"");
+        }
+
     }
 
     @Override
