@@ -6,9 +6,5 @@
         android:title="@string/action_search"
         android:icon="@drawable/ic_search_white_24dp"
         yourapp:showAsAction="ifRoom|collapseActionView"
-        yourapp:actionViewClass="android.widget.SearchView" />
-    <item
-        android:id="@+id/legal"
-        android:title="@string/open_source_licenses"
-        ws:showAsAction="never" />
+        yourapp:actionViewClass="android.support.v7.widget.SearchView" />
 </menu>

@@ -30,7 +30,6 @@
     <!-- Translatable text of Navigation Drawer Menu -->
     <string-array name="nav_menu_options">
         <item >Map</item>
-        <item >Search</item>
         <item >Favorites</item>
         <item >Messages</item>
         <item >Account/LogIn</item>
@@ -41,7 +40,6 @@
 
     <string-array name="nav_menu_activities" translatable="false">
         <item>Maps2Activity</item>
-        <item>ListSearchTabActivity</item>
         <item>StarredHostTabActivity</item>
         <item>MessagesTabActivity</item>
         <item>AuthenticatorActivity</item>
@@ -52,7 +50,6 @@
 
     <string-array name="nav_menu_icons" translatable="false">
         <item>@drawable/ic_map_grey600_24dp</item>
-        <item>@drawable/ic_search_grey600_24dp</item>
         <item>@drawable/ic_favorite_grey600_24dp</item>
         <item>@drawable/ic_message_grey600_24dp</item>
         <item>@drawable/ic_login_grey600_24dp</item>

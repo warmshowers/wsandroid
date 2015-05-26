@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,7 +24,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import fi.bitrite.android.ws.R;
@@ -71,6 +69,10 @@ public class FeedbackActivity extends WSBaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
+
+        // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
+        mHasBackIntent = true;
+
         initView();
 
         feedbackEditText = (EditText) findViewById(R.id.feedbackEditText);

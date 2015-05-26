@@ -153,6 +153,7 @@
     <string name="current_login_status">You are currently logged in as %1$s</string>
     <string name="title_activity_about">About Warm Showers</string>
     <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="title_activity_search">Search</string>
 
     <!-- new strings from 1.5.0beta3+ -->
     <string name="title_activity_feedback">Leaving Feedback</string>

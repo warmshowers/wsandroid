@@ -4,12 +4,12 @@
     <style name="wsAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryColorDark</item>
-        <item name="colorAccent">@color/accent_material_dark</item>
+        <item name="colorAccent">@color/primaryColorAccent</item>
         <item name="android:statusBarColor">@color/primaryColorDark</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-
+        <item name="android:textColorLink">@color/primaryColorAccent</item>
         <item name="android:actionBarStyle">@style/WsActionBar</item>
 
         <!-- Support library compatibility -->
@@ -30,20 +30,91 @@
         <item name="titleTextStyle">@style/WsTitleTextStyle</item>
     </style>
 
-    <style name="WsTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
-    </style>
-
+    <!-- Animated Arrow - Toolbar -->
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
         <item name="color">@android:color/white</item>
     </style>
 
+    <!-- Map Location Clusters -->
     <style name="SingleLocationClusterIcon.TextAppearance" parent="android:TextAppearance">
         <item name="android:textColor">#ffffffff</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <!-- Icon Styles -->
+    <style name="WsListIcon">
+        <item name="android:tint">@color/primaryTextColorLight</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+
+    <!-- Button Styles -->
+    <style name="MaterialCardViewButton">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+    </style>
+
+    <style name="MaterialCardViewButtonText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minWidth">74dp</item>
+        <item name="android:paddingLeft">18dp</item>
+        <item name="android:paddingRight">18dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- Text Styles -->
+    <style name="WsPictureOverlayTitle" parent="@android:style/TextAppearance">
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textColor">@color/primaryWhite</item>
+        <item name="android:fontFamily">sans-serif-thin</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="WsPictureOverlayTitle.Medium">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="WsText" parent="@android:style/TextAppearance">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="WsText.light">
+        <item name="android:textColor">@color/primaryTextColorLight</item>
+    </style>
+
+    <style name="WsText.subHead">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="WsText.caption">
+        <item name="android:textColor">@color/primaryTextColorLight</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:singleLine">false</item>
+    </style>
+
+    <style name="WsTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
+
 
 </resources>

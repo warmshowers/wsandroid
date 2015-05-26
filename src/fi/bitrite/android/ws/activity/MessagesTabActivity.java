@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.activity;
 import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,8 +25,8 @@ public class MessagesTabActivity extends WSBaseActivity implements android.widge
 
     TextView mNoNetworkWarning;
     TextView mUnreadCount;
-    Button mUpdateMessages;
-    Button mViewMessagesOnSite;
+    CardView mUpdateMessages;
+    CardView mViewMessagesOnSite;
 
     private DialogHandler dialogHandler;
     private int numUnread;
@@ -38,8 +39,8 @@ public class MessagesTabActivity extends WSBaseActivity implements android.widge
 
         mNoNetworkWarning = (TextView)findViewById(R.id.noNetworkWarningMessages);
         mUnreadCount = (TextView)findViewById(R.id.unreadCount);
-        mUpdateMessages = (Button)findViewById(R.id.btnUpdateMessages);
-        mViewMessagesOnSite = (Button)findViewById(R.id.btnViewOnSite);
+        mUpdateMessages = (CardView)findViewById(R.id.btnUpdateMessages);
+        mViewMessagesOnSite = (CardView)findViewById(R.id.btnViewOnSite);
 
         dialogHandler = new DialogHandler(this);
         if (Tools.isNetworkConnected(this)) {

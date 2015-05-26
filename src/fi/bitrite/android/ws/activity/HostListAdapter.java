@@ -3,6 +3,9 @@ package fi.bitrite.android.ws.activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.HostBriefInfo;
@@ -19,6 +23,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
@@ -46,13 +52,36 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
         String hostFullname = host.getFullname();
 
-        // Emphasize the location if it's a match on the search
+        // Emphasize the name or location if it's a match on the search
         if (mQuery != null) {
-            if (host.getCity().toLowerCase().contains(mQuery)) {
-                location.setTextColor(Color.BLACK);
+
+            final String cityString = host.getLocation().toLowerCase();
+
+
+            //TODO: Special caracters match in search but not in display
+            if (Pattern.compile(Pattern.quote(mQuery), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(cityString).find() != false) {
+                location.setText(getTextMatch(mQuery, cityString));
             } else {
-                 location.setTextColor(Color.GRAY);
+                location.setText(host.getLocation());
             }
+
+            //Toast.makeText(mContext, "HostListAdp hostFullname = " + hostFullname + " - " + mQuery + " - " + Pattern.compile(Pattern.quote(mQuery), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(hostFullname).find(), Toast.LENGTH_SHORT).show();
+
+            if (Pattern.compile(Pattern.quote(mQuery), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(hostFullname).find() != false) {
+                fullname.setText(getTextMatch(mQuery,hostFullname));
+            } else {
+                fullname.setText(hostFullname);
+            }
+        } else {
+            fullname.setText(hostFullname);
+            location.setText(host.getLocation());
+        }
+
+        // Divider
+        if (position == 0) {
+            hostListItem.findViewById(R.id.divider).setVisibility(View.GONE);
+        } else {
+            hostListItem.findViewById(R.id.divider).setVisibility(View.VISIBLE);
         }
 
         // Set the host icon to black if they're available, otherwise gray
@@ -72,11 +101,23 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
         String memberString = mContext.getString(R.string.search_host_summary, createdDate, activeDate);
         memberInfo.setText(memberString);
 
-
-        fullname.setText(hostFullname);
-        location.setText(host.getLocation());
-
         return hostListItem;
+    }
+
+    private SpannableStringBuilder getTextMatch(String mPattern, String mMatch) {
+
+        final Pattern p = Pattern.compile(mPattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+        final Matcher matcher = p.matcher(mMatch);
+
+        // TODO: ignore accents and other special characters
+        final SpannableStringBuilder spannable = new SpannableStringBuilder(mMatch);
+        final ForegroundColorSpan span = new ForegroundColorSpan(mContext.getResources().getColor(R.color.primaryColorAccent));
+        while (matcher.find()) {
+            spannable.setSpan(
+                    span, matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+        }
+        return spannable;
     }
 
     private LinearLayout inflateView(View convertView) {

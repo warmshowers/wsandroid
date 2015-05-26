@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -59,6 +58,10 @@ public class HostContactActivity extends WSBaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.host_contact);
+
+        // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
+        mHasBackIntent = true;
+
         initView();
 
         title = (TextView) findViewById(R.id.txtContactHostTitle);

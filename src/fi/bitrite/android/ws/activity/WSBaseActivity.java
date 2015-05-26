@@ -1,7 +1,5 @@
 package fi.bitrite.android.ws.activity;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
@@ -12,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.*;
 import java.util.ArrayList;
@@ -29,16 +25,18 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLeftDrawerList;
     private NavDrawerListAdapter mNavDrawerListAdapter;
+    private int currentActivity;
 
     public static final String TAG = "WSBaseActivity";
     protected String mActivityName = this.getClass().getSimpleName();
     protected ArrayList<NavRow> mNavRowList = new ArrayList<NavRow>();
     String mActivityFriendly;
 
+    protected boolean mHasBackIntent = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         String[] navMenuOptions = getResources().getStringArray(R.array.nav_menu_options);
         String[] navMenuActivities = getResources().getStringArray(R.array.nav_menu_activities);
@@ -48,13 +46,13 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         for (int i=0; i<navMenuOptions.length; i++) {
             mActivityClassToFriendly.put(navMenuActivities[i], navMenuOptions[i]);
 
-            // TODO: Fix the default icon, implement the action management
             int icon = icons.getResourceId(i, R.drawable.ic_action_email);
             NavRow row = new NavRow(icon, navMenuOptions[i], navMenuActivities[i]);
             mNavRowList.add(row);
+
+            if (navMenuActivities[i].equals(mActivityName)) currentActivity = i;
         }
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
-
     }
 
     protected void initView() {
@@ -80,13 +78,12 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-
+                showDrawerSelection(currentActivity);
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -106,13 +103,22 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             lblNotLoggedIn.setVisibility(View.VISIBLE);
             lblUsername.setVisibility(View.GONE);
         }
-
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
+
+        if (mHasBackIntent) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
     }
 
     @Override
@@ -141,6 +147,8 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
      */
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String[] activities = getResources().getStringArray(R.array.nav_menu_activities);
+        if (mActivityName.equals(activities[position])) return;
+
         try {
             Class activityClass =  Class.forName(this.getPackageName() + ".activity." + activities[position]);
             Intent i = new Intent(this, activityClass);
@@ -148,23 +156,22 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         } catch (ClassNotFoundException e) {
             Log.i(TAG, "Class not found: " + activities[position]);
         }
+
         mDrawerLayout.closeDrawers();
-        // Toast.makeText(this, "onItemClick position=" + Integer.toString(position), Toast.LENGTH_SHORT).show();
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_actions, menu);
+    /**
+     * Highlight the text and icon in the selected item on the nav drawer
+     *
+     * @param position
+     */
+    public void showDrawerSelection(int position) {
+        View rowView = mLeftDrawerList.getChildAt(position);
+        int accentColor = getResources().getColor(R.color.primaryColorAccent);
 
-        // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        android.widget.SearchView searchView = (android.widget.SearchView) menu.findItem(R.id.action_search).getActionView();
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
-
-        return true;
+        ((TextView)rowView.findViewById(R.id.menu_text)).setTextColor(accentColor);
+        ((ImageView)rowView.findViewById(R.id.icon)).setColorFilter(accentColor);
     }
 
 

@@ -6,7 +6,8 @@
         android:layout_gravity="left|start"
         android:layout_width="match_parent"
         android:background="#fff"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clickable="true">
 
 
         <LinearLayout
@@ -14,37 +15,54 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:orientation="vertical"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="50dp">
+                android:layout_height="160dp"
+                android:background="#FF777777">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/userPhoto"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:src="@drawable/default_hostinfo_profile"
+                    android:scaleType="centerCrop" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Warm Showers"
-                    android:id="@+id/AppLabel"
-                    android:layout_marginLeft="32dp" />
+                    android:layout_alignParentBottom="true"
+                    android:gravity="bottom"
+                    android:paddingBottom="14dp"
+                    android:paddingTop="14dp"
+                    android:background="#CC555555">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="You are not logged in. Use the Account/Login selection below."
-                    android:id="@+id/lblNotLoggedIn"
-                    android:layout_marginLeft="32dp"
-                    android:visibility="gone" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="You are not logged in. Use the Account/Login selection below."
+                        android:id="@+id/lblNotLoggedIn"
+                        android:layout_marginLeft="16dp"
+                        android:visibility="gone" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Username"
-                    android:id="@+id/lblUsername"
-                    android:layout_marginLeft="32dp" />
+                    <TextView
+                        android:id="@+id/lblUsername"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/WsPictureOverlayTitle.Medium"
+                        android:text="Username"
+                        android:layout_marginBottom="4dp"/>
 
-            </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/lblUserEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/WsPictureOverlayTitle"
+                        android:text="user@email.com"/>
+                </LinearLayout>
+
+            </RelativeLayout>
 
 
             <ListView
@@ -53,6 +71,8 @@
                 android:layout_height="match_parent"
                 android:divider="@android:color/transparent"
                 android:dividerHeight="0dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:background="#ffffff" />
         </LinearLayout>
 
