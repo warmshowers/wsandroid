@@ -35,6 +35,10 @@ public class WebViewActivity extends WSBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
+
+        // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
+        hasBackIntent = true;
+
         initView();
 
         mWebView = (WebView) this.findViewById(R.id.webView);

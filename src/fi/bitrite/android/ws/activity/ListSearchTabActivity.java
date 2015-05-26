@@ -51,6 +51,10 @@ public class ListSearchTabActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_tab);
+
+        // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
+        hasBackIntent = true;
+
         initView();
 
         mDialogHandler = new DialogHandler(this);

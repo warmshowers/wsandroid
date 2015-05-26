@@ -71,6 +71,10 @@ public class FeedbackActivity extends WSBaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
+
+        // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
+        hasBackIntent = true;
+
         initView();
 
         feedbackEditText = (EditText) findViewById(R.id.feedbackEditText);

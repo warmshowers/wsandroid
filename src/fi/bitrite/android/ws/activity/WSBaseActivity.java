@@ -29,11 +29,14 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLeftDrawerList;
     private NavDrawerListAdapter mNavDrawerListAdapter;
+    private int currentActivity;
 
     public static final String TAG = "WSBaseActivity";
     protected String mActivityName = this.getClass().getSimpleName();
     protected ArrayList<NavRow> mNavRowList = new ArrayList<NavRow>();
     String mActivityFriendly;
+
+    public boolean hasBackIntent = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +55,14 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             int icon = icons.getResourceId(i, R.drawable.ic_action_email);
             NavRow row = new NavRow(icon, navMenuOptions[i], navMenuActivities[i]);
             mNavRowList.add(row);
+
+            //TODO: possible to use == ? Would be more robust? I don't understand this :P
+            if (navMenuActivities[i].equals(mActivityName)) currentActivity = i;
         }
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
+
+
+        //Toast.makeText(this, "WSBaseActivity onCreate = " + mActivityFriendly + " - " + mActivityName, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -80,13 +89,14 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
 
+                // TODO: This need to go onPostCreate or similar, but I always get an 'findViewById on null object' error
+                setDrawerSelect(currentActivity);
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -106,13 +116,27 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             lblNotLoggedIn.setVisibility(View.VISIBLE);
             lblUsername.setVisibility(View.GONE);
         }
-
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
+
+
+        // TODO: Use an int to allow back with an 'x' icon instead of the back arrow (ex: Feedback, Contact)
+        if (hasBackIntent) {
+
+            //mToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha));
+            //getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
     }
 
     @Override
@@ -141,6 +165,8 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
      */
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String[] activities = getResources().getStringArray(R.array.nav_menu_activities);
+        if (mActivityName.equals(activities[position])) return;
+
         try {
             Class activityClass =  Class.forName(this.getPackageName() + ".activity." + activities[position]);
             Intent i = new Intent(this, activityClass);
@@ -148,10 +174,31 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         } catch (ClassNotFoundException e) {
             Log.i(TAG, "Class not found: " + activities[position]);
         }
+
         mDrawerLayout.closeDrawers();
-        // Toast.makeText(this, "onItemClick position=" + Integer.toString(position), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "onItemClick position = " + mActivityName + " : "  + activities[position], Toast.LENGTH_SHORT).show();
     }
 
+
+    public void setDrawerSelect (int position) {
+        //Toast.makeText(this, "WSBaseActivity setDrawerSelect = " + position + " - " + mLeftDrawerList.toString(), Toast.LENGTH_SHORT).show();
+        for (int i = 0; i < mLeftDrawerList.getCount(); i++) {
+            View rowView = mLeftDrawerList.getChildAt(i);
+            if (rowView == null) return;
+            TextView rowText = (TextView) rowView.findViewById(R.id.menu_text);
+            ImageView rowIcon = (ImageView) rowView.findViewById(R.id.icon);
+
+            if (i == position) {
+                rowText.setTextColor(getResources().getColor(R.color.primaryColorAccent));
+                rowIcon.setColorFilter(getResources().getColor(R.color.primaryColorAccent));
+                //mSelected.setBackgroundColor(0xFF00FF00);
+            } else {
+                rowText.setTextColor(getResources().getColor(R.color.primaryTextColor));
+                rowIcon.setColorFilter(null);
+                //mView.setBackgroundColor(0x00000000);
+            }
+
+        }
 
 
 

@@ -81,6 +81,10 @@ public class HostInformationActivity extends WSBaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.host_information);
+
+        // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
+        hasBackIntent = true;
+
         initView();
 
         layoutHostDetails = (LinearLayout)findViewById(R.id.layoutHostDetails);
