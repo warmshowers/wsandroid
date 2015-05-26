@@ -2,19 +2,14 @@ package fi.bitrite.android.ws.activity;
 
 import android.app.Dialog;
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.TextView.OnEditorActionListener;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 
@@ -53,7 +48,7 @@ public class ListSearchTabActivity
         setContentView(R.layout.list_tab);
 
         // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
-        hasBackIntent = true;
+        mHasBackIntent = true;
 
         initView();
 

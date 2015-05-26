@@ -1,7 +1,5 @@
 package fi.bitrite.android.ws.activity;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
@@ -12,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.*;
 import java.util.ArrayList;
@@ -36,7 +32,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     protected ArrayList<NavRow> mNavRowList = new ArrayList<NavRow>();
     String mActivityFriendly;
 
-    public boolean hasBackIntent = false;
+    protected boolean mHasBackIntent = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +52,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             NavRow row = new NavRow(icon, navMenuOptions[i], navMenuActivities[i]);
             mNavRowList.add(row);
 
-            //TODO: possible to use == ? Would be more robust? I don't understand this :P
             if (navMenuActivities[i].equals(mActivityName)) currentActivity = i;
         }
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
@@ -123,12 +118,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
 
-
-        // TODO: Use an int to allow back with an 'x' icon instead of the back arrow (ex: Feedback, Contact)
-        if (hasBackIntent) {
-
-            //mToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha));
-            //getSupportActionBar().setHomeButtonEnabled(true);
+        if (mHasBackIntent) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -176,12 +166,10 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         }
 
         mDrawerLayout.closeDrawers();
-        //Toast.makeText(this, "onItemClick position = " + mActivityName + " : "  + activities[position], Toast.LENGTH_SHORT).show();
     }
 
 
     public void setDrawerSelect (int position) {
-        //Toast.makeText(this, "WSBaseActivity setDrawerSelect = " + position + " - " + mLeftDrawerList.toString(), Toast.LENGTH_SHORT).show();
         for (int i = 0; i < mLeftDrawerList.getCount(); i++) {
             View rowView = mLeftDrawerList.getChildAt(i);
             if (rowView == null) return;
@@ -191,17 +179,11 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             if (i == position) {
                 rowText.setTextColor(getResources().getColor(R.color.primaryColorAccent));
                 rowIcon.setColorFilter(getResources().getColor(R.color.primaryColorAccent));
-                //mSelected.setBackgroundColor(0xFF00FF00);
             } else {
                 rowText.setTextColor(getResources().getColor(R.color.primaryTextColor));
                 rowIcon.setColorFilter(null);
-                //mView.setBackgroundColor(0x00000000);
             }
-
         }
-
-
-
     }
 
 

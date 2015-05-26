@@ -83,7 +83,7 @@ public class HostInformationActivity extends WSBaseActivity
         setContentView(R.layout.host_information);
 
         // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
-        hasBackIntent = true;
+        mHasBackIntent = true;
 
         initView();
 

@@ -1,11 +1,8 @@
 package fi.bitrite.android.ws.activity;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -13,17 +10,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieSyncManager;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import android.webkit.CookieManager;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import java.net.URI;
-
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.util.GlobalInfo;
@@ -37,7 +30,7 @@ public class WebViewActivity extends WSBaseActivity {
         setContentView(R.layout.activity_web_view);
 
         // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
-        hasBackIntent = true;
+        mHasBackIntent = true;
 
         initView();
 
