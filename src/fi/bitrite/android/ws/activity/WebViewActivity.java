@@ -75,7 +75,7 @@ public class WebViewActivity extends WSBaseActivity {
 
         mWebView.loadUrl(url);
 
-        new AlertDialog.Builder(this)
+        new android.support.v7.app.AlertDialog.Builder(this)
                 .setTitle("Leaving app")
                 .setMessage(getString(R.string.embedded_browser_warning))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -83,7 +83,7 @@ public class WebViewActivity extends WSBaseActivity {
                         // continue
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                //  .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
 
     }
