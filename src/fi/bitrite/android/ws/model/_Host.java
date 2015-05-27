@@ -46,8 +46,10 @@ import android.os.Parcelable;
     protected String mCreated = "";
     protected String mLanguagesSpoken = "";
     protected String mPicture = "";
+    protected String mProfilePictureSmall = "";
+    protected String mProfilePictureLarge = "";
 
-    protected _Host(int id, String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude, String login, String created, String languagesSpoken, String picture) {
+    protected _Host(int id, String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude, String login, String created, String languagesSpoken, String picture, String profilePictureSmall, String profilePictureLarge) {
         this();
         mId = id;
         mName = name;
@@ -82,6 +84,8 @@ import android.os.Parcelable;
         mCreated = created;
         mLanguagesSpoken = languagesSpoken;
         mPicture = picture;
+        mProfilePictureSmall = profilePictureSmall;
+        mProfilePictureLarge = profilePictureLarge;
     }
 
     protected _Host() {
@@ -218,6 +222,10 @@ import android.os.Parcelable;
 
     public String getPicture() { return mPicture; }
 
+    public String getProfilePictureSmall() { return mProfilePictureSmall; }
+
+    public String getProfilePictureLarge() { return mProfilePictureLarge; }
+
     public String getLanguagesSpoken() {
         return mLanguagesSpoken;
     }
@@ -260,6 +268,8 @@ import android.os.Parcelable;
         parcel.writeInt(mId);
         parcel.writeString(mLanguagesSpoken);
         parcel.writeString(mPicture);
+        parcel.writeString(mProfilePictureSmall);
+        parcel.writeString(mProfilePictureLarge);
     }
 
     public void readFromParcel(Parcel source) {
@@ -296,10 +306,12 @@ import android.os.Parcelable;
         mId = source.readInt();
         mLanguagesSpoken = source.readString();
         mPicture = source.readString();
+        mProfilePictureSmall = source.readString();
+        mProfilePictureLarge = source.readString();
     }
 
     public void readFromJson(JSONObject json) throws JSONException {
-        mId = json.optInt("id");
+        mId = json.optInt("uid");
         if (!json.isNull("name")) {
             mName = json.optString("name");
         }
@@ -396,7 +408,12 @@ import android.os.Parcelable;
         if (!json.isNull("picture")) {
             mPicture = json.optString("picture");
         }
-
+        if (!json.isNull("profile_image_profile_picture")) {
+            mProfilePictureSmall = json.optString("profile_image_profile_picture");
+        }
+        if (!json.isNull("profile_image_mobile_profile_photo_std")) {
+            mProfilePictureLarge = json.optString("profile_image_mobile_profile_photo_std");
+        }
     }
 
 }

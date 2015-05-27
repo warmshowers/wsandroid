@@ -352,7 +352,7 @@ public class HostInformationActivity extends WSBaseActivity
         // If we're connected and there is a picture, get host picture.
         // TODO: Consider saving the picture in the db.
         if (Tools.isNetworkConnected(this)) {
-            String url = profilePicture(host.getPicture());
+            String url = profilePictureURL(host.getProfilePictureLarge());
             if (!url.isEmpty()) {
                 new DownloadImageTask(imgMemberPhoto)
                         .execute(url);
@@ -363,18 +363,12 @@ public class HostInformationActivity extends WSBaseActivity
     }
 
     /**
-     * Choose the variant of a profile picture to use.
-     * Unfortunately this is dependent on knowing how imagecache is configured on the server.
-     *
-     * @param basePicture This is the picture returned by the site, like 'files/pictures/picture-1165.jpg'
-     * @return Either a string with the full URL to the picture or an empty string if no picture exists
+     * Create URL for profile picture
      */
-    public String profilePicture(String basePicture) {
-        String[] parts = basePicture.split("/", 2);
+    public String profilePictureURL(String uri) {
         String url = "";
-
-        if (!basePicture.isEmpty() && parts.length == 2) {
-            url = GlobalInfo.warmshowersBaseUrl + "/" + parts[0] + "/imagecache/mobile_photo_4x3/" + parts[1];
+        if (!uri.isEmpty()) {
+            url = GlobalInfo.warmshowersBaseUrl + "/" + uri;
         }
         return url;
     }
