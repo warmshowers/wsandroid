@@ -70,7 +70,7 @@
                             <TextView
                                 style="@style/MaterialCardViewButtonText"
                                 android:textColor="@color/primaryWhite"
-                                android:text="Log out of Warmshowers on this device"/>
+                                android:text="@string/login_logout"/>
                         </RelativeLayout>
 
                     </android.support.v7.widget.CardView>
