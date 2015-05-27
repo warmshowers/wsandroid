@@ -9,6 +9,7 @@ import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
 import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.http.HttpException;
 import fi.bitrite.android.ws.util.http.HttpUtils;
@@ -30,6 +31,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Base class for classes that use GET to either scrape the WS website for information
@@ -38,6 +41,21 @@ import java.util.List;
 public class RestClient {
 
     public static final String TAG = "RestClient";
+    private static String csrfToken = "";
+
+    private void getToken() throws IOException {
+        getToken(true);
+    }
+    private void getToken(boolean reset) throws IOException {
+        if (csrfToken.isEmpty() || reset) {
+            try {
+                csrfToken = stringGet(GlobalInfo.warmshowersBaseUrl + "/services/session/token");
+            } catch (URISyntaxException e) {
+                // Ignore it...
+            }
+        }
+    }
+
 
     public JSONObject get(String simpleUrl) throws HttpException, JSONException, URISyntaxException, IOException {
         HttpClient client = HttpUtils.getDefaultClient();
@@ -45,8 +63,12 @@ public class RestClient {
         JSONObject jsonObj;
         int responseCode;
 
+        getToken();
+
         String url = HttpUtils.encodeUrl(simpleUrl);
         HttpGet get = new HttpGet(url);
+        get.addHeader("X-CSRF-Token", csrfToken);
+
         HttpContext context = HttpSessionContainer.INSTANCE.getSessionContext();
 
         HttpResponse response = client.execute(get, context);
@@ -58,7 +80,7 @@ public class RestClient {
         if (responseCode != HttpStatus.SC_OK) {
             Log.i(TAG, "Non-200 HTTP response(" + Integer.toString(responseCode) + " for URL " + url);
             switch (responseCode) {
-                case HttpStatus.SC_UNAUTHORIZED:    // 401, typically when not logged in
+                case HttpStatus.SC_UNAUTHORIZED:    // 401, typically when not logged in, or no CSRF token
                     doRequiredAuth();
                     return get(url);
                 case HttpStatus.SC_FORBIDDEN:
@@ -85,8 +107,11 @@ public class RestClient {
         HttpClient client = HttpUtils.getDefaultClient();
         String jsonString = "";
         JSONObject jsonObj;
+        getToken();
 
         HttpPost httpPost = new HttpPost(url);
+        httpPost.addHeader("X-CSRF-Token", csrfToken);
+
         httpPost.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
         HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
         HttpResponse response = client.execute(httpPost, httpContext);
@@ -98,13 +123,18 @@ public class RestClient {
             Log.i(TAG, "Non-200 HTTP response(" + Integer.toString(responseCode) + " for URL " + url);
             switch (responseCode) {
                 case HttpStatus.SC_UNAUTHORIZED:    // 401, typically when not logged in
-                    // If it is *not* an unauth for user 0, it's for a properly auth user, so we have to bail.
-                    if (!response.getStatusLine().getReasonPhrase().contains("denied for user 0")) {
-                        throw new HttpException("401 error " + response.getStatusLine().getReasonPhrase());
+                case HttpStatus.SC_FORBIDDEN:       // 403 denied
+                    // If it is *not* an unauth for user 0/anonymous, it's for a properly auth user, so we have to bail.
+                    // Drupal 6 says "user 0", Drupal 7 says "user anonymous".
+                    // 401 for not logged in, Drupal7 gives 403 for no CSRF token or bad csrf token
+                    String statusLine = response.getStatusLine().getReasonPhrase();
+                    Pattern pattern = Pattern.compile("(denied for user (0|anonymous)|CSRF validation failed)");
+                    Matcher matcher = pattern.matcher(statusLine);
+                    if (!matcher.find()) {
+                        throw new HttpException(Integer.toString(responseCode) + " error " + response.getStatusLine().getReasonPhrase());
                     }
                     doRequiredAuth();
                     return post(url, params);
-                case HttpStatus.SC_FORBIDDEN:
                 case HttpStatus.SC_NOT_ACCEPTABLE:  // 406, Typically trying to log out when not logged in
                 default:
                     throw new HttpException(Integer.toString(responseCode) + " " + response.getStatusLine().getReasonPhrase());
@@ -149,7 +179,11 @@ public class RestClient {
         String jsonString = "";
         JSONObject jsonObj;
 
+        getToken();
+
         HttpPost httpPost = new HttpPost(url);
+        httpPost.addHeader("X-CSRF-Token", csrfToken);
+
         httpPost.setEntity(new UrlEncodedFormEntity(params, "utf-8"));
         HttpContext httpContext = HttpSessionContainer.INSTANCE.getSessionContext();
         HttpResponse response = client.execute(httpPost, httpContext);
@@ -161,7 +195,7 @@ public class RestClient {
             Log.i(TAG, "authpost() Non-200 HTTP response(" + Integer.toString(responseCode) + " for URL " + url);
             switch (responseCode) {
                 case HttpStatus.SC_UNAUTHORIZED:    // 401, typically when not logged in
-                case HttpStatus.SC_FORBIDDEN:
+                case HttpStatus.SC_FORBIDDEN:       // 403 forbidden
                 case HttpStatus.SC_NOT_ACCEPTABLE:  // 406, Typically trying to log out when not logged in
                 default:
                     throw new HttpException(Integer.toString(responseCode));
@@ -219,8 +253,33 @@ public class RestClient {
     }
 
     protected void doRequiredAuth() throws NoAccountException, IOException, JSONException {
+        getToken(true);
         HttpAuthenticator authenticator = new HttpAuthenticator();
         authenticator.authenticate();
+        getToken(true);  // New token required with new session establishment
     }
+
+    public String stringGet(String simpleUrl) throws HttpException, IOException, URISyntaxException {
+        HttpClient client = HttpUtils.getDefaultClient();
+        int responseCode;
+
+        String url;
+        url = HttpUtils.encodeUrl(simpleUrl);
+        HttpGet get = new HttpGet(url);
+        HttpContext context = HttpSessionContainer.INSTANCE.getSessionContext();
+
+        HttpResponse response = client.execute(get, context);
+        HttpEntity entity = response.getEntity();
+        responseCode = response.getStatusLine().getStatusCode();
+
+        String result = EntityUtils.toString(entity, "UTF-8");
+
+        if (responseCode != HttpStatus.SC_OK) {
+            Log.i(TAG, "Non-200 HTTP response(" + Integer.toString(responseCode) + " for URL " + url);
+            throw new HttpException(Integer.toString(responseCode));
+        }
+        return result;
+    }
+
 
 }
