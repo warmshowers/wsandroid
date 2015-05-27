@@ -256,7 +256,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="32dp"
-                                android:text="Profile"
+                                android:text="@string/hostinfo_profile"
                                 style="@style/WsText.subHead" />
                         </LinearLayout>
 
@@ -269,6 +269,16 @@
                             style="@style/WsText"/>
 
                     </LinearLayout>
+
+                    <View
+                        android:layout_height="1dp"
+                        android:layout_width="match_parent"
+                        android:background="@color/primaryTextColorLight"
+                        android:alpha="0.2"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginLeft="72dp"
+                        android:layout_marginRight="0dp" />
 
                     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:id="@+id/details"
@@ -297,7 +307,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="32dp"
-                                android:text="Details"
+                                android:text="@string/hostinfo_details"
                                 style="@style/WsText.subHead" />
 
                         </LinearLayout>

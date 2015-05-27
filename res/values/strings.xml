@@ -115,6 +115,8 @@
     <string name="embedded_browser_warning">You have left the app and using an embedded browser to view Warmshowers.org. Use the back button to return to the app.</string>
     <string name="not_connected_to_network">You are not currently connected to the network.</string>
     <string name="hostinfo_activity_title">Member Profile</string>
+    <string name="hostinfo_profile">Profile</string>
+    <string name="hostinfo_details">Details</string>
     <string name="host_service_shower">Shower</string>
     <string name="host_services_food">Food</string>
     <string name="host_services_bed">Bed</string>
@@ -151,6 +153,7 @@
     <string name="not_currently_available">Not Currently Available</string>
     <string name="currently_available">Currently Available</string>
     <string name="current_login_status">You are currently logged in as %1$s</string>
+    <string name="login_logout">Log out of Warmshowers on this device</string>
     <string name="title_activity_about">About Warm Showers</string>
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="title_activity_search">Search</string>

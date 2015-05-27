@@ -23,7 +23,7 @@
     <string name="enter_credentials">Veuillez entrer votre nom d\'utilisateur et mot de passe</string>
     <string name="error_retrieving_messages">Une erreur s\'est produite lors de la récupération des messages.</string>
     <string name="error_sending_message">Le message n\'a pu être envoyé. Vérifiez vos informations de connexion et votre connexion internet</string>
-    <string name="feedback">Recommandation(s) (%1 $d)</string>
+    <string name="feedback">Recommandation(s) (%1$d)</string>
     <string name="home_phone"><u>Téléphone fixe:</u></string>
     <string name="mobile_phone"><u>Téléphone mobile:</u></string>
     <string name="host_count">%1$d hôtes à cet endroit</string>
@@ -94,7 +94,7 @@
     <string name="star_this_host">Ajouter aux hôtes favoris</string>
     <string name="unknown_exception">Erreur inconnue, veuillez signaler dans la formulaire de contact de warmshowers.org: %1$s</string>
     <string name="unstar_this_host">Enlever des favoris</string>
-    <string name="viewMessagesOnSite">Voir les messages sur le site</string>
+    <string name="viewMessagesOnSite">Voir sur le site</string>
     <string name="view_in_maps_app">Voir dans l\'application Maps</string>
     <string name="view_on_map">Voir sur la carte WarmShowers</string>
     <string name="sending_feedback">Envoi du commentaire</string>
@@ -111,6 +111,8 @@
     <string name="embedded_browser_warning">Vous avez quitté l\'application et vous utilisez un navigateur intégré pour naviguez sur Warmshowers.org. Utilisez le bouton retour pour revenir à l\'application.</string>
     <string name="not_connected_to_network">Vous n\'êtes présentement pas connecté au réseau</string>
     <string name="hostinfo_activity_title">Profil du membre</string>
+    <string name="hostinfo_profile">Profil</string>
+    <string name="hostinfo_details">Détails</string>
     <string name="host_service_shower">Douche</string>
     <string name="host_services_food">Nourriture</string>
     <string name="host_services_bed">Lit</string>
@@ -127,32 +129,35 @@
       * enter_credentials should be changed to say "Your Warmshowers.org username or email"
 
     -->
-    <string name="label_feedback_for_this_member">Your feedback for this member:</string>
-    <string name="drawer_open">open</string>
-    <string name="drawer_close">close</string>
-    <string name="text_search_title">Text Search</string>
-    <string name="search_hint">Host name or city/town</string>
-    <string name="action_search">Host search</string>
-    <string name="contact_host">Contact Member</string>
-    <string name="search_host_summary">Member since %1$s, last active %2$s</string>
-    <string name="host_limitations">Max guests %1$s, Languages spoken %2$s</string>
-    <string name="favorite_host">Favorite Host</string>
-    <string name="no_feedback_yet">No feedback yet</string>
+    <string name="label_feedback_for_this_member">Votre recommandation pour ce membre:</string>
+    <string name="drawer_open">ouvrir</string>
+    <string name="drawer_close">fermer</string>
+    <string name="text_search_title">Recherche par mots</string>
+    <string name="search_hint">Nom de membre ou de ville</string>
+    <string name="action_search">Recherche d\'hôtes</string>
+    <string name="contact_host">Contacter le membre</string>
+    <string name="search_host_summary">Membre depuis %1$s, actif le %2$s</string>
+    <string name="host_limitations">Nmb. d\'invités max. %1$s, Langues parlées %2$s</string>
+    <string name="favorite_host">Hôte favori</string>
+    <string name="no_feedback_yet">Pas de recommandation pour l\'instant</string>
     <string name="mobile_phone_abbrev">Mobile: %1$s</string>
-    <string name="home_phone_abbrev">Home: %1$s</string>
-    <string name="work_phone_abbrev">Work: %1$s</string>
-    <string name="host_services_description">Services this host may offer: %1$s</string>
-    <string name="nearby_service_accommodation">Accommodation</string>
-    <string name="nearby_service_bikeshop">Bikeshop</string>
-    <string name="nearby_services_description">Nearby services: %1$s</string>
-    <string name="nearby_service_campground">Campground</string>
-    <string name="not_currently_available">Not Currently Available</string>
-    <string name="currently_available">Currently Available</string>
-    <string name="current_login_status">You are currently logged in as %1$s</string>
-    <string name="title_activity_about">About Warm Showers</string>
-    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="home_phone_abbrev">Fixe: %1$s</string>
+    <string name="work_phone_abbrev">Travail: %1$s</string>
+    <string name="host_services_description">Services que l\'hôte peut offrir: %1$s</string>
+    <string name="nearby_service_accommodation">Hôtel/Auberge</string>
+    <string name="nearby_service_bikeshop">Magasin de vélos</string>
+    <string name="nearby_services_description"><Se></Se>rvices à proximité: %1$s</string>
+    <string name="nearby_service_campground">Camping</string>
+    <string name="not_currently_available">Non disponible actuellement</string>
+    <string name="currently_available">Disponible actuellement</string>
+    <string name="current_login_status">Connecté(e) en tant que %1$s</string>
+    <string name="login_logout">Se déconnecter de WarmShowers sur cet appareil</string>
+    <string name="title_activity_about">À propos de Warm Showers</string>
+    <string name="open_source_licenses">Licenses <i>Open Source</i>></string>
 
     <!-- new strings from 1.5.0beta3+ -->
-    <string name="title_activity_feedback">Leaving Feedback</string>
+    <string name="title_activity_feedback">Envoi de la recommendation</string>
+    <string name="title_activity_search">Recherche</string>
+    <string name="title_activity_web_view"></string>
 
 </resources>
