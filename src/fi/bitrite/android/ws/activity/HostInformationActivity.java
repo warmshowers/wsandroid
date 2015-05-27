@@ -352,7 +352,7 @@ public class HostInformationActivity extends WSBaseActivity
         // If we're connected and there is a picture, get host picture.
         // TODO: Consider saving the picture in the db.
         if (Tools.isNetworkConnected(this)) {
-            String url = profilePictureURL(host.getProfilePictureLarge());
+            String url = host.getProfilePictureLarge();
             if (!url.isEmpty()) {
                 new DownloadImageTask(imgMemberPhoto)
                         .execute(url);
@@ -360,17 +360,6 @@ public class HostInformationActivity extends WSBaseActivity
                 layoutHostDetails.setVisibility(View.VISIBLE);
             }
         }
-    }
-
-    /**
-     * Create URL for profile picture
-     */
-    public String profilePictureURL(String uri) {
-        String url = "";
-        if (!uri.isEmpty()) {
-            url = GlobalInfo.warmshowersBaseUrl + "/" + uri;
-        }
-        return url;
     }
 
     /**
