@@ -9,6 +9,10 @@ buildscript {
 apply plugin: 'com.android.application'
 repositories {
     mavenCentral()
+
+    repositories {
+        maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
+    }
 }
 
 // This stanza will turn on checking for unchecked conversion and deprecation.
@@ -29,6 +33,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.1.0'
     compile 'com.android.support:support-v4:22.1.0'
     compile 'com.android.support:cardview-v7:21.0.+'
+    compile 'com.afollestad:material-dialogs:0.7.4.2'
 }
 
 android {
