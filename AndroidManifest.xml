@@ -47,7 +47,7 @@
 
         <activity
             android:name=".activity.SettingsActivity"
-            android:label="@string/app_name" />
+            android:label="@string/settings" />
         <activity
             android:name=".activity.AuthenticatorActivity"
             android:label="@string/app_name" />
@@ -85,6 +85,7 @@
             android:label="@string/contact_host" />
         <activity
             android:name=".activity.WebViewActivity"
+            android:theme="@style/wsAppTheme.Grey"
             android:label="@string/title_activity_web_view" />
         <activity
             android:name=".activity.FeedbackActivity"

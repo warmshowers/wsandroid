@@ -1,7 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,10 +10,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
-
 import android.webkit.CookieManager;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
@@ -68,17 +68,17 @@ public class WebViewActivity extends WSBaseActivity {
 
         mWebView.loadUrl(url);
 
-        new android.support.v7.app.AlertDialog.Builder(this)
-                .setTitle("Leaving app")
-                .setMessage(getString(R.string.embedded_browser_warning))
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+        new MaterialDialog.Builder(this)
+                .title("Leaving app")
+                .content(getString(R.string.embedded_browser_warning))
+                .positiveText(android.R.string.yes)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
                         // continue
                     }
                 })
-                //  .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
-
     }
 
     @Override
@@ -102,9 +102,6 @@ public class WebViewActivity extends WSBaseActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
