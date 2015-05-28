@@ -30,7 +30,6 @@
     <!-- Translatable text of Navigation Drawer Menu -->
     <string-array name="nav_menu_options">
         <item >Karte</item>
-        <item >Suche</item>
         <item >Favoriten</item>
         <item >Nachrichten</item>
         <item >Konto / Login</item>

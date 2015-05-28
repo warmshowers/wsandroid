@@ -28,7 +28,6 @@
     <!-- Translatable text of Navigation Drawer Menu -->
     <string-array name="nav_menu_options">
         <item>Mapa</item>
-        <item>Búsqueda</item>
         <item>Favoritos</item>
         <item>Mensajes</item>
         <item>Cuenta/Iniciar Sesión</item>
