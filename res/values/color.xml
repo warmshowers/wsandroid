@@ -8,5 +8,9 @@
     <color name="primaryTextColorLight">#FF767676</color>
     <color name="secondaryListColorLight">#fffbfbfb</color>
     <color name="secondaryCardBackground">#ffe7e7e7</color>
+    <color name="greyColor">#607D8B</color>
+    <color name="greyColorDark">#455A64</color>
+    <color name="greyColorAccent">#00B0FF</color>
     <color name="backgroundLightGrey">#EAEAEA</color>
+
 </resources>

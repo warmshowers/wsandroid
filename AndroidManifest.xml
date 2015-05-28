@@ -85,6 +85,7 @@
             android:label="@string/contact_host" />
         <activity
             android:name=".activity.WebViewActivity"
+            android:theme="@style/wsAppTheme.Grey"
             android:label="@string/title_activity_web_view" />
         <activity
             android:name=".activity.FeedbackActivity"
