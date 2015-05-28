@@ -8,4 +8,5 @@
     <color name="primaryTextColorLight">#FF767676</color>
     <color name="secondaryListColorLight">#fffbfbfb</color>
     <color name="secondaryCardBackground">#ffe7e7e7</color>
+    <color name="backgroundLightGrey">#EAEAEA</color>
 </resources>

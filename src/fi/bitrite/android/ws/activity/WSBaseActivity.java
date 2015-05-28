@@ -168,10 +168,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
      */
     public void showDrawerSelection(int position) {
         View rowView = mLeftDrawerList.getChildAt(position);
-        int accentColor = getResources().getColor(R.color.primaryColorAccent);
-
-        ((TextView)rowView.findViewById(R.id.menu_text)).setTextColor(accentColor);
-        ((ImageView)rowView.findViewById(R.id.icon)).setColorFilter(accentColor);
+        rowView.setBackgroundColor(getResources().getColor(R.color.backgroundLightGrey));
     }
 
 
