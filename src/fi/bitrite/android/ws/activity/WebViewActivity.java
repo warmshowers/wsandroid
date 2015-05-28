@@ -1,7 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
-
 import android.webkit.CookieManager;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -80,7 +78,6 @@ public class WebViewActivity extends WSBaseActivity {
                         // continue
                     }
                 })
-                //.icon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
 
