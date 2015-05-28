@@ -1,6 +1,8 @@
 package fi.bitrite.android.ws.activity;
 
 import android.app.Dialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -53,7 +55,9 @@ public class MessagesTabActivity extends WSBaseActivity implements android.widge
             @Override
             public void onClick(View v) {
                 String url = GlobalInfo.warmshowersBaseUrl + "/user/" + AuthenticationHelper.getAccountUid() + "/messages";
-                WebViewActivity.viewOnSite(MessagesTabActivity.this, url, getString(R.string.messages_on_site));
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
             }
         });
     }

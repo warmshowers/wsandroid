@@ -400,7 +400,10 @@ public class HostInformationActivity extends WSBaseActivity
     public void viewOnSite() {
         final Host host = hostInfo.getHost();
         String url = GlobalInfo.warmshowersBaseUrl + "/user/" + hostInfo.getId();
-        WebViewActivity.viewOnSite(HostInformationActivity.this, url, host.getFullname());
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+        // WebViewActivity.viewOnSite(HostInformationActivity.this, url, host.getFullname());
     }
 
     private class HostInformationTask extends AsyncTask<Void, Void, Object> {
