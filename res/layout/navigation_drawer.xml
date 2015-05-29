@@ -21,7 +21,7 @@
                 android:background="#FF777777">
 
                 <ImageView
-                    android:id="@+id/userPhoto"
+                    android:id="@+id/imgUserPhoto"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:src="@drawable/default_hostinfo_profile"
@@ -55,7 +55,7 @@
 
 
                     <TextView
-                        android:id="@+id/lblUserEmail"
+                        android:id="@+id/lblFullname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/WsPictureOverlayTitle"

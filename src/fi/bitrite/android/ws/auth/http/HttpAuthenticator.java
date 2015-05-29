@@ -7,7 +7,9 @@ import android.util.Log;
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
+import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.MemberInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 
 import org.apache.http.NameValuePair;
@@ -52,6 +54,7 @@ public class HttpAuthenticator {
      */
     public int authenticate() throws HttpAuthenticationFailedException, IOException, JSONException, NoAccountException {
         RestClient authClient = new RestClient();
+
         int userId = 0;
 
         try {
@@ -70,6 +73,9 @@ public class HttpAuthenticator {
             JSONObject authResult = authClient.authpost(wsUserAuthUrl, credentials);
 
             userId = authResult.getJSONObject("user").getInt("uid");
+            Host profileInfo = Host.CREATOR.parse(authResult.getJSONObject("user"));
+            MemberInfo.initInstance(profileInfo);
+
             String cookieSessionName = authResult.getString("session_name");
             String cookieSessionId = authResult.getString("sessid");
 
@@ -101,8 +107,8 @@ public class HttpAuthenticator {
             // or if there was something wrong with what the server returned
             throw new HttpAuthenticationFailedException(e);
         }
-
         return userId;
+
     }
 
 }

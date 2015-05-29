@@ -3,6 +3,8 @@ package fi.bitrite.android.ws.activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -12,12 +14,23 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.*;
+
+import org.json.JSONException;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
+import fi.bitrite.android.ws.auth.Authenticator;
 import fi.bitrite.android.ws.auth.NoAccountException;
+import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
+import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.NavRow;
+import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.MemberInfo;
 
 abstract class WSBaseActivity extends AppCompatActivity implements android.widget.AdapterView.OnItemClickListener {
     protected Toolbar mToolbar;
@@ -43,7 +56,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         HashMap<String, String> mActivityClassToFriendly = new HashMap<String, String>();
 
         TypedArray icons = getResources().obtainTypedArray(R.array.nav_menu_icons);
-        for (int i=0; i<navMenuOptions.length; i++) {
+        for (int i = 0; i < navMenuOptions.length; i++) {
             mActivityClassToFriendly.put(navMenuActivities[i], navMenuOptions[i]);
 
             int icon = icons.getResourceId(i, R.drawable.ic_action_email);
@@ -53,6 +66,12 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             if (navMenuActivities[i].equals(mActivityName)) currentActivity = i;
         }
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();  // Always call the superclass method first
+        initDrawer();
     }
 
     protected void initView() {
@@ -67,12 +86,20 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             mToolbar.setTitle(mActivityFriendly);
             setSupportActionBar(mToolbar);
         }
+        // Make sure we have an active account, or go to authentication screen
+        if (!setupCredentials()) {
+            return;
+        }
+
         initDrawer();
     }
 
-    private void initDrawer() {
+    protected void initDrawer() {
+        final TextView lblUsername = (TextView) mDrawerLayout.findViewById(R.id.lblUsername);
+        final TextView lblNotLoggedIn = (TextView) mDrawerLayout.findViewById(R.id.lblNotLoggedIn);
+        final TextView lblFullname = (TextView) mDrawerLayout.findViewById(R.id.lblFullname);
+        final ImageView memberPhoto = (ImageView) mDrawerLayout.findViewById(R.id.imgUserPhoto);
 
-        ListView leftDrawer = (ListView)findViewById(R.id.left_drawer);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
 
             @Override
@@ -88,21 +115,24 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        // Make sure we have an active account, or go to authentication screen
-        if (!setupCredentials()) {
-            return;
-        }
-
-        TextView lblUsername = (TextView) mDrawerLayout.findViewById(R.id.lblUsername);
-        TextView lblNotLoggedIn = (TextView) mDrawerLayout.findViewById(R.id.lblNotLoggedIn);
-
-        try {
-            String username = AuthenticationHelper.getAccountUsername();
-            lblUsername.setText(username);
-        } catch (NoAccountException e) {
+        Host memberInfo = MemberInfo.getMemberInfo();
+        if (memberInfo != null) {
+            lblUsername.setText(memberInfo.getName());
+            lblFullname.setText(memberInfo.getFullname());
+            String photoPath = MemberInfo.getMemberPhotoFilePath();
+            if (photoPath != null && memberPhoto != null) {
+                memberPhoto.setImageBitmap(BitmapFactory.decodeFile(photoPath));
+            }
+            else {
+                memberPhoto.setImageResource(R.drawable.default_hostinfo_profile);
+            }
+        } else {
+            memberPhoto.setImageResource(R.drawable.default_hostinfo_profile);
             lblNotLoggedIn.setVisibility(View.VISIBLE);
             lblUsername.setVisibility(View.GONE);
+            lblFullname.setVisibility(View.GONE);
         }
+
     }
 
     @Override
@@ -130,7 +160,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
 
     @Override
     public void onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(Gravity.START | Gravity.LEFT)){
+        if (mDrawerLayout.isDrawerOpen(Gravity.START | Gravity.LEFT)) {
             mDrawerLayout.closeDrawers();
             return;
         }
@@ -150,7 +180,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         if (mActivityName.equals(activities[position])) return;
 
         try {
-            Class activityClass =  Class.forName(this.getPackageName() + ".activity." + activities[position]);
+            Class activityClass = Class.forName(this.getPackageName() + ".activity." + activities[position]);
             Intent i = new Intent(this, activityClass);
             startActivity(i);
         } catch (ClassNotFoundException e) {
@@ -177,17 +207,17 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     }
 
     /**
-     *
-     * @return
-     *   true if we already have an account set up in the AccountManager
-     *   false if we have to wait for the auth screen to process
+     * @return true if we already have an account set up in the AccountManager
+     * false if we have to wait for the auth screen to process
      */
     public boolean setupCredentials() {
         try {
             AuthenticationHelper.getWarmshowersAccount();
+            if (MemberInfo.getInstance() == null) {
+                MemberInfo.initInstance(null); // Try to get persisted information
+            }
             return true;
-        }
-        catch (NoAccountException e) {
+        } catch (NoAccountException e) {
 
             if (this.getClass() != AuthenticatorActivity.class) {  // Would be circular, so don't do it.
                 startAuthenticatorActivity(new Intent(this, AuthenticatorActivity.class));

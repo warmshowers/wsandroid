@@ -15,11 +15,13 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.lang.reflect.Member;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
 import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
+import fi.bitrite.android.ws.util.MemberInfo;
 
 /**
  * The activity responsible for getting WarmShowers credentials from the user,
@@ -81,7 +83,9 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
 
     public void logout(View unusedArg) {
         AuthenticationHelper.removeOldAccount();
+        MemberInfo.doLogout();
         // TODO: Actually perform a logout operation
+        initDrawer();
         updateLoggedOutView();
     }
 
@@ -113,7 +117,7 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
         return mDialogHandler.createDialog(id, getResources().getString(R.string.authenticating));
     }
 
-    private class AuthenticationTask extends AsyncTask<Void, Void, Void> {
+    public class AuthenticationTask extends AsyncTask<Void, Void, Void> {
         int mUID = 0;
         boolean mNetworkError = false;
 
@@ -144,6 +148,7 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
                 AuthenticationHelper.removeOldAccount();
                 // And just stay on the page auth screen.
             } else {
+                initDrawer();
                 Intent resultIntent = new Intent();
                 setResult(RESULT_OK, resultIntent);
                 finish();
