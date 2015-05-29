@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.model.NavRow;
 
 /**
@@ -20,11 +21,13 @@ import fi.bitrite.android.ws.model.NavRow;
 public class NavDrawerListAdapter extends ArrayAdapter<NavRow> {
     private final Context mContext;
     private final ArrayList<NavRow> mValues;
+    private final int mCurrentActivityIndex;
 
-    public NavDrawerListAdapter(Context context, ArrayList<NavRow> values) {
+    public NavDrawerListAdapter(Context context, ArrayList<NavRow> values, int currentActivity) {
         super(context, R.layout.nav_drawer_row, values);
-        this.mContext = context;
-        this.mValues = values;
+        mContext = context;
+        mValues = values;
+        mCurrentActivityIndex = currentActivity;
     }
 
     @Override
@@ -37,9 +40,9 @@ public class NavDrawerListAdapter extends ArrayAdapter<NavRow> {
         NavRow currentRow = mValues.get(position);
         menuTextView.setText(currentRow.getRowText());
         iconView.setImageResource(currentRow.getIconResource());
-//        Drawable icon = getContext().getResources().get
-//        iconView.setImageDrawable();
-
+        if (position == mCurrentActivityIndex) {
+            rowView.setBackgroundColor(WSAndroidApplication.getAppContext().getResources().getColor(R.color.backgroundLightGrey));
+        }
         return rowView;
     }
 }

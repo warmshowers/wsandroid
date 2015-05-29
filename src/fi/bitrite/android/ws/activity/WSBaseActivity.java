@@ -38,7 +38,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLeftDrawerList;
     private NavDrawerListAdapter mNavDrawerListAdapter;
-    private int currentActivity;
+    private int mCurrentActivity;
 
     public static final String TAG = "WSBaseActivity";
     protected String mActivityName = this.getClass().getSimpleName();
@@ -63,7 +63,9 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             NavRow row = new NavRow(icon, navMenuOptions[i], navMenuActivities[i]);
             mNavRowList.add(row);
 
-            if (navMenuActivities[i].equals(mActivityName)) currentActivity = i;
+            if (navMenuActivities[i].equals(mActivityName)) {
+                mCurrentActivity = i;
+            }
         }
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
     }
@@ -77,8 +79,10 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     protected void initView() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLeftDrawerList = (ListView) mDrawerLayout.findViewById(R.id.left_drawer);
+        mLeftDrawerList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mNavDrawerListAdapter = new NavDrawerListAdapter(this, mNavRowList);
+        mNavDrawerListAdapter = new NavDrawerListAdapter(this, mNavRowList, mCurrentActivity);
         mLeftDrawerList.setAdapter(mNavDrawerListAdapter);
         mLeftDrawerList.setOnItemClickListener(this);
 
@@ -110,7 +114,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                showDrawerSelection(currentActivity);
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -188,17 +191,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         }
 
         mDrawerLayout.closeDrawers();
-    }
-
-
-    /**
-     * Highlight the text and icon in the selected item on the nav drawer
-     *
-     * @param position
-     */
-    public void showDrawerSelection(int position) {
-        View rowView = mLeftDrawerList.getChildAt(position);
-        rowView.setBackgroundColor(getResources().getColor(R.color.backgroundLightGrey));
     }
 
 
