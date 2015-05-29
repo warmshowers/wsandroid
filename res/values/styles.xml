@@ -11,6 +11,9 @@
         <item name="android:textColorLink">@color/primaryColorAccent</item>
         <item name="android:actionBarStyle">@style/WsActionBar</item>
         <item name="android:alertDialogTheme">@style/wsAppTheme.Dialog.Alert</item>
+        <item name="android:spinnerItemStyle">@style/WsText.light</item>
+        <item name="colorButtonNormal">@color/button_dark</item>
+
 
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/WsActionBar</item>
@@ -70,6 +73,11 @@
 
 
     <!-- Button Styles -->
+
+    <style name="button_dark" parent="Base.Widget.AppCompat.Button">
+        <item name="android:textColor">@color/primaryWhite</item>
+    </style>
+
     <style name="MaterialCardViewButton">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textColorPrimary">@android:color/white</item>
@@ -118,6 +126,10 @@
         <item name="android:textColor">@color/primaryTextColorLight</item>
     </style>
 
+    <style name="WsText.warning">
+        <item name="android:textColor">@color/textWarning</item>
+    </style>
+
     <style name="WsText.subHead">
         <item name="android:textSize">16sp</item>
     </style>
@@ -133,5 +145,14 @@
         <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
+    <style name="WsInputText" parent="@style/Widget.AppCompat.EditText">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="WsInputText.Headline" parent="@style/Widget.AppCompat.EditText">
+        <item name="android:textSize">24sp</item>
+    </style>
 
 </resources>

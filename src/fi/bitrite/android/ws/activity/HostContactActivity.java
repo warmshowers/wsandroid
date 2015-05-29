@@ -32,7 +32,6 @@ import fi.bitrite.android.ws.util.http.HttpException;
 public class HostContactActivity extends WSBaseActivity
         implements android.widget.AdapterView.OnItemClickListener {
 
-    TextView title;
     EditText editSubject;
     EditText editMessage;
     Button btnHostContact;
@@ -47,6 +46,7 @@ public class HostContactActivity extends WSBaseActivity
         super.onResume();
         if (!Tools.isNetworkConnected(this)) {
             noNetworkWarning.setText(getString(R.string.not_connected_to_network));
+            noNetworkWarning.setVisibility(View.VISIBLE);
             btnHostContact.setEnabled(false);
             return;
         }
@@ -64,7 +64,6 @@ public class HostContactActivity extends WSBaseActivity
 
         initView();
 
-        title = (TextView) findViewById(R.id.txtContactHostTitle);
         editSubject = (EditText) findViewById(R.id.editContactHostSubject);
         editMessage = (EditText) findViewById(R.id.editContactHostMessage);
         btnHostContact = (Button) findViewById(R.id.btnHostContact);
@@ -79,7 +78,7 @@ public class HostContactActivity extends WSBaseActivity
             host = (Host) i.getParcelableExtra("host");
         }
 
-        title.setText(getString(R.string.contact_message_to, host.getFullname()));
+        getSupportActionBar().setTitle(getString(R.string.contact_message_to, host.getFullname()));
     }
 
     @Override
