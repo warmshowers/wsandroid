@@ -4,13 +4,17 @@
     <color name="primaryColor">#03A9F4</color>
     <color name="primaryColorDark">#0288D1</color>
     <color name="primaryColorAccent">#00B0FF</color>
-    <color name="primaryTextColor">#FF1B1B1B</color>
-    <color name="primaryTextColorLight">#FF767676</color>
+    <color name="primaryTextColor">#DF000000</color>
+    <color name="primaryTextColorLight">#8A000000</color>
+    <color name="primaryTextColorDisable">#42000000</color>
+    <color name="primaryButtonDisable">#1e000000</color>
     <color name="secondaryListColorLight">#fffbfbfb</color>
     <color name="secondaryCardBackground">#ffe7e7e7</color>
     <color name="greyColor">#607D8B</color>
     <color name="greyColorDark">#455A64</color>
     <color name="greyColorAccent">#00B0FF</color>
     <color name="backgroundLightGrey">#EAEAEA</color>
+    <color name="textWarning">#ffff121a</color>
+    <color name="dividerColor">#1e000000</color>
 
 </resources>
