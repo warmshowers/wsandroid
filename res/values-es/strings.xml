@@ -146,4 +146,11 @@
     <string name="title_activity_about">Sobre Warm Showers</string>
     <string name="open_source_licenses">Licencias de Código Abierto</string>
     <string name="title_activity_feedback">Dejando Comentario </string>
+
+    <!-- new strings from 1.5.0beta5+ -->
+    <string name="login_logout">Log out on this device</string>
+    <string name="title_activity_search">Search</string>
+    <string name="hostinfo_profile">Profile</string>
+    <string name="hostinfo_details">Details</string>
+
 </resources>

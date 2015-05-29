@@ -156,4 +156,11 @@
     <!-- new strings from 1.5.0beta3+ -->
     <string name="title_activity_feedback">Rückmeldung hinterlassen</string>
 
+    <!-- new strings from 1.5.0beta5+ -->
+    <string name="login_logout">Log out on this device</string>
+    <string name="title_activity_search">Search</string>
+    <string name="hostinfo_profile">Profile</string>
+    <string name="hostinfo_details">Details</string>
+
+
 </resources>
