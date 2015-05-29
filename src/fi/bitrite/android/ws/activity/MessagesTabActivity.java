@@ -86,6 +86,7 @@ public class MessagesTabActivity extends WSBaseActivity implements android.widge
             mNoNetworkWarning.setText(getString(R.string.not_connected_to_network));
             mUpdateMessages.setEnabled(false);
             mViewMessagesOnSite.setEnabled(false);
+            mNoNetworkWarning.setVisibility(View.VISIBLE);
             return;
         }
         mUpdateMessages.setEnabled(true);
