@@ -99,6 +99,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     }
 
     protected void initDrawer() {
+
         final TextView lblUsername = (TextView) mDrawerLayout.findViewById(R.id.lblUsername);
         final TextView lblNotLoggedIn = (TextView) mDrawerLayout.findViewById(R.id.lblNotLoggedIn);
         final TextView lblFullname = (TextView) mDrawerLayout.findViewById(R.id.lblFullname);
@@ -117,6 +118,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
 
         Host memberInfo = MemberInfo.getMemberInfo();
         if (memberInfo != null) {
@@ -141,7 +143,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
 
         if (mHasBackIntent) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
