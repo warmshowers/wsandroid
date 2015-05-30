@@ -265,7 +265,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="56dp"
-                            android:text="I&apos;m the Webmaster of Warmshowers.org and now the Executive Director as well, the first paid staff for our great organization. "
+                            android:text="Dummy about me text"
                             style="@style/WsText"/>
 
                     </LinearLayout>
