@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import com.afollestad.materialdialogs.prefs.MaterialListPreference;
 
+import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.R;
 
 /**
@@ -17,6 +18,10 @@ public class WsPreferenceFragment extends PreferenceFragment implements SharedPr
     public void onCreate(final Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
+        if (BuildConfig.DEBUG) {
+            addPreferencesFromResource(R.xml.developer_options);
+        }
+
         setSummary();
     }
 

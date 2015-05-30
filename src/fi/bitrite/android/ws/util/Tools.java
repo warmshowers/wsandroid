@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.format.DateUtils;
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Calendar;
 
+import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.activity.FeedbackActivity;
@@ -64,11 +66,16 @@ public class Tools {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
-        boolean simulateDisconnected = context.getResources().getBoolean(R.bool.simulate_network_disconnected);
 
-        if (simulateDisconnected) {
-            return false;
+        if (BuildConfig.DEBUG) {
+            boolean simulateDisconnected = PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean("developer_no_network", false);
+            ;
+            if (simulateDisconnected) {
+                return false;
+            }
         }
+
         return isConnected;
     }
 
