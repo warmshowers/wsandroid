@@ -47,6 +47,7 @@ import static java.util.Collections.sort;
  */
 public class HostInformationActivity extends WSBaseActivity
         implements android.widget.AdapterView.OnItemClickListener {
+    public static final String TAG = "HostInformationActivity";
 
     public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
 
@@ -131,7 +132,6 @@ public class HostInformationActivity extends WSBaseActivity
         starredHostDao.close();
         starredHostDao.open();
 
-        shouldDownloadHostInfo = true;
         if (savedInstanceState != null) {
             // recovering from e.g. screen rotation change
             hostInfo = HostInformation.fromSavedInstanceState(savedInstanceState, starredHostDao);
@@ -141,33 +141,26 @@ public class HostInformationActivity extends WSBaseActivity
             Intent i = getIntent();
             hostInfo = HostInformation.fromIntent(i, starredHostDao);
 
-            if (intentProvidesFullHostInfo(i)) {
-                if (hostInfo.isStarred()) {
-                    hostInfo.setHost(starredHostDao.getHost(hostInfo.getId()));
-                    hostInfo.setFeedback(starredHostDao.getFeedback(hostInfo.getId(), hostInfo.getHost().getName()));
-                }
-            }
             // If we have the network, then go ahead and download/update regardless of whether starred
             if (!Tools.isNetworkConnected(this)) {
                 shouldDownloadHostInfo = false;
             }
         }
 
-        starredHostDao.close();
+
+        // set HostDetails to INVISIBLE to reduce 'pop in' effect
+        layoutHostDetails.setVisibility(View.INVISIBLE);
 
         if (shouldDownloadHostInfo) {
             downloadHostInformation();
         } else {
+            Host host = starredHostDao.getHost(hostInfo.getId());
+            ArrayList<Feedback> feedback = starredHostDao.getFeedback(host.getId(), host.getName());
+            hostInfo = new HostInformation(host, feedback, host.getId(), true);
+
             updateViewContent();
         }
-
-        // set HostDetails to INVISIBLE to reduce 'pop in' effect
-        layoutHostDetails.setVisibility(View.INVISIBLE);
-    }
-
-
-    private boolean intentProvidesFullHostInfo(Intent i) {
-        return i.getBooleanExtra("full_info", false);
+        starredHostDao.close();
     }
 
     @Override
@@ -358,7 +351,10 @@ public class HostInformationActivity extends WSBaseActivity
                         .execute(url);
             } else {
                 layoutHostDetails.setVisibility(View.VISIBLE);
+
             }
+        } else {
+            layoutHostDetails.setVisibility(View.VISIBLE);
         }
     }
 
@@ -392,8 +388,8 @@ public class HostInformationActivity extends WSBaseActivity
                 Tools.scaleImage(bmImage, bmImage.getWidth());
                 // Attempt to now force the name on top of the picture
                 lblMemberName.setTextColor(Color.WHITE);
-                layoutHostDetails.setVisibility(View.VISIBLE);
             }
+            layoutHostDetails.setVisibility(View.VISIBLE);
         }
     }
 
