@@ -54,7 +54,7 @@ public class MapSearchJsonParser {
 
             int id = hostObj.getInt("uid");
 
-            String fullName = hostObj.getString("name");
+            String fullName = hostObj.getString("fullname");
             if (fullName.isEmpty()) {
                 fullName = "(Unknown host)";
             }
@@ -74,7 +74,7 @@ public class MapSearchJsonParser {
 
             HostBriefInfo h = new HostBriefInfo(
                     id,
-                    "",  // No username provided in this feed
+                    hostObj.getString("name"),  
                     fullName,
                     hostObj.getString("street"),
                     hostObj.getString("city"),
