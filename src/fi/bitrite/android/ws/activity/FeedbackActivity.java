@@ -48,8 +48,8 @@ public class FeedbackActivity extends WSBaseActivity
     Spinner howWeMet;
     Button btnSubmit;
     TextView noNetworkWarning;
-    int dateWeMetMonth;
-    int dateWeMetYear;
+    int mDateWeMetMonth;
+    int mDateWeMetYear;
 
     DatePickerDialog datePickerDialog;
     ArrayTranslator translator = ArrayTranslator.getInstance();
@@ -85,8 +85,11 @@ public class FeedbackActivity extends WSBaseActivity
         noNetworkWarning = (TextView) findViewById(R.id.noNetworkWarningFeedback);
 
         // Set txtDateWeMet to current date for default
-        String hostedOn = Tools.getDateAsMY(this, Calendar.getInstance().getTimeInMillis());
+        Calendar c = Calendar.getInstance();
+        String hostedOn = Tools.getDateAsMY(this, c.getTimeInMillis());
         txtDateWeMet.setText(hostedOn);
+        mDateWeMetMonth = c.MONTH;
+        mDateWeMetYear = c.YEAR;
 
         dialogHandler = new DialogHandler(this);
 
@@ -177,8 +180,8 @@ public class FeedbackActivity extends WSBaseActivity
                 args.add(new BasicNameValuePair("node[body]", feedbackEditText.getText().toString()));
                 args.add(new BasicNameValuePair("node[field_guest_or_host][value]", translator.getEnglishHostGuestOption(howWeMet.getSelectedItemPosition())));
                 args.add(new BasicNameValuePair("node[field_rating][value]", translator.getEnglishRating(feedbackOverallExperience.getSelectedItemPosition())));
-                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][year]", Integer.toString(dateWeMetYear)));
-                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][month]", Integer.toString(dateWeMetMonth + 1)));
+                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][year]", Integer.toString(mDateWeMetYear)));
+                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][month]", Integer.toString(mDateWeMetMonth + 1)));
 
                 RestClient restClient = new RestClient();
                 JSONObject result = restClient.post(WARMSHOWERS_FEEDBACK_POST_URL, args);
@@ -234,8 +237,8 @@ public class FeedbackActivity extends WSBaseActivity
         datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                dateWeMetMonth = monthOfYear;
-                dateWeMetYear = year;
+                mDateWeMetMonth = monthOfYear;
+                mDateWeMetYear = year;
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
                 txtDateWeMet.setText(Tools.getDateAsMY(FeedbackActivity.this, newDate.getTimeInMillis()));

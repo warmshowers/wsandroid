@@ -107,5 +107,5 @@ public class MemberInfo {
             instance = null;
         }
     }
-    
+
 }
