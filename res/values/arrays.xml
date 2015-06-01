@@ -34,7 +34,6 @@
         <item >Messages</item>
         <item >Account/LogIn</item>
         <item >Settings</item>
-        <item>Help &amp; Feedback</item>
         <item >About</item>
     </string-array>
 
@@ -44,7 +43,6 @@
         <item>MessagesTabActivity</item>
         <item>AuthenticatorActivity</item>
         <item>SettingsActivity</item>
-        <item>HelpActivity</item>
         <item>AboutActivity</item>
     </string-array>
 

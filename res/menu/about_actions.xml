@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ws="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/open_source_software"
+        android:title="@string/view_licenses"
+        ws:showAsAction="never" />
+
+</menu>

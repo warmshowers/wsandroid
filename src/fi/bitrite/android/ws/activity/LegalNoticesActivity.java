@@ -29,6 +29,8 @@ public class LegalNoticesActivity extends WSBaseActivity {
     setContentView(R.layout.legal);
     initView();
 
+    // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
+    mHasBackIntent = true;
 
     TextView legal=(TextView)findViewById(R.id.legal);
 

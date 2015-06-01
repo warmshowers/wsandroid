@@ -152,5 +152,6 @@
     <string name="title_activity_search">Buscar</string>
     <string name="hostinfo_profile">Perfil</string>
     <string name="hostinfo_details">Detalles</string>
+    <string name="view_licenses">View Open Source Licenses</string>
 
 </resources>
