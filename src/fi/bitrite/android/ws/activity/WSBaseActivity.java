@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -15,26 +14,19 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.*;
 
-import org.json.JSONException;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;
-import fi.bitrite.android.ws.auth.Authenticator;
 import fi.bitrite.android.ws.auth.NoAccountException;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.NavRow;
-import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.MemberInfo;
 
 abstract class WSBaseActivity extends AppCompatActivity implements android.widget.AdapterView.OnItemClickListener {
     protected Toolbar mToolbar;
-    private DrawerLayout mDrawerLayout;
+    protected DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLeftDrawerList;
     private NavDrawerListAdapter mNavDrawerListAdapter;
@@ -84,6 +76,21 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             mToolbar.setTitle(mActivityFriendly);
             setSupportActionBar(mToolbar);
         }
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
         // Make sure we have an active account, or go to authentication screen
         if (!setupCredentials()) {
             return;
@@ -99,21 +106,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         final TextView lblFullname = (TextView) mDrawerLayout.findViewById(R.id.lblFullname);
         final ImageView memberPhoto = (ImageView) mDrawerLayout.findViewById(R.id.imgUserPhoto);
 
-        if (mDrawerToggle == null) {
-            mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
-
-                @Override
-                public void onDrawerClosed(View drawerView) {
-                    super.onDrawerClosed(drawerView);
-                }
-
-                @Override
-                public void onDrawerOpened(View drawerView) {
-                    super.onDrawerOpened(drawerView);
-                }
-            };
-            mDrawerLayout.setDrawerListener(mDrawerToggle);
-        }
 
         Host memberInfo = MemberInfo.getMemberInfo();
         if (memberInfo != null) {
@@ -122,8 +114,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             String photoPath = MemberInfo.getMemberPhotoFilePath();
             if (photoPath != null && memberPhoto != null) {
                 memberPhoto.setImageBitmap(BitmapFactory.decodeFile(photoPath));
-            }
-            else {
+            } else {
                 memberPhoto.setImageResource(R.drawable.default_hostinfo_profile);
             }
         } else {
@@ -132,7 +123,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             lblUsername.setVisibility(View.GONE);
             lblFullname.setVisibility(View.GONE);
         }
-
     }
 
     @Override
@@ -166,6 +156,20 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initDrawer();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Update the drawer if we're returning from another activity
+        initDrawer();
     }
 
     /**

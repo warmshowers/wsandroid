@@ -115,11 +115,6 @@ public class ListSearchTabActivity
 
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
     protected Dialog onCreateDialog(int id, Bundle args) {
         return mDialogHandler.createDialog(id, getResources().getString(R.string.performing_search));
     }

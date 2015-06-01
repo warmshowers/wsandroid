@@ -112,11 +112,6 @@ public class StarredHostTabActivity extends WSBaseActivity
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         starredHostDao.open();

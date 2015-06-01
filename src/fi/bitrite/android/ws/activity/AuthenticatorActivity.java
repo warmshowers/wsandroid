@@ -71,13 +71,13 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
         notLoggedInLayout.setVisibility(View.GONE);
         loggedInLayout.setVisibility(View.VISIBLE);
         txtLoggedInStatus.setText(getString(R.string.current_login_status, username));
-
-        findViewById(android.R.id.content).invalidate();
+        initDrawer();
     }
     void updateLoggedOutView() {
         notLoggedInLayout.setVisibility(View.VISIBLE);
         loggedInLayout.setVisibility(View.GONE);
         findViewById(android.R.id.content).invalidate();
+        initDrawer();
     }
 
 
@@ -85,7 +85,6 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
         AuthenticationHelper.removeOldAccount();
         MemberInfo.doLogout();
         // TODO: Actually perform a logout operation
-        initDrawer();
         updateLoggedOutView();
     }
 
@@ -148,7 +147,6 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
                 AuthenticationHelper.removeOldAccount();
                 // And just stay on the page auth screen.
             } else {
-                initDrawer();
                 Intent resultIntent = new Intent();
                 setResult(RESULT_OK, resultIntent);
                 finish();
