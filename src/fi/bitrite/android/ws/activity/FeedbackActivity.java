@@ -1,6 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
