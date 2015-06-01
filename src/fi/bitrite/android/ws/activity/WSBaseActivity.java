@@ -70,12 +70,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();  // Always call the superclass method first
-        initDrawer();
-    }
-
     protected void initView() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLeftDrawerList = (ListView) mDrawerLayout.findViewById(R.id.left_drawer);
@@ -105,20 +99,21 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         final TextView lblFullname = (TextView) mDrawerLayout.findViewById(R.id.lblFullname);
         final ImageView memberPhoto = (ImageView) mDrawerLayout.findViewById(R.id.imgUserPhoto);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
+        if (mDrawerToggle == null) {
+            mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.drawer_open, R.string.drawer_close) {
 
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-            }
+                @Override
+                public void onDrawerClosed(View drawerView) {
+                    super.onDrawerClosed(drawerView);
+                }
 
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
+                @Override
+                public void onDrawerOpened(View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                }
+            };
+            mDrawerLayout.setDrawerListener(mDrawerToggle);
+        }
 
         Host memberInfo = MemberInfo.getMemberInfo();
         if (memberInfo != null) {
@@ -143,6 +138,8 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+
+        mDrawerToggle.syncState();
 
         if (mHasBackIntent) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
