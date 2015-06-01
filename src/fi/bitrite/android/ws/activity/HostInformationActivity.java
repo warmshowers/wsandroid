@@ -343,7 +343,7 @@ public class HostInformationActivity extends WSBaseActivity
         }
 
         // If we're connected and there is a picture, get host picture.
-        // TODO: Consider saving the picture in the db.
+        // TODO: Consider saving the picture on disk, with uid.
         if (Tools.isNetworkConnected(this)) {
             String url = host.getProfilePictureLarge();
             if (!url.isEmpty()) {

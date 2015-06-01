@@ -25,13 +25,12 @@ import fi.bitrite.android.ws.model.Host;
 public class MemberInfo {
     private static MemberInfo instance;
     private Host mHost;
-    File mProfilePhotoFile;
     private static final String TAG = "MemberInfo";
 
-    private static final String mWSAndroidDirName = Environment
+    public static final String mWSAndroidDirName = Environment
             .getExternalStorageDirectory()
             .getAbsolutePath() + "/wsandroid/";
-    private static File mWSAndroidDir;
+    public static final String mProfilePhotoPath = mWSAndroidDirName + "memberphoto";
 
     private MemberInfo(Host host) {
         if (host == null) {
@@ -43,19 +42,10 @@ public class MemberInfo {
         mHost = host;
         persistMemberInfo(host);
 
-        // Get the member photo if it doesn't exist already
-        mWSAndroidDir = new File(mWSAndroidDirName);
-        if (!mWSAndroidDir.exists()) {
-            mWSAndroidDir.mkdirs();
-        }
-        String profilePhotoPath = mWSAndroidDirName + "memberphoto";
-        File profileImageFile = new File(profilePhotoPath);
-        // If the file doesn't exist or is tiny, download it, otherwise use the one we have
-        if (!profileImageFile.exists() || profileImageFile.length() < 1000) {
-            // Download it
-            new DownloadProfilePhotoTask(mHost.getProfilePictureSmall(), profilePhotoPath).execute();
-        } else {
-            mProfilePhotoFile = profileImageFile;
+        // Set up directory for photos if it doesn't exist
+        File androidDir = new File(mWSAndroidDirName);
+        if (!androidDir.exists()) {
+            androidDir.mkdirs();
         }
     }
 
@@ -81,16 +71,16 @@ public class MemberInfo {
         return host;
     }
     private void deleteMemberInfo() {
+        File photo = new File(mProfilePhotoPath);
+        boolean result = photo.delete();
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WSAndroidApplication.getAppContext());
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.remove("member_info");
         prefsEditor.commit();
     }
     public static String getMemberPhotoFilePath() {
-        if (instance != null && instance.mProfilePhotoFile != null && instance.mProfilePhotoFile.length() > 1000) {
-            return instance.mProfilePhotoFile.getPath();
-        }
-        return null;
+        return instance != null ? instance.mProfilePhotoPath : null;
     }
 
     public static void initInstance(Host host)
@@ -112,66 +102,10 @@ public class MemberInfo {
     }
 
     public static void doLogout() {
-        if (instance != null && instance.mProfilePhotoFile != null) {
-            boolean result = instance.mProfilePhotoFile.delete();
+        if (instance != null) {
             instance.deleteMemberInfo();
             instance = null;
         }
     }
-
-    private class DownloadProfilePhotoTask extends AsyncTask<Void, Void, File> {
-        String mTargetFilePath;
-        InputStream is;
-        String mUrl;
-
-        public DownloadProfilePhotoTask(String url, String targetFilePath) {
-            mUrl = url;
-            mTargetFilePath = targetFilePath;
-        }
-
-        @Override
-        protected File doInBackground(Void... params)  {
-            File targetFile = new File(mTargetFilePath);
-            if (targetFile.exists()) {
-                targetFile.delete();
-            }
-            HttpURLConnection c = null;
-            FileOutputStream fos = null;
-            BufferedOutputStream out = null;
-            try {
-                c = (HttpURLConnection) new URL(mUrl).openConnection();
-                fos = new FileOutputStream(mTargetFilePath);
-                out = new BufferedOutputStream(fos);
-
-                InputStream in = c.getInputStream();
-                byte[] buffer = new byte[16384];
-                int len = 0;
-                while (( len = in.read( buffer)) > 0) {
-                    fos.write(buffer, 0, len);
-                }
-                fos.flush();
-
-            } catch (Exception e) {
-                Log.i(TAG, "Error: " + e);
-            }
-            finally {
-                try {
-                    fos.getFD().sync();
-                    out.close();
-                    c.disconnect();
-                } catch (Exception e) {
-                    // Don't worry about these?
-                }
-            }
-            return targetFile;
-        }
-
-        protected void onPostExecute(File profilePhoto) {
-            if (profilePhoto != null && profilePhoto.length() > 1000) {
-                mProfilePhotoFile = profilePhoto;
-            }
-        }
-
-    }
-
+    
 }

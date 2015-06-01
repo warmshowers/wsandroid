@@ -19,8 +19,14 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +87,16 @@ public class HttpAuthenticator {
 
             AuthenticationHelper.addCookieInfo(cookieSessionName, cookieSessionId, userId);
 
+            String filePath = MemberInfo.getMemberPhotoFilePath();
+            // Get the member photo if it doesn't exist already
+            File profileImageFile = new File(filePath);
+            // If the file doesn't exist or is tiny, download it, otherwise use the one we have
+            if (!profileImageFile.exists() || profileImageFile.length() < 1000) {
+                // Download it
+                downloadMemberPhoto(profileInfo, filePath);
+            }
+
+
         } catch (ClientProtocolException e) {
             if (e.getCause() instanceof CircularRedirectException) {
                 // If we get this authentication has still been successful, so ignore it
@@ -109,6 +125,42 @@ public class HttpAuthenticator {
         }
         return userId;
 
+    }
+
+    private File downloadMemberPhoto(Host profileInfo, String targetFilePath) {
+        File targetFile = new File(targetFilePath);
+        if (targetFile.exists()) {
+            targetFile.delete();
+        }
+        HttpURLConnection c = null;
+        FileOutputStream fos = null;
+        BufferedOutputStream out = null;
+        try {
+            c = (HttpURLConnection) new URL(profileInfo.getProfilePictureSmall()).openConnection();
+            fos = new FileOutputStream(targetFilePath);
+            out = new BufferedOutputStream(fos);
+
+            InputStream in = c.getInputStream();
+            byte[] buffer = new byte[16384];
+            int len = 0;
+            while (( len = in.read( buffer)) > 0) {
+                fos.write(buffer, 0, len);
+            }
+            fos.flush();
+
+        } catch (Exception e) {
+            Log.i(TAG, "Error: " + e);
+        }
+        finally {
+            try {
+                fos.getFD().sync();
+                out.close();
+                c.disconnect();
+            } catch (Exception e) {
+                // Don't worry about these?
+            }
+        }
+        return targetFile;
     }
 
 }
