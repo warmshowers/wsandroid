@@ -1,7 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -48,8 +48,9 @@ public class DialogHandler {
 
     private void showAlertDialog(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
-        builder.setMessage(message).setCancelable(false)
-                .setNeutralButton(parentActivity.getString(R.string.alert_neutral_button), new DialogInterface.OnClickListener() {
+        builder .setMessage(message)
+                .setCancelable(true)
+                .setPositiveButton(parentActivity.getString(R.string.alert_neutral_button), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                     }

@@ -10,7 +10,7 @@
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:textColorLink">@color/primaryColorAccent</item>
         <item name="android:actionBarStyle">@style/WsActionBar</item>
-        <item name="android:alertDialogTheme">@style/wsAppTheme.Dialog.Alert</item>
+        <item name="alertDialogTheme">@style/wsAppTheme.Dialog.Alert</item>
         <item name="android:spinnerItemStyle">@style/WsText.light</item>
         <item name="colorButtonNormal">@color/button_dark</item>
 
@@ -40,15 +40,10 @@
     </style>
 
     <!-- App compat dialogs -->
-    <style name="wsAppTheme.Dialog.Alert" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
-        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+    <style name="wsAppTheme.Dialog.Alert" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/primaryColorAccent</item>
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryColorDark</item>
     </style>
+
 
     <!-- Animated Arrow - Toolbar -->
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
@@ -131,7 +126,16 @@
     </style>
 
     <style name="WsText.subHead">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="WsText.title">
+        <item name="android:textSize">21sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="WsText.headline">
+        <item name="android:textSize">27sp</item>
     </style>
 
     <style name="WsText.caption">

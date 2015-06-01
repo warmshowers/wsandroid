@@ -1,7 +1,7 @@
 package fi.bitrite.android.ws.activity;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -708,7 +708,7 @@ public class Maps2Activity extends WSBaseActivity implements
         alertDialogBuilder.setCustomTitle(customTitleView);
 
         alertDialogBuilder
-                .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 return;

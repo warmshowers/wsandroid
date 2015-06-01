@@ -1,6 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -144,8 +144,8 @@ public class HostContactActivity extends WSBaseActivity
 
     protected void showSuccessDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(HostContactActivity.this);
-        builder.setMessage(getResources().getString(R.string.message_sent)).setPositiveButton(
-                getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+        builder .setMessage(getResources().getString(R.string.message_sent))
+                .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         finish();
                     }
