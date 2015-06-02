@@ -7,6 +7,8 @@ import com.afollestad.materialdialogs.prefs.MaterialListPreference;
 
 import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.Tools;
 
 /**
  * This fragment approach is thanks to http://stackoverflow.com/a/26564401/215713
@@ -28,6 +30,14 @@ public class WsPreferenceFragment extends PreferenceFragment implements SharedPr
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         setSummary();
+        switch (key) {
+            case "developer_server_url":
+                GlobalInfo.setWarmshowersBaseUrl(sharedPreferences.getString(key, "https://www.warmshowers.org"));
+                break;
+            case "developer_server_cookie":
+                GlobalInfo.setWarmshowersCookieDomain(sharedPreferences.getString(key, ".warmshowers.org"));
+                break;
+        }
     }
     void setSummary() {
         MaterialListPreference pref = (MaterialListPreference) findPreference("distance_unit");

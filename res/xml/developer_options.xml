@@ -6,4 +6,16 @@
         android:defaultValue="false"
         />
 
+    <EditTextPreference
+        android:key="developer_server_url"
+        android:title="Dev: Server URL"
+        android:defaultValue="https://www.warmshowers.org"
+        />
+
+    <EditTextPreference
+        android:key="developer_server_cookie"
+        android:title="Dev: Server Cookie"
+        android:defaultValue=".warmshowers.org"
+        />
+
 </PreferenceScreen>
