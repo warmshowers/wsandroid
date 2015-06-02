@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,8 +26,8 @@ public class MessagesTabActivity extends WSBaseActivity implements android.widge
 
     TextView mNoNetworkWarning;
     TextView mUnreadCount;
-    CardView mUpdateMessages;
-    CardView mViewMessagesOnSite;
+    Button mUpdateMessages;
+    Button mViewMessagesOnSite;
 
     private DialogHandler dialogHandler;
     private int numUnread;
@@ -41,8 +40,8 @@ public class MessagesTabActivity extends WSBaseActivity implements android.widge
 
         mNoNetworkWarning = (TextView)findViewById(R.id.noNetworkWarningMessages);
         mUnreadCount = (TextView)findViewById(R.id.unreadCount);
-        mUpdateMessages = (CardView)findViewById(R.id.btnUpdateMessages);
-        mViewMessagesOnSite = (CardView)findViewById(R.id.btnViewOnSite);
+        mUpdateMessages = (Button)findViewById(R.id.btnUpdateMessages);
+        mViewMessagesOnSite = (Button)findViewById(R.id.btnViewOnSite);
 
         dialogHandler = new DialogHandler(this);
         if (Tools.isNetworkConnected(this)) {

@@ -47,33 +47,21 @@
 
                 <LinearLayout
                     android:layout_width="fill_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="12dp"
-                    android:layout_marginLeft="-8dp"
-                    android:layout_marginRight="-8dp">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:paddingLeft="-4dp"
+                    android:paddingRight="-4dp"
+                    android:gravity="left">
 
-                    <android.support.v7.widget.CardView
+                    <Button
                         android:id="@+id/btnLogout"
-                        android:onClick="logout"
-                        style="@style/MaterialCardViewButton"
+                        style="@style/button_dark"
                         android:layout_width="fill_parent"
-                        card_view:cardBackgroundColor="@color/primaryColor"
-                        card_view:cardCornerRadius="2dp"
-                        card_view:cardElevation="2dp"
-                        card_view:cardUseCompatPadding="true">
-
-                        <RelativeLayout
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent">
-
-                            <TextView
-                                style="@style/MaterialCardViewButtonText"
-                                android:textColor="@color/primaryWhite"
-                                android:text="@string/login_logout"/>
-                        </RelativeLayout>
-
-                    </android.support.v7.widget.CardView>
+                        android:layout_height="wrap_content"
+                        android:onClick="logout"
+                        android:text="@string/login_logout" />
 
                 </LinearLayout>
 
@@ -88,16 +76,19 @@
 
                 <TextView
                     android:id="@+id/lblCredentials"
+                    style="@style/WsText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
+                    android:paddingBottom="16dp"
                     android:textAppearance="@style/WsText.light"
                     android:text="@string/enter_credentials" />
 
                 <EditText
                     android:id="@+id/editUsername"
+                    style="@style/WsInputText"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
                     android:hint="@string/username_hint"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:inputType="text">
@@ -107,6 +98,7 @@
 
                 <EditText
                     android:id="@+id/editPassword"
+                    style="@style/WsInputText"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password_hint"
@@ -116,10 +108,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp"
+                    android:paddingLeft="-4dp"
+                    android:paddingRight="-4dp">
 
                     <Button
                         android:id="@+id/okButton"
+                        style="@style/button_dark"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.0"
@@ -128,6 +124,7 @@
 
                     <Button
                         android:id="@+id/cancelButton"
+                        style="@style/button_dark"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.0"

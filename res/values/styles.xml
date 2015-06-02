@@ -13,10 +13,14 @@
         <item name="alertDialogTheme">@style/wsAppTheme.Dialog.Alert</item>
         <item name="android:spinnerItemStyle">@style/WsText.light</item>
         <item name="colorButtonNormal">@color/button_dark</item>
-
+        <item name="android:textAppearanceButton">@style/buttonStyle</item>
 
         <!-- Support library compatibility -->
         <item name="actionBarStyle">@style/WsActionBar</item>
+    </style>
+
+    <style name="buttonStyle" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="wsAppTheme.Grey" parent="wsAppTheme">
