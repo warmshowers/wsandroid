@@ -122,14 +122,6 @@
                         android:onClick="applyCredentials"
                         android:text="@string/ok" />
 
-                    <Button
-                        android:id="@+id/cancelButton"
-                        style="@style/button_dark"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.0"
-                        android:onClick="cancel"
-                        android:text="@string/cancel" />
 
                 </LinearLayout>
 

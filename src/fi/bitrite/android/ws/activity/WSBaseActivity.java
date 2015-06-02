@@ -161,6 +161,10 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     @Override
     protected void onResume() {
         super.onResume();
+        if (!setupCredentials()) {
+            return;
+        }
+
         initDrawer();
     }
 

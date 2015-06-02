@@ -77,6 +77,7 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
         notLoggedInLayout.setVisibility(View.VISIBLE);
         loggedInLayout.setVisibility(View.GONE);
         findViewById(android.R.id.content).invalidate();
+        mHasBackIntent = true;
         initDrawer();
     }
 
@@ -93,12 +94,7 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
         setResult(RESULT_CANCELED, resultIntent);
         finish();
     }
-
-    @Override
-    public void onBackPressed() {
-        cancel(null);
-    }
-
+    
     public void applyCredentials(View view) {
 
         String username = editUsername.getText().toString();
