@@ -77,8 +77,9 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
         notLoggedInLayout.setVisibility(View.VISIBLE);
         loggedInLayout.setVisibility(View.GONE);
         findViewById(android.R.id.content).invalidate();
-        mHasBackIntent = true;
+        mDisableNavigation = true;
         initDrawer();
+
     }
 
 
