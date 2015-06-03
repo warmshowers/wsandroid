@@ -38,6 +38,7 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     String mActivityFriendly;
 
     protected boolean mHasBackIntent = false;
+    protected boolean mDisableNavigation = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +124,11 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             lblUsername.setVisibility(View.GONE);
             lblFullname.setVisibility(View.GONE);
         }
+
+        if (mDisableNavigation)
+        {
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
+        }
     }
 
     @Override
@@ -155,6 +161,11 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
             mDrawerLayout.closeDrawers();
             return;
         }
+
+        if (mDisableNavigation) {
+            return;
+        }
+
         super.onBackPressed();
     }
 
