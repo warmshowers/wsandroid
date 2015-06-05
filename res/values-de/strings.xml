@@ -6,7 +6,7 @@
     <string name="label">Warmshowers für Android</string>
     <string name="authenticating">Authentifizieren...</string>
     <string name="need_account">Starten der App ohne Warmshowers-Kontodaten nicht möglich</string>
-    <string name="authentication_failed">Login fehlgeschlagen. Geben Sie Ihre Kontodaten bitte erneut ein (Menu -> Konto).</string>
+    <string name="authentication_failed">Login fehlgeschlagen. Geben Sie Ihre Kontodaten bitte erneut ein.</string>
     <string name="no_starred_hosts">"Sie haben zurzeit keine markierten Gastgeber (Gastgeber, deren Profile offline abrufbar sind). Sie können Gastgeber markieren, indem Sie auf den Stern oben rechts auf deren Profil klicken."</string>
     <string name="list_search_hint">Name oder Stadt</string>
     <string name="no_results">Ihre Suche hat keine Ergebnisse geliefert.</string>
