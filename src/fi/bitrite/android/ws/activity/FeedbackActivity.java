@@ -22,6 +22,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -175,13 +176,25 @@ public class FeedbackActivity extends WSBaseActivity
 
                 // See https://github.com/warmshowers/Warmshowers.org/wiki/Warmshowers-RESTful-Services-for-Mobile-Apps#create_feedback
                 List<NameValuePair> args = new ArrayList<NameValuePair>();
+
+                // Drupal 7 semantics for node creation
+                args.add(new BasicNameValuePair("type", "trust_referral"));
+                args.add(new BasicNameValuePair("field_member_i_trust[und][0][uid]", host.getName()));
+                args.add(new BasicNameValuePair("body[und][0][value]", feedbackEditText.getText().toString()));
+                args.add(new BasicNameValuePair("field_guest_or_host[und]", translator.getEnglishHostGuestOption(howWeMet.getSelectedItemPosition())));
+                args.add(new BasicNameValuePair("field_rating[und]", translator.getEnglishRating(feedbackOverallExperience.getSelectedItemPosition())));
+                args.add(new BasicNameValuePair("field_hosting_date[und][0][value][year]", Integer.toString(mDateWeMetYear)));
+                args.add(new BasicNameValuePair("field_hosting_date[und][0][value][month]", Integer.toString(mDateWeMetMonth + 1)));
+                args.add(new BasicNameValuePair("field_hosting_date[und][0][value][day]", "15")); // D7 required day of month
+
+                // Drupal 6 semantics for node creation, can be removed after Drupal 7 deployment
                 args.add(new BasicNameValuePair("node[type]", "trust_referral"));
-                args.add(new BasicNameValuePair("node[field_member_i_trust][0][uid][uid]", host.getName()));
-                args.add(new BasicNameValuePair("node[body]", feedbackEditText.getText().toString()));
-                args.add(new BasicNameValuePair("node[field_guest_or_host][value]", translator.getEnglishHostGuestOption(howWeMet.getSelectedItemPosition())));
-                args.add(new BasicNameValuePair("node[field_rating][value]", translator.getEnglishRating(feedbackOverallExperience.getSelectedItemPosition())));
-                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][year]", Integer.toString(mDateWeMetYear)));
-                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][month]", Integer.toString(mDateWeMetMonth + 1)));
+                args.add(new BasicNameValuePair("node[field_member_i_trust][und][0][uid]", host.getName()));
+                args.add(new BasicNameValuePair("node[body][und][0][value]", feedbackEditText.getText().toString()));
+                args.add(new BasicNameValuePair("node[field_guest_or_host][und]", translator.getEnglishHostGuestOption(howWeMet.getSelectedItemPosition())));
+                args.add(new BasicNameValuePair("node[field_rating][und]", translator.getEnglishRating(feedbackOverallExperience.getSelectedItemPosition())));
+                args.add(new BasicNameValuePair("node[field_hosting_date][und][0][value][year]", Integer.toString(mDateWeMetYear)));
+                args.add(new BasicNameValuePair("node[field_hosting_date][und][0][value][month]", Integer.toString(mDateWeMetMonth + 1)));
 
                 RestClient restClient = new RestClient();
                 JSONObject result = restClient.post(WARMSHOWERS_FEEDBACK_POST_URL, args);
