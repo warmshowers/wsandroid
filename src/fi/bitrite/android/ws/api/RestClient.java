@@ -44,7 +44,7 @@ public class RestClient {
     private static String csrfToken = "";
 
     private void getToken() throws IOException {
-        getToken(true);
+        getToken(false);
     }
     private void getToken(boolean reset) throws IOException {
         if (csrfToken.isEmpty() || reset) {
