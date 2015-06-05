@@ -63,7 +63,17 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         mActivityFriendly = mActivityClassToFriendly.get(mActivityName);
     }
 
-    protected void initView() {
+    /**
+     * Initialize the view.
+     *
+     * This has to be done after onCreate() because the various drawer resources need to exist
+     * already, so this is called explicitly in the constructor of child objects.
+     *
+     * @return
+     *   true if the caller should continue processing
+     *   false if authentication is needed and the caller should finish()
+     */
+    protected boolean initView() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLeftDrawerList = (ListView) mDrawerLayout.findViewById(R.id.left_drawer);
         mLeftDrawerList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -92,12 +102,13 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        initDrawer();
+
         // Make sure we have an active account, or go to authentication screen
         if (!setupCredentials()) {
-            return;
+            return(false);
         }
-
-        initDrawer();
+        return true;
     }
 
     protected void initDrawer() {
@@ -211,10 +222,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     }
 
 
-    private void startAuthenticatorActivity(Intent i) {
-        startActivityForResult(i, AuthenticatorActivity.REQUEST_TYPE_AUTHENTICATE);
-    }
-
     /**
      * @return true if we already have an account set up in the AccountManager
      * false if we have to wait for the auth screen to process
@@ -229,7 +236,9 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         } catch (NoAccountException e) {
 
             if (this.getClass() != AuthenticatorActivity.class) {  // Would be circular, so don't do it.
-                startAuthenticatorActivity(new Intent(this, AuthenticatorActivity.class));
+                Intent i = new Intent(this, AuthenticatorActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(i);
             }
             return false;
         }

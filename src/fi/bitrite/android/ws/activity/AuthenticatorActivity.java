@@ -143,10 +143,12 @@ public class AuthenticatorActivity extends WSSupportAccountAuthenticatorActivity
                 }
                 AuthenticationHelper.removeOldAccount();
                 // And just stay on the page auth screen.
-            } else {
-                Intent resultIntent = new Intent();
-                setResult(RESULT_OK, resultIntent);
-                finish();
+            }
+            // Otherwise launch the maps activity, with no history
+            else {
+                Intent i = new Intent(AuthenticatorActivity.this, Maps2Activity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(i);
             }
         }
     }

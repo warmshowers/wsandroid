@@ -86,7 +86,10 @@ public class HostInformationActivity extends WSBaseActivity
         // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
         mHasBackIntent = true;
 
-        initView();
+        if (!initView()) {
+            finish();
+            return;
+        }
 
         layoutHostDetails = (LinearLayout)findViewById(R.id.layoutHostDetails);
         imgMemberPhoto = (ImageView) findViewById(R.id.memberPhoto);

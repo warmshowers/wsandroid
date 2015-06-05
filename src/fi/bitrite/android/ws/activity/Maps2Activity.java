@@ -98,7 +98,10 @@ public class Maps2Activity extends WSBaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        initView();
+        if (!initView()) {
+            finish();
+            return;
+        }
 
         // Google analytics tracker
         ((WSAndroidApplication) getApplication()).getTracker(WSAndroidApplication.TrackerName.APP_TRACKER);

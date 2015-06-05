@@ -74,7 +74,10 @@ public class FeedbackActivity extends WSBaseActivity
         // Tell the BaseActivity to use a back action in the toolbar instead of the hamburger
         mHasBackIntent = true;
 
-        initView();
+        if (!initView()) {
+            finish();
+            return;
+        }
 
         feedbackEditText = (EditText) findViewById(R.id.feedbackEditText);
         txtDateWeMet = (EditText)findViewById(R.id.txtDateWeMet);

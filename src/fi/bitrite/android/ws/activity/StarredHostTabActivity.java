@@ -38,7 +38,10 @@ public class StarredHostTabActivity extends WSBaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.starred_hosts_tab);
-        initView();
+        if (!initView()) {
+            finish();
+            return;
+        }
 
         starredHostList = (ListView)findViewById(R.id.lstStarredHosts);
         noStarredHostsLabel = (TextView)findViewById(R.id.lblNoStarredHosts);
