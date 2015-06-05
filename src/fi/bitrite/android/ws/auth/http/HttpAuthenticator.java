@@ -136,7 +136,7 @@ public class HttpAuthenticator {
         FileOutputStream fos = null;
         BufferedOutputStream out = null;
         try {
-            c = (HttpURLConnection) new URL(profileInfo.getProfilePictureSmall()).openConnection();
+            c = (HttpURLConnection) new URL(profileInfo.getProfilePictureLarge()).openConnection();
             fos = new FileOutputStream(targetFilePath);
             out = new BufferedOutputStream(fos);
 
