@@ -63,8 +63,8 @@ android {
         release.setRoot('build-types/release')
     }
     defaultConfig {
-        versionName "1.5.0 beta 6"
-        versionCode 36
+        versionName "1.5.0"
+        versionCode 37
         minSdkVersion 11
         compileSdkVersion 22
         targetSdkVersion 22
