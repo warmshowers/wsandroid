@@ -102,12 +102,12 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        initDrawer();
-
         // Make sure we have an active account, or go to authentication screen
         if (!setupCredentials()) {
             return(false);
         }
+        initDrawer();
+
         return true;
     }
 
