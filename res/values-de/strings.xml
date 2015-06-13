@@ -53,8 +53,8 @@
     <string name="sending_message">Nachricht wird gesendet …</string>
     <string name="error_sending_message">Konnte Nachricht nicht senden. Bitte überprüfen Sie Ihre Kontodaten und Internetverbindung.</string>
     <string name="message_sent">Nachricht erfolgreich versendet.</string>
-    <string name="about_1">"Entwickelt durch Warmshowers.org-Freiwillige, verwaltet durch den ursprünglichen Programmierer Johannes Staffans \nÜbersetzung: Cyril Wendl (Deutsch)</string>
-    <string name="about_2">Dies ist eine open-source-App unter der Apache 2.0-Lizenz. Sie können mithelfen, indem Sie unser Git-repository auf github.com/warmshowers/wsandroid forken \nMelden Sie Probleme auf ebendieser Seite oder via das Warmshowers-Kontaktformular, de.warmshowers.org/contact</string>
+    <string name="about_1">"Entwickelt von Warmshowers-Freiwilligen, verwaltet durch den Programmierer Johannes Staffans \nÜbersetzung: Cyril Wendl (Deutsch)</string>
+    <string name="about_2">Dies ist eine open-source-App unter der Apache 2.0-Lizenz. Sie können mithelfen, indem Sie unser Git-repository auf github.com/warmshowers/wsandroid forken \nMelden Sie Probleme via das Warmshowers-Kontaktformular, de.warmshowers.org/contact</string>
     <string name="feedback">Rückmeldung (%1$d)</string>
     <string name="error_retrieving_messages">Ein Problem ist beim Abrufen der Nachrichten aufgetreten.</string>
     <string name="messages_in_progress">Nachrichten werden abgerufen…</string>
@@ -71,7 +71,7 @@
     <string name="alert_neutral_button">OK</string>
     <string name="contact_message_to">"Nachricht an %1$s"</string>
     <string name="disconnected_location_services">Nich mehr verbunden mit den Google-Play-Diensten. Bitte verbinden Sie sich erneut.</string>
-    <string name="hosts_dont_load">Gastgaber-Orte werden nicht geladen auf dieser Stufe\nZoomen Sie herein....</string>
+    <string name="hosts_dont_load">Gastgaber-Orte werden nicht geladen auf dieser Stufe\nZoomen Sie hinein...</string>
     <!-- Distance from current has 2 args, number and units -->
     <string name="distance_from_current">"%1$d %2$s von der aktuellen Position"</string>
     <string name="host_not_currently_available">(Zurzeit nicht verfügbar)</string>
@@ -89,7 +89,7 @@
     <string name="prefs_distance_unit">Längeneinheit</string>
     <string name="prefs_distance_unit_summary">Möchten Sie Distanzen in Kilometern oder Meilen angezeigt?</string>
     <string name="prefs_ga_collect_stats_title">Anonyme Benutzerstatistiken senden</string>
-    <string name="prefs_ga_collect_stats_summary">Statistiken werden an Google Analytics gesendet, um den Entwicklern die Verbesserung der App zu erleichtern, Sie können dies jedoch abstellen..</string><!--is this meant in the sense of "currently sending....", i.e. as a status message?-->
+    <string name="prefs_ga_collect_stats_summary">Statistiken werden an Google Analytics gesendet, um den Entwicklern die Verbesserung der App zu erleichtern, Sie können dies jedoch abstellen.</string><!--is this meant in the sense of "currently sending....", i.e. as a status message?-->
     <string name="languages_spoken"><u>Gesprochene Sprachen:</u></string>
     <string name="map_network_not_connected">Netzwerk ist nicht verbunden, nur markierte Gastgeber werden angezeigt.</string>
     <string name="open_in_map_application">In Karten-App öffnen</string>
@@ -161,7 +161,7 @@
     <string name="title_activity_search">Suchen</string>
     <string name="hostinfo_profile">Profil</string>
     <string name="hostinfo_details">Details</string>
-    <string name="view_licenses">View Open Source Licenses</string>
+    <string name="view_licenses">Open-Source-Lizenzen sehen</string>
 
 
 </resources>
