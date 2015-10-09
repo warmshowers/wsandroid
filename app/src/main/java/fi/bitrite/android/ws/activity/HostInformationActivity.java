@@ -17,7 +17,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.activity.model.HostInformation;
@@ -91,7 +93,57 @@ public class HostInformationActivity extends WSBaseActivity
             return;
         }
 
-        layoutHostDetails = (LinearLayout)findViewById(R.id.layoutHostDetails);
+        initUI();
+
+        dialogHandler = new DialogHandler(HostInformationActivity.this);
+        boolean inProgress = DialogHandler.inProgress();
+
+        // TODO: Looks like the idea is to make sure the db connection is
+        //      closed so we can open it, but this seems like a hack.
+        starredHostDao.close();
+        starredHostDao.open();
+
+        // set HostDetails to INVISIBLE to reduce 'pop in' effect
+        layoutHostDetails.setVisibility(View.INVISIBLE);
+
+        if (savedInstanceState != null) {
+            // recovering from e.g. screen rotation change
+
+            if (inProgress) {
+                // if we were in the process of downloading host info, retry
+                downloadHostInformation();
+            } else {
+                hostInfo = HostInformation.fromSavedInstanceState(savedInstanceState, starredHostDao);
+                updateViewContent();
+            }
+        } else {
+            // returning from another activity
+            Intent i = getIntent();
+            hostInfo = HostInformation.fromIntent(i, starredHostDao);
+
+            // Don't download if we have no network connection
+            if (!Tools.isNetworkConnected(this)) {
+                // Try loading from db if starred
+                if (starredHostDao.isHostStarred(hostInfo.getId())) {
+                    Host host = starredHostDao.getHost(hostInfo.getId());
+                    ArrayList<Feedback> feedback = starredHostDao.getFeedback(host.getId(), host.getName());
+                    hostInfo = new HostInformation(host, feedback, host.getId(), true);
+
+                    updateViewContent();
+                }
+            } else {
+                downloadHostInformation();
+            }
+        }
+
+        starredHostDao.close();
+    }
+
+    /*
+     * Grab the UI components from R and init event listeners
+     */
+    private void initUI() {
+        layoutHostDetails = (LinearLayout) findViewById(R.id.layoutHostDetails);
         imgMemberPhoto = (ImageView) findViewById(R.id.memberPhoto);
         lblMemberName = (TextView) findViewById(R.id.lblMemberName);
         iconAvailableStatus = (ImageView) findViewById(R.id.iconAvailableStatus);
@@ -113,12 +165,7 @@ public class HostInformationActivity extends WSBaseActivity
         txtHostServices = (TextView) findViewById(R.id.txtHostServices);
         txtNearbyServices = (TextView) findViewById(R.id.txtNearbyServices);
 
-        dialogHandler = new DialogHandler(HostInformationActivity.this);
-        boolean inProgress = DialogHandler.inProgress();
-        boolean shouldDownloadHostInfo = true;
-
         checkBoxFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
                                                         @Override
                                                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                                             if (isChecked && !hostInfo.getStarred()) {
@@ -131,39 +178,6 @@ public class HostInformationActivity extends WSBaseActivity
                                                         }
                                                     }
         );
-
-        starredHostDao.close();
-        starredHostDao.open();
-
-        if (savedInstanceState != null) {
-            // recovering from e.g. screen rotation change
-            hostInfo = HostInformation.fromSavedInstanceState(savedInstanceState, starredHostDao);
-            shouldDownloadHostInfo = inProgress;
-        } else {
-            // returning from another activity
-            Intent i = getIntent();
-            hostInfo = HostInformation.fromIntent(i, starredHostDao);
-
-            // If we have the network, then go ahead and download/update regardless of whether starred
-            if (!Tools.isNetworkConnected(this)) {
-                shouldDownloadHostInfo = false;
-            }
-        }
-
-
-        // set HostDetails to INVISIBLE to reduce 'pop in' effect
-        layoutHostDetails.setVisibility(View.INVISIBLE);
-
-        if (shouldDownloadHostInfo) {
-            downloadHostInformation();
-        } else {
-            Host host = starredHostDao.getHost(hostInfo.getId());
-            ArrayList<Feedback> feedback = starredHostDao.getFeedback(host.getId(), host.getName());
-            hostInfo = new HostInformation(host, feedback, host.getId(), true);
-
-            updateViewContent();
-        }
-        starredHostDao.close();
     }
 
     @Override
@@ -193,7 +207,7 @@ public class HostInformationActivity extends WSBaseActivity
     private void setStarredHost(boolean saveHost) {
         starredHostDao.open();
 
-        if (!saveHost && starredHostDao.isHostStarred(hostInfo.getId(), hostInfo.getHost().getName())) {
+        if (!saveHost && starredHostDao.isHostStarred(hostInfo.getId())) {
             starredHostDao.delete(hostInfo.getId(), hostInfo.getHost().getName());
         } else {
             starredHostDao.insert(hostInfo.getId(), hostInfo.getHost().getName(), hostInfo.getHost(), hostInfo.getFeedback());

@@ -32,7 +32,7 @@ public class HostInformation {
         final Host host = savedInstanceState.getParcelable("host");
         final ArrayList<Feedback> feedback = savedInstanceState.getParcelableArrayList("feedback");
         final int id = savedInstanceState.getInt("id");
-        final boolean starred = dao.isHostStarred(id, host.getName());
+        final boolean starred = dao.isHostStarred(id);
 
         return new HostInformation(host, feedback, id, starred);
     }
@@ -41,7 +41,7 @@ public class HostInformation {
         final Host host = (Host) i.getParcelableExtra("host");
         final int id = i.getIntExtra("id", NO_ID);
         final ArrayList<Feedback> feedback = i.getParcelableArrayListExtra("feedback");
-        final boolean starred = dao.isHostStarred(id, host.getName());
+        final boolean starred = dao.isHostStarred(id);
 
         return new HostInformation(host, feedback, id, starred);
     }

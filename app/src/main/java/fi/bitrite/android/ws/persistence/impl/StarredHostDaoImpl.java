@@ -11,12 +11,9 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public class StarredHostDaoImpl implements StarredHostDao {
@@ -159,7 +156,7 @@ public class StarredHostDaoImpl implements StarredHostDao {
         insert(id, name, host, feedback);
     }
 
-    public boolean isHostStarred(int id, String name) {
+    public boolean isHostStarred(int id) {
         return (getHost(id) != null);
     }
 }
