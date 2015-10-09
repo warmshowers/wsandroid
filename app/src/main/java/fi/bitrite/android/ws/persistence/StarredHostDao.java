@@ -21,7 +21,7 @@ public interface StarredHostDao {
 
     public void update(int id, String name, Host host, List<Feedback> feedback);
 
-    public boolean isHostStarred(int id, String name);
+    public boolean isHostStarred(int id);
 
     public void open();
 
