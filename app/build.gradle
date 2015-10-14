@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+repositories {
+    mavenCentral()
+
+    repositories {
+        maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
+        maven { url "https://jitpack.io" }
+    }
+}
+
+// This stanza will turn on checking for unchecked conversion and deprecation.
+//allprojects {
+//    gradle.projectsEvaluated {
+//        tasks.withType(JavaCompile) {
+//            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+//        }
+//    }
+//}
+
+dependencies {
+    compile files('libs/parcelgen.jar')  // Can't find for maven/gradle
+    compile 'com.google.code.gson:gson:2.1'
+    compile 'com.google.maps.android:android-maps-utils:0.3.4'
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.google.android.gms:play-services:6.5.87'
+    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.android.support:support-v4:22.1.0'
+    compile 'com.android.support:cardview-v7:21.0.+'
+    compile 'com.afollestad:material-dialogs:0.7.4.2' // https://github.com/afollestad/material-dialogs
+}
+
+android {
+    buildToolsVersion "22.0.1"
+
+    sourceSets {
+        // Move the build types to build-types/<type>
+        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
+        // This moves them out of them default location under src/<type>/... which would
+        // conflict with src/ being used by the main source set.
+        // Adding new build types or product flavors should be accompanied
+        // by a similar customization.
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }
+    defaultConfig {
+        versionName "1.5.1beta1"
+        versionCode 38
+        minSdkVersion 11
+        compileSdkVersion 22
+        targetSdkVersion 22
+    }
+}

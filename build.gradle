@@ -1,73 +1,23 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.0'
+        classpath 'com.android.tools.build:gradle:1.3.0'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
     }
 }
-apply plugin: 'com.android.application'
-repositories {
-    mavenCentral()
 
+allprojects {
     repositories {
-        maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
-        maven { url "https://jitpack.io" }
+        jcenter()
     }
 }
 
-// This stanza will turn on checking for unchecked conversion and deprecation.
-//allprojects {
-//    gradle.projectsEvaluated {
-//        tasks.withType(JavaCompile) {
-//            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-//        }
-//    }
-//}
-
-dependencies {
-    compile files('lib/parcelgen.jar')  // Can't find for maven/gradle
-    compile 'com.google.code.gson:gson:2.1'
-    compile 'com.google.maps.android:android-maps-utils:0.3.4'
-    compile 'com.google.guava:guava:18.0'
-    compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:support-v4:22.1.0'
-    compile 'com.android.support:cardview-v7:21.0.+'
-    compile 'com.afollestad:material-dialogs:0.7.4.2' // https://github.com/afollestad/material-dialogs
-}
-
-android {
-    buildToolsVersion "22.0.1"
-
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
-
-        // Move the tests to tests/java, tests/res, etc...
-        instrumentTest.setRoot('tests')
-
-        // Move the build types to build-types/<type>
-        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
-        // This moves them out of them default location under src/<type>/... which would
-        // conflict with src/ being used by the main source set.
-        // Adding new build types or product flavors should be accompanied
-        // by a similar customization.
-        debug.setRoot('build-types/debug')
-        release.setRoot('build-types/release')
-    }
-    defaultConfig {
-        versionName "1.5.1beta1"
-        versionCode 38
-        minSdkVersion 11
-        compileSdkVersion 22
-        targetSdkVersion 22
-    }
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
