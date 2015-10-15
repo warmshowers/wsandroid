@@ -89,7 +89,7 @@ public class HostContactActivity extends WSBaseActivity
 
     public void sendMessageToHost(View view) {
         String subject = editSubject.getText().toString();
-        String message = editMessage.getText().toString();
+        String message = String.format("%s\n\n%s", editMessage.getText().toString(), getString(R.string.sent_from_android));
 
         if (subject.isEmpty() || message.isEmpty()) {
             dialogHandler.alert(getResources().getString(R.string.message_validation_error));

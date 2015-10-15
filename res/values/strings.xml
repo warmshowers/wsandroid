@@ -164,4 +164,7 @@
     <string name="hostinfo_details">Details</string>
     <string name="view_licenses">View Open Source Licenses</string>
 
+    <!-- new strings from 1.5.1 -->
+    <string name="sent_from_android" translatable="false">Sent from the <a href='https://play.google.com/store/apps/details?id=fi.bitrite.android.ws'>Warmshowers App for Android</a></string>
+
 </resources>
