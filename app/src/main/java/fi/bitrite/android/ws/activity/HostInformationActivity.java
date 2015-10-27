@@ -108,12 +108,12 @@ public class HostInformationActivity extends WSBaseActivity
 
         if (savedInstanceState != null) {
             // recovering from e.g. screen rotation change
+            hostInfo = HostInformation.fromSavedInstanceState(savedInstanceState, starredHostDao);
 
             if (inProgress) {
                 // if we were in the process of downloading host info, retry
                 downloadHostInformation();
             } else {
-                hostInfo = HostInformation.fromSavedInstanceState(savedInstanceState, starredHostDao);
                 updateViewContent();
             }
         } else {
