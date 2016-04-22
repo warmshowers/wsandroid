@@ -82,6 +82,7 @@
             android:label="" />
         <activity
             android:name=".activity.HostContactActivity"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/contact_host" />
         <activity
             android:name=".activity.WebViewActivity"
