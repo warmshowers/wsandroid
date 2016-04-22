@@ -8,10 +8,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
@@ -22,16 +29,16 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.util.Tools;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
 public class ListSearchTabActivity
         extends WSBaseActivity
         implements android.widget.AdapterView.OnItemClickListener {
 
-    ArrayList<HostBriefInfo> mListSearchHosts;
+    public static final String KEY_SEARCH_SUCCESSFUL = "ListSearchTab_Search_Successful";
     public static final String CLUSTER_MEMBERS = "search_results";
+
+    HostListAdapter mHostListAdapter;
+
+    ArrayList<HostBriefInfo> mListSearchHosts = new ArrayList<>();
     String mQuery = "";
 
     TextView mNoNetworkWarning;
@@ -42,6 +49,8 @@ public class ListSearchTabActivity
     LinearLayout mSearchResultsLayout;
     TextView mMultipleHostsAddress;
     TextView mHostsAtAddress;
+
+    boolean mHasSearchBeenSuccessful;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +81,21 @@ public class ListSearchTabActivity
             }
         });
 
+        mHostListAdapter = new HostListAdapter(
+                WSAndroidApplication.getAppContext(),
+                R.layout.host_list_item,
+                mQuery,
+                mListSearchHosts
+        );
+        mListSearchResult.setAdapter(mHostListAdapter);
+
         if (savedInstanceState != null) {
             mListSearchHosts = savedInstanceState.getParcelableArrayList("list_search_hosts");
+
+            // Updates the dataset of the adapter with the hosts saved in mListSearchHosts
+            mHostListAdapter.resetDataset(mListSearchHosts);
+
+            mHasSearchBeenSuccessful = savedInstanceState.getBoolean(KEY_SEARCH_SUCCESSFUL);
         }
 
         handleIntent(getIntent());
@@ -92,10 +114,13 @@ public class ListSearchTabActivity
     }
 
     void handleIntent(Intent intent) {
-
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             mQuery = intent.getStringExtra(SearchManager.QUERY);
-            doTextSearch(mQuery);
+
+            if (!mHasSearchBeenSuccessful) {
+                doTextSearch(mQuery);
+            }
+
         } else if (intent.hasExtra(CLUSTER_MEMBERS)) {
             mListSearchHosts = intent.getParcelableArrayListExtra(CLUSTER_MEMBERS);
             if (!mListSearchHosts.isEmpty()) {
@@ -128,6 +153,18 @@ public class ListSearchTabActivity
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         super.onItemClick(parent, view, position, id);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("list_search_hosts", mListSearchHosts);
+        outState.putBoolean(KEY_SEARCH_SUCCESSFUL, mHasSearchBeenSuccessful);
+
+        if (DialogHandler.inProgress() && mTextSearchTask != null) {
+            mTextSearchTask.cancel(true);
+            mDialogHandler.dismiss();
+        }
+        super.onSaveInstanceState(outState);
     }
 
     private class TextSearchTask extends AsyncTask<Search, Void, Object> {
@@ -165,23 +202,15 @@ public class ListSearchTabActivity
                 }
             });
 
-            mListSearchResult.setAdapter(new HostListAdapter(WSAndroidApplication.getAppContext(),
-                    R.layout.host_list_item, mQuery, mListSearchHosts));
+            mHostListAdapter.resetDataset(mListSearchHosts);
 
             if (mListSearchHosts.isEmpty()) {
                 mDialogHandler.alert(getResources().getString(R.string.no_results));
             }
+
+            mHasSearchBeenSuccessful = true;
         }
 
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("list_search_hosts", mListSearchHosts);
-        if (DialogHandler.inProgress() && mTextSearchTask != null) {
-            mTextSearchTask.cancel(true);
-        }
-        super.onSaveInstanceState(outState);
     }
 
     @Override
