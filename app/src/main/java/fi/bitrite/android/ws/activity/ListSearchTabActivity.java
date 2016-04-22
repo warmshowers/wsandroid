@@ -31,6 +31,7 @@ public class ListSearchTabActivity
         implements android.widget.AdapterView.OnItemClickListener {
 
     ArrayList<HostBriefInfo> mListSearchHosts;
+    public static final String CLUSTER_MEMBERS = "search_results";
     String mQuery = "";
 
     TextView mNoNetworkWarning;
@@ -95,10 +96,8 @@ public class ListSearchTabActivity
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             mQuery = intent.getStringExtra(SearchManager.QUERY);
             doTextSearch(mQuery);
-        } else if (intent.hasExtra("search_results")) {
-            // TODO: What is search_results used for, why is it passed this way?
-            // It may be an obsolete attempt to show cluster members from maps2activity
-            mListSearchHosts = intent.getParcelableArrayListExtra("search_results");
+        } else if (intent.hasExtra(CLUSTER_MEMBERS)) {
+            mListSearchHosts = intent.getParcelableArrayListExtra(CLUSTER_MEMBERS);
             if (!mListSearchHosts.isEmpty()) {
                 // Hide the SearchEdit
                 mSearchEditLayout.setVisibility(View.INVISIBLE);
