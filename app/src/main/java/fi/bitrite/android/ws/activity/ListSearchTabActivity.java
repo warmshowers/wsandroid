@@ -1,10 +1,12 @@
 package fi.bitrite.android.ws.activity;
 
-import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +35,7 @@ public class ListSearchTabActivity
         extends WSBaseActivity
         implements android.widget.AdapterView.OnItemClickListener {
 
-    public static final String KEY_SEARCH_SUCCESSFUL = "ListSearchTab_Search_Successful";
+    public static final String SEARCH_SUCCESSFUL = "ListSearchTab_Search_Successful";
     public static final String CLUSTER_MEMBERS = "search_results";
 
     HostListAdapter mHostListAdapter;
@@ -50,7 +52,7 @@ public class ListSearchTabActivity
     TextView mMultipleHostsAddress;
     TextView mHostsAtAddress;
 
-    boolean mHasSearchBeenSuccessful;
+    boolean mSearchSuccessful;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +97,7 @@ public class ListSearchTabActivity
             // Updates the dataset of the adapter with the hosts saved in mListSearchHosts
             mHostListAdapter.resetDataset(mListSearchHosts);
 
-            mHasSearchBeenSuccessful = savedInstanceState.getBoolean(KEY_SEARCH_SUCCESSFUL);
+            mSearchSuccessful = savedInstanceState.getBoolean(SEARCH_SUCCESSFUL);
         }
 
         handleIntent(getIntent());
@@ -117,7 +119,7 @@ public class ListSearchTabActivity
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             mQuery = intent.getStringExtra(SearchManager.QUERY);
 
-            if (!mHasSearchBeenSuccessful) {
+            if (!mSearchSuccessful) {
                 doTextSearch(mQuery);
             }
 
@@ -137,14 +139,24 @@ public class ListSearchTabActivity
         }
     }
 
+    private void showProgressDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        ProgressDialogFragment progressDialogFragment =
+                ProgressDialogFragment.newInstance(R.string.performing_search);
+        progressDialogFragment.show(fm, "fragment_progress");
+    }
 
-    @Override
-    protected Dialog onCreateDialog(int id, Bundle args) {
-        return mDialogHandler.createDialog(id, getResources().getString(R.string.performing_search));
+    private void dismissProgressDialog() {
+        final FragmentManager fm = getSupportFragmentManager();
+
+        final Fragment progress = fm.findFragmentByTag("fragment_progress");
+        if (progress != null) {
+            ((DialogFragment) progress).dismiss();
+        }
     }
 
     public void doTextSearch(String text) {
-        mDialogHandler.showDialog(DialogHandler.TEXT_SEARCH);
+        showProgressDialog();
         Search search = new RestTextSearch(text);
         mTextSearchTask = new TextSearchTask();
         mTextSearchTask.execute(search);
@@ -158,7 +170,7 @@ public class ListSearchTabActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("list_search_hosts", mListSearchHosts);
-        outState.putBoolean(KEY_SEARCH_SUCCESSFUL, mHasSearchBeenSuccessful);
+        outState.putBoolean(SEARCH_SUCCESSFUL, mSearchSuccessful);
 
         if (DialogHandler.inProgress() && mTextSearchTask != null) {
             mTextSearchTask.cancel(true);
@@ -187,7 +199,7 @@ public class ListSearchTabActivity
         @SuppressWarnings("unchecked")
         @Override
         protected void onPostExecute(Object result) {
-            mDialogHandler.dismiss();
+            dismissProgressDialog();
 
             if (result instanceof Exception) {
                 RestClient.reportError(ListSearchTabActivity.this, result);
@@ -208,7 +220,7 @@ public class ListSearchTabActivity
                 mDialogHandler.alert(getResources().getString(R.string.no_results));
             }
 
-            mHasSearchBeenSuccessful = true;
+            mSearchSuccessful = true;
         }
 
     }
