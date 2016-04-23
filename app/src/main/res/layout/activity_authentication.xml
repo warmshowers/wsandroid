@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<android.support.v4.widget.DrawerLayout
     android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:background="@color/primaryWhite">
+        android:background="@color/primaryWhite"
+        android:orientation="vertical">
 
-        <include layout="@layout/toolbar" />
+        <include layout="@layout/toolbar"/>
 
         <!-- activity view -->
         <LinearLayout
@@ -24,8 +25,8 @@
                 android:id="@+id/loggedInLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
                 android:gravity="center_horizontal"
+                android:orientation="vertical"
                 android:visibility="visible">
 
 
@@ -33,27 +34,27 @@
                     android:id="@+id/txtLoggedInStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
                     android:layout_marginBottom="12dp"
+                    android:layout_marginTop="12dp"
                     android:textAppearance="@style/WsText.subHead"
-                    android:text="You are currently logged in as Joe (joe@nowhere.com)" />
+                    tools:text="You are currently logged in as Joe (joe@nowhere.com)"/>
 
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
-                    android:background="@color/primaryTextColorLight"
                     android:alpha="0.2"
+                    android:background="@color/primaryTextColorLight"
                     />
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="start"
                     android:orientation="horizontal"
-                    android:paddingTop="12dp"
                     android:paddingBottom="12dp"
                     android:paddingLeft="-4dp"
                     android:paddingRight="-4dp"
-                    android:gravity="left">
+                    android:paddingTop="12dp">
 
                     <Button
                         android:id="@+id/btnLogout"
@@ -61,7 +62,7 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:onClick="logout"
-                        android:text="@string/login_logout" />
+                        android:text="@string/login_logout"/>
 
                 </LinearLayout>
 
@@ -80,8 +81,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="16dp"
-                    android:textAppearance="@style/WsText.light"
-                    android:text="@string/enter_credentials" />
+                    android:text="@string/enter_credentials"
+                    android:textAppearance="@style/WsText.light"/>
 
                 <EditText
                     android:id="@+id/editUsername"
@@ -90,10 +91,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:hint="@string/username_hint"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    android:inputType="text">
+                    android:inputType="text"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead">
 
-                    <requestFocus />
+                    <requestFocus/>
                 </EditText>
 
                 <EditText
@@ -102,26 +103,25 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password_hint"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
                     android:paddingLeft="-4dp"
                     android:paddingRight="-4dp">
 
                     <Button
                         android:id="@+id/okButton"
                         style="@style/button_dark"
-                        android:layout_width="fill_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.0"
                         android:onClick="applyCredentials"
-                        android:text="@string/ok" />
-
+                        android:text="@string/ok"/>
 
                 </LinearLayout>
 
@@ -131,5 +131,5 @@
 
     </LinearLayout>
 
-    <include layout="@layout/navigation_drawer" />
+    <include layout="@layout/navigation_drawer"/>
 </android.support.v4.widget.DrawerLayout>

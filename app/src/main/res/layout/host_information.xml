@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
     android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     <!-- activity view -->
@@ -10,14 +12,14 @@
         android:layout_height="fill_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/toolbar" />
+        <include layout="@layout/toolbar"/>
 
         <ScrollView
             android:id="@+id/scrollHostInformation"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:scrollbars="vertical"
-            android:background="@color/primaryWhite">
+            android:background="@color/primaryWhite"
+            android:scrollbars="vertical">
 
             <LinearLayout
                 android:id="@+id/layoutHostDetails"
@@ -27,35 +29,35 @@
                 android:paddingBottom="20dp">
 
                 <RelativeLayout
+                    android:id="@+id/pictureLayout"
                     android:layout_width="match_parent"
                     android:layout_height="220dp"
-                    android:id="@+id/pictureLayout"
                     android:background="#333333">
 
                     <ImageView
                         android:id="@+id/memberPhoto"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+                        android:baselineAlignBottom="true"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/default_hostinfo_profile"
-                        android:baselineAlignBottom="true" />
+                        android:src="@drawable/default_hostinfo_profile"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="bottom"
-                        android:paddingBottom="10dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingBottom="10dp">
 
                         <EditText
+                            android:id="@+id/editText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:inputType="phone"
-                            android:ems="10"
-                            android:id="@+id/editText"
                             android:layout_marginLeft="72dp"
                             android:layout_marginRight="20dp"
-                            android:visibility="invisible" />
+                            android:ems="10"
+                            android:inputType="phone"
+                            android:visibility="invisible"/>
 
                         <TextView
                             android:id="@+id/lblMemberName"
@@ -63,9 +65,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="72dp"
                             android:layout_marginRight="20dp"
-                            android:textSize="36dp"
                             android:textColor="#ffffff"
-                            android:text="Member Name bla bla bla bla" />
+                            android:textSize="36sp"
+                            tools:text="Member Name bla bla bla bla"/>
 
                     </LinearLayout>
 
@@ -73,72 +75,67 @@
 
 
                 <LinearLayout
-                    android:orientation="vertical"
+                    android:id="@+id/contentLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/contentLayout"
                     android:layout_marginRight="16dp"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical">
 
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    <RelativeLayout
                         android:id="@+id/favorite"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
-                        android:orientation="vertical"
                         android:paddingTop="8dp">
 
-                        <RelativeLayout
-                            android:layout_width="match_parent"
+                        <ImageView
+                            android:id="@+id/iconFavorite"
+                            style="@style/WsListIcon"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_action_favorite_outline"/>
+
+                        <CheckBox
+                            android:id="@+id/checkBoxFavorite"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:checked="false"/>
 
-                            <ImageView
-                                android:id="@+id/iconFavorite"
-                                style="@style/WsListIcon"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerVertical="true"
-                                android:src="@drawable/ic_action_favorite_outline" />
+                        <TextView
+                            android:id="@+id/textView"
+                            style="@style/WsText.subHead"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="56dp"
+                            android:layout_toLeftOf="@id/checkBoxFavorite"
+                            android:text="@string/favorite_host"/>
 
-                            <TextView
-                                android:id="@+id/textView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                style="@style/WsText.subHead"
-                                android:layout_marginLeft="56dp"
-                                android:text="@string/favorite_host"
-                                 />
 
-                            <CheckBox
-                                android:id="@+id/checkBoxFavorite"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:checked="false"
-                                android:layout_centerVertical="true"
-                                android:layout_alignParentRight="true"/>
-                        </RelativeLayout>
-
-                    </LinearLayout>
+                    </RelativeLayout>
 
                     <View
-                        android:layout_height="1dp"
                         android:layout_width="match_parent"
-                        android:background="@color/primaryTextColorLight"
-                        android:alpha="0.2"
+                        android:layout_height="1dp"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginTop="8dp"
                         android:layout_marginLeft="72dp"
-                        android:layout_marginRight="0dp" />
+                        android:layout_marginRight="0dp"
+                        android:layout_marginTop="8dp"
+                        android:alpha="0.2"
+                        android:background="@color/primaryTextColorLight"/>
 
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    <LinearLayout
                         android:id="@+id/availability"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_marginLeft="16dp"
                         android:orientation="vertical"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp">
+                        android:paddingBottom="8dp"
+                        android:paddingTop="8dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -149,45 +146,45 @@
                             <ImageView
                                 android:id="@+id/iconAvailableStatus"
                                 style="@style/WsListIcon"
-                                android:src="@drawable/ic_home_variant_black_24dp" />
+                                android:src="@drawable/ic_home_variant_black_24dp"/>
 
                             <TextView
                                 android:id="@+id/txtAvailability"
+                                style="@style/WsText.subHead"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="32dp"
-                                android:text="Currently Available"
-                                style="@style/WsText.subHead" />
+                                tools:text="Currently Available"/>
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/txtLoginInfo"
+                            style="@style/WsText.caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="56dp"
-                            style="@style/WsText.caption"
-                            android:text="Member since 2005, Last login January 1, 2015" />
+                            tools:text="Member since 2005, Last login January 1, 2015"/>
 
 
                         <TextView
                             android:id="@+id/txtHostLimitations"
+                            style="@style/WsText.caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="56dp"
-                            style="@style/WsText.caption"
-                            android:text="Max guests: 3, Languages: English, Spanish" />
+                            tools:text="Max guests: 3, Languages: English, Spanish"/>
 
                     </LinearLayout>
 
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    <LinearLayout
                         android:id="@+id/address"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:orientation="vertical"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp">
+                        android:paddingBottom="8dp"
+                        android:paddingTop="8dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -198,16 +195,16 @@
                             <ImageView
                                 style="@style/WsListIcon"
                                 android:layout_gravity="top"
-                                android:src="@drawable/ic_action_place" />
+                                android:src="@drawable/ic_action_place"/>
 
                             <TextView
                                 android:id="@+id/txtHostLocation"
+                                style="@style/WsText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="top"
                                 android:layout_marginLeft="32dp"
-                                android:text="848 Montclair Drive\nPalisade, CO 81526 USA"
-                                style="@style/WsText" />
+                                tools:text="848 Montclair Drive\nPalisade, CO 81526 USA"/>
 
                         </LinearLayout>
 
@@ -217,21 +214,21 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="56dp"
                             android:singleLine="false"
-                            android:visibility="gone" />
+                            android:visibility="gone"/>
 
                     </LinearLayout>
 
                     <View
-                        android:layout_height="1dp"
                         android:layout_width="match_parent"
-                        android:background="@color/primaryTextColorLight"
-                        android:alpha="0.2"
+                        android:layout_height="1dp"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginTop="8dp"
                         android:layout_marginLeft="72dp"
-                        android:layout_marginRight="0dp" />
+                        android:layout_marginRight="0dp"
+                        android:layout_marginTop="8dp"
+                        android:alpha="0.2"
+                        android:background="@color/primaryTextColorLight"/>
 
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    <LinearLayout
                         android:id="@+id/profile"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -249,45 +246,45 @@
                             <ImageView
                                 android:id="@+id/imageView"
                                 style="@style/WsListIcon"
-                                android:src="@drawable/ic_action_info_outline" />
+                                android:src="@drawable/ic_action_info_outline"/>
 
                             <TextView
+                                style="@style/WsText.subHead"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="32dp"
-                                android:text="@string/hostinfo_profile"
-                                style="@style/WsText.subHead" />
+                                android:text="@string/hostinfo_profile"/>
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/txtHostComments"
+                            style="@style/WsText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="56dp"
-                            android:text="Dummy about me text"
-                            style="@style/WsText"/>
+                            tools:text="Dummy about me text"/>
 
                     </LinearLayout>
 
                     <View
-                        android:layout_height="1dp"
                         android:layout_width="match_parent"
-                        android:background="@color/primaryTextColorLight"
-                        android:alpha="0.2"
+                        android:layout_height="1dp"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginTop="8dp"
                         android:layout_marginLeft="72dp"
-                        android:layout_marginRight="0dp" />
+                        android:layout_marginRight="0dp"
+                        android:layout_marginTop="8dp"
+                        android:alpha="0.2"
+                        android:background="@color/primaryTextColorLight"/>
 
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    <LinearLayout
                         android:id="@+id/details"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_marginLeft="16dp"
                         android:orientation="vertical"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp">
+                        android:paddingBottom="8dp"
+                        android:paddingTop="8dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -299,57 +296,57 @@
                             <ImageView
                                 android:id="@+id/imageView2"
                                 style="@style/WsListIcon"
-                                android:src="@drawable/ic_action_list" />
+                                android:src="@drawable/ic_action_list"/>
 
                             <TextView
                                 android:id="@+id/textView5"
+                                style="@style/WsText.subHead"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="32dp"
-                                android:text="@string/hostinfo_details"
-                                style="@style/WsText.subHead" />
+                                android:text="@string/hostinfo_details"/>
 
                         </LinearLayout>
 
                         <TextView
                             android:id="@+id/txtHostServices"
+                            style="@style/WsText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="56dp"
                             android:singleLine="false"
-                            style="@style/WsText"
-                            android:text="Services this host may offer: " />
+                            tools:text="Services this host may offer: "/>
 
                         <TextView
                             android:id="@+id/txtNearbyServices"
+                            style="@style/WsText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="56dp"
                             android:singleLine="false"
-                            style="@style/WsText"
-                            android:text="Nearby services" />
+                            tools:text="Nearby services"/>
 
                     </LinearLayout>
 
                     <View
-                        android:layout_height="1dp"
                         android:layout_width="match_parent"
-                        android:background="@color/primaryTextColorLight"
-                        android:alpha="0.2"
+                        android:layout_height="1dp"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginTop="8dp"
                         android:layout_marginLeft="72dp"
-                        android:layout_marginRight="0dp" />
+                        android:layout_marginRight="0dp"
+                        android:layout_marginTop="8dp"
+                        android:alpha="0.2"
+                        android:background="@color/primaryTextColorLight"/>
 
-                    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    <LinearLayout
                         android:id="@+id/feedback"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:orientation="vertical"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp">
+                        android:paddingBottom="8dp"
+                        android:paddingTop="8dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -360,19 +357,19 @@
                             <ImageView
                                 android:id="@+id/imageView3"
                                 style="@style/WsListIcon"
-                                android:src="@drawable/ic_action_people" />
+                                android:src="@drawable/ic_action_people"/>
 
                             <TextView
                                 android:id="@+id/txtFeedbackLabel"
+                                style="@style/WsText.subHead"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="32dp"
-                                android:text="Feedback"
-                                style="@style/WsText.subHead" />
+                                tools:text="Feedback"/>
                         </LinearLayout>
 
-                        <fi.bitrite.android.ws.view.FeedbackTable xmlns:android="http://schemas.android.com/apk/res/android"
+                        <fi.bitrite.android.ws.view.FeedbackTable
                             android:id="@+id/tblFeedback"
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent"
@@ -389,7 +386,6 @@
     </LinearLayout>
 
 
-
-    <include layout="@layout/navigation_drawer" />
+    <include layout="@layout/navigation_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>

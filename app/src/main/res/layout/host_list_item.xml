@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="88dp"
     android:layout_marginLeft="16dp">
@@ -12,67 +13,69 @@
         android:layout_marginTop="16dp">
 
         <View
-        android:layout_height="40dp"
-        android:layout_width="40dp"
-        android:alpha="0.6"
-        android:background="@drawable/circle"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:alpha="0.6"
+            android:background="@drawable/circle"/>
 
         <ImageView
             android:id="@+id/icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_home_variant_black_24dp"
+            android:layout_centerInParent="true"
             android:layout_gravity="center_vertical"
-            android:layout_centerInParent="true" />
+            android:src="@drawable/ic_home_variant_black_24dp"/>
 
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
         android:layout_marginLeft="56dp"
         android:layout_marginRight="16dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginTop="14dp">
+        android:layout_marginTop="14dp"
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/txtHostFullname"
+            style="@style/WsText.subHead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Firstname Lastname"
-            android:id="@+id/txtHostFullname"
             android:layout_gravity="center_vertical"
-            style="@style/WsText.subHead" />
+            tools:text="Firstname Lastname"/>
 
         <TextView
             android:id="@+id/txtHostLocation"
+            style="@style/WsText.light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gunnison, Co, USA"
-            style="@style/WsText.light"
-            android:layout_marginTop="1dp" />
+            android:layout_marginTop="1dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="1337 Fleetwood Avenue, Random place, California, USA"/>
 
         <TextView
             android:id="@+id/txtMemberInfo"
+            style="@style/WsText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Member since January 1, 2015. Last active 3 weeks ago.zz"
-            android:textColor="@android:color/darker_gray"
-            style="@style/WsText"
-            android:visibility="visible"
+            android:layout_marginTop="1dp"
             android:lines="1"
-            android:layout_marginTop="1dp" />
+            android:textColor="@android:color/darker_gray"
+            android:visibility="visible"
+            tools:text="Member since January 1, 2015. Last active 3 weeks ago."/>
 
     </LinearLayout>
 
     <View
+        android:id="@+id/divider"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:background="@color/primaryTextColorLight"
-        android:id="@+id/divider"
         android:layout_alignParentBottom="false"
-        android:alpha="0.2"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="56dp" />
+        android:layout_marginLeft="56dp"
+        android:alpha="0.2"
+        android:background="@color/primaryTextColorLight"/>
 
 </RelativeLayout>

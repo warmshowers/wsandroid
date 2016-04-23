@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/listTab"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/listTab"
-    >
+    android:orientation="vertical">
 
-    <include layout="@layout/toolbar" />
+    <include layout="@layout/toolbar"/>
 
-    <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/drawer_layout">
+        android:layout_height="match_parent">
         <!-- activity view -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:background="#fff"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#fff">
 
             <TextView
                 android:id="@+id/noNetworkWarningList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#ffff121a" />
+                android:textColor="#ffff121a"/>
 
 
             <LinearLayout
+                android:id="@+id/listSummaryLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="invisible"
                 android:gravity="center"
-                android:id="@+id/listSummaryLayout">
+                android:orientation="vertical"
+                android:visibility="invisible">
 
                 <TextView
                     android:id="@+id/multipleHostAddress"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:textSize="20dp" />
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/hostsAtAddress"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textSize="20dp" />
+                    android:textSize="20sp"/>
 
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="2dp"
-                    android:background="#c0c0c0" />
+                    android:background="#c0c0c0"/>
 
             </LinearLayout>
 
             <ListView
+                android:id="@+id/lstSearchResult"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/lstSearchResult"
-                android:divider="#00000000" />
+                android:divider="#00000000"/>
         </RelativeLayout>
 
-        <include layout="@layout/navigation_drawer" />
+        <include layout="@layout/navigation_drawer"/>
     </android.support.v4.widget.DrawerLayout>
 </LinearLayout>

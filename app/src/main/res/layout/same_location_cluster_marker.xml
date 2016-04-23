@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="@dimen/single_host_marker_size"
-android:layout_height="@dimen/single_host_marker_size"
-android:foregroundGravity="center_horizontal" >
-
-<ImageView
-    android:id="@+id/image"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/single_host_marker_size"
     android:layout_height="@dimen/single_host_marker_size"
-    android:src="@drawable/map_markers_multiple"
-    android:scaleType="centerCrop"
-    android:paddingTop="6dp" />
+    xmlns:tools="http://schemas.android.com/tools"
+    android:foregroundGravity="center_horizontal">
 
-<TextView
-    android:id="@+id/text"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textAppearance="@style/SingleLocationClusterIcon.TextAppearance"
-    android:text="27"
-    android:alpha=".8"
-    android:layout_gravity="center_horizontal"
-    android:gravity="center"
-    android:paddingTop="7dp" />
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="@dimen/single_host_marker_size"
+        android:layout_height="@dimen/single_host_marker_size"
+        android:paddingTop="6dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/map_markers_multiple"/>
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:alpha=".8"
+        android:gravity="center"
+        android:paddingTop="7dp"
+        android:textAppearance="@style/SingleLocationClusterIcon.TextAppearance"
+        tools:text="27"/>
 
 </FrameLayout>

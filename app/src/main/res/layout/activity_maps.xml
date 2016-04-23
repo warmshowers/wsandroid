@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/drawer_layout">
+    android:layout_height="match_parent">
     <!-- activity view -->
 
     <LinearLayout
@@ -12,14 +13,14 @@
         android:layout_height="fill_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/toolbar" />
+        <include layout="@layout/toolbar"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:background="#fff"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#fff">
 
-            <fragment xmlns:tools="http://schemas.android.com/tools"
+            <fragment
                 android:id="@+id/map_fragment"
                 class="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
@@ -31,14 +32,12 @@
                 map:uiTiltGestures="true"
                 map:uiZoomControls="true"
                 map:uiZoomGestures="true"
-                tools:layout="@layout/activity_maps"
-
-                />
+                tools:layout="@layout/activity_maps"/>
         </RelativeLayout>
 
     </LinearLayout>
 
-    <include layout="@layout/navigation_drawer" />
+    <include layout="@layout/navigation_drawer"/>
 </android.support.v4.widget.DrawerLayout>
 
 

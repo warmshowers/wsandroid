@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout
-    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/background_light"
-    android:padding="16dp"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/WsText.subHead"
-        android:text="Title Placeholder"
         android:id="@+id/title"
-        android:textColor="@color/primaryColorAccent"
-        android:gravity="center_horizontal" />
-
-    <TextView
+        style="@style/WsText.subHead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/WsText"
-        android:text="Snippet placeholder"
+        android:gravity="center_horizontal"
+        android:textColor="@color/primaryColorAccent"
+        tools:text="Title Placeholder"/>
+
+    <TextView
         android:id="@+id/snippet"
-        android:gravity="center_horizontal" />
+        style="@style/WsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        tools:text="Snippet placeholder"/>
 
 </LinearLayout>
