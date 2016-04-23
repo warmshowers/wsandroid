@@ -15,7 +15,6 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.lang.reflect.Member;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationHelper;

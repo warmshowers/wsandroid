@@ -1,10 +1,10 @@
 package fi.bitrite.android.ws.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Automatically generated Parcelable implementation for _Host.

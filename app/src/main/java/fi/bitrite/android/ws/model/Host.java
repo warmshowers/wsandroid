@@ -6,14 +6,15 @@ import android.os.Parcel;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.yelp.parcelgen.JsonParser.DualCreator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import fi.bitrite.android.ws.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import fi.bitrite.android.ws.R;
 
 public class Host extends _Host {
 

@@ -1,11 +1,12 @@
 package fi.bitrite.android.ws.host.impl;
 
-import fi.bitrite.android.ws.model.Feedback;
-import fi.bitrite.android.ws.util.http.HttpException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import fi.bitrite.android.ws.model.Feedback;
+import fi.bitrite.android.ws.util.http.HttpException;
 
 /**
  * Parses a JSON string containing zero or more recommendations for a host.

@@ -3,6 +3,7 @@ package fi.bitrite.android.ws;
 import android.app.Application;
 import android.content.Context;
 import android.preference.PreferenceManager;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 

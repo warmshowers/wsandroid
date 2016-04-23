@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+
 import com.afollestad.materialdialogs.prefs.MaterialListPreference;
 
 import fi.bitrite.android.ws.BuildConfig;

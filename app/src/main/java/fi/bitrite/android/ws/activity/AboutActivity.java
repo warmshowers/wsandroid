@@ -6,8 +6,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.google.android.gms.common.GooglePlayServicesUtil;
-
 import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.R;
 

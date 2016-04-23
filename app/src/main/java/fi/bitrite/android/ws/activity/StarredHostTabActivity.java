@@ -11,16 +11,18 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.persistence.StarredHostDao;
 import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 public class StarredHostTabActivity extends WSBaseActivity
         implements android.widget.AdapterView.OnItemClickListener {

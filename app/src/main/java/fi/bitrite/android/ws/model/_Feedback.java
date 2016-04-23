@@ -2,6 +2,7 @@ package fi.bitrite.android.ws.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

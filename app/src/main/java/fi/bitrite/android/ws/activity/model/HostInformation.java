@@ -2,12 +2,13 @@ package fi.bitrite.android.ws.activity.model;
 
 import android.content.Intent;
 import android.os.Bundle;
-import fi.bitrite.android.ws.model.Feedback;
-import fi.bitrite.android.ws.model.Host;
-import fi.bitrite.android.ws.persistence.StarredHostDao;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import fi.bitrite.android.ws.model.Feedback;
+import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.persistence.StarredHostDao;
 
 /**
  * This class is used by the HostInformationActivity to pass host information along.

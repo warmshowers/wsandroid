@@ -1,15 +1,15 @@
 package fi.bitrite.android.ws.host.impl;
 
-import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.model.Host;
-import fi.bitrite.android.ws.util.GlobalInfo;
-import fi.bitrite.android.ws.util.http.HttpException;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.http.HttpException;
 
 
 /**

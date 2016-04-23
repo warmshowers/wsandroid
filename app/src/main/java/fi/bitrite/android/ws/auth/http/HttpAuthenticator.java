@@ -4,14 +4,6 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.util.Log;
 
-import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.auth.AuthenticationHelper;
-import fi.bitrite.android.ws.auth.NoAccountException;
-import fi.bitrite.android.ws.model.Host;
-import fi.bitrite.android.ws.util.GlobalInfo;
-import fi.bitrite.android.ws.util.MemberInfo;
-import fi.bitrite.android.ws.util.http.HttpException;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CircularRedirectException;
 import org.apache.http.client.ClientProtocolException;
@@ -25,10 +17,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.auth.AuthenticationHelper;
+import fi.bitrite.android.ws.auth.NoAccountException;
+import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.MemberInfo;
+import fi.bitrite.android.ws.util.http.HttpException;
 
 /**
  * Responsible for authenticating the user against the WarmShowers web service.

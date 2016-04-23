@@ -4,15 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.auth.NoAccountException;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
-import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
-import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
-import fi.bitrite.android.ws.util.GlobalInfo;
-import fi.bitrite.android.ws.util.Tools;
-import fi.bitrite.android.ws.util.http.HttpException;
-import fi.bitrite.android.ws.util.http.HttpUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -33,6 +24,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.auth.NoAccountException;
+import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
+import fi.bitrite.android.ws.auth.http.HttpAuthenticator;
+import fi.bitrite.android.ws.auth.http.HttpSessionContainer;
+import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.Tools;
+import fi.bitrite.android.ws.util.http.HttpException;
+import fi.bitrite.android.ws.util.http.HttpUtils;
 
 /**
  * Base class for classes that use GET to either scrape the WS website for information

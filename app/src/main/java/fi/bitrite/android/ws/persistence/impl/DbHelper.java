@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.persistence.impl;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
 import fi.bitrite.android.ws.WSAndroidApplication;
 
 public class DbHelper extends SQLiteOpenHelper {

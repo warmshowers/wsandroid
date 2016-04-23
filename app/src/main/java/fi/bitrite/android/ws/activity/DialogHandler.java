@@ -1,10 +1,10 @@
 package fi.bitrite.android.ws.activity;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 
 import fi.bitrite.android.ws.R;
 

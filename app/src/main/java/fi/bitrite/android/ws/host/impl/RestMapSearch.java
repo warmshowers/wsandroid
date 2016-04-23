@@ -2,12 +2,6 @@ package fi.bitrite.android.ws.host.impl;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.host.Search;
-import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.util.GlobalInfo;
-import fi.bitrite.android.ws.util.http.HttpException;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
@@ -16,6 +10,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.host.Search;
+import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.http.HttpException;
 
 public class RestMapSearch extends RestClient implements Search {
 

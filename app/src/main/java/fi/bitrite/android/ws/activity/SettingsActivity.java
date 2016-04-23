@@ -1,10 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 

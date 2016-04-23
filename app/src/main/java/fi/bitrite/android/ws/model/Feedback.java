@@ -1,9 +1,11 @@
 package fi.bitrite.android.ws.model;
 
 import android.os.Parcel;
+
+import com.yelp.parcelgen.JsonParser.DualCreator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.yelp.parcelgen.JsonParser.DualCreator;
 
 
 public class Feedback extends _Feedback implements Comparable<Feedback> {

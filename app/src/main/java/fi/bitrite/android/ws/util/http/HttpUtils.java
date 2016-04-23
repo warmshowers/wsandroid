@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.util.http;
 
 import android.os.Build;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;

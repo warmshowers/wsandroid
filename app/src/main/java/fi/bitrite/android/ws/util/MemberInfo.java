@@ -1,20 +1,13 @@
 package fi.bitrite.android.ws.util;
 
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.model.Host;

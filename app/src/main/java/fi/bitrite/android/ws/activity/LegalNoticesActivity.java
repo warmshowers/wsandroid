@@ -15,11 +15,12 @@
 
 package fi.bitrite.android.ws.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.text.util.Linkify;
 import android.widget.TextView;
+
 import com.google.android.gms.common.GooglePlayServicesUtil;
+
 import fi.bitrite.android.ws.R;
 
 public class LegalNoticesActivity extends WSBaseActivity {

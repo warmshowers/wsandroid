@@ -7,9 +7,11 @@ import android.util.AttributeSet;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import java.util.List;
+
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.util.ArrayTranslator;
-import java.util.List;
 
 /**
  * Custom table that creates rows dynamically.

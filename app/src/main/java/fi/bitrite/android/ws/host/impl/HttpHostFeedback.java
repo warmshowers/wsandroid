@@ -3,13 +3,13 @@ package fi.bitrite.android.ws.host.impl;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.model.Feedback;
-import fi.bitrite.android.ws.util.GlobalInfo;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+
+import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.model.Feedback;
+import fi.bitrite.android.ws.util.GlobalInfo;
 
 /**
  * Retrieves feedback for a given host.
