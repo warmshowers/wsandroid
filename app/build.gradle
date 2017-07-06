@@ -49,5 +49,7 @@ android {
         minSdkVersion 11
         compileSdkVersion 23
         targetSdkVersion 23
+
+        useLibrary 'org.apache.http.legacy'
     }
 }
