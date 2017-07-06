@@ -26,7 +26,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:support-v4:22.1.0'
     compile 'com.android.support:cardview-v7:21.0.+'
-    compile 'com.afollestad:material-dialogs:0.7.4.2' // https://github.com/afollestad/material-dialogs
+    compile 'com.afollestad.material-dialogs:core:0.8.6.2' // https://github.com/afollestad/material-dialogs
+    compile 'com.afollestad.material-dialogs:commons:0.8.6.2'
 }
 
 android {
@@ -46,7 +47,7 @@ android {
         versionName "1.5.1beta1"
         versionCode 38
         minSdkVersion 11
-        compileSdkVersion 22
-        targetSdkVersion 22
+        compileSdkVersion 23
+        targetSdkVersion 23
     }
 }
