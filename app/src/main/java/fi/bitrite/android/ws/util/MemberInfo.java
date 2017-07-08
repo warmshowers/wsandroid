@@ -55,7 +55,7 @@ public class MemberInfo {
         Gson gson = new Gson();
         String json = gson.toJson(host);
         prefsEditor.putString("member_info", json);
-        prefsEditor.commit();
+        prefsEditor.apply();
     }
 
     private Host retrieveMemberInfo() {
@@ -77,7 +77,7 @@ public class MemberInfo {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WSAndroidApplication.getAppContext());
         SharedPreferences.Editor prefsEditor = prefs.edit();
         prefsEditor.remove("member_info");
-        prefsEditor.commit();
+        prefsEditor.apply();
     }
     public static String getMemberPhotoFilePath() {
         return instance != null ? instance.mProfilePhotoPath : null;

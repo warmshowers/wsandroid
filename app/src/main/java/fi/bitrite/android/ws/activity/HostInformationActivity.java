@@ -70,7 +70,6 @@ public class HostInformationActivity extends WSBaseActivity
 
     ImageView iconAvailableStatus;
     FeedbackTable feedbackTable;
-    TextView comments;
     TextView txtHostServices;
     TextView txtNearbyServices;
 
@@ -161,7 +160,6 @@ public class HostInformationActivity extends WSBaseActivity
 
         txtFeedbackLabel = (TextView) findViewById(R.id.txtFeedbackLabel);
         feedbackTable = (FeedbackTable) findViewById(R.id.tblFeedback);
-        comments = (TextView) findViewById(R.id.txtHostComments);
         txtHostServices = (TextView) findViewById(R.id.txtHostServices);
         txtNearbyServices = (TextView) findViewById(R.id.txtNearbyServices);
 

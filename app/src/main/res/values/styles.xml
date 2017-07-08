@@ -93,16 +93,16 @@
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">16dp</item>
         <item name="android:textColor">@color/primaryWhite</item>
-        <item name="android:fontFamily">sans-serif-thin</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
     <style name="WsPictureOverlayTitle.Medium">
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="WsText" parent="@android:style/TextAppearance">
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:textSize">14sp</item>
     </style>
@@ -140,7 +140,6 @@
     </style>
 
     <style name="WsInputText" parent="@style/Widget.AppCompat.EditText">
-        <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:textSize">16sp</item>
     </style>

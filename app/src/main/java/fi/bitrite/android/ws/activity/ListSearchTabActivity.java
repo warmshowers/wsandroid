@@ -108,7 +108,7 @@ public class ListSearchTabActivity
                 mSearchResultsLayout.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
 
                 mMultipleHostsAddress.setText(mListSearchHosts.get(0).getLocation());
-                mHostsAtAddress.setText(getString(R.string.host_count, mListSearchHosts.size()));
+                mHostsAtAddress.setText(getResources().getQuantityString(R.plurals.host_count, mListSearchHosts.size(), mListSearchHosts.size()));
             }
         }
     }

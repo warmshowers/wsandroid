@@ -327,7 +327,7 @@ public class Maps2Activity extends WSBaseActivity implements
 
                     hostList += getString(R.string.click_to_view_all);
                 }
-                String title = getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getLocation());
+                String title = getResources().getQuantityString(R.plurals.hosts_at_location, hosts.size(), hosts.size(), hosts.get(0).getLocation());
 
                 tv.setText(Html.fromHtml(title));
                 tv = (TextView) mPopup.findViewById(R.id.snippet);
@@ -371,7 +371,7 @@ public class Maps2Activity extends WSBaseActivity implements
         editor.putFloat("latitude", (float) position.target.latitude);
         editor.putFloat("longitude", (float) position.target.longitude);
         editor.putFloat("zoom", (float) position.zoom);
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -699,7 +699,7 @@ public class Maps2Activity extends WSBaseActivity implements
 
         LinearLayout customTitleView = (LinearLayout) getLayoutInflater().inflate(R.layout.multihost_dialog_header, null);
         TextView titleView = (TextView) customTitleView.findViewById(R.id.title);
-        titleView.setText(getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getStreetCityAddress()));
+        titleView.setText(getResources().getQuantityString(R.plurals.hosts_at_location, hosts.size(), hosts.size(), hosts.get(0).getStreetCityAddress()));
 
         TextView distanceView = (TextView) customTitleView.findViewById(R.id.distance_from_current);
         distanceView.setText(distanceSummary);
