@@ -61,7 +61,7 @@ public class MapSearchJsonParserTest {
         HostBriefInfo host = hosts.get(0);
         assertEquals(18496, host.getId());
         assertEquals("Johannes Staffans", host.getFullname());
-        assertEquals("Helsinki, 00650, FI", host.getLocation());
+        assertEquals("Helsinki, ES", host.getLocation());
         assertEquals("60.184443", host.getLatitude());
         assertEquals("25.006599", host.getLongitude());
     }
@@ -80,6 +80,6 @@ public class MapSearchJsonParserTest {
         MapSearchJsonParser parser = new MapSearchJsonParser(new JSONObject(hostWithStreet.getContent()));
         List<HostBriefInfo> hosts = parser.getHosts();
         HostBriefInfo host = hosts.get(0);
-        assertEquals("Street 1", host.getLocation());
+        assertEquals("Street 1, Helsinki, ES", host.getLocation());
     }
 }
