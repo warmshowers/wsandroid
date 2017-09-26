@@ -35,8 +35,6 @@ import java.util.List;
  */
 public class HttpAuthenticator {
 
-    private final String wsUserAuthUrl = GlobalInfo.warmshowersBaseUrl + "/services/rest/user/login";
-    private final String wsUserLogoutUrl = GlobalInfo.warmshowersBaseUrl + "/services/rest/user/logout";
 
     private static final String TAG = "HttpAuthenticator";
 
@@ -59,6 +57,10 @@ public class HttpAuthenticator {
      * - 0 if already logged in
      */
     public int authenticate() throws HttpAuthenticationFailedException, IOException, JSONException, NoAccountException {
+
+        final String wsUserAuthUrl = GlobalInfo.warmshowersBaseUrl + "/services/rest/user/login";
+        final String wsUserLogoutUrl = GlobalInfo.warmshowersBaseUrl + "/services/rest/user/logout";
+
         RestClient authClient = new RestClient();
 
         int userId = 0;
