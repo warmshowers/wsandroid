@@ -304,7 +304,7 @@ public class Maps2Activity extends WSBaseActivity implements
         @Override
         public View getInfoContents(Marker marker) {
 
-            String hostList = "";
+            StringBuilder hostList = new StringBuilder();
             ArrayList<HostBriefInfo> hosts = new ArrayList<HostBriefInfo>();
             if (mPopup == null) {
                 mPopup = mInflater.inflate(R.layout.info_window, null);
@@ -322,16 +322,16 @@ public class Maps2Activity extends WSBaseActivity implements
                 hosts = (ArrayList<HostBriefInfo>) mLastClickedCluster.getItems();
                 if (mLastClickedCluster != null) {
                     for (HostBriefInfo host : hosts) {
-                        hostList += host.getFullname() + "<br/>";
+                        hostList.append(host.getFullname()).append("<br/>");
                     }
 
-                    hostList += getString(R.string.click_to_view_all);
+                    hostList.append(getString(R.string.click_to_view_all));
                 }
                 String title = getString(R.string.hosts_at_location, hosts.size(), hosts.get(0).getLocation());
 
                 tv.setText(Html.fromHtml(title));
                 tv = (TextView) mPopup.findViewById(R.id.snippet);
-                tv.setText(Html.fromHtml(hostList));
+                tv.setText(Html.fromHtml(hostList.toString()));
 
             }
 
