@@ -5,6 +5,7 @@ repositories {
     repositories {
         maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
         maven { url "https://jitpack.io" }
+        maven { url "https://maven.google.com" }
     }
 }
 
@@ -19,18 +20,22 @@ repositories {
 
 dependencies {
     compile files('libs/parcelgen.jar')  // Can't find for maven/gradle
-    compile 'com.google.code.gson:gson:2.1'
+    compile 'com.google.code.gson:gson:2.7'
     compile 'com.google.maps.android:android-maps-utils:0.3.4'
-    compile 'com.google.guava:guava:18.0'
-    compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:support-v4:22.1.0'
-    compile 'com.android.support:cardview-v7:21.0.+'
-    compile 'com.afollestad:material-dialogs:0.7.4.2' // https://github.com/afollestad/material-dialogs
+    compile 'com.google.guava:guava:20.0'
+    compile 'com.google.android.gms:play-services-maps:11.0.4'
+    compile 'com.google.android.gms:play-services-analytics:11.0.4'
+    compile 'com.google.android.gms:play-services-location:11.0.4'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:cardview-v7:25.3.1'
+    compile 'com.afollestad.material-dialogs:commons:0.9.4.7'
+    compile 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
+    compile 'junit:junit:4.12'
 }
 
 android {
-    buildToolsVersion "22.0.1"
+    buildToolsVersion '25.0.0'
 
     dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
@@ -50,8 +55,8 @@ android {
     defaultConfig {
         versionName "1.5.1beta1"
         versionCode 38
-        minSdkVersion 11
-        compileSdkVersion 22
-        targetSdkVersion 22
+        minSdkVersion 14
+        compileSdkVersion 26
+        targetSdkVersion 26
     }
 }
