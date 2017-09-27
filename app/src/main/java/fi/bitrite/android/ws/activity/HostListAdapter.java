@@ -1,8 +1,6 @@
 package fi.bitrite.android.ws.activity;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -13,18 +11,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.HostBriefInfo;
-
-import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.model.HostBriefInfo;
 
 public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
 
@@ -37,6 +32,12 @@ public class HostListAdapter extends ArrayAdapter<HostBriefInfo> {
         mContext = context;
         mQuery = (query != null && !query.isEmpty()) ? query.toLowerCase() : null;
         mResource = resource;
+    }
+
+    public void resetDataset(List<HostBriefInfo> hosts) {
+        this.clear();
+        this.addAll(hosts);
+        this.notifyDataSetChanged();
     }
 
     @Override
