@@ -18,6 +18,13 @@ allprojects {
     }
 }
 
+ext {
+    isTravisBuild = "true".equals(System.getenv("TRAVIS"))
+
+    // Allows for -Dpre-dex=false to be set
+    isPreDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
