@@ -160,7 +160,7 @@ public class Host extends _Host {
             return "";
         }
 
-        Date date = new Date(Long.valueOf(timestamp) * 1000);
+        Date date = new Date(Long.parseLong(timestamp) * 1000);
         DateFormat dateFormat = SimpleDateFormat.getDateInstance();
         return dateFormat.format(date);
     }
