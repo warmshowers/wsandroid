@@ -140,14 +140,9 @@ public class MessagesTabActivity extends WSBaseActivity implements android.widge
     }
 
     private void updateViewContent() {
-        String text;
-
-        if (numUnread > 0) {
-            String numUnreadFormat = getResources().getString(R.string.unread_messages);
-            text = String.format(numUnreadFormat, numUnread);
-        } else {
-            text = getResources().getString(R.string.no_unread_messages);
-        }
+        String text = (numUnread > 0)
+            ? getResources().getQuantityString(R.plurals.unread_messages, numUnread, numUnread)
+            : getResources().getString(R.string.no_unread_messages);
 
         mUnreadCount.setText(text);
         mUpdateMessages.setVisibility(View.VISIBLE);

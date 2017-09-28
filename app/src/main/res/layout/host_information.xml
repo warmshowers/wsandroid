@@ -216,7 +216,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="56dp"
-                            android:singleLine="false"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -317,7 +316,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="56dp"
-                            android:singleLine="false"
                             style="@style/WsText"
                             android:text="Services this host may offer: " />
 
@@ -326,7 +324,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="56dp"
-                            android:singleLine="false"
                             style="@style/WsText"
                             android:text="Nearby services" />
 

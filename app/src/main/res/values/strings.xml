@@ -59,19 +59,28 @@
     <string name="error_retrieving_messages">An error occurred while retrieving messages.</string>
     <string name="messages_in_progress">Retrieving messages …</string>
     <string name="no_unread_messages">You have no unread messages.</string>
-    <string name="unread_messages">You have %d unread message(s).</string>
+    <plurals name="unread_messages">
+        <item quantity="one">You have %d unread message.</item>
+        <item quantity="other">You have %d unread messages.</item>
+    </plurals>
     <string name="updateMessages">Update</string>
     <string name="loading_hosts">Loading hosts …</string>
-    <string name="hosts_at_location">%1$s hosts at %2$s</string>
+    <plurals name="hosts_at_location">
+        <item quantity="one">%1$d host at %2$s</item>
+        <item quantity="other">%1$d hosts at %2$s</item>
+    </plurals>
 	<string name="view_on_site">View on website</string>
-    <string name="host_count">%1$d hosts at this location</string>
+    <plurals name="host_count">
+        <item quantity="one">%1$d host at this location</item>
+        <item quantity="other">%1$d hosts at this location</item>
+    </plurals>
     <string name="click_to_view_all"><strong>Click to view all</strong></string>
     <string name="map_default_latitude">46.8625</string>
     <string name="map_default_longitude">-114.011667</string>
     <string name="alert_neutral_button">OK</string>
     <string name="contact_message_to">"Message to %1$s"</string>
     <string name="disconnected_location_services">Disconnected from Google Play services. Please re-connect.</string>
-    <string name="hosts_dont_load">Host locations don\'t load at this zoom level\nZoom in....</string>
+    <string name="hosts_dont_load">Host locations don\'t load at this zoom level\nZoom ing</string>
     <!-- Distance from current has 2 args, number and units -->
     <string name="distance_from_current">"%1$d %2$s from current location"</string>
     <string name="host_not_currently_available">(Not currently available)</string>

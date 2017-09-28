@@ -84,7 +84,9 @@ public class ResourceFile extends ExternalResource
     {
         try
         {
-            stream.close();
+            if (stream != null) {
+                stream.close();
+            }
         }
         catch (IOException e)
         {

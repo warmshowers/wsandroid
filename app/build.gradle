@@ -4,6 +4,7 @@ repositories {
 
     repositories {
         maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
+        maven { url "https://maven.google.com" }
         maven { url "https://jitpack.io" }
     }
 }
@@ -19,18 +20,64 @@ repositories {
 
 dependencies {
     compile files('libs/parcelgen.jar')  // Can't find for maven/gradle
-    compile 'com.google.code.gson:gson:2.1'
+    compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.google.maps.android:android-maps-utils:0.3.4'
-    compile 'com.google.guava:guava:18.0'
-    compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:support-v4:22.1.0'
-    compile 'com.android.support:cardview-v7:21.0.+'
-    compile 'com.afollestad:material-dialogs:0.7.4.2' // https://github.com/afollestad/material-dialogs
+    compile 'com.google.guava:guava:20.0'
+    compile 'com.google.android.gms:play-services-analytics:8.3.0'
+    compile 'com.google.android.gms:play-services-location:8.3.0'
+    compile 'com.google.android.gms:play-services-maps:8.3.0'
+    compile 'com.android.support:appcompat-v7:24.1.0'
+    compile 'com.android.support:support-v4:24.1.0'
+    compile 'com.android.support:cardview-v7:24.1.0'
+    compile 'com.afollestad.material-dialogs:core:0.8.6.2' // https://github.com/afollestad/material-dialogs
+    compile 'com.afollestad.material-dialogs:commons:0.8.6.2'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.json:json:20170516'
+}
+
+
+def propertiesFile = rootProject.file("local.properties")
+def properties = new Properties()
+if (propertiesFile.canRead()) {
+    properties.load(new FileInputStream(propertiesFile))
 }
 
 android {
-    buildToolsVersion "22.0.1"
+    buildToolsVersion "26.0.0"
+
+    def doSignRelease = false
+
+    signingConfigs {
+        development {
+            storeFile file("../keystores/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+
+        release {
+            if (properties['keystoreFile']) {
+                doSignRelease = true
+
+                // Set these values in local.properties
+                storeFile file(properties['keystoreFile'])
+                storePassword properties['keystorePassword']
+                keyAlias properties['keyAlias']
+                keyPassword properties['keyPassword']
+            }
+        }
+    }
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+            if (doSignRelease) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
 
     dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
@@ -51,7 +98,9 @@ android {
         versionName "1.5.1beta1"
         versionCode 38
         minSdkVersion 11
-        compileSdkVersion 22
-        targetSdkVersion 22
+        compileSdkVersion 26
+        targetSdkVersion 26
+
+        useLibrary 'org.apache.http.legacy'
     }
 }

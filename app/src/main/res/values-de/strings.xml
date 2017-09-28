@@ -59,12 +59,21 @@
     <string name="error_retrieving_messages">Ein Problem ist beim Abrufen der Nachrichten aufgetreten.</string>
     <string name="messages_in_progress">Nachrichten werden abgerufen…</string>
     <string name="no_unread_messages">Sie haben keine ungelesenen Nachrichten.</string>
-    <string name="unread_messages">Sie haben %d ungelesene Nachrichten.</string>
+    <plurals name="unread_messages">
+        <item quantity="one">Sie haben %d ungelesene Nachricht.</item>
+        <item quantity="other">Sie haben %d ungelesene Nachrichten.</item>
+    </plurals>
     <string name="updateMessages">Aktualisieren</string>
     <string name="loading_hosts">Gastgeber werden geladen…</string>
-    <string name="hosts_at_location">%1$s Gastgeber bei %2$s</string>
+    <plurals name="hosts_at_location">
+        <item quantity="one">%1$d Gastgeber bei %2$s</item>
+        <item quantity="other">%1$d Gastgeber bei %2$s</item>
+    </plurals>
     <string name="view_on_site">Auf der Webseite ansehen</string>
-    <string name="host_count">%1$d Gastgeber an diesem Ort</string>
+    <plurals name="host_count">
+        <item quantity="one">%1$d Gastgeber an diesem Ort</item>
+        <item quantity="other">%1$d Gastgeber an diesem Ort</item>
+    </plurals>
     <string name="click_to_view_all"><strong>Klicken Sie, um alle zu sehen</strong></string>
     <string name="map_default_latitude">46.8625</string>
     <string name="map_default_longitude">-114.011667</string>
@@ -89,7 +98,7 @@
     <string name="prefs_distance_unit">Längeneinheit</string>
     <string name="prefs_distance_unit_summary">Möchten Sie Distanzen in Kilometern oder Meilen angezeigt?</string>
     <string name="prefs_ga_collect_stats_title">Anonyme Benutzerstatistiken senden</string>
-    <string name="prefs_ga_collect_stats_summary">Statistiken werden an Google Analytics gesendet, um den Entwicklern die Verbesserung der App zu erleichtern, Sie können dies jedoch abstellen.</string><!--is this meant in the sense of "currently sending....", i.e. as a status message?-->
+    <string name="prefs_ga_collect_stats_summary">Statistiken werden an Google Analytics gesendet, um den Entwicklern die Verbesserung der App zu erleichtern, Sie können dies jedoch abstellen.</string><!--is this meant in the sense of "currently sending…", i.e. as a status message?-->
     <string name="languages_spoken"><u>Gesprochene Sprachen:</u></string>
     <string name="map_network_not_connected">Netzwerk ist nicht verbunden, nur markierte Gastgeber werden angezeigt.</string>
     <string name="open_in_map_application">In Karten-App öffnen</string>
