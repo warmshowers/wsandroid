@@ -99,7 +99,7 @@ android {
         versionCode 38
         minSdkVersion 11
         compileSdkVersion 26
-        targetSdkVersion 26
+        targetSdkVersion 22
 
         useLibrary 'org.apache.http.legacy'
     }
