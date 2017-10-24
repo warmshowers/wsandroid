@@ -8,7 +8,7 @@ android:
     - tools
 
     # Build tools & SDK.
-    - build-tools-26.0.2
+    - build-tools-26.0.0
     - android-26
 
     # Additional components
@@ -26,4 +26,4 @@ cache:
   directories:
     - $HOME/.android/build-cache
     - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+	- $HOME/.gradle/wrapper/
