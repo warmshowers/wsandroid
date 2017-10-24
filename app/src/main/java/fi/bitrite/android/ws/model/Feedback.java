@@ -1,9 +1,16 @@
 package fi.bitrite.android.ws.model;
 
+import android.annotation.SuppressLint;
 import android.os.Parcel;
+
+import com.yelp.parcelgen.JsonParser.DualCreator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import com.yelp.parcelgen.JsonParser.DualCreator;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class Feedback extends _Feedback implements Comparable<Feedback> {
@@ -30,6 +37,17 @@ public class Feedback extends _Feedback implements Comparable<Feedback> {
 
     @Override
     public int compareTo(Feedback other) {
-        return (int) (other.getHostingDate().compareTo(this.getHostingDate()));
+        return (int) (other.getHostingDateStr().compareTo(this.getHostingDateStr()));
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private static SimpleDateFormat feedbackDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+    public Date getHostingDate() {
+        try {
+            return feedbackDateFormat.parse(getHostingDateStr());
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }
