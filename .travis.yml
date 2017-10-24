@@ -8,7 +8,7 @@ android:
     - tools
 
     # Build tools & SDK.
-    - build-tools-26.0.0
+    - build-tools-26.0.2
     - android-26
 
     # Additional components
