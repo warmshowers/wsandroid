@@ -7,9 +7,12 @@ import android.util.AttributeSet;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import java.util.Date;
+import java.util.List;
+
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.util.ArrayTranslator;
-import java.util.List;
 
 /**
  * Custom table that creates rows dynamically.
@@ -58,16 +61,21 @@ public class FeedbackTable extends TableLayout {
         StringBuilder sb = new StringBuilder();
 
         if (!isInEditMode()) {
-            sb.append(translator.translateHostGuest(f.getGuestOrHost()));
+            sb.append(translator.translateHostGuest(f.getGuestOrHostStr()));
 
             // Present hosted date without DOM because we don't carry that.
-            int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY;
-            String hostedOn = DateUtils.formatDateTime(mContext, f.getHostingDate().getTime(), flags);
+            Date hostingDate = f.getHostingDate();
+            if (hostingDate != null) {
+                int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY;
+                String hostedOn = DateUtils.formatDateTime(mContext, hostingDate.getTime(), flags);
 
-            sb.append(" (");
-            sb.append(hostedOn);
-            sb.append(") - ");
-            sb.append(translator.translateRating(f.getRating()));
+                sb.append(" (");
+                sb.append(hostedOn);
+                sb.append(')');
+            }
+
+            sb.append(" - ");
+            sb.append(translator.translateRating(f.getRatingStr()));
         }
         return sb.toString();
     }
