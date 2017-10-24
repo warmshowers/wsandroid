@@ -5,8 +5,6 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -23,8 +21,7 @@ import java.util.Date;
     protected String mBody;
     protected String mGuestOrHost;
     protected String mRating;
-    protected String mHostingDateString;
-    protected SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    protected long mHostingDate;
 
     protected _Feedback(String id, String uid, String fullname, String name, String body, String guestOrHost, String rating, long hostingDate) {
         this();
@@ -35,7 +32,7 @@ import java.util.Date;
         mBody = body;
         mGuestOrHost = guestOrHost;
         mRating = rating;
-        mHostingDateString = new Date(hostingDate).toString();
+        mHostingDate = hostingDate;
     }
 
     protected _Feedback() {
@@ -67,11 +64,8 @@ import java.util.Date;
     }
 
     public Date getHostingDate() {
-        try {
-            return formatter.parse(mHostingDateString);
-        } catch (ParseException e) {
-            return new Date();
-        }
+        Date d = new Date((long)mHostingDate * 1000);
+        return d;
     }
 
     public int describeContents() {
@@ -86,7 +80,7 @@ import java.util.Date;
         parcel.writeString(mBody);
         parcel.writeString(mGuestOrHost);
         parcel.writeString(mRating);
-        parcel.writeLong(getHostingDate().getTime());
+        parcel.writeLong(mHostingDate);
     }
 
     public void readFromParcel(Parcel source) {
@@ -97,7 +91,7 @@ import java.util.Date;
         mBody = source.readString();
         mGuestOrHost = source.readString();
         mRating = source.readString();
-        mHostingDateString = new Date(source.readLong()).toString();
+        mHostingDate = source.readLong();
     }
 
     public void readFromJson(JSONObject json) throws JSONException {
@@ -116,13 +110,13 @@ import java.util.Date;
         if (!json.isNull("body")) {
             mBody = json.optString("body");
         }
-        if (!json.isNull("field_guest_or_host")) {
-            mGuestOrHost = json.optString("field_guest_or_host");
+        if (!json.isNull("field_guest_or_host_value")) {
+            mGuestOrHost = json.optString("field_guest_or_host_value");
         }
-        if (!json.isNull("field_rating")) {
-            mRating = json.optString("field_rating");
+        if (!json.isNull("field_rating_value")) {
+            mRating = json.optString("field_rating_value");
         }
-        mHostingDateString = json.optString("field_hosting_date");
+        mHostingDate = json.optLong("field_hosting_date_value");
     }
 
 }

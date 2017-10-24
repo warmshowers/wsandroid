@@ -67,7 +67,7 @@ public class FeedbackTable extends TableLayout {
             sb.append(" (");
             sb.append(hostedOn);
             sb.append(") - ");
-            sb.append(translator.translateRating(f.getRagit ting()));
+            sb.append(translator.translateRating(f.getRating()));
         }
         return sb.toString();
     }
