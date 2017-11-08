@@ -25,6 +25,16 @@ ext {
     isPreDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
 }
 
+// Loads the local properties.
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.canRead()) {
+    def localProperties = new Properties()
+    localProperties.load(new FileInputStream(localPropertiesFile))
+    localProperties.stringPropertyNames().each {
+        project.ext[it] = localProperties[it]
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

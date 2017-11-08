@@ -36,13 +36,6 @@ dependencies {
     testCompile 'org.json:json:20170516'
 }
 
-
-def propertiesFile = rootProject.file("local.properties")
-def properties = new Properties()
-if (propertiesFile.canRead()) {
-    properties.load(new FileInputStream(propertiesFile))
-}
-
 android {
     buildToolsVersion "26.0.0"
 
@@ -57,14 +50,14 @@ android {
         }
 
         release {
-            if (properties['keystoreFile']) {
+            if (keystoreFile) {
                 doSignRelease = true
 
-                // Set these values in local.properties
-                storeFile file(properties['keystoreFile'])
-                storePassword properties['keystorePassword']
-                keyAlias properties['keyAlias']
-                keyPassword properties['keyPassword']
+                // Set these values in local.properties.
+                storeFile file(keystoreFile)
+                storePassword keystorePassword
+                keyAlias keystoreKeyAlias
+                keyPassword keystoreKeyPassword
             }
         }
     }
