@@ -89,8 +89,9 @@ android {
         release.setRoot('build-types/release')
     }
     defaultConfig {
-        versionName "1.5.1beta1"
-        versionCode 38
+        versionName "1.5.1"
+        versionCode 39 // Always increase when changing versionName.
+
         minSdkVersion 11
         compileSdkVersion 26
         targetSdkVersion 22
