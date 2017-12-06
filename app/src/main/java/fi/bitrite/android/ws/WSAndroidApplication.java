@@ -1,18 +1,31 @@
 package fi.bitrite.android.ws;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.preference.PreferenceManager;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
 import java.util.HashMap;
 
+import javax.inject.Inject;
 
-public class WSAndroidApplication extends Application {
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasActivityInjector;
+import fi.bitrite.android.ws.di.AppComponent;
+import fi.bitrite.android.ws.di.AppInjector;
+
+
+public class WSAndroidApplication extends Application implements HasActivityInjector {
 
     public static final String TAG = "WSAndroidApplication";
     private static Context mContext;
+    private static AppInjector mAppInjector;
+
+    @Inject
+    DispatchingAndroidInjector<Activity> mDispatchingAndroidInjector;
 
     // Google Analytics Support
     public enum TrackerName {
@@ -50,11 +63,18 @@ public class WSAndroidApplication extends Application {
                 .getBoolean("ga_collect_stats", true);
         analytics.setAppOptOut(gaOptOut);
 
+        mAppInjector = AppInjector.create(this);
     }
 
     public static Context getAppContext() {
         return WSAndroidApplication.mContext;
     }
+    public static AppComponent getAppComponent() {
+        return mAppInjector.getAppComponent();
+    }
 
-
+    @Override
+    public DispatchingAndroidInjector<Activity> activityInjector() {
+        return mDispatchingAndroidInjector;
+    }
 }
