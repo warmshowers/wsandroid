@@ -37,10 +37,9 @@ dependencies {
 }
 
 android {
-    buildToolsVersion "26.0.0"
+    buildToolsVersion "27.0.1" // also update in .travis.yml
 
     def doSignRelease = false
-
     signingConfigs {
         development {
             storeFile file("../keystores/debug.keystore")
@@ -88,12 +87,13 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
     }
+
     defaultConfig {
         versionName "1.5.1"
         versionCode 39 // Always increase when changing versionName.
 
         minSdkVersion 11
-        compileSdkVersion 26
+        compileSdkVersion 26 // also update in .travis.yml
         targetSdkVersion 22
 
         useLibrary 'org.apache.http.legacy'
