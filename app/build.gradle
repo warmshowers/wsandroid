@@ -18,22 +18,34 @@ repositories {
 //    }
 //}
 
+ext {
+    androidMapsUtilsVersion = '0.3.4'
+    gsonVersion = '2.8.1'
+    guavaVersion = '20.0'
+    jsonVersion = '20170516'
+    junitVersion = '4.12'
+    lang3Version = '3.6'
+    materialDialogsVersion = '0.9.6.0' // Depends on the android support lib. Their version must match ours.
+    playServicesVersion = '11.4.2'
+    supportLibVersion = '27.0.1'
+}
+
 dependencies {
-    compile files('libs/parcelgen.jar')  // Can't find for maven/gradle
-    compile 'com.google.code.gson:gson:2.8.1'
-    compile 'com.google.maps.android:android-maps-utils:0.3.4'
-    compile 'com.google.guava:guava:20.0'
-    compile 'com.google.android.gms:play-services-analytics:8.3.0'
-    compile 'com.google.android.gms:play-services-location:8.3.0'
-    compile 'com.google.android.gms:play-services-maps:8.3.0'
-    compile 'com.android.support:appcompat-v7:24.1.0'
-    compile 'com.android.support:support-v4:24.1.0'
-    compile 'com.android.support:cardview-v7:24.1.0'
-    compile 'com.afollestad.material-dialogs:core:0.8.6.2' // https://github.com/afollestad/material-dialogs
-    compile 'com.afollestad.material-dialogs:commons:0.8.6.2'
-    compile 'org.apache.commons:commons-lang3:3.5'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.json:json:20170516'
+    implementation files('libs/parcelgen.jar')  // Can't find for maven/gradle
+    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion" // https://github.com/afollestad/material-dialogs
+    implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:cardview-v7:$supportLibVersion"
+    implementation "com.android.support:support-v4:$supportLibVersion"
+    implementation "com.google.android.gms:play-services-analytics:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-location:$playServicesVersion"
+    implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "com.google.maps.android:android-maps-utils:$androidMapsUtilsVersion"
+    implementation "org.apache.commons:commons-lang3:$lang3Version"
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.json:json:$jsonVersion"
 }
 
 android {
@@ -92,7 +104,7 @@ android {
         versionName "1.5.1"
         versionCode 39 // Always increase when changing versionName.
 
-        minSdkVersion 11
+        minSdkVersion 14
         compileSdkVersion 26 // also update in .travis.yml
         targetSdkVersion 22
 

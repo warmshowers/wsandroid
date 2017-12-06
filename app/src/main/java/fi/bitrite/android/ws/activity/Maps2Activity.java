@@ -776,16 +776,5 @@ public class Maps2Activity extends WSBaseActivity implements
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.legal) {
-            startActivity(new Intent(this, LegalNoticesActivity.class));
-
-            return(true);
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 }
 
