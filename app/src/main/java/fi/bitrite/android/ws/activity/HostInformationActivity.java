@@ -16,14 +16,29 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
+
+import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.activity.model.HostInformation;
 import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.api_new.AuthenticationController;
+import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.host.impl.HttpHostFeedback;
 import fi.bitrite.android.ws.host.impl.HttpHostInformation;
 import fi.bitrite.android.ws.model.Feedback;
@@ -34,12 +49,6 @@ import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.view.FeedbackTable;
 
-import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import static java.util.Collections.sort;
 
 /**
@@ -48,10 +57,12 @@ import static java.util.Collections.sort;
  * or downloaded from the WarmShowers web service.
  */
 public class HostInformationActivity extends WSBaseActivity
-        implements android.widget.AdapterView.OnItemClickListener {
+        implements android.widget.AdapterView.OnItemClickListener, Injectable {
     public static final String TAG = "HostInformationActivity";
 
     public static final int RESULT_SHOW_HOST_ON_MAP = RESULT_FIRST_USER + 1;
+
+    @Inject AuthenticationController mAuthenticationController;
 
     LinearLayout layoutHostDetails;
     ImageView imgMemberPhoto;
@@ -424,8 +435,8 @@ public class HostInformationActivity extends WSBaseActivity
             Object retObj = null;
 
             try {
-                HttpHostInformation httpHostInfo = new HttpHostInformation();
-                HttpHostFeedback hostFeedback = new HttpHostFeedback();
+                HttpHostInformation httpHostInfo = new HttpHostInformation(mAuthenticationController);
+                HttpHostFeedback hostFeedback = new HttpHostFeedback(mAuthenticationController);
                 int uid = hostInfo.getId();
                 boolean starred = hostInfo.getStarred();
 

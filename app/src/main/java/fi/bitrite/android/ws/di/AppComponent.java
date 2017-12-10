@@ -15,6 +15,7 @@ import fi.bitrite.android.ws.auth.AuthenticationService;
         AndroidInjectionModule.class,
         AppModule.class,
         ActivitiesModule.class,
+        ServiceModule.class,
 })
 public interface AppComponent {
     @Component.Builder

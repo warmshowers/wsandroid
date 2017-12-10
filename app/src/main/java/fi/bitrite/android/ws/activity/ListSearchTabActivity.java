@@ -22,9 +22,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.inject.Inject;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.api_new.AuthenticationController;
+import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestTextSearch;
 import fi.bitrite.android.ws.model.Host;
@@ -33,10 +37,12 @@ import fi.bitrite.android.ws.util.Tools;
 
 public class ListSearchTabActivity
         extends WSBaseActivity
-        implements android.widget.AdapterView.OnItemClickListener {
+        implements android.widget.AdapterView.OnItemClickListener, Injectable {
 
     public static final String SEARCH_SUCCESSFUL = "ListSearchTab_Search_Successful";
     public static final String CLUSTER_MEMBERS = "search_results";
+
+    @Inject AuthenticationController mAuthenticationController;
 
     HostListAdapter mHostListAdapter;
 
@@ -157,7 +163,7 @@ public class ListSearchTabActivity
 
     public void doTextSearch(String text) {
         showProgressDialog();
-        Search search = new RestTextSearch(text);
+        Search search = new RestTextSearch(mAuthenticationController, text);
         mTextSearchTask = new TextSearchTask();
         mTextSearchTask.execute(search);
     }

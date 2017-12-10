@@ -8,20 +8,26 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
-import android.webkit.CookieManager;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import javax.inject.Inject;
+
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.auth.AuthenticationHelper;
-import fi.bitrite.android.ws.auth.NoAccountException;
+import fi.bitrite.android.ws.api_new.AuthenticationController;
+import fi.bitrite.android.ws.auth.AuthData;
+import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.util.GlobalInfo;
 
-public class WebViewActivity extends WSBaseActivity {
+public class WebViewActivity extends WSBaseActivity implements Injectable {
+
+    @Inject AuthenticationController mAuthenticationController;
+
     WebView mWebView = null;
 
     @Override
@@ -56,10 +62,12 @@ public class WebViewActivity extends WSBaseActivity {
 
         CookieSyncManager.createInstance(this);
         CookieManager cookieManager = CookieManager.getInstance();
+
         String cookieString = "";
-        try {
-            cookieString = AuthenticationHelper.getAccountCookie();
-        } catch (NoAccountException e) {
+        AuthData authData = mAuthenticationController.getAuthData().getValue();
+        if (authData != null && authData.authToken != null) {
+            cookieString = authData.authToken.toString();
+        } else {
             Toast.makeText(this, R.string.no_account, Toast.LENGTH_SHORT);
             // We'll continue because they *could* just log in.
         }

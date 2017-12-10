@@ -1,12 +1,12 @@
 package fi.bitrite.android.ws.activity;
 
-import android.support.v7.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,14 +22,17 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.api_new.AuthenticationController;
+import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.ArrayTranslator;
 import fi.bitrite.android.ws.util.GlobalInfo;
@@ -40,7 +43,9 @@ import fi.bitrite.android.ws.util.Tools;
  * over the WarmShowers web service.
  */
 public class FeedbackActivity extends WSBaseActivity
-        implements android.widget.AdapterView.OnItemClickListener, View.OnClickListener {
+        implements android.widget.AdapterView.OnItemClickListener, View.OnClickListener, Injectable {
+
+    @Inject AuthenticationController mAuthenticationController;
 
     EditText feedbackEditText;
     EditText txtDateWeMet;
@@ -199,7 +204,7 @@ public class FeedbackActivity extends WSBaseActivity
                 args.add(new BasicNameValuePair("node[field_hosting_date][0][value][year]", Integer.toString(mDateWeMetYear)));
                 args.add(new BasicNameValuePair("node[field_hosting_date][0][value][month]", Integer.toString(mDateWeMetMonth + 1)));
 
-                RestClient restClient = new RestClient();
+                RestClient restClient = new RestClient(mAuthenticationController);
                 JSONObject result = restClient.post(WARMSHOWERS_FEEDBACK_POST_URL, args);
 
             } catch (Exception e) {

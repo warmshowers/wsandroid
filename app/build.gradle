@@ -28,6 +28,9 @@ ext {
     lang3Version = '3.6'
     materialDialogsVersion = '0.9.6.0' // Depends on the android support lib. Their version must match ours.
     playServicesVersion = '11.4.2'
+    retrofitVersion = '2.3.0'
+    rxAndroidVersion = '2.0.1'
+    rxJavaVersion = '2.1.7'
     supportLibVersion = '27.0.1'
 }
 
@@ -49,6 +52,11 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
     implementation "com.google.guava:guava:$guavaVersion"
     implementation "com.google.maps.android:android-maps-utils:$androidMapsUtilsVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
     implementation "org.apache.commons:commons-lang3:$lang3Version"
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.json:json:$jsonVersion"
@@ -115,5 +123,10 @@ android {
         targetSdkVersion 22
 
         useLibrary 'org.apache.http.legacy'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }

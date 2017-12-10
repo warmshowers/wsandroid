@@ -12,17 +12,24 @@ import android.widget.TextView;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 
+import javax.inject.Inject;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.auth.AuthenticationHelper;
+import fi.bitrite.android.ws.api_new.AuthenticationController;
+import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.messaging.RestUnreadCount;
 import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.MemberInfo;
 import fi.bitrite.android.ws.util.Tools;
 
 
 
-public class MessagesTabActivity extends WSBaseActivity implements android.widget.AdapterView.OnItemClickListener, View.OnClickListener {
+public class MessagesTabActivity extends WSBaseActivity implements
+        android.widget.AdapterView.OnItemClickListener, View.OnClickListener, Injectable {
+
+    @Inject AuthenticationController mAuthenticationController;
 
     TextView mNoNetworkWarning;
     TextView mUnreadCount;
@@ -53,7 +60,7 @@ public class MessagesTabActivity extends WSBaseActivity implements android.widge
         mViewMessagesOnSite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = GlobalInfo.warmshowersBaseUrl + "/user/" + AuthenticationHelper.getAccountUid() + "/messages";
+                String url = GlobalInfo.warmshowersBaseUrl + "/user/" + MemberInfo.getMemberInfo().getId() + "/messages";
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 startActivity(i);
@@ -113,7 +120,7 @@ public class MessagesTabActivity extends WSBaseActivity implements android.widge
             Object retObj = null;
 
             try {
-                RestUnreadCount unreadCount = new RestUnreadCount();
+                RestUnreadCount unreadCount = new RestUnreadCount(mAuthenticationController);
                 numUnread = unreadCount.getUnreadCount();
             } catch (Exception e) {
                 if (DialogHandler.inProgress()) {

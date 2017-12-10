@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.auth.AuthenticationHelper;
-import fi.bitrite.android.ws.auth.NoAccountException;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.NavRow;
 import fi.bitrite.android.ws.util.MemberInfo;
@@ -102,10 +100,10 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        // Make sure we have an active account, or go to authentication screen
-        if (!setupCredentials()) {
-            return(false);
+        if (MemberInfo.getInstance() == null) {
+            MemberInfo.initInstance(null); // Try to get persisted information
         }
+
         initDrawer();
 
         return true;
@@ -183,9 +181,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
     @Override
     protected void onResume() {
         super.onResume();
-        if (!setupCredentials()) {
-            return;
-        }
 
         initDrawer();
     }
@@ -219,29 +214,6 @@ abstract class WSBaseActivity extends AppCompatActivity implements android.widge
         }
 
         mDrawerLayout.closeDrawers();
-    }
-
-
-    /**
-     * @return true if we already have an account set up in the AccountManager
-     * false if we have to wait for the auth screen to process
-     */
-    public boolean setupCredentials() {
-        try {
-            AuthenticationHelper.getWarmshowersAccount();
-            if (MemberInfo.getInstance() == null) {
-                MemberInfo.initInstance(null); // Try to get persisted information
-            }
-            return true;
-        } catch (NoAccountException e) {
-
-            if (this.getClass() != AuthenticatorActivity.class) {  // Would be circular, so don't do it.
-                Intent i = new Intent(this, AuthenticatorActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                startActivity(i);
-            }
-            return false;
-        }
     }
 
 }

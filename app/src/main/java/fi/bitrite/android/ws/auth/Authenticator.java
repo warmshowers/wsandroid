@@ -8,47 +8,73 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
+
+import javax.inject.Inject;
+
 import fi.bitrite.android.ws.activity.AuthenticatorActivity;
 
 public class Authenticator extends AbstractAccountAuthenticator {
 
+    private final AccountManager accountManager;
+
     private final Context context;
 
-    public Authenticator(Context context) {
+    @Inject
+    public Authenticator(Context context, @NonNull AccountManager accountManager) {
         super(context);
+
+        this.accountManager = accountManager;
         this.context = context;
     }
 
     @Override
-    public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType,
-                             String[] requiredFeatures, Bundle options) throws NetworkErrorException {
-        final Intent intent = new Intent(context, AuthenticatorActivity.class);
-        intent.putExtra(AuthenticatorActivity.PARAM_AUTHTOKEN_TYPE, authTokenType);
-        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+    public Bundle addAccount(AccountAuthenticatorResponse response, String accountType,
+                             String authTokenType, String[] requiredFeatures,
+                             Bundle options) throws NetworkErrorException{
+        final Intent intent = new Intent(context, AuthenticatorActivity.class)
+                // Used by {@link AuthenticatorActivity}.
+                .putExtra(AccountManager.KEY_ACCOUNT_TYPE, accountType)
+
+                // Used by {@link android.accounts.AccountAuthenticatorAcitvity}.
+                .putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+
         final Bundle bundle = new Bundle();
         bundle.putParcelable(AccountManager.KEY_INTENT, intent);
+
         return bundle;
     }
 
     @Override
-    public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType,
-                               Bundle options) throws NetworkErrorException {
-        if (!authTokenType.equals(AuthenticationService.ACCOUNT_TYPE)) {
-            final Bundle result = new Bundle();
-            result.putString(AccountManager.KEY_ERROR_MESSAGE, "invalid authentication token type");
-            return result;
-        }
-        final AccountManager am = AccountManager.get(context);
-        final String password = am.getPassword(account);
-        if (password != null) {
+    public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account,
+                               String authTokenType, Bundle options) throws NetworkErrorException {
+        // Checks if the auth token is already available.
+        String authToken = accountManager.peekAuthToken(account, authTokenType);
+        if (!TextUtils.isEmpty(authToken)) {
+            // We got the token.
+            // These values are required by the {@link android.accounts.AbstractAccountAuthenticator}.
             final Bundle result = new Bundle();
             result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
-            result.putString(AccountManager.KEY_ACCOUNT_TYPE, AuthenticationService.ACCOUNT_TYPE);
-            result.putString(AccountManager.KEY_AUTHTOKEN, password);
+            result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
+            result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
             return result;
         }
 
-        return null;
+        // We were not able to get the token. This means it was invalidated at some other
+        // point -> re-login.
+        final Intent intent = new Intent(context, AuthenticatorActivity.class)
+                // Used by {@link AuthenticatorActivity}.
+                .putExtra(AccountManager.KEY_ACCOUNT_NAME, account.name)
+                .putExtra(AccountManager.KEY_ACCOUNT_TYPE, account.type)
+
+                // Used by {@link android.accounts.AccountAuthenticatorActivity}.
+                .putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+
+        final Bundle bundle = new Bundle();
+        bundle.putParcelable(AccountManager.KEY_INTENT, intent);
+
+        return bundle;
     }
 
     @Override
@@ -57,13 +83,14 @@ public class Authenticator extends AbstractAccountAuthenticator {
     }
 
     @Override
-    public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options)
-            throws NetworkErrorException {
+    public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account,
+                                     Bundle options) throws NetworkErrorException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features)
+    public Bundle hasFeatures(
+            AccountAuthenticatorResponse response, Account account, String[] features)
             throws NetworkErrorException {
         Bundle result = new Bundle();
         result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false);
@@ -71,8 +98,9 @@ public class Authenticator extends AbstractAccountAuthenticator {
     }
 
     @Override
-    public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType,
-                                    Bundle options) throws NetworkErrorException {
+    public Bundle updateCredentials(
+            AccountAuthenticatorResponse response, Account account, String authTokenType,
+            Bundle options) throws NetworkErrorException {
         throw new UnsupportedOperationException();
     }
 

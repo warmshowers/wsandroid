@@ -17,9 +17,13 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.inject.Inject;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.api_new.AuthenticationController;
+import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.host.impl.RestHostContact;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.Tools;
@@ -30,7 +34,9 @@ import fi.bitrite.android.ws.util.http.HttpException;
  * over the WarmShowers web service.
  */
 public class HostContactActivity extends WSBaseActivity
-        implements android.widget.AdapterView.OnItemClickListener {
+        implements android.widget.AdapterView.OnItemClickListener, Injectable {
+
+    @Inject AuthenticationController mAuthenticationController;
 
     EditText editSubject;
     EditText editMessage;
@@ -115,7 +121,7 @@ public class HostContactActivity extends WSBaseActivity
             String message = params[1];
             Object retObj = null;
             try {
-                RestHostContact contact = new RestHostContact();
+                RestHostContact contact = new RestHostContact(mAuthenticationController);
                 JSONObject result = contact.send(host.getName(), subject, message);
 
                 JSONArray resultArray = result.getJSONArray("arrayresult");

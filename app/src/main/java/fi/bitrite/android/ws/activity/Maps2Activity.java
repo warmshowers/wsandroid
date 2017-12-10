@@ -20,7 +20,6 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -54,9 +53,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Inject;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.api_new.AuthenticationController;
+import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestMapSearch;
 import fi.bitrite.android.ws.model.Host;
@@ -76,7 +79,9 @@ public class Maps2Activity extends WSBaseActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks,
         SharedPreferences.OnSharedPreferenceChangeListener,
-        OnMapReadyCallback {
+        OnMapReadyCallback, Injectable {
+
+    @Inject AuthenticationController mAuthenticationController;
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapSearchTask searchTask;
@@ -509,7 +514,8 @@ public class Maps2Activity extends WSBaseActivity implements
 
         // And get standard host list for region from server
         LatLngBounds curScreen = mMap.getProjection().getVisibleRegion().latLngBounds;
-        Search search = new RestMapSearch(curScreen.northeast, curScreen.southwest);
+        Search search = new RestMapSearch(
+                mAuthenticationController, curScreen.northeast, curScreen.southwest);
 
         if (position.zoom < getResources().getInteger(R.integer.map_zoom_min_load)) {
             sendMessage(R.string.hosts_dont_load, false);

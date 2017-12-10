@@ -1,21 +1,14 @@
 package fi.bitrite.android.ws.host.impl;
 
-import android.util.Log;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fi.bitrite.android.ws.auth.http.HttpAuthenticationFailedException;
-import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.util.http.HttpException;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.util.http.HttpException;
 
 public class MapSearchJsonParser {
 
@@ -26,7 +19,7 @@ public class MapSearchJsonParser {
         mJSONObj = json;
     }
 
-    public List<HostBriefInfo> getHosts() throws HttpAuthenticationFailedException, HttpException, JSONException {
+    public List<HostBriefInfo> getHosts() throws HttpException, JSONException {
         if (!isComplete(mJSONObj)) {
             throw new IncompleteResultsException("Could not retrieve hosts. Try again.");
         }

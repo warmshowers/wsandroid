@@ -6,18 +6,38 @@ import android.os.Parcel;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.yelp.parcelgen.JsonParser.DualCreator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import fi.bitrite.android.ws.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import fi.bitrite.android.ws.R;
+
 public class Host extends _Host {
 
     private long mUpdated;
+
+    public Host() {
+        super();
+    }
+
+    public Host(int id, String name, String fullname, String street, String additional, String city,
+                String province, String postalCode, String country, String mobilePhone,
+                String homePhone, String workPhone, String comments, String preferredNotice,
+                String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop,
+                String campground, String food, String kitchenUse, String laundry, String lawnspace,
+                String motel, String sag, String shower, String storage, String latitude,
+                String longitude, String login, String created, String languagesSpoken,
+                String picture, String profilePictureSmall, String profilePictureLarge) {
+        super(id, name, fullname, street, additional, city, province, postalCode, country,
+                mobilePhone, homePhone, workPhone, comments, preferredNotice, maxCyclists,
+                notCurrentlyAvailable, bed, bikeshop, campground, food, kitchenUse, laundry,
+                lawnspace, motel, sag, shower, storage, latitude, longitude, login, created,
+                languagesSpoken, picture, profilePictureSmall, profilePictureLarge);
+    }
 
     public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
         Host host = new Host();
