@@ -20,6 +20,7 @@ repositories {
 
 ext {
     androidMapsUtilsVersion = '0.3.4'
+    butterknifeVersion = '8.8.1'
     daggerVersion = '2.13'
     gsonVersion = '2.8.1'
     guavaVersion = '20.0'
@@ -37,6 +38,7 @@ ext {
 dependencies {
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
     implementation files('libs/parcelgen.jar')  // Can't find for maven/gradle
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion" // https://github.com/afollestad/material-dialogs
     implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
@@ -52,6 +54,7 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
     implementation "com.google.guava:guava:$guavaVersion"
     implementation "com.google.maps.android:android-maps-utils:$androidMapsUtilsVersion"
+    implementation "com.jakewharton:butterknife:$butterknifeVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"

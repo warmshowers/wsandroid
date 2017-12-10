@@ -7,14 +7,15 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AuthenticationManager;
 import fi.bitrite.android.ws.di.Injectable;
@@ -29,23 +30,16 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
 
     @Inject AuthenticationManager mAuthenticationManager;
 
-    private TextView edtUsername;
-    private TextView edtPassword;
-    private Button btnLogin;
+    @BindView(R.id.editUsername) TextView edtUsername;
+    @BindView(R.id.editPassword) TextView edtPassword;
 
     private DialogHandler mDialogHandler;
-
-    private String mAccountType;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
         setContentView(R.layout.activity_authentication);
-
-        edtUsername = findViewById(R.id.editUsername);
-        edtPassword = findViewById(R.id.editPassword);
-        btnLogin = findViewById(R.id.btnLogin);
+        ButterKnife.bind(this);
 
         mDialogHandler = new DialogHandler(this);
 
@@ -59,13 +53,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
             edtPassword.requestFocus();
         }
 
-        btnLogin.setOnClickListener(this::login);
-
         // Shows the keyboard
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
-    public void login(View view) {
+    @OnClick(R.id.btnLogin)
+    public void login() {
         String username = edtUsername.getText().toString();
         String password = edtPassword.getText().toString();
 
@@ -76,7 +69,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity implemen
         mDialogHandler.showDialog(DialogHandler.AUTHENTICATE);
 
         mAuthenticationManager.login(username, password)
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
                     Bundle response = new Bundle();
                     response.putString(AccountManager.KEY_ACCOUNT_NAME, username);
