@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-
-
-    <com.afollestad.materialdialogs.prefs.MaterialListPreference
+    <ListPreference
         android:key="distance_unit"
         android:title="@string/prefs_distance_unit"
         android:defaultValue="km"
@@ -16,8 +14,5 @@
         android:key="ga_collect_stats"
         android:title="@string/prefs_ga_collect_stats_title"
         android:summary="@string/prefs_ga_collect_stats_summary"
-        android:defaultValue="true"
-        />
-            
-
+        android:defaultValue="true" />
 </PreferenceScreen>

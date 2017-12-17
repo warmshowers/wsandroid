@@ -28,7 +28,9 @@ ext {
     junitVersion = '4.12'
     lang3Version = '3.6'
     materialDialogsVersion = '0.9.6.0' // Depends on the android support lib. Their version must match ours.
-    playServicesVersion = '11.4.2'
+    multidexVersion = '1.0.1'
+    picassoVersion = '2.5.2'
+    playServicesVersion = '11.6.2'
     retrofitVersion = '2.3.0'
     rxAndroidVersion = '2.0.1'
     rxJavaVersion = '2.1.7'
@@ -44,6 +46,8 @@ dependencies {
     implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:cardview-v7:$supportLibVersion"
+    implementation "com.android.support:multidex:$multidexVersion"
+    implementation "com.android.support:preference-v7:$supportLibVersion"
     implementation "com.android.support:support-v4:$supportLibVersion"
     implementation "com.google.android.gms:play-services-analytics:$playServicesVersion"
     implementation "com.google.android.gms:play-services-location:$playServicesVersion"
@@ -55,6 +59,7 @@ dependencies {
     implementation "com.google.guava:guava:$guavaVersion"
     implementation "com.google.maps.android:android-maps-utils:$androidMapsUtilsVersion"
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
+    implementation "com.squareup.picasso:picasso:$picassoVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
@@ -124,6 +129,8 @@ android {
         minSdkVersion 14
         compileSdkVersion 26 // also update in .travis.yml
         targetSdkVersion 22
+
+        multiDexEnabled true
 
         useLibrary 'org.apache.http.legacy'
     }

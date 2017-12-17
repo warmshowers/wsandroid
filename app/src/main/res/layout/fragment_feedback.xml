@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:divider="@drawable/divider"
+        android:dividerPadding="-16dp"
+        android:showDividers="middle">
+
+        <TextView
+            android:id="@+id/all_lbl_no_network_warning"
+            style="@style/WsText.warning"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/not_connected_to_network"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_horizontal_margin">
+
+            <TextView
+                android:id="@+id/feedback_lbl_overall_experience"
+                style="@style/WsText.subHead"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lbl_feedback_overall_experience" />
+
+            <Spinner
+                android:id="@+id/feedback_sel_overall_experience"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:entries="@array/feedback_overall_experience_options"
+                android:spinnerMode="dropdown"
+                android:background="#00ffffff"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_horizontal_margin">
+
+            <TextView
+                style="@style/WsText.subHead"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_feedback_for_this_member"/>
+
+            <EditText
+                android:id="@+id/feedback_txt_feedback"
+                style="@style/WsInputText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:padding="0dp"
+                android:layout_marginTop="8dp"
+                android:enabled="true"
+                android:focusable="true"
+                android:gravity="top"
+                android:hint="@string/feedback_hint"
+                android:inputType="text|textMultiLine|textCapSentences|textAutoCorrect"
+                android:minLines="3" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_horizontal_margin">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/WsText.subHead"
+                android:text="@string/feedback_date_we_met"
+                android:focusable="false" />
+
+            <EditText
+                android:id="@+id/feedback_txt_date_we_met"
+                style="@style/WsText.light"
+                android:background="#00ffffff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:text="May 2010"
+                android:focusable="false"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_horizontal_margin">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/WsText.subHead"
+                android:text="@string/feedback_how_we_met_prompt" />
+
+            <Spinner
+                android:id="@+id/feedback_sel_how_we_met"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:entries="@array/feedback_how_we_met_options"
+                android:prompt="@string/feedback_how_we_met_prompt"
+                android:spinnerMode="dropdown"
+                android:background="#00ffffff"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+
+            android:gravity="right">
+
+            <Button
+                android:id="@+id/all_btn_submit"
+                style="@style/button_dark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/feedback_send" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
+

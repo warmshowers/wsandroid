@@ -7,6 +7,7 @@
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
     <!-- Below is required as of appcompat v22.1 to avoid a crash, see http://stackoverflow.com/questions/29790070/upgraded-to-appcompat-v22-1-0-and-now-getting-illegalargumentexception-appcompa -->

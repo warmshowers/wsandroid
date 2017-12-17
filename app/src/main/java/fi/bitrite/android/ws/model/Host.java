@@ -185,7 +185,7 @@ public class Host extends _Host {
         return dateFormat.format(date);
     }
 
-    public Object getLatLng() {
+    public LatLng getLatLng() {
         return new LatLng(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
     }
 }

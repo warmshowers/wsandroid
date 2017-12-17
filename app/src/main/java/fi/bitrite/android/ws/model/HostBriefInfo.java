@@ -201,7 +201,7 @@ public class HostBriefInfo implements Parcelable, ClusterItem {
         return new Date(mLogin * 1000L);
     }
 
-    public long getmUpdated() {
+    public long getUpdated() {
         return mUpdated;
     }
 }

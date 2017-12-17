@@ -1,11 +1,11 @@
 package fi.bitrite.android.ws.persistence;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.HostBriefInfo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public interface StarredHostDao {
 
@@ -24,6 +24,8 @@ public interface StarredHostDao {
     public boolean isHostStarred(int id);
 
     public void open();
+
+    public boolean isOpen();
 
     public void close();
 }

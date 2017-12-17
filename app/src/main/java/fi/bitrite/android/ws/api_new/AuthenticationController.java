@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.api_new;
 
 import android.accounts.Account;
+import android.app.Activity;
 import android.support.annotation.WorkerThread;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import fi.bitrite.android.ws.api_new.interceptors.ResponseInterceptor;
 import fi.bitrite.android.ws.auth.AuthData;
 import fi.bitrite.android.ws.auth.AuthToken;
 import fi.bitrite.android.ws.auth.AuthenticationManager;
+import fi.bitrite.android.ws.ui.MainActivity;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.reactivex.subjects.BehaviorSubject;
@@ -33,7 +35,7 @@ public class AuthenticationController {
 
     private final BehaviorSubject<AuthData> mAuthData = BehaviorSubject.create();
 
-    private boolean mInitialized = false;
+    private Activity mMainActivity = null;
 
     @Inject
     public AuthenticationController(
@@ -57,11 +59,11 @@ public class AuthenticationController {
      * Initializes this controller async. If no account is created yet, the login activity is shown.
      * This function must not be called before an activity is started.
      */
-    public void init() {
+    public void init(MainActivity mainActivity) {
         if (isInitialized()) {
             throw new RuntimeException("AuthenticationController::init must not be called twice.");
         }
-        mInitialized = true;
+        mMainActivity = mainActivity;
 
         // Gets the existing accounts.
         Account[] accounts = mAuthenticationManager.getExistingAccounts();
@@ -74,7 +76,7 @@ public class AuthenticationController {
             accountSingle = Single.just(accounts[0]);
         } else {
             // Creates a new account by showing the login activity.
-            accountSingle = mAuthenticationManager.createNewAccount();
+            accountSingle = mAuthenticationManager.createNewAccount(mMainActivity);
         }
 
         initAuthData(accountSingle)
@@ -85,7 +87,7 @@ public class AuthenticationController {
     }
 
     public boolean isInitialized() {
-        return mInitialized;
+        return mMainActivity != null;
     }
 
     private Completable initAuthData(Single<Account> accountSingle) {
@@ -97,7 +99,7 @@ public class AuthenticationController {
 
                         // We disallow the user to change their account (the username field is not
                         // editable).
-                        return mAuthenticationManager.getAuthToken(acc);
+                        return mAuthenticationManager.getAuthToken(acc, mMainActivity);
                     })
                     .subscribe(authToken -> {
                         String csrfToken = mAuthenticationManager.getCsrfToken(account.get());

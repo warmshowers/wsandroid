@@ -1,73 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
 
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#fff">
 
-    <FrameLayout
-        tools:ignore="MergeRootFrame"
+    <TextView
+        style="@style/WsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:textAppearance="@style/WsText.light"
+        android:text="@string/enter_credentials" />
+
+    <EditText
+        android:id="@+id/auth_txt_username"
+        style="@style/WsInputText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:hint="@string/username_hint"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:inputType="text">
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/auth_txt_password"
+        style="@style/WsInputText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password_hint"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/all_btn_submit"
+        style="@style/button_dark"
+        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:text="@string/ok" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:id="@+id/notLoggedInLayout"
-            android:background="#fff">
-
-            <TextView
-                android:id="@+id/lblCredentials"
-                style="@style/WsText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:textAppearance="@style/WsText.light"
-                android:text="@string/enter_credentials" />
-
-            <EditText
-                android:id="@+id/editUsername"
-                style="@style/WsInputText"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:hint="@string/username_hint"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:inputType="text">
-
-                <requestFocus />
-            </EditText>
-
-            <EditText
-                android:id="@+id/editPassword"
-                style="@style/WsInputText"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/password_hint"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                android:inputType="textPassword" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp"
-                android:paddingLeft="-4dp"
-                android:paddingRight="-4dp">
-
-                <Button
-                    android:id="@+id/btnLogin"
-                    style="@style/button_dark"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
-                    android:text="@string/ok" />
-
-            </LinearLayout>
-        </LinearLayout>
-    </FrameLayout>
-</android.support.v4.widget.DrawerLayout>
+</LinearLayout>

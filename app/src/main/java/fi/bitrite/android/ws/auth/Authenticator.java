@@ -13,7 +13,7 @@ import android.text.TextUtils;
 
 import javax.inject.Inject;
 
-import fi.bitrite.android.ws.activity.AuthenticatorActivity;
+import fi.bitrite.android.ws.ui.AuthenticatorActivity;
 
 public class Authenticator extends AbstractAccountAuthenticator {
 

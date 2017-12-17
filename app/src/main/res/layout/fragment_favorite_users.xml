@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff">
+
+    <TextView
+        android:id="@+id/favorites_lbl_no_users"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_starred_hosts"
+        android:visibility="gone"
+        android:layout_margin="16dp"/>
+
+    <ListView
+        android:id="@+id/favorites_lst_users"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:divider="#00000000" />
+</RelativeLayout>

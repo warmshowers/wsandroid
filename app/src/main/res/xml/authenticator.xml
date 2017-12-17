@@ -1,6 +1,8 @@
-<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<account-authenticator
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:accountType="org.warmshowers"
     android:icon="@drawable/ic_launcher"
     android:smallIcon="@drawable/ic_launcher"
-    android:label="@string/label"
-/>
+    android:label="@string/label" />

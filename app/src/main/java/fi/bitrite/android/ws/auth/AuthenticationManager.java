@@ -11,11 +11,11 @@ import android.support.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import fi.bitrite.android.ws.activity.ActivityHelper;
 import fi.bitrite.android.ws.api_new.WarmshowersService;
 import fi.bitrite.android.ws.api_new.response.LoginResponse;
 import fi.bitrite.android.ws.model.Host;
-import fi.bitrite.android.ws.util.MemberInfo;
+import fi.bitrite.android.ws.ui.AuthenticatorActivity;
+import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
@@ -30,7 +30,7 @@ public class AuthenticationManager {
 
     private final AccountManager mAccountManager;
     private final WarmshowersService mWarmshowersService;
-    private final ActivityHelper mActivityHelper;
+    private final LoggedInUserHelper mLoggedInUserHelper;
 //    private final Executor executor;
 
     public class LoginResult {
@@ -61,19 +61,20 @@ public class AuthenticationManager {
     @Inject
     public AuthenticationManager(
             AccountManager accountManager, WarmshowersService warmshowersService,
-            ActivityHelper activityHelper) {
+            LoggedInUserHelper loggedInUserHelper) {
         mAccountManager = accountManager;
         mWarmshowersService = warmshowersService;
-        mActivityHelper = activityHelper;
+        mLoggedInUserHelper = loggedInUserHelper;
     }
 
     /**
-     * Creates a new account, the {@link fi.bitrite.android.ws.activity.AuthenticatorActivity} is
+     * Creates a new account, the {@link AuthenticatorActivity} is
      * shown to the user.
      *
+     * @param activity The activity that is used to launch the {@link AuthenticatorActivity} if needed.
      * @return The new account as soon as it becomes available.
      */
-    public Single<Account> createNewAccount() {
+    public Single<Account> createNewAccount(Activity activity) {
         return Single.create(emitter -> {
             Bundle options = new Bundle();
 
@@ -93,7 +94,6 @@ public class AuthenticationManager {
             };
 
             // Asks the user to create the new account. This is done by showing the login page.
-            final Activity activity = mActivityHelper.waitForAvailableActivity();
             mAccountManager.addAccount(ACCOUNT_TYPE, AUTH_TOKEN_TYPE, null, options,
                     activity, accountManagerCallback, null);
         });
@@ -138,8 +138,8 @@ public class AuthenticationManager {
                         mAccountManager.setAuthToken(account, AUTH_TOKEN_TYPE, authToken.toString());
 
                         // Saves our account information.
-                        Host profileInfo = loginResponse.user.toHost(false);
-                        MemberInfo.initInstance(profileInfo);
+                        Host loggedInUser = loginResponse.user.toHost(false);
+                        mLoggedInUserHelper.set(loggedInUser);
 
                         // Fires the callback.
                         AuthData authData = new AuthData(account, authToken, csrfToken);
@@ -172,14 +172,30 @@ public class AuthenticationManager {
     }
 
     /**
+     * Peeks the authToken of the given account from the Android account service. Null is returned,
+     * if the token is not available and no further action is taken.
+     *
+     * @param account The account to get the authToken for.
+     * @return The authToken or null if not available
+     */
+    @Nullable
+    public AuthToken peekAuthToken(@NonNull Account account) {
+        String authTokenStr = mAccountManager.peekAuthToken(account, AUTH_TOKEN_TYPE);
+        return authTokenStr == null
+                ? null
+                : AuthToken.fromString(authTokenStr);
+    }
+
+    /**
      * Gets the authToken of the given account from the Android account service. If the token is not
-     * available, the {@link fi.bitrite.android.ws.activity.AuthenticatorActivity} is shown to the
+     * available, the {@link AuthenticatorActivity} is shown to the
      * user s.t. they can re-login.
      *
+     * @param activity The activity that is used to launch the {@link AuthenticatorActivity} if needed.
      * @param account The account to get the authToken for.
      * @return The authToken as soon as it becomes available.
      */
-    public Single<AuthToken> getAuthToken(@NonNull Account account) {
+    public Single<AuthToken> getAuthToken(@NonNull Account account, Activity activity) {
         return Single.create(emitter -> {
             AccountManagerCallback<Bundle> accountManagerCallback = tokenFuture -> {
                 try {
@@ -194,7 +210,6 @@ public class AuthenticationManager {
                 }
             };
 
-            final Activity activity = mActivityHelper.waitForAvailableActivity();
             mAccountManager.getAuthToken(
                     account, AUTH_TOKEN_TYPE, null, activity, accountManagerCallback, null);
         });

@@ -4,17 +4,19 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import fi.bitrite.android.ws.model.Feedback;
-import fi.bitrite.android.ws.model.Host;
-import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.persistence.StarredHostDao;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import fi.bitrite.android.ws.model.Feedback;
+import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.persistence.StarredHostDao;
 
 public class StarredHostDaoImpl implements StarredHostDao {
 
@@ -32,6 +34,11 @@ public class StarredHostDaoImpl implements StarredHostDao {
         if (database != null && database.isOpen()) {
             database.close();
         }
+    }
+
+    @Override
+    public boolean isOpen() {
+        return database != null && database.isOpen();
     }
 
     public void insert(int id, String name, Host host, List<Feedback> feedback) {

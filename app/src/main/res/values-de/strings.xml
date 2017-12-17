@@ -78,7 +78,7 @@
     <string name="map_default_latitude">46.8625</string>
     <string name="map_default_longitude">-114.011667</string>
     <string name="alert_neutral_button">OK</string>
-    <string name="contact_message_to">"Nachricht an %1$s"</string>
+    <string name="title_fragment_contact_user">"Nachricht an %1$s"</string>
     <string name="disconnected_location_services">Nich mehr verbunden mit den Google-Play-Diensten. Bitte verbinden Sie sich erneut.</string>
     <string name="hosts_dont_load">Gastgaber-Orte werden nicht geladen auf dieser Stufe\nZoomen Sie hinein...</string>
     <!-- Distance from current has 2 args, number and units -->
@@ -120,7 +120,7 @@
     <string name="feedback_overall_experience_error">Sie müssen einen Wert für die generelle Erfahrung mit diesem Mitglied auswählen</string>
     <string name="embedded_browser_warning">Sie haben die App verlassen und benutzen einen eingebetteten Browser, um Warmshowers.org anzusehen. Klicken Sie auf "zurück", wenn Sie zur App zurückkehren wollen.</string>
     <string name="not_connected_to_network">Sie sind zurzeit mit keinem Netzwerk verbunden.</string>
-    <string name="hostinfo_activity_title">Mitgliedsprofil</string>
+    <string name="title_fragment_user">Mitgliedsprofil</string>
     <string name="host_service_shower">Dusche</string>
     <string name="host_services_food">Essen</string>
     <string name="host_services_bed">Bett</string>
@@ -159,18 +159,29 @@
     <string name="not_currently_available">Zurzeit nicht verfügbar</string>
     <string name="currently_available">Zurzeit verfügbar</string>
     <string name="current_login_status">Sie sind zurzeit als %1$s eingeloggt</string>
-    <string name="title_activity_about">Über Warmshowers</string>
+    <string name="title_fragment_about">Über Warmshowers</string>
     <string name="open_source_licenses">Open-Source-Lizenzen</string>
 
     <!-- new strings from 1.5.0beta3+ -->
-    <string name="title_activity_feedback">Rückmeldung hinterlassen</string>
+    <string name="title_fragment_feedback">Rückmeldung hinterlassen</string>
 
     <!-- new strings from 1.5.0beta5+ -->
     <string name="login_logout">Auf diesem Gerät abmelden</string>
-    <string name="title_activity_search">Suchen</string>
+    <string name="title_fragment_search">Suchen</string>
     <string name="hostinfo_profile">Profil</string>
     <string name="hostinfo_details">Details</string>
     <string name="view_licenses">Open-Source-Lizenzen sehen</string>
 
+    <!-- new strings from 2.0 -->
+    <string name="navigation_item_map">Karte</string>
+    <string name="navigation_item_favorites">Favoriten</string>
+    <string name="navigation_item_messages">Mitteilungen</string>
+    <string name="navigation_item_account">Konto</string>
+    <string name="navigation_item_settings">Einstellungen</string>
+    <string name="navigation_item_about">Über</string>
+
+    <string name="title_fragment_favorites">Favoriten</string>
+    <string name="title_fragment_messages">Mitteilungen</string>
+    <string name="title_fragment_settings">Einstellungen</string>
 
 </resources>

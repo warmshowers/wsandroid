@@ -12,21 +12,15 @@ import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.Calendar;
-
 import fi.bitrite.android.ws.BuildConfig;
-import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.activity.FeedbackActivity;
 
 /**
  * General simple tools, mostly public methods.
@@ -59,6 +53,7 @@ public class Tools {
         return calculateDistanceBetween(location, l2, units);
     }
 
+    // TODO(saemy): Make reactive.
     static public boolean isNetworkConnected(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

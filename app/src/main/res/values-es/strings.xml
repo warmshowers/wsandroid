@@ -78,7 +78,7 @@
     <string name="map_default_latitude">46.8625</string>
     <string name="map_default_longitude">-114.011667</string>
     <string name="alert_neutral_button">OK</string>
-    <string name="contact_message_to">"Mensaje para %1$s"</string>
+    <string name="title_fragment_contact_user">"Mensaje para %1$s"</string>
     <string name="disconnected_location_services">Desconectado de Google Play services. Conéctate nuevamente por favor.</string>
     <string name="hosts_dont_load">Las ubicaciones de los anfitriones no cargan en este nivel de zoom\nZoom in…</string>
     <!-- Distance from current has 2 args, number and units -->
@@ -121,7 +121,7 @@
     <string name="feedback_overall_experience_error">Debes escoger un valor para la experiencia general con este usuario</string>
     <string name="embedded_browser_warning">Has salido de la aplicación usando un navegador para ver Warmshowers.org. Usa el botón “Regresar” para volver a la aplicación.</string>
     <string name="not_connected_to_network">No estás conectado a la red actualmente.</string>
-    <string name="hostinfo_activity_title">Perfil de usuario </string>
+    <string name="title_fragment_user">Perfil de usuario </string>
     <string name="host_service_shower">Ducha</string>
     <string name="host_services_food">Comida</string>
     <string name="host_services_bed">Sitio para dormir</string>
@@ -152,15 +152,27 @@
     <string name="not_currently_available">No Disponible Actualmente</string>
     <string name="currently_available">Disponible Actualmente</string>
     <string name="current_login_status">Has iniciado sesión como %1$s</string>
-    <string name="title_activity_about">Sobre Warm Showers</string>
+    <string name="title_fragment_about">Sobre Warmshowers</string>
     <string name="open_source_licenses">Licencias de Código Abierto</string>
-    <string name="title_activity_feedback">Dejando Comentario </string>
+    <string name="title_fragment_feedback">Dejando Comentario </string>
 
     <!-- new strings from 1.5.0beta5+ -->
     <string name="login_logout">Cerrar sesión en este dispositivo</string>
-    <string name="title_activity_search">Buscar</string>
+    <string name="title_fragment_search">Buscar</string>
     <string name="hostinfo_profile">Perfil</string>
     <string name="hostinfo_details">Detalles</string>
     <string name="view_licenses">View Open Source Licenses</string>
+
+    <!-- new strings from 2.0 -->
+    <string name="navigation_item_map">Mapa</string>
+    <string name="navigation_item_favorites">Favoritos</string>
+    <string name="navigation_item_messages">Mensajes</string>
+    <string name="navigation_item_account">Cuenta</string>
+    <string name="navigation_item_settings">Configuraciones</string>
+    <string name="navigation_item_about">Acerca de</string>
+
+    <string name="title_fragment_favorites">Favoritos</string>
+    <string name="title_fragment_messages">Mensajes</string>
+    <string name="title_fragment_settings">Configuraciones</string>
 
 </resources>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primaryWhite"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:divider="@drawable/divider"
+    android:dividerPadding="-16dp"
+    android:showDividers="middle">
+
+    <TextView
+        android:id="@+id/all_lbl_no_network_warning"
+        style="@style/WsText.warning"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:text="@string/not_connected_to_network"/>
+
+    <EditText
+        android:id="@+id/contact_user_txt_subject"
+        style="@style/WsInputText.Headline"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:hint="@string/subject_hint"
+        android:inputType="text|textCapSentences"
+        android:background="#00ffffff">
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/contact_user_txt_message"
+        style="@style/WsInputText"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:minHeight="200dp"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:gravity="top"
+        android:layout_weight="1"
+        android:hint="@string/message_hint"
+        android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
+        android:background="#00ffffff"/>
+
+    <Button
+        android:id="@+id/all_btn_submit"
+        style="@style/button_dark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="right"
+        android:text="@string/send_message" />
+
+</LinearLayout>
