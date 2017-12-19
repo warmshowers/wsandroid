@@ -18,43 +18,35 @@ import io.reactivex.subjects.BehaviorSubject;
 
 @Singleton
 public class LoggedInUserHelper {
-    public class Helper {
-        @Nullable public final Host user;
-
-        Helper(@Nullable Host user) {
-            this.user = user;
-        }
-
-        public boolean hasUser() {
-            return user != null;
-        }
-    }
-
     private final SharedPreferencesStore mStore;
-    private final BehaviorSubject<Helper> mLoggedInUser;
+    private final BehaviorSubject<MaybeNull<Host>> mLoggedInUser;
 
     @Inject
     public LoggedInUserHelper() {
          mStore = new SharedPreferencesStore(WSAndroidApplication.getAppContext());
 
          Host loggedInUser = mStore.load();
-         mLoggedInUser = BehaviorSubject.createDefault(new Helper(loggedInUser));
+         mLoggedInUser = BehaviorSubject.createDefault(new MaybeNull<>(loggedInUser));
     }
 
     @Nullable
     public Host get() {
-        return mLoggedInUser.getValue().user;
+        return mLoggedInUser.getValue().data;
     }
 
     @NonNull
-    public BehaviorSubject<Helper> getSubject() {
+    public BehaviorSubject<MaybeNull<Host>> getRx() {
         return mLoggedInUser;
     }
 
     public void set(@Nullable Host loggedInUser) {
-        mStore.save(loggedInUser);
+        if (loggedInUser != null) {
+            mStore.save(loggedInUser);
+        } else {
+            mStore.remove();
+        }
 
-        mLoggedInUser.onNext(new Helper(loggedInUser));
+        mLoggedInUser.onNext(new MaybeNull<>(loggedInUser));
     }
 
 

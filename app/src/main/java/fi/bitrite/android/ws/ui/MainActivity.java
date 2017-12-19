@@ -146,11 +146,11 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mDisposables = new CompositeDisposable();
 
         // Listens for logged-in user changes.
-        mDisposables.add(mLoggedInUserHelper.getSubject()
+        mDisposables.add(mLoggedInUserHelper.getRx()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(helper -> {
-                    if (helper.hasUser()) {
-                        Host loggedInUser = helper.user;
+                .subscribe(nullableUser -> {
+                    if (nullableUser.isNonNull()) {
+                        Host loggedInUser = nullableUser.data;
 
                         mLblFullname.setText(loggedInUser.getFullname());
                         mLblUsername.setText(loggedInUser.getName());

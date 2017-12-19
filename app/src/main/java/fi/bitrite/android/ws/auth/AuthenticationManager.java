@@ -16,8 +16,10 @@ import fi.bitrite.android.ws.api_new.response.LoginResponse;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.ui.AuthenticatorActivity;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 import retrofit2.Response;
 
 @Singleton
@@ -31,7 +33,8 @@ public class AuthenticationManager {
     private final AccountManager mAccountManager;
     private final WarmshowersService mWarmshowersService;
     private final LoggedInUserHelper mLoggedInUserHelper;
-//    private final Executor executor;
+
+    private final BehaviorSubject<Account[]> mAccounts;
 
     public class LoginResult {
         private final Response<LoginResponse> mResponse;
@@ -65,6 +68,14 @@ public class AuthenticationManager {
         mAccountManager = accountManager;
         mWarmshowersService = warmshowersService;
         mLoggedInUserHelper = loggedInUserHelper;
+
+        mAccounts = BehaviorSubject.createDefault(mAccountManager.getAccountsByType(ACCOUNT_TYPE));
+        mAccountManager.addOnAccountsUpdatedListener(accounts -> {
+            Account[] newAccounts = mAccountManager.getAccountsByType(ACCOUNT_TYPE);
+            if (!mAccounts.getValue().equals(newAccounts)) {
+                mAccounts.onNext(newAccounts);
+            }
+        }, null, false);
     }
 
     /**
@@ -74,8 +85,8 @@ public class AuthenticationManager {
      * @param activity The activity that is used to launch the {@link AuthenticatorActivity} if needed.
      * @return The new account as soon as it becomes available.
      */
-    public Single<Account> createNewAccount(Activity activity) {
-        return Single.create(emitter -> {
+    public Observable<Account> createNewAccount(Activity activity) {
+        return Single.<Account>create(emitter -> {
             Bundle options = new Bundle();
 
             AccountManagerCallback<Bundle> accountManagerCallback = accountManagerFuture -> {
@@ -96,7 +107,7 @@ public class AuthenticationManager {
             // Asks the user to create the new account. This is done by showing the login page.
             mAccountManager.addAccount(ACCOUNT_TYPE, AUTH_TOKEN_TYPE, null, options,
                     activity, accountManagerCallback, null);
-        });
+        }).toObservable();
     }
 
     /**
@@ -108,9 +119,9 @@ public class AuthenticationManager {
      * @param password
      * @return The login result
      */
-    public Single<LoginResult> login(String username, String password) {
+    public Observable<LoginResult> login(String username, String password) {
         return mWarmshowersService.login(username, password)
-                .subscribeOn(Schedulers.newThread()) // FIXME(saemy): Use fixed background thread/looper.
+                .subscribeOn(Schedulers.io())
                 .map(response -> {
                     if (response.isSuccessful()) {
                         LoginResponse loginResponse = response.body();
@@ -138,7 +149,7 @@ public class AuthenticationManager {
                         mAccountManager.setAuthToken(account, AUTH_TOKEN_TYPE, authToken.toString());
 
                         // Saves our account information.
-                        Host loggedInUser = loginResponse.user.toHost(false);
+                        Host loggedInUser = loginResponse.user.toHost();
                         mLoggedInUserHelper.set(loggedInUser);
 
                         // Fires the callback.
@@ -147,7 +158,7 @@ public class AuthenticationManager {
                     } else {
                         return new LoginResult(response);
                     }
-                });
+                }).toObservable();
     }
 
     private boolean isExistingAccount(@NonNull Account account) {
@@ -167,8 +178,8 @@ public class AuthenticationManager {
      *
      * @return The accounts
      */
-    public Account[] getExistingAccounts() {
-        return mAccountManager.getAccountsByType(ACCOUNT_TYPE);
+    public BehaviorSubject<Account[]> getExistingAccounts() {
+        return mAccounts;
     }
 
     /**

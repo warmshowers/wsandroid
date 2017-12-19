@@ -12,12 +12,13 @@ import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.api_new.interceptors.HeaderInterceptor;
 import fi.bitrite.android.ws.api_new.interceptors.ResponseInterceptor;
+import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.auth.AuthData;
 import fi.bitrite.android.ws.auth.AuthToken;
 import fi.bitrite.android.ws.auth.AuthenticationManager;
 import fi.bitrite.android.ws.ui.MainActivity;
 import io.reactivex.Completable;
-import io.reactivex.Single;
+import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import retrofit2.Response;
 
@@ -30,6 +31,7 @@ import retrofit2.Response;
 @Singleton
 public class AuthenticationController {
 
+    private final AccountManager mAccountManager;
     private final AuthenticationManager mAuthenticationManager;
     private final WarmshowersService mWarmshowersService;
 
@@ -39,8 +41,10 @@ public class AuthenticationController {
 
     @Inject
     public AuthenticationController(
-            AuthenticationManager authenticationManager, HeaderInterceptor headerInterceptor,
-            ResponseInterceptor responseInterceptor, WarmshowersService warmshowersService) {
+            AccountManager accountManager, AuthenticationManager authenticationManager,
+            HeaderInterceptor headerInterceptor, ResponseInterceptor responseInterceptor,
+            WarmshowersService warmshowersService) {
+        mAccountManager = accountManager;
         mAuthenticationManager = authenticationManager;
         mWarmshowersService = warmshowersService;
 
@@ -66,21 +70,18 @@ public class AuthenticationController {
         mMainActivity = mainActivity;
 
         // Gets the existing accounts.
-        Account[] accounts = mAuthenticationManager.getExistingAccounts();
-
-        Single<Account> accountSingle;
-        if (accounts.length > 0) {
-            // There already is an account.
-
-            // TODO(saemy): Remember the one used last time.
-            accountSingle = Single.just(accounts[0]);
-        } else {
-            // Creates a new account by showing the login activity.
-            accountSingle = mAuthenticationManager.createNewAccount(mMainActivity);
-        }
-
-        initAuthData(accountSingle)
-                .subscribe(() -> {}, e -> {
+        mAccountManager.getCurrentAccount()
+                .map(account -> {
+                    if (account.isNonNull()) {
+                        // There already is an account.
+                        return Observable.just(account.data);
+                    } else {
+                        // Creates a new account by showing the login activity.
+                        return mAuthenticationManager.createNewAccount(mMainActivity);
+                    }
+                })
+                .flatMap(account -> initAuthData(account).toObservable())
+                .subscribe(o -> {}, e -> {
                     // TODO(saemy): Exception handling...
                     mAuthData.onNext(new AuthData());
                 });
@@ -90,7 +91,7 @@ public class AuthenticationController {
         return mMainActivity != null;
     }
 
-    private Completable initAuthData(Single<Account> accountSingle) {
+    private Completable initAuthData(Observable<Account> accountSingle) {
         final AtomicReference<Account> account = new AtomicReference<>(); // To have a final variable...
         return Completable.create(emitter -> {
             accountSingle
@@ -99,7 +100,7 @@ public class AuthenticationController {
 
                         // We disallow the user to change their account (the username field is not
                         // editable).
-                        return mAuthenticationManager.getAuthToken(acc, mMainActivity);
+                        return mAuthenticationManager.getAuthToken(acc, mMainActivity).toObservable();
                     })
                     .subscribe(authToken -> {
                         String csrfToken = mAuthenticationManager.getCsrfToken(account.get());
@@ -178,7 +179,7 @@ public class AuthenticationController {
             // auth token to be updated.
             // Waits for the auth token to show up.
             try {
-                initAuthData(Single.just(mAuthData.getValue().account))
+                initAuthData(Observable.just(mAuthData.getValue().account))
                         .blockingAwait();
 
                 return true;

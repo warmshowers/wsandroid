@@ -83,15 +83,15 @@ public class ApiUser {
     @SerializedName("profile_image_map_infoWindow") public String profilePictureUrl_50x50;
 
 
-    public Host toHost(boolean isStarred) {
+    public Host toHost() {
         return new Host(id, name, fullname, street, additionalAddress, city, province, postalCode,
                 countryCode, mobilePhone, homePhone, workPhone, comments, preferredNotice,
                 iTs(maximalCyclistCount), bTs(notCurrentlyAvailable), bTs(hasBed),
                 distanceToBikeshop, distanceToCampground, bTs(hasFood), bTs(hasKitchen),
                 bTs(hasLaundry), bTs(hasLawnspace), distanceToMotel, bTs(hasSag), bTs(hasShower),
                 bTs(hasStorage), dTs(latitude), dTs(longitude), dteTs(lastLogin),
-                dteTs(created), spokenLanguages, picture.url, profilePictureUrl_179x200,
-                profilePictureUrl_400x400);
+                dteTs(created), spokenLanguages, picture != null ? picture.url : null,
+                profilePictureUrl_179x200, profilePictureUrl_400x400);
     }
 
     private static String bTs(boolean value) {
