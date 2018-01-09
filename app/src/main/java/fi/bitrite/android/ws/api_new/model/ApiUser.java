@@ -1,10 +1,7 @@
 package fi.bitrite.android.ws.api_new.model;
 
-import android.annotation.SuppressLint;
-
 import com.google.gson.annotations.SerializedName;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import fi.bitrite.android.ws.model.Host;
@@ -86,28 +83,25 @@ public class ApiUser {
     public Host toHost() {
         return new Host(id, name, fullname, street, additionalAddress, city, province, postalCode,
                 countryCode, mobilePhone, homePhone, workPhone, comments, preferredNotice,
-                iTs(maximalCyclistCount), bTs(notCurrentlyAvailable), bTs(hasBed),
-                distanceToBikeshop, distanceToCampground, bTs(hasFood), bTs(hasKitchen),
-                bTs(hasLaundry), bTs(hasLawnspace), distanceToMotel, bTs(hasSag), bTs(hasShower),
-                bTs(hasStorage), dTs(latitude), dTs(longitude), dteTs(lastLogin),
-                dteTs(created), spokenLanguages, picture != null ? picture.url : null,
+                i2s(maximalCyclistCount), b2s(notCurrentlyAvailable), b2s(hasBed),
+                distanceToBikeshop, distanceToCampground, b2s(hasFood), b2s(hasKitchen),
+                b2s(hasLaundry), b2s(hasLawnspace), distanceToMotel, b2s(hasSag), b2s(hasShower),
+                b2s(hasStorage), d2s(latitude), d2s(longitude), dte2s(lastLogin),
+                dte2s(created), spokenLanguages, picture != null ? picture.url : null,
                 profilePictureUrl_179x200, profilePictureUrl_400x400);
     }
 
-    private static String bTs(boolean value) {
+    private static String b2s(boolean value) {
         return value ? "1" : "0";
     }
-    private static String dTs(double value) {
+    private static String d2s(double value) {
         return Double.toString(value);
     }
-    private static String iTs(int value) {
+    private static String i2s(int value) {
         return Integer.toString(value);
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private final static SimpleDateFormat stringDateFormat =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    private static String dteTs(Date value) {
-        return stringDateFormat.format(value);
+    private static String dte2s(Date value) {
+        return Long.toString(value.getTime()/1000); // In seconds
     }
 }

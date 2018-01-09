@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.http.HttpException;
 
 public class MapSearchJsonParser {
@@ -19,7 +19,7 @@ public class MapSearchJsonParser {
         mJSONObj = json;
     }
 
-    public List<HostBriefInfo> getHosts() throws HttpException, JSONException {
+    public List<Host> getHosts() throws HttpException, JSONException {
         if (!isComplete(mJSONObj)) {
             throw new IncompleteResultsException("Could not retrieve hosts. Try again.");
         }
@@ -38,49 +38,15 @@ public class MapSearchJsonParser {
         return status.getInt("totalresults");
     }
 
-    private List<HostBriefInfo> parseHosts(JSONObject jsonObj) throws JSONException{
-        List<HostBriefInfo> hostList = new ArrayList<HostBriefInfo>();
+    private List<Host> parseHosts(JSONObject jsonObj) throws JSONException{
+        List<Host> hostList = new ArrayList<Host>();
 
         JSONArray hosts = jsonObj.getJSONArray("accounts");
         for (int i=0; i < hosts.length(); i++) {
             JSONObject hostObj = hosts.getJSONObject(i);
 
-            int id = hostObj.getInt("uid");
-
-            String fullName = hostObj.getString("fullname");
-            if (fullName.isEmpty()) {
-                fullName = "(Unknown host)";
-            }
-
-            StringBuilder location = new StringBuilder();
-            location.append(hostObj.getString("street"));
-            if (location.length() > 0) {
-                location.append(", ");
-            }
-
-            if (hostObj.getString("postal_code").length() > 0 && 0 != hostObj.getString("postal_code").compareToIgnoreCase("none")) {
-                location.append(" " + hostObj.getString("postal_code"));
-            }
-
-            String lat = hostObj.getString("latitude");
-            String lon = hostObj.getString("longitude");
-
-            HostBriefInfo h = new HostBriefInfo(
-                    id,
-                    hostObj.getString("name"),  
-                    fullName,
-                    hostObj.getString("street"),
-                    hostObj.getString("city"),
-                    hostObj.getString("province"),
-                    hostObj.getString("country"),
-                    "",   // No about_me provided here
-                    (hostObj.getString("notcurrentlyavailable").equals("1")),
-                    hostObj.getString("access"),
-                    hostObj.getString("created")
-            );
-            h.setLatitude(lat);
-            h.setLongitude(lon);
-            hostList.add(h);
+            Host host = Host.CREATOR.parse(hostObj);
+            hostList.add(host);
         }
 
         return hostList;

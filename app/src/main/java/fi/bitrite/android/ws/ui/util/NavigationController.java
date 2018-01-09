@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
-import fi.bitrite.android.ws.model.HostBriefInfo;
 import fi.bitrite.android.ws.ui.AboutFragment;
 import fi.bitrite.android.ws.ui.ContactUserFragment;
 import fi.bitrite.android.ws.ui.FavoriteUsersFragment;
@@ -151,7 +150,7 @@ public class NavigationController {
                 ContactUserFragment.create(recipient), false);
     }
 
-    public void navigateToUserList(ArrayList<HostBriefInfo> users) {
+    public void navigateToUserList(ArrayList<Host> users) {
         navigateTo(NAVIGATION_TAG_MAIN + "/user_list-" + users.hashCode(),
                 SearchFragment.create(users), false);
     }

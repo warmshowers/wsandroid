@@ -27,7 +27,7 @@ import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.api_new.AuthenticationController;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestTextSearch;
-import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
 import fi.bitrite.android.ws.ui.util.DialogHelper;
 import fi.bitrite.android.ws.ui.util.NavigationController;
@@ -51,13 +51,13 @@ public class SearchFragment extends BaseFragment {
     private UserListAdapter mSearchResultListAdapter;
     private TextSearchTask mTextSearchTask;
 
-    private ArrayList<HostBriefInfo> mSearchResult;
+    private ArrayList<Host> mSearchResult;
     private String mQuery;
 
     private ProgressDialog.Disposable mProgressDisposable;
     private boolean mSearchSuccessful;
 
-    public static Fragment create(ArrayList<HostBriefInfo> users) {
+    public static Fragment create(ArrayList<Host> users) {
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(KEY_SEARCH_RESULT, users);
 
@@ -83,9 +83,9 @@ public class SearchFragment extends BaseFragment {
 
         // Checks if we already have the search result.
         final Bundle args = getArguments();
-        ArrayList<HostBriefInfo> argsProvidedSearchResult =
+        ArrayList<Host> argsProvidedSearchResult =
                 args.getParcelableArrayList(KEY_SEARCH_RESULT);
-        ArrayList<HostBriefInfo> icicleProvidedSearchResult = savedInstanceState == null
+        ArrayList<Host> icicleProvidedSearchResult = savedInstanceState == null
                 ? null
                 : savedInstanceState.getParcelableArrayList(KEY_SEARCH_RESULT);
         mSearchResult = argsProvidedSearchResult == null
@@ -94,7 +94,7 @@ public class SearchFragment extends BaseFragment {
         mSearchSuccessful = mSearchResult != null;
         mSearchResult = mSearchResult != null ? mSearchResult : new ArrayList<>();
 
-        // FIXME(saemy): Move to own fragment (which has a common base to this one).
+        // TODO(saemy): Move to own fragment (which has a common base to this one).
         boolean hasArgsProvidedSearchResult = argsProvidedSearchResult != null;
         mLayoutSummary.setVisibility(hasArgsProvidedSearchResult ? View.VISIBLE : View.GONE);
         mLblUsersAtAddress.setText(hasArgsProvidedSearchResult
@@ -151,7 +151,7 @@ public class SearchFragment extends BaseFragment {
 
     @OnItemClick(R.id.search_lst_result)
     public void onUserClicked(int position) {
-        HostBriefInfo user = (HostBriefInfo) mLstSearchResult.getItemAtPosition(position);
+        Host user = (Host) mLstSearchResult.getItemAtPosition(position);
         mNavigationController.navigateToUser(user.getId());
     }
 
@@ -178,12 +178,12 @@ public class SearchFragment extends BaseFragment {
                 return;
             }
 
-            mSearchResult = (ArrayList<HostBriefInfo>) result;
+            mSearchResult = (ArrayList<Host>) result;
 
             // Sort so that available hosts come up first
             Collections.sort(mSearchResult, (left, right) -> {
-                int ncaLeft = left.getNotCurrentlyAvailableAsInt();
-                int ncaRight = right.getNotCurrentlyAvailableAsInt();
+                int ncaLeft = left.isNotCurrentlyAvailable() ? 1  : 0;
+                int ncaRight = right.isNotCurrentlyAvailable() ? 1 : 0;
 
                 return ncaLeft != ncaRight
                         ? ncaLeft - ncaRight

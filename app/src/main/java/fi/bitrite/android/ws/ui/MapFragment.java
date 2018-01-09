@@ -69,35 +69,38 @@ import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.api_new.AuthenticationController;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestMapSearch;
-import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.persistence.StarredHostDao;
-import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
+import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.WSNonHierarchicalDistanceBasedAlgorithm;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.CompletableSubject;
 
 public class MapFragment extends BaseFragment implements
-        ClusterManager.OnClusterClickListener<HostBriefInfo>,
-        ClusterManager.OnClusterInfoWindowClickListener<HostBriefInfo>,
-        ClusterManager.OnClusterItemClickListener<HostBriefInfo>,
-        ClusterManager.OnClusterItemInfoWindowClickListener<HostBriefInfo>,
+        ClusterManager.OnClusterClickListener<Host>,
+        ClusterManager.OnClusterInfoWindowClickListener<Host>,
+        ClusterManager.OnClusterItemClickListener<Host>,
+        ClusterManager.OnClusterItemInfoWindowClickListener<Host>,
         GoogleMap.OnCameraChangeListener,
         GoogleApiClient.OnConnectionFailedListener,
         GoogleApiClient.ConnectionCallbacks {
 
     private static final String KEY_MAP_TARGET_LAT_LNG = "map_target_lat_lng";
 
-    @Inject NavigationController mNavigationController;
     @Inject AuthenticationController mAuthenticationController;
+    @Inject NavigationController mNavigationController;
+    @Inject FavoriteRepository mFavoriteRepository;
 
     private Unbinder mUnbinder;
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private MapSearchTask searchTask;
-    private ConcurrentHashMap<Integer, HostBriefInfo> mHosts = new ConcurrentHashMap<Integer, HostBriefInfo>();
-    private ClusterManager<HostBriefInfo> mClusterManager;
-    private Cluster<HostBriefInfo> mLastClickedCluster;
+    private ConcurrentHashMap<Integer, Host> mHosts = new ConcurrentHashMap<>();
+    private ClusterManager<Host> mClusterManager;
+    private Cluster<Host> mLastClickedCluster;
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     private static final String DIALOG_ERROR = "dialog_error";
@@ -108,8 +111,6 @@ public class MapFragment extends BaseFragment implements
     Location mLastDeviceLocation;
     String mDistanceUnit;
     private boolean mIsOffline = false;
-    StarredHostDao starredHostDao = new StarredHostDaoImpl();
-    private List<HostBriefInfo> starredHosts;
     private GoogleApiClient mGoogleApiClient;
     enum ClusterStatus {none, some, all}
 
@@ -163,17 +164,7 @@ public class MapFragment extends BaseFragment implements
     public void onResume() {
         super.onResume();
 
-        // We'll use the starred hosts when network is offline.
-        starredHostDao.open();
-        starredHosts = starredHostDao.getAllBrief();
-
         setUpMapIfNeeded();
-    }
-
-    @Override
-    public void onPause() {
-        starredHostDao.close();
-        super.onPause();
     }
 
     @Override
@@ -347,7 +338,7 @@ public class MapFragment extends BaseFragment implements
     /**
      * Add the title and snippet to the marker so that infoWindow can be rendered.
      */
-    private class HostRenderer extends DefaultClusterRenderer<HostBriefInfo> {
+    private class HostRenderer extends DefaultClusterRenderer<Host> {
         private final IconGenerator mSingleLocationClusterIconGenerator = new IconGenerator(getActivity().getApplicationContext());
         private final IconGenerator mSingleHostIconGenerator = new IconGenerator(getActivity().getApplicationContext());
         private SparseArray<BitmapDescriptor> mIcons = new SparseArray<BitmapDescriptor>();
@@ -367,7 +358,7 @@ public class MapFragment extends BaseFragment implements
         }
 
         @Override
-        protected void onBeforeClusterRendered(Cluster<HostBriefInfo> cluster, MarkerOptions markerOptions) {
+        protected void onBeforeClusterRendered(Cluster<Host> cluster, MarkerOptions markerOptions) {
 
             if (clusterLocationStatus(cluster) == ClusterStatus.all) {
                 int size = cluster.getSize();
@@ -384,7 +375,7 @@ public class MapFragment extends BaseFragment implements
         }
 
         @Override
-        protected void onBeforeClusterItemRendered(HostBriefInfo host, MarkerOptions markerOptions) {
+        protected void onBeforeClusterItemRendered(Host host, MarkerOptions markerOptions) {
             String street = host.getStreet();
             String snippet = host.getCity() + ", " + host.getProvince().toUpperCase();
             if (street != null && street.length() > 0) {
@@ -399,7 +390,7 @@ public class MapFragment extends BaseFragment implements
         }
 
         @Override
-        protected boolean shouldRenderAsCluster(Cluster<HostBriefInfo> cluster) {
+        protected boolean shouldRenderAsCluster(Cluster<Host> cluster) {
             // Render as a cluster if all the items are at the exact same location, or if there are more than
             // min_cluster_size in the cluster.
             ClusterStatus status = clusterLocationStatus(cluster);
@@ -414,10 +405,10 @@ public class MapFragment extends BaseFragment implements
          * @param cluster
          * @return
          */
-        protected ClusterStatus clusterLocationStatus(Cluster<HostBriefInfo> cluster) {
+        protected ClusterStatus clusterLocationStatus(Cluster<Host> cluster) {
 
             HashSet<String> latLngs = new HashSet<String>();
-            for (HostBriefInfo item : cluster.getItems()) {
+            for (Host item : cluster.getItems()) {
                 latLngs.add(item.getLatLng().toString());
             }
 
@@ -452,7 +443,6 @@ public class MapFragment extends BaseFragment implements
         public View getInfoContents(Marker marker) {
 
             StringBuilder hostList = new StringBuilder();
-            ArrayList<HostBriefInfo> hosts = new ArrayList<HostBriefInfo>();
             if (mPopup == null) {
                 mPopup = mInflater.inflate(R.layout.view_user_info_multiple, null);
             }
@@ -466,11 +456,11 @@ public class MapFragment extends BaseFragment implements
                     distance_tv.setText(Html.fromHtml(getString(R.string.distance_from_current, (int) distance, mDistanceUnit)));
                 }
 
-                hosts = (ArrayList<HostBriefInfo>) mLastClickedCluster.getItems();
+                ArrayList<Host> hosts = (ArrayList<Host>) mLastClickedCluster.getItems();
                 Collections.sort(hosts, (left, right) -> {
                     // TODO(saemy): Unify with the algorithm used in {@link SearchFragment}
-                    int ncaLeft = left.getNotCurrentlyAvailableAsInt();
-                    int ncaRight = right.getNotCurrentlyAvailableAsInt();
+                    int ncaLeft = left.isNotCurrentlyAvailable() ? 1 : 0;
+                    int ncaRight = right.isNotCurrentlyAvailable() ? 1 : 0;
 
                     return ncaLeft != ncaRight
                             ? ncaLeft - ncaRight
@@ -478,7 +468,7 @@ public class MapFragment extends BaseFragment implements
 
                 });
 
-                for (HostBriefInfo host : hosts) {
+                for (Host host : hosts) {
                     hostList.append(host.getFullname()).append("<br/>");
                 }
                 hostList.append(getString(R.string.click_to_view_all));
@@ -530,6 +520,7 @@ public class MapFragment extends BaseFragment implements
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(gotoLatLng, zoom));
     }
 
+    private Disposable mLoadOfflineUserDisposable;
     @Override
     public void onCameraChange(CameraPosition position) {
         mLastCameraPosition = position;
@@ -550,6 +541,13 @@ public class MapFragment extends BaseFragment implements
         // If we were offline, switch back on, but remove the offline markers
         if (mIsOffline) {
             mIsOffline = false;
+
+            // Stop listening for the favorite users.
+            if (mLoadOfflineUserDisposable != null) {
+                mLoadOfflineUserDisposable.dispose();
+                mLoadOfflineUserDisposable = null;
+            }
+
             mClusterManager.clearItems();
             mClusterManager.getMarkerCollection().clear();
             mHosts.clear();
@@ -572,8 +570,26 @@ public class MapFragment extends BaseFragment implements
         mClusterManager.clearItems();
         mClusterManager.getMarkerCollection().clear();
         mHosts.clear();
-        mClusterManager.addItems(starredHosts);
-        mClusterManager.cluster();
+
+        // We'll use the starred hosts when network is offline.
+        List<Integer> loadedUserIds = new ArrayList<>();
+        mLoadOfflineUserDisposable = Observable.merge(mFavoriteRepository.getFavorites())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(hostResource -> {
+                    if (hostResource.hasData() && mIsOffline) {
+                        // Users pop up twice as one is the error since we cannot load it from the
+                        // network.
+                        Host user = hostResource.data;
+                        if (loadedUserIds.contains(user.getId())) {
+                            return;
+                        }
+                        loadedUserIds.add(user.getId());
+
+                        mClusterManager.addItem(user);
+                        mClusterManager.cluster();
+                    }
+                });
+
     }
 
     public void doMapSearch(Search search) {
@@ -588,12 +604,12 @@ public class MapFragment extends BaseFragment implements
      * - Otherwise, move the camera to show the bounds of the map
      */
     @Override
-    public boolean onClusterClick(Cluster<HostBriefInfo> cluster) {
+    public boolean onClusterClick(Cluster<Host> cluster) {
         mLastClickedCluster = cluster; // remember for use later in the Adapter
 
         // Find out the bounds of the hosts currently in cluster
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (HostBriefInfo host : cluster.getItems()) {
+        for (Host host : cluster.getItems()) {
             builder.include(host.getLatLng());
         }
         LatLngBounds bounds = builder.build();
@@ -608,7 +624,7 @@ public class MapFragment extends BaseFragment implements
             mMap.animateCamera(cu);
             return true;
         }
-        showMultihostSelectDialog((ArrayList<HostBriefInfo>) cluster.getItems());
+        showMultihostSelectDialog((ArrayList<Host>) cluster.getItems());
         return true;
     }
 
@@ -616,18 +632,18 @@ public class MapFragment extends BaseFragment implements
      * Start the Search tab with the members we have at this exact location.
      */
     @Override
-    public void onClusterInfoWindowClick(Cluster<HostBriefInfo> hostBriefInfoCluster) {
-        ArrayList<HostBriefInfo> users = (ArrayList<HostBriefInfo>) hostBriefInfoCluster.getItems();
+    public void onClusterInfoWindowClick(Cluster<Host> cluster) {
+        ArrayList<Host> users = (ArrayList<Host>) cluster.getItems();
         mNavigationController.navigateToUserList(users);
     }
 
     @Override
-    public boolean onClusterItemClick(HostBriefInfo hostBriefInfo) {
+    public boolean onClusterItemClick(Host user) {
         return false;
     }
 
     @Override
-    public void onClusterItemInfoWindowClick(HostBriefInfo user) {
+    public void onClusterItemInfoWindowClick(Host user) {
         mNavigationController.navigateToUser(user.getId());
     }
 
@@ -657,13 +673,13 @@ public class MapFragment extends BaseFragment implements
                 return;
             }
 
-            ArrayList<HostBriefInfo> hosts = (ArrayList<HostBriefInfo>) result;
+            ArrayList<Host> hosts = (ArrayList<Host>) result;
             if (hosts.isEmpty()) {
                 sendMessage(R.string.no_results);
             }
 
-            for (HostBriefInfo host : hosts) {
-                HostBriefInfo v = mHosts.putIfAbsent(host.getId(), host);
+            for (Host host : hosts) {
+                Host v = mHosts.putIfAbsent(host.getId(), host);
                 // Only add to the cluster if it wasn't in mHosts before.
                 if (v == null) {
                     mClusterManager.addItem(host);
@@ -750,7 +766,7 @@ public class MapFragment extends BaseFragment implements
         }
     }
 
-    public void showMultihostSelectDialog(final ArrayList<HostBriefInfo> users) {
+    public void showMultihostSelectDialog(final ArrayList<Host> users) {
         String[] mPossibleItems = new String[users.size()];
 
         double distance = Tools.calculateDistanceBetween(users.get(0).getLatLng(), mLastDeviceLocation, mDistanceUnit);
@@ -772,7 +788,7 @@ public class MapFragment extends BaseFragment implements
         alertDialogBuilder
                 .setNegativeButton(R.string.ok, (dialog, which) -> {})
                 .setItems(mPossibleItems, (dialog, index) -> {
-                    HostBriefInfo briefHost = users.get(index);
+                    Host briefHost = users.get(index);
                     mNavigationController.navigateToUser(briefHost.getId());
                 });
         AlertDialog alertDialog = alertDialogBuilder.create();

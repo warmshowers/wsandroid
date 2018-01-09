@@ -49,7 +49,7 @@ public class AuthenticationController {
         mWarmshowersService = warmshowersService;
 
         mAuthData
-                .filter(authData -> authData != null)
+                .filter(AuthData::isValid)
                 .subscribe(authData -> {
                     headerInterceptor.setSessionCookie(authData.authToken.name, authData.authToken.id);
                     headerInterceptor.setCsrfToken(authData.csrfToken);
@@ -117,7 +117,7 @@ public class AuthenticationController {
     }
 
     public ResponseInterceptor.Handler getResponseInterceptorHandler() {
-        // FIXME(saemy): Remove this accessor when RestClient is no longer in use.
+        // TODO(saemy): Remove this accessor when RestClient is no longer in use.
         return mResponseInterceptorHandler;
     }
 
@@ -138,7 +138,7 @@ public class AuthenticationController {
         public boolean handleCsrfValidationError() throws IOException {
             // Waits for the response to become available.
             try {
-                Response<String> response = mWarmshowersService.renewCsrfToken().blockingGet();
+                Response<String> response = mWarmshowersService.renewCsrfToken().blockingFirst();
 
                 if (response.isSuccessful()) {
                     Account account = mAuthData.getValue().account;

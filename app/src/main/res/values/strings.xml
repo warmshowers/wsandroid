@@ -176,6 +176,15 @@
     <string name="sent_from_android" translatable="false">Sent from the <a href='https://play.google.com/store/apps/details?id=fi.bitrite.android.ws'>Warmshowers App for Android</a></string>
 
     <!-- new strings from 2.0 -->
+    <string name="feedback_relation_host">Host</string>
+    <string name="feedback_relation_guest">Guest</string>
+    <string name="feedback_relation_met_while_traveling">Met while traveling</string>
+    <string name="feedback_relation_other">Other</string>
+
+    <string name="feedback_rating_positive">Positive</string>
+    <string name="feedback_rating_neutral">Neutral</string>
+    <string name="feedback_rating_negative">Negative</string>
+
     <string name="navigation_item_map">Map</string>
     <string name="navigation_item_favorites">Favorites</string>
     <string name="navigation_item_messages">Messages</string>

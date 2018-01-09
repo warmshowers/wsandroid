@@ -158,7 +158,7 @@ public class AuthenticationManager {
                     } else {
                         return new LoginResult(response);
                     }
-                }).toObservable();
+                });
     }
 
     private boolean isExistingAccount(@NonNull Account account) {

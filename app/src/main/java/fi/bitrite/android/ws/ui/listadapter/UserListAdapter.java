@@ -23,9 +23,9 @@ import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.model.Host;
 
-public class UserListAdapter extends ArrayAdapter<HostBriefInfo> {
+public class UserListAdapter extends ArrayAdapter<Host> {
 
     private final String mQuery;
     private final Pattern mQueryPattern;
@@ -37,7 +37,7 @@ public class UserListAdapter extends ArrayAdapter<HostBriefInfo> {
     @BindView(R.id.user_list_divider) View mDivider;
     @BindColor(R.color.primaryColorAccent) int mForegroundColor;
 
-    public UserListAdapter(Context context, String query, List<HostBriefInfo> users) {
+    public UserListAdapter(Context context, String query, List<Host> users) {
         super(context, R.layout.item_user_list, users);
 
         mQuery = TextUtils.isEmpty(query) ? null : query.toLowerCase();
@@ -47,7 +47,7 @@ public class UserListAdapter extends ArrayAdapter<HostBriefInfo> {
                 : null;
     }
 
-    public void resetDataset(List<HostBriefInfo> users) {
+    public void resetDataset(List<Host> users) {
         clear();
         addAll(users);
         notifyDataSetChanged();
@@ -56,7 +56,7 @@ public class UserListAdapter extends ArrayAdapter<HostBriefInfo> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        final HostBriefInfo user = getItem(position);
+        final Host user = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
@@ -91,10 +91,10 @@ public class UserListAdapter extends ArrayAdapter<HostBriefInfo> {
         mDivider.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
 
         // Set the host icon to black if they're available, otherwise gray
-        mIcon.setImageResource(user.getNotCurrentlyAvailable()
+        mIcon.setImageResource(user.isNotCurrentlyAvailable()
                 ? R.drawable.ic_home_variant_grey600_24dp
                 : R.drawable.ic_home_variant_black_24dp);
-        mIcon.setAlpha(user.getNotCurrentlyAvailable() ? 0.5f : 1.0f);
+        mIcon.setAlpha(user.isNotCurrentlyAvailable() ? 0.5f : 1.0f);
 
         DateFormat simpleDate = DateFormat.getDateInstance();
         String activeDate = simpleDate.format(user.getLastLoginAsDate());

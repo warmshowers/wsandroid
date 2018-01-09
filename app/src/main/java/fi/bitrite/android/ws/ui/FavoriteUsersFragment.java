@@ -17,7 +17,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -25,24 +27,28 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.HostBriefInfo;
-import fi.bitrite.android.ws.persistence.StarredHostDao;
-import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
+import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.repository.FavoriteRepository;
+import fi.bitrite.android.ws.repository.Resource;
+import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
 import fi.bitrite.android.ws.ui.util.NavigationController;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class FavoriteUsersFragment extends BaseFragment {
 
     private static final int CONTEXT_MENU_DELETE = 0;
 
+    @Inject FavoriteRepository mFavoriteRepository;
     @Inject NavigationController mNavigationController;
+    @Inject UserRepository mUserRepository;
 
     @BindView(R.id.favorites_lst_users) ListView mLstUsers;
     @BindView(R.id.favorites_lbl_no_users) TextView mLblNoUsers;
 
-    private final StarredHostDao mFavoriteUsersDao = new StarredHostDaoImpl();
     private UserListAdapter mUserListAdapter;
-    private List<HostBriefInfo> mFavoriteUsers = new ArrayList<>();
+    private List<Host> mFavoriteUsers = new ArrayList<>();
 
     public static Fragment create() {
         Bundle bundle = new Bundle();
@@ -69,19 +75,12 @@ public class FavoriteUsersFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mFavoriteUsersDao.open();
         updateFavoriteUsersList();
-    }
-
-    @Override 
-    public void onPause() {
-        super.onPause();
-        mFavoriteUsersDao.close();
     }
 
     @OnItemClick(R.id.favorites_lst_users)
     public void onUserClicked(int position) {
-        HostBriefInfo selectedUser = mFavoriteUsers.get(position);
+        Host selectedUser = mFavoriteUsers.get(position);
         mNavigationController.navigateToUser(selectedUser.getId());
     }
 
@@ -100,8 +99,8 @@ public class FavoriteUsersFragment extends BaseFragment {
 
         switch (item.getItemId()) {
             case CONTEXT_MENU_DELETE:
-                HostBriefInfo host = mFavoriteUsers.get(info.position);
-                mFavoriteUsersDao.delete(host.getId(), host.getName());
+                Host user = mFavoriteUsers.get(info.position);
+                mFavoriteRepository.remove(user.getId());
                 updateFavoriteUsersList();
                 return true;
         }
@@ -110,16 +109,29 @@ public class FavoriteUsersFragment extends BaseFragment {
     }
 
     private void updateFavoriteUsersList() {
-        mFavoriteUsers = mFavoriteUsersDao.getAllBrief();
-        // Sort in order of recently saved
-        Collections.sort(mFavoriteUsers, (left, right) -> (int)(right.getUpdated() - left.getUpdated()));
+        List<Observable<Resource<Host>>> favorites = mFavoriteRepository.getFavorites();
 
-        boolean hasFavorites = !mFavoriteUsers.isEmpty();
+        Map<Integer, Host> hosts = new HashMap<>();
+        Observable.merge(favorites)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(hostResource -> {
+                    if (hostResource.data != null) {
+                        hosts.put(hostResource.data.getId(), hostResource.data);
 
+                        if (hosts.size() == favorites.size()) {
+                            mFavoriteUsers = new ArrayList<>(hosts.values());
+
+                            // Sort in order of name
+                            Collections.sort(mFavoriteUsers, (left, right) -> left.getFullname().compareTo(right.getFullname()));
+
+                            mUserListAdapter.resetDataset(mFavoriteUsers);
+                        }
+                    }
+                });
+
+        boolean hasFavorites = !favorites.isEmpty();
         mLblNoUsers.setVisibility(hasFavorites ? View.GONE : View.VISIBLE);
         mLstUsers.setVisibility(hasFavorites ? View.VISIBLE : View.GONE);
-
-        mUserListAdapter.resetDataset(mFavoriteUsers);
     }
 
     @Override

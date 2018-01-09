@@ -12,48 +12,19 @@
         <item name="mi">mi</item>
     </string-array>
 
-    <!--Translatated values must be in exactly the same positions.-->
-    <string-array name="feedback_how_we_met_options">
-        <item>Host</item>
-        <item>Guest</item>
-        <item>Met Traveling</item>
-        <item>Other</item>
+     <!-- Keep in sync with @{link FeedbackFragment}. -->
+    <string-array name="feedback_relation_options" translatable="false">
+        <item>@string/feedback_relation_host</item>
+        <item>@string/feedback_relation_guest</item>
+        <item>@string/feedback_relation_met_while_traveling</item>
+        <item>@string/feedback_relation_other</item>
     </string-array>
 
-    <!--Translatated values must be in exactly the same positions.-->
-    <string-array name="feedback_overall_experience_options">
-        <item>Positive</item>
-        <item>Neutral</item>
-        <item>Negative</item>
-    </string-array>
-
-    <!-- Translatable text of Navigation Drawer Menu -->
-    <string-array name="nav_menu_options">
-        <item >Map</item>
-        <item >Favorites</item>
-        <item >Messages</item>
-        <item >Account/LogIn</item>
-        <item >Settings</item>
-        <item >About</item>
-    </string-array>
-
-    <string-array name="nav_menu_activities" translatable="false">
-        <item>Maps2Activity</item>
-        <item>StarredHostTabActivity</item>
-        <item>MessagesTabActivity</item>
-        <item>AuthenticatorActivity</item>
-        <item>SettingsActivity</item>
-        <item>AboutActivity</item>
-    </string-array>
-
-    <string-array name="nav_menu_icons" translatable="false">
-        <item>@drawable/ic_map_grey600_24dp</item>
-        <item>@drawable/ic_favorite_grey600_24dp</item>
-        <item>@drawable/ic_message_grey600_24dp</item>
-        <item>@drawable/ic_login_grey600_24dp</item>
-        <item>@drawable/ic_settings_grey600_24dp</item>
-        <item>@drawable/ic_help_grey600_24dp</item>
-        <item>@drawable/ic_info_grey600_24dp</item>
+    <!-- Keep in sync with @{link FeedbackFragment}. -->
+    <string-array name="feedback_rating_options" translatable="false">
+        <item>@string/feedback_rating_positive</item>
+        <item>@string/feedback_rating_neutral</item>
+        <item>@string/feedback_rating_negative</item>
     </string-array>
 
 </resources>

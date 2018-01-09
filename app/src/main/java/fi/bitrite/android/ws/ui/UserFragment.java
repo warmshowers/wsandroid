@@ -2,14 +2,12 @@ package fi.bitrite.android.ws.ui;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -41,18 +40,19 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.api_new.AuthenticationController;
-import fi.bitrite.android.ws.host.impl.HttpHostFeedback;
-import fi.bitrite.android.ws.host.impl.HttpHostInformation;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
-import fi.bitrite.android.ws.persistence.StarredHostDao;
-import fi.bitrite.android.ws.persistence.impl.StarredHostDaoImpl;
+import fi.bitrite.android.ws.repository.FavoriteRepository;
+import fi.bitrite.android.ws.repository.FeedbackRepository;
+import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.ui.view.FeedbackTable;
 import fi.bitrite.android.ws.util.GlobalInfo;
+import fi.bitrite.android.ws.util.MaybeNull;
 import fi.bitrite.android.ws.util.Tools;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -66,10 +66,11 @@ public class UserFragment extends BaseFragment {
 
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER = "user";
-    private static final String KEY_FEEDBACK = "feedback";
 
     @Inject NavigationController mNavigationController;
-    @Inject AuthenticationController mAuthenticationController;
+    @Inject FavoriteRepository mFavoriteRepository;
+    @Inject FeedbackRepository mFeedbackRepository;
+    @Inject UserRepository mUserRepository;
 
     @BindView(R.id.user_layout_details) LinearLayout mLayoutDetails;
     @BindView(R.id.user_img_photo) ImageView mImgPhoto;
@@ -94,18 +95,17 @@ public class UserFragment extends BaseFragment {
     @BindColor(R.color.primaryColorAccent) int mFavoritedColor;
     @BindColor(R.color.primaryTextColor) int mNonFavoritedColor;
 
-    private StarredHostDao mFavoriteUsersDao = new StarredHostDaoImpl();
-
     private ProgressDialog.Disposable mDownloadUserInfoProgressDisposable;
 
     private int mUserId;
 
-    private final BehaviorSubject<UserInformation> mUserInfo =
-            BehaviorSubject.createDefault(new UserInformation());
+    private final BehaviorSubject<MaybeNull<Host>> mUser =
+            BehaviorSubject.createDefault(new MaybeNull<>());
+    private final BehaviorSubject<List<Feedback>> mFeedbacks = BehaviorSubject.create();
     private final BehaviorSubject<Boolean> mFavorite = BehaviorSubject.create();
     private CompositeDisposable mDisposables;
 
-    private UserInformationTask mUserInfoTask;
+    private boolean mDbFavoriteStatus;
 
     public static Fragment create(int userId) {
         Bundle bundle = new Bundle();
@@ -129,34 +129,14 @@ public class UserFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_user, container, false);
         ButterKnife.bind(this, view);
 
-        mFavoriteUsersDao.open();
+        Bundle arguments = getArguments();
 
-        if (savedInstanceState == null) {
-            // Called from another activity.
-            Bundle arguments = getArguments();
+        mUserId = arguments.getInt(KEY_USER_ID);
 
-            mUserId = arguments.getInt(KEY_USER_ID);
+        mDbFavoriteStatus = mFavoriteRepository.isFavorite(mUserId);
+        mFavorite.onNext(mDbFavoriteStatus);
 
-            downloadUserInformation();
-        } else {
-            // Recovering from e.g. screen rotation change.
-            mUserId = savedInstanceState.getInt(KEY_USER_ID);
-
-            Host user = savedInstanceState.getParcelable(KEY_USER);
-            List<Feedback> feedback = savedInstanceState.getParcelableArrayList(KEY_FEEDBACK);
-
-            UserInformation userInformation = new UserInformation(user, feedback);
-            mUserInfo.onNext(new UserInformation(user, feedback));
-
-            if (mDownloadUserInfoProgressDisposable != null || user == null) {
-                // We were in the process of downloading host info, retry
-                downloadUserInformation();
-            } else {
-                updateViewContent(userInformation);
-            }
-        }
-
-        mFavorite.onNext(mFavoriteUsersDao.isHostStarred(mUserId));
+        getUserInformation();
 
         return view;
     }
@@ -165,61 +145,49 @@ public class UserFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        if (!mFavoriteUsersDao.isOpen()) {
-            mFavoriteUsersDao.open();
-        }
-
         mDisposables = new CompositeDisposable();
-        mDisposables.add(mUserInfo.subscribe(userInformation -> {
-            saveUserIfFavorite(userInformation);
+        mDisposables.add(mUser
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> updateUserViewContent()));
 
-            updateViewContent(userInformation);
-        }));
+        mDisposables.add(mFeedbacks
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(feedbacks -> updateFeedbacksViewContent()));
 
-        mDisposables.add(mFavorite.subscribe(isFavorite -> {
-            saveUserIfFavorite(mUserInfo.getValue());
+        mDisposables.add(mFavorite
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(isFavorite -> {
+                    saveUserIfFavorite();
 
-            mCkbFavorite.setChecked(isFavorite);
-            mImgFavorite.setColorFilter(isFavorite ? mFavoritedColor : mNonFavoritedColor);
-        }));
+                    mCkbFavorite.setChecked(isFavorite);
+                    mImgFavorite.setColorFilter(isFavorite ? mFavoritedColor : mNonFavoritedColor);
+                }));
     }
 
-    private void saveUserIfFavorite(UserInformation userInformation) {
-        if (!userInformation.isValid()) {
+    private void saveUserIfFavorite() {
+        boolean isFavorite = mFavorite.getValue();
+        if (isFavorite == mDbFavoriteStatus) {
+            return;
+        }
+        if (mUser.getValue().isNull()) {
             return;
         }
 
-        Host user = userInformation.user;
-        List<Feedback> feedback = userInformation.feedback;
+        Host user = mUser.getValue().data;
+        List<Feedback> feedback = mFeedbacks.getValue();
 
-        if (mFavorite.getValue()) {
-            mFavoriteUsersDao.update(user.getId(), user.getName(), user, feedback);
+        if (isFavorite) {
+            mFavoriteRepository.add(user, feedback);
         } else {
-            mFavoriteUsersDao.delete(user.getId(), user.getName());
-        }
-    }
-
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        UserInformation userInfo = mUserInfo.getValue();
-        outState.putInt(KEY_USER_ID, mUserId);
-        if (userInfo.isValid()) {
-            outState.putParcelable(KEY_USER, userInfo.user);
-            outState.putParcelableArrayList(KEY_FEEDBACK, new ArrayList<>(userInfo.feedback));
+            mFavoriteRepository.remove(user.getId());
         }
 
-        if (mUserInfoTask != null) {
-            mUserInfoTask.cancel(false);
-        }
-
-        super.onSaveInstanceState(outState);
+        mDbFavoriteStatus = isFavorite;
     }
 
     @Override
     public void onPause() {
         mDisposables.dispose();
-        mFavoriteUsersDao.close();
         super.onPause();
     }
 
@@ -237,20 +205,20 @@ public class UserFragment extends BaseFragment {
         Toast.makeText(getContext(), msgId, Toast.LENGTH_SHORT).show();
     }
 
-    private void updateViewContent(UserInformation userInfo) {
-        mLayoutDetails.setVisibility(userInfo.isValid() ? View.VISIBLE : View.GONE);
+    private void updateUserViewContent() {
+        MaybeNull<Host> maybeUser = mUser.getValue();
+        mLayoutDetails.setVisibility(maybeUser.isNonNull() ? View.VISIBLE : View.GONE);
 
-        if (!userInfo.isValid()) {
+        if (maybeUser.isNull()) {
             return;
         }
 
-        final Host user = userInfo.user;
+        final Host user = maybeUser.data;
 
         mLblName.setText(user.getFullname());
         setTitle(user.getFullname());
 
         // Host Availability:
-        // TODO: Copied from UserListAdapter.java, needs to be refactored
         // Set the user icon to black if they're available, otherwise gray
         boolean isAvailable = !user.isNotCurrentlyAvailable();
         mImgAvailability.setAlpha(isAvailable ? 1.0f : 0.5f);
@@ -307,13 +275,6 @@ public class UserFragment extends BaseFragment {
             mLblNearbyServices.setText(getString(R.string.nearby_services_description, nearbyServices));
         }
 
-        List<Feedback> feedback = mUserInfo.getValue().feedback;
-        Collections.sort(feedback);
-        mTblFeedback.addRows(feedback);
-        mLblFeedback.setText(feedback.isEmpty()
-                ? getString(R.string.no_feedback_yet)
-                : getString(R.string.feedback, feedback.size()));
-
         // If we're connected and there is a picture, get host picture.
         String url = user.getProfilePictureLarge();
         if (!TextUtils.isEmpty(url)) {
@@ -322,6 +283,15 @@ public class UserFragment extends BaseFragment {
                     .placeholder(R.drawable.default_hostinfo_profile)
                     .into(mImgPhoto);
         }
+    }
+    private void updateFeedbacksViewContent() {
+        List<Feedback> feedbacks = mFeedbacks.getValue();
+        Collections.sort(feedbacks, (left, right) -> right.meetingDate.compareTo(left.meetingDate));
+
+        mTblFeedback.setRows(feedbacks);
+        mLblFeedback.setText(feedbacks.isEmpty()
+                ? getString(R.string.no_feedback_yet)
+                : getString(R.string.feedback, feedbacks.size()));
     }
 
     private void contactHost(@NonNull Host user) {
@@ -359,62 +329,44 @@ public class UserFragment extends BaseFragment {
         startActivity(i);
     }
 
-    private void downloadUserInformation() {
+    private void getUserInformation() {
         mDownloadUserInfoProgressDisposable = ProgressDialog.create(R.string.host_info_in_progress)
                 .show(getActivity());
 
-        mUserInfoTask = new UserInformationTask(mUserId);
-        mUserInfoTask.execute();
-    }
+        AtomicInteger numFinished = new AtomicInteger(0);
+        Observable.merge(
+                mUserRepository.getUser(mUserId)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .map(hostResource -> {
+                            if (hostResource.hasData()) {
+                                mUser.onNext(new MaybeNull<>(hostResource.data));
+                            }
 
-    private class UserInformationTask extends AsyncTask<Void, Void, Object> {
-        private final int mUserId;
+                            // TODO(saemy): Error handling.
+//                        if (hostResource.isError()) {
+//                            RestClient.reportError(getContext(), hostResource.error);
+//                        }
 
-        UserInformationTask(int userId) {
-            mUserId = userId;
-        }
-
-        @Override
-        protected Object doInBackground(Void... params) {
-            try {
-                if (Tools.isNetworkConnected(getContext())) {
-                    // Download if we have a network connection.
-                    HttpHostInformation httpHostInfo = new HttpHostInformation(mAuthenticationController);
-                    HttpHostFeedback hostFeedback = new HttpHostFeedback(mAuthenticationController);
-
-                    Host user = httpHostInfo.getHostInformation(mUserId);
-                    ArrayList<Feedback> feedback = hostFeedback.getFeedback(mUserId);
-
-                    return new UserInformation(user, feedback);
-                } else {
-                    // Try loading from db if favorite and no network.
-                    Host host = mFavoriteUsersDao.getHost(mUserId);
-                    if (host != null) {
-                        List<Feedback> feedback =
-                                mFavoriteUsersDao.getFeedback(mUserId, host.getName());
-                        return new UserInformation(host, feedback);
+                            return !hostResource.isLoading();
+                        }),
+                mFeedbackRepository.getForRecipient(mUserId)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .map(feedbacksResource -> {
+                            if (feedbacksResource.hasData()) {
+                                mFeedbacks.onNext(feedbacksResource.data);
+                            }
+                            // TODO(saemy): Error handling.
+                            return !feedbacksResource.isLoading();
+                        }))
+                .subscribe(finished -> {
+                    if (finished && numFinished.incrementAndGet() >= 2) {
+                        mDownloadUserInfoProgressDisposable.dispose();
                     }
-                }
+                }, throwable -> {
+                    mDownloadUserInfoProgressDisposable.dispose();
 
-                return new UserInformation();
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage(), e);
-                return e;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            mDownloadUserInfoProgressDisposable.dispose();
-            mDownloadUserInfoProgressDisposable = null;
-
-            if (result instanceof Exception) {
-                RestClient.reportError(getContext(), result);
-                return;
-            }
-
-            mUserInfo.onNext((UserInformation) result);
-        }
+                    RestClient.reportError(getContext(), throwable);
+                });
     }
 
     @Override
@@ -425,7 +377,7 @@ public class UserFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Host user = mUserInfo.getValue().user;
+        Host user = mUser.getValue().data;
         if (user == null) {
             return super.onOptionsItemSelected(item);
         }
@@ -455,23 +407,6 @@ public class UserFragment extends BaseFragment {
     @Override
     protected CharSequence getTitle() {
         return getString(R.string.title_fragment_user);
-    }
-
-    static class UserInformation {
-        public final Host user;
-        public final List<Feedback> feedback;
-
-        UserInformation() {
-            this(null, null);
-        }
-        UserInformation(Host user, List<Feedback> feedback) {
-            this.user = user;
-            this.feedback = feedback == null ? new ArrayList<>() : feedback;
-        }
-
-        boolean isValid() {
-            return user != null;
-        }
     }
 }
 

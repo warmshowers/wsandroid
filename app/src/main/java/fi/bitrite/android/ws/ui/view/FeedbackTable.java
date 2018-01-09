@@ -2,6 +2,9 @@ package fi.bitrite.android.ws.ui.view;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.widget.TableLayout;
@@ -11,26 +14,21 @@ import android.widget.TextView;
 import java.util.Date;
 import java.util.List;
 
+import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Feedback;
-import fi.bitrite.android.ws.util.ArrayTranslator;
 
 /**
  * Custom table that creates rows dynamically.
  */
+// TODO(saemy): Replace by ListView
 public class FeedbackTable extends TableLayout {
-
-    private ArrayTranslator mTranslator;
-    private Context mContext;
 
     public FeedbackTable(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
-        if (!isInEditMode()) {
-            mTranslator = ArrayTranslator.getInstance();
-        }
     }
 
-    public void addRows(List<Feedback> feedback) {
+    public void setRows(List<Feedback> feedback) {
+        removeAllViews();
 
         int i = 0;
         for (Feedback f : feedback) {
@@ -50,7 +48,7 @@ public class FeedbackTable extends TableLayout {
             addView(tr);
 
             tr = getFeedbackRow();
-            TextView body = getFeedbackText(f.getBody());
+            TextView body = getFeedbackText(f.body);
             body.setPadding(0, 0, 0, 5);
             tr.addView(body);
             addView(tr);
@@ -61,31 +59,26 @@ public class FeedbackTable extends TableLayout {
         StringBuilder sb = new StringBuilder();
 
         if (!isInEditMode()) {
-            sb.append(mTranslator.translateHostGuest(f.getGuestOrHostStr()));
+            sb.append(getContext().getString(getRelationStringRes(f.relation)));
 
             // Present hosted date without DOM because we don't carry that.
-            Date hostingDate = f.getHostingDate();
-            if (hostingDate != null) {
-                int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY;
-                String hostedOn = DateUtils.formatDateTime(mContext, hostingDate.getTime(), flags);
-
+            Date meetingDate = f.meetingDate;
+            if (meetingDate != null) {
                 sb.append(" (");
-                sb.append(hostedOn);
+                sb.append(formatMeetingDate(meetingDate));
                 sb.append(')');
             }
 
             sb.append(" - ");
-            sb.append(mTranslator.translateRating(f.getRatingStr()));
+            sb.append(getContext().getString(getRatingStringRes(f.rating)));
         }
         return sb.toString();
     }
 
     private String getAuthorString(Feedback f) {
-        String name = f.getFullname();
-        if (name == null || name.length() == 0) {
-            name = "Unknown";
-        }
-        return name;
+        return TextUtils.isEmpty(f.senderFullname)
+                ? "Unknown" // TODO(saemy): Move into a string resource
+                : f.senderFullname;
     }
 
     private TextView getFeedbackText(String text) {
@@ -105,5 +98,37 @@ public class FeedbackTable extends TableLayout {
                 TableRow.LayoutParams.WRAP_CONTENT
         ));
         return tr;
+    }
+
+    private String formatMeetingDate(@Nullable Date meetingDate) {
+        return meetingDate != null
+                ? DateUtils.formatDateTime(getContext(), meetingDate.getTime(),
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NO_MONTH_DAY)
+                : "";
+    }
+
+    @StringRes
+    private static int getRelationStringRes(Feedback.Relation relation) {
+        switch (relation) {
+            case Host: return R.string.feedback_relation_host;
+            case Guest: return R.string.feedback_relation_guest;
+            case MetWhileTraveling: return R.string.feedback_relation_met_while_traveling;
+            case Other: return R.string.feedback_relation_other;
+
+            default:
+                throw new RuntimeException("Unknown relation type.");
+        }
+    }
+
+    @StringRes
+    private static int getRatingStringRes(Feedback.Rating rating) {
+        switch (rating) {
+            case Positive: return R.string.feedback_rating_positive;
+            case Neutral: return R.string.feedback_rating_neutral;
+            case Negative: return R.string.feedback_rating_negative;
+
+            default:
+                throw new RuntimeException("Unknown rating type.");
+        }
     }
 }

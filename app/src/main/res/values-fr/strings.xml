@@ -170,6 +170,15 @@
     <string name="view_licenses">View Open Source Licenses</string>
 
     <!-- new strings from 2.0 -->
+    <string name="feedback_relation_host">Hôte</string>
+    <string name="feedback_relation_guest">Invité</string>
+    <string name="feedback_relation_met_while_traveling">Rencontré en voyage</string>
+    <string name="feedback_relation_other">Autre</string>
+
+    <string name="feedback_rating_positive">Positif</string>
+    <string name="feedback_rating_neutral">Neutre</string>
+    <string name="feedback_rating_negative">Négatif</string>
+
     <string name="navigation_item_map">Carte</string>
     <string name="navigation_item_favorites">Favoris</string>
     <string name="navigation_item_messages">Messages</string>

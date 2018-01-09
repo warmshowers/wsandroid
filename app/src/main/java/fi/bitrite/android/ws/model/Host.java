@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.Parcel;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
 import com.yelp.parcelgen.JsonParser.DualCreator;
 
 import org.json.JSONException;
@@ -16,7 +17,7 @@ import java.util.Date;
 
 import fi.bitrite.android.ws.R;
 
-public class Host extends _Host {
+public class Host extends _Host implements ClusterItem {
 
     private long mUpdated;
 
@@ -37,17 +38,6 @@ public class Host extends _Host {
                 notCurrentlyAvailable, bed, bikeshop, campground, food, kitchenUse, laundry,
                 lawnspace, motel, sag, shower, storage, latitude, longitude, login, created,
                 languagesSpoken, picture, profilePictureSmall, profilePictureLarge);
-    }
-
-    public static Host createFromBriefInfo(HostBriefInfo briefInfo) {
-        Host host = new Host();
-        host.mId = briefInfo.getId();
-        host.mName = briefInfo.getName();
-        host.mFullname = briefInfo.getFullname();
-        host.mComments = briefInfo.getAboutMe();
-        host.mLongitude = briefInfo.getLongitude();
-        host.mLatitude = briefInfo.getLatitude();
-        return host;
     }
 
     public static final DualCreator<Host> CREATOR = new DualCreator<Host>() {
@@ -156,22 +146,35 @@ public class Host extends _Host {
         return getLogin();
     }
 
+    @Override
+    public LatLng getPosition() {
+        return new LatLng(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
+    }
+
+    public String getStreetCityAddress() {
+        String result = "";
+        if (mStreet != null && mStreet.length() > 0) {
+            result = mStreet + ", ";
+        }
+        result += mCity + ", " + mProvince.toUpperCase();
+        return result;
+    }
+
     public Date getCreatedAsDate() {
         return stringToDate(mCreated);
     }
     public Date getLastLoginAsDate() {
         return stringToDate(mLogin);
     }
-    protected Date stringToDate(String s) {
-
+    private Date stringToDate(String s) {
         int intDate = 0;
         try {
             intDate = Integer.parseInt(s);
         } catch (Exception e) {
-            // Ignore
+            return null;
         }
-        Date d = new Date((long)intDate * 1000);
-        return d;
+
+        return new Date(intDate * 1000L);
     }
 
 

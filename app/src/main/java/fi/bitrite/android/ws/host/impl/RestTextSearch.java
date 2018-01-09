@@ -12,7 +12,7 @@ import java.util.List;
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.api_new.AuthenticationController;
 import fi.bitrite.android.ws.host.Search;
-import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 
@@ -37,14 +37,14 @@ public class RestTextSearch extends RestClient implements Search {
      * we should just use the info returned by that service and move on.
      *
      */
-    public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException {
+    public List<Host> doSearch() throws JSONException, HttpException, IOException {
 
         List<NameValuePair> args = new ArrayList<NameValuePair>();
         args.add(new BasicNameValuePair("keyword", this.keyword));
 
         JSONObject jsonObject = post(WARMSHOWERS_HOST_BY_KEYWORD_URL, args);
 
-        List<HostBriefInfo> list = new ArrayList<HostBriefInfo>();
+        List<Host> list = new ArrayList<>();
         JSONObject statusJson = jsonObject.getJSONObject("status");
         String numDelivered = statusJson.get("delivered").toString();
         if (Integer.parseInt(numDelivered) > 0) {
@@ -53,20 +53,8 @@ public class RestTextSearch extends RestClient implements Search {
             for (int i = 0; i < hostJson.names().length(); i++) {
                 int uid = hostJson.names().getInt(i);
                 JSONObject account = (JSONObject) (hostJson.get(Integer.toString(uid)));
-                HostBriefInfo bi = new HostBriefInfo(
-                        uid,
-                        account.get("name").toString(),
-                        account.get("fullname").toString(),
-                        account.get("street").toString(),
-                        account.get("city").toString(),
-                        account.get("province").toString(),
-                        account.get("country").toString(),
-                        account.get("comments").toString(),
-                        (account.get("notcurrentlyavailable").toString().equals("1")),
-                        account.getString("access"),
-                        account.getString("created")
-                );
-                list.add(bi);
+                Host user = Host.CREATOR.parse(account);
+                list.add(user);
             }
         }
         return list;

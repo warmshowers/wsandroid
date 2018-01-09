@@ -34,17 +34,17 @@
             android:paddingBottom="@dimen/activity_horizontal_margin">
 
             <TextView
-                android:id="@+id/feedback_lbl_overall_experience"
+                android:id="@+id/feedback_lbl_rating"
                 style="@style/WsText.subHead"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/lbl_feedback_overall_experience" />
 
             <Spinner
-                android:id="@+id/feedback_sel_overall_experience"
+                android:id="@+id/feedback_sel_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:entries="@array/feedback_overall_experience_options"
+                android:entries="@array/feedback_rating_options"
                 android:spinnerMode="dropdown"
                 android:background="#00ffffff"/>
 
@@ -120,10 +120,10 @@
                 android:text="@string/feedback_how_we_met_prompt" />
 
             <Spinner
-                android:id="@+id/feedback_sel_how_we_met"
+                android:id="@+id/feedback_sel_relation"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:entries="@array/feedback_how_we_met_options"
+                android:entries="@array/feedback_relation_options"
                 android:prompt="@string/feedback_how_we_met_prompt"
                 android:spinnerMode="dropdown"
                 android:background="#00ffffff"/>

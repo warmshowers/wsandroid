@@ -37,7 +37,6 @@ import fi.bitrite.android.ws.api_new.AuthenticationController;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.ui.util.DialogHelper;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
-import fi.bitrite.android.ws.util.ArrayTranslator;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 
@@ -57,9 +56,9 @@ public class FeedbackFragment extends BaseFragment {
 
     @BindView(R.id.feedback_txt_feedback) EditText mTxtFeedback;
     @BindView(R.id.feedback_txt_date_we_met) EditText mTxtDateWeMet;
-    @BindView(R.id.feedback_lbl_overall_experience) TextView mLblOverallExperience;
-    @BindView(R.id.feedback_sel_overall_experience) Spinner mSelOverallExperience;
-    @BindView(R.id.feedback_sel_how_we_met) Spinner mSelHowWeMet;
+    @BindView(R.id.feedback_lbl_rating) TextView mLblRating;
+    @BindView(R.id.feedback_sel_rating) Spinner mSelRating;
+    @BindView(R.id.feedback_sel_relation) Spinner mSelRelation;
     @BindView(R.id.all_btn_submit) Button mBtnSubmit;
     @BindView(R.id.all_lbl_no_network_warning) TextView mLblNoNetworkWarning;
 
@@ -67,7 +66,6 @@ public class FeedbackFragment extends BaseFragment {
     private int mDateWeMetYear;
 
     private DatePickerDialog mDatePickerDialog;
-    private final ArrayTranslator mTranslator = ArrayTranslator.getInstance();
     private ProgressDialog.Disposable mProgressDisposable;
 
     private Host mRecipient;
@@ -105,7 +103,7 @@ public class FeedbackFragment extends BaseFragment {
             mTxtDateWeMet.setText(Tools.getDateAsMY(getContext(), date.getTimeInMillis()));
         }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
 
-        mLblOverallExperience.setText(getString(R.string.lbl_feedback_overall_experience, mRecipient.getFullname()));
+        mLblRating.setText(getString(R.string.lbl_feedback_overall_experience, mRecipient.getFullname()));
 
         return view;
     }
@@ -127,12 +125,12 @@ public class FeedbackFragment extends BaseFragment {
             return;
         }
         // Ensure a selection in the "how we met"
-        if (mSelHowWeMet.getSelectedItemPosition() == AdapterView.INVALID_POSITION) {
+        if (mSelRelation.getSelectedItemPosition() == AdapterView.INVALID_POSITION) {
             DialogHelper.alert(getContext(), R.string.feedback_how_we_met_error);
             return;
         }
         // Ensure a selection in "overall experience"
-        if (mSelOverallExperience.getSelectedItemPosition() == AdapterView.INVALID_POSITION) {
+        if (mSelRating.getSelectedItemPosition() == AdapterView.INVALID_POSITION) {
             DialogHelper.alert(getContext(), R.string.feedback_overall_experience_error);
             return;
         }
@@ -163,18 +161,37 @@ public class FeedbackFragment extends BaseFragment {
 //                args.add(new BasicNameValuePair("type", "trust_referral"));
 //                args.add(new BasicNameValuePair("field_member_i_trust[und][0][uid]", host.getName()));
 //                args.add(new BasicNameValuePair("body[und][0][value]", mTxtFeedback.getText().toString()));
-//                args.add(new BasicNameValuePair("field_guest_or_host[und]", mTranslator.getEnglishHostGuestOption(mSelHowWeMet.getSelectedItemPosition())));
-//                args.add(new BasicNameValuePair("field_rating[und]", mTranslator.getEnglishRating(mSelOverallExperience.getSelectedItemPosition())));
+//                args.add(new BasicNameValuePair("field_guest_or_host[und]", mTranslator.getEnglishHostGuestOption(mSelRelation.getSelectedItemPosition())));
+//                args.add(new BasicNameValuePair("field_rating[und]", mTranslator.getEnglishRating(mSelRating.getSelectedItemPosition())));
 //                args.add(new BasicNameValuePair("field_hosting_date[und][0][value][year]", Integer.toString(mDateWeMetYear)));
 //                args.add(new BasicNameValuePair("field_hosting_date[und][0][value][month]", Integer.toString(mDateWeMetMonth + 1)));
 //                args.add(new BasicNameValuePair("field_hosting_date[und][0][value][day]", "15")); // D7 required day of month
+
+                // Keep in sync with R.array.feedback_relation_options.
+                String relationStr;
+                switch (mSelRelation.getSelectedItemPosition()) {
+                    case 0: relationStr = "Guest"; break;
+                    case 1: relationStr = "Host"; break;
+                    case 2: relationStr = "MetWhileTraveling"; break;
+                    case 3: relationStr = "Other"; break;
+                    default: throw new Exception("Invalid option.");
+                }
+
+                // Keep in sync with R.array.feedback_rating_options.
+                String ratingStr;
+                switch (mSelRating.getSelectedItemPosition()) {
+                    case 0: ratingStr = "Positive"; break;
+                    case 1: ratingStr = "Neutral"; break;
+                    case 2: ratingStr = "Negative"; break;
+                    default: throw new Exception("Invalid option.");
+                }
 
                 // Drupal 6 semantics for node creation, wrapped on server side
                 args.add(new BasicNameValuePair("node[type]", "trust_referral"));
                 args.add(new BasicNameValuePair("node[field_member_i_trust][0][uid][uid]", mRecipient.getName()));
                 args.add(new BasicNameValuePair("node[body]", mTxtFeedback.getText().toString()));
-                args.add(new BasicNameValuePair("node[field_guest_or_host][value]", mTranslator.getEnglishHostGuestOption(mSelHowWeMet.getSelectedItemPosition())));
-                args.add(new BasicNameValuePair("node[field_rating][value]", mTranslator.getEnglishRating(mSelOverallExperience.getSelectedItemPosition())));
+                args.add(new BasicNameValuePair("node[field_guest_or_host][value]", relationStr));
+                args.add(new BasicNameValuePair("node[field_rating][value]", ratingStr));
                 args.add(new BasicNameValuePair("node[field_hosting_date][0][value][year]", Integer.toString(mDateWeMetYear)));
                 args.add(new BasicNameValuePair("node[field_hosting_date][0][value][month]", Integer.toString(mDateWeMetMonth + 1)));
 

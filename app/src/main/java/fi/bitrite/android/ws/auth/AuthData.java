@@ -16,4 +16,10 @@ public class AuthData {
         this.authToken = authToken;
         this.csrfToken = csrfToken;
     }
+
+    public boolean isValid() {
+        return account != null &&
+                authToken != null &&
+                csrfToken != null;
+    }
 }

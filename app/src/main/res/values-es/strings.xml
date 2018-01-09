@@ -164,6 +164,15 @@
     <string name="view_licenses">View Open Source Licenses</string>
 
     <!-- new strings from 2.0 -->
+    <string name="feedback_relation_host">Anfitrión</string>
+    <string name="feedback_relation_guest">Huesped</string>
+    <string name="feedback_relation_met_while_traveling">Viajando</string>
+    <string name="feedback_relation_other">Otro</string>
+
+    <string name="feedback_rating_positive">Positiva</string>
+    <string name="feedback_rating_neutral">Neutral</string>
+    <string name="feedback_rating_negative">Negativa</string>
+
     <string name="navigation_item_map">Mapa</string>
     <string name="navigation_item_favorites">Favoritos</string>
     <string name="navigation_item_messages">Mensajes</string>

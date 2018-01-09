@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
 
     <string-array name="distanceUnits">
@@ -10,31 +9,6 @@
     <string-array name="distanceUnitValues">
         <item name="km">km</item>
         <item name="mi">mi</item>
-    </string-array>
-
-    <!--Translatated values must be in exactly the same positions.-->
-    <string-array name="feedback_how_we_met_options">
-        <item>Gastgeber</item>
-        <item>Gast</item>
-        <item>Beim Reisen getroffen</item>
-        <item>Andere</item>
-    </string-array>
-
-    <!--Translatated values must be in exactly the same positions.-->
-    <string-array name="feedback_overall_experience_options">
-        <item>Positiv</item>
-        <item>Neutral</item>
-        <item>Negativ</item>
-    </string-array>
-
-    <!-- Translatable text of Navigation Drawer Menu -->
-    <string-array name="nav_menu_options">
-        <item >Karte</item>
-        <item >Favoriten</item>
-        <item >Nachrichten</item>
-        <item >Konto / Login</item>
-        <item >Einstellungen</item>
-        <item >Über uns</item>
     </string-array>
 
 </resources>

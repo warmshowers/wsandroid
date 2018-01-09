@@ -14,7 +14,7 @@ import java.util.List;
 import fi.bitrite.android.ws.api.RestClient;
 import fi.bitrite.android.ws.api_new.AuthenticationController;
 import fi.bitrite.android.ws.host.Search;
-import fi.bitrite.android.ws.model.HostBriefInfo;
+import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.http.HttpException;
 
@@ -32,7 +32,7 @@ public class RestMapSearch extends RestClient implements Search {
         this.searchArea = MapSearchArea.fromLatLngs(northEast, southWest);
     }
 
-    public List<HostBriefInfo> doSearch() throws JSONException, HttpException, IOException {
+    public List<Host> doSearch() throws JSONException, HttpException, IOException {
         JSONObject json = getHostsJson();
         return new MapSearchJsonParser(json).getHosts();
     }
