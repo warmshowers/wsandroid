@@ -50,7 +50,7 @@ android {
         }
 
         release {
-            if (keystoreFile) {
+            if (project.hasProperty('keystoreFile')) {
                 doSignRelease = true
 
                 // Set these values in local.properties.
