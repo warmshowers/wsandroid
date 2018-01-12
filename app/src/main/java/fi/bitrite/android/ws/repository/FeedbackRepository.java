@@ -13,6 +13,7 @@ import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.persistence.FeedbackDao;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 
 public class FeedbackRepository extends Repository<List<Feedback>> {
     @Inject FeedbackDao mFeedbackDao;
@@ -53,19 +54,21 @@ public class FeedbackRepository extends Repository<List<Feedback>> {
 
     @Override
     Observable<LoadResult<List<Feedback>>> loadFromNetwork(int recipientId) {
-        return mWarmshowersService.fetchFeedbackForRecipient(recipientId).map(apiFeedbackResponse -> {
-            if (apiFeedbackResponse.isSuccessful()) {
-                // Converts the {@link ApiFeedback}s into {@link Feedback}s.
-                List<ApiFeedback> apiFeedbacks = apiFeedbackResponse.body().feedbacks;
-                List<Feedback> feedbacks = new ArrayList<>(apiFeedbacks.size());
-                for (ApiFeedback apiFeedback : apiFeedbacks) {
-                    feedbacks.add(apiFeedback.toFeedback());
-                }
+        return mWarmshowersService.fetchFeedbackForRecipient(recipientId)
+                .subscribeOn(Schedulers.io())
+                .map(apiFeedbackResponse -> {
+                    if (apiFeedbackResponse.isSuccessful()) {
+                        // Converts the {@link ApiFeedback}s into {@link Feedback}s.
+                        List<ApiFeedback> apiFeedbacks = apiFeedbackResponse.body().feedbacks;
+                        List<Feedback> feedbacks = new ArrayList<>(apiFeedbacks.size());
+                        for (ApiFeedback apiFeedback : apiFeedbacks) {
+                            feedbacks.add(apiFeedback.toFeedback());
+                        }
 
-                return new LoadResult<>(LoadResult.Source.NETWORK, feedbacks);
-            } else {
-                throw new Error(apiFeedbackResponse.errorBody().toString());
-            }
-        });
+                        return new LoadResult<>(LoadResult.Source.NETWORK, feedbacks);
+                    } else {
+                        throw new Error(apiFeedbackResponse.errorBody().toString());
+                    }
+                });
     }
 }

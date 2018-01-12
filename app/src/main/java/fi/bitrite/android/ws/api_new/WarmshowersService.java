@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.api_new;
 import fi.bitrite.android.ws.api_new.model.ApiUser;
 import fi.bitrite.android.ws.api_new.response.FeedbackResponse;
 import fi.bitrite.android.ws.api_new.response.LoginResponse;
+import fi.bitrite.android.ws.api_new.response.UserSearchByLocationResponse;
 import io.reactivex.Observable;
 import retrofit2.Response;
 import retrofit2.http.Field;
@@ -26,4 +27,15 @@ public interface WarmshowersService {
 
     @GET("user/{userId}/json_recommendations")
     Observable<Response<FeedbackResponse>> fetchFeedbackForRecipient(@Path("userId") int recipientId);
+
+    public final static int SEARCH_USER_DEFAULT_LIMIT = 800;
+
+    @POST("/services/rest/hosts/by_location")
+    @FormUrlEncoded
+    Observable<Response<UserSearchByLocationResponse>> searchUsersByLocation(
+            @Field("minlat") double minLat, @Field("minlon") double minLon,
+            @Field("maxlat") double maxLat, @Field("maxlon") double maxLon,
+            @Field("centerlat") double centerLat, @Field("centerlon") double centerLon,
+            // TODO(saemy): Add offset to the REST API.
+            @Field("limit") int limit);
 }

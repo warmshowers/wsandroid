@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.os.Parcel;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.clustering.ClusterItem;
 import com.yelp.parcelgen.JsonParser.DualCreator;
 
 import org.json.JSONException;
@@ -17,7 +16,7 @@ import java.util.Date;
 
 import fi.bitrite.android.ws.R;
 
-public class Host extends _Host implements ClusterItem {
+public class Host extends _Host {
 
     private long mUpdated;
 
@@ -144,11 +143,6 @@ public class Host extends _Host implements ClusterItem {
 
     public String getLastLogin() {
         return getLogin();
-    }
-
-    @Override
-    public LatLng getPosition() {
-        return new LatLng(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
     }
 
     public String getStreetCityAddress() {

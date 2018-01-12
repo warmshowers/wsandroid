@@ -2,6 +2,8 @@ package fi.bitrite.android.ws.repository;
 
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,10 +12,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.api_new.WarmshowersService;
+import fi.bitrite.android.ws.api_new.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.UserDao;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 @Singleton
 public class UserRepository extends Repository<Host> {
@@ -69,13 +73,38 @@ public class UserRepository extends Repository<Host> {
 
     @Override
     Observable<LoadResult<Host>> loadFromNetwork(int userId) {
-        return mWarmshowersService.fetchUser(userId).map(apiUserResponse -> {
-            if (apiUserResponse.isSuccessful()) {
-                return new LoadResult<>(
-                        LoadResult.Source.NETWORK, apiUserResponse.body().toHost());
-            } else {
-                throw new Error(apiUserResponse.errorBody().toString());
-            }
-        });
+        return mWarmshowersService.fetchUser(userId)
+                .subscribeOn(Schedulers.io())
+                .map(apiUserResponse -> {
+                    if (apiUserResponse.isSuccessful()) {
+                        return new LoadResult<>(
+                                LoadResult.Source.NETWORK, apiUserResponse.body().toHost());
+                    } else {
+                        throw new Error(apiUserResponse.errorBody().toString());
+                    }
+                });
+    }
+
+
+    public Observable<List<UserSearchByLocationResponse.User>> searchByLocation(
+            LatLng northEast, LatLng southWest) {
+
+        final double minLat = southWest.latitude;
+        final double minLon = southWest.longitude;
+        final double maxLat = northEast.latitude;
+        final double maxLon = northEast.longitude;
+        final double centerLat = (minLat + maxLat) / 2.0f;
+        final double centerLon = (minLon + maxLon) / 2.0f;
+
+        return mWarmshowersService.searchUsersByLocation(minLat, minLon, maxLat, maxLon, centerLat,
+                centerLon, WarmshowersService.SEARCH_USER_DEFAULT_LIMIT)
+                .subscribeOn(Schedulers.io())
+                .map(apiResponse -> {
+                    if (apiResponse.isSuccessful()) {
+                        return apiResponse.body().users;
+                    } else {
+                        throw new Error(apiResponse.errorBody().toString());
+                    }
+                });
     }
 }
