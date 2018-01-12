@@ -2,22 +2,28 @@ package fi.bitrite.android.ws.ui;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
@@ -28,43 +34,35 @@ import fi.bitrite.android.ws.api_new.AuthenticationController;
 import fi.bitrite.android.ws.host.Search;
 import fi.bitrite.android.ws.host.impl.RestTextSearch;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.repository.Resource;
+import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
 import fi.bitrite.android.ws.ui.util.DialogHelper;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
-import fi.bitrite.android.ws.util.Tools;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.subjects.BehaviorSubject;
 
 public class SearchFragment extends BaseFragment {
 
     private static final String KEY_QUERY = "query";
-    private static final String KEY_SEARCH_RESULT = "search_result";
+    private static final String KEY_USER_IDS = "user_ids";
 
     @Inject AuthenticationController mAuthenticationController;
     @Inject NavigationController mNavigationController;
+    @Inject UserRepository mUserRepository;
 
-    @BindView(R.id.all_lbl_no_network_warning) TextView mLblNoNetwork;
-    @BindView(R.id.search_layout_summary) LinearLayout mLayoutSummary;
-    @BindView(R.id.search_lbl_multiple_user_address) TextView mLblMultipleUserAddress;
-    @BindView(R.id.search_lbl_users_at_address) TextView mLblUsersAtAddress;
     @BindView(R.id.search_lst_result) ListView mLstSearchResult;
+    @BindColor(R.color.primaryColorAccent) int mDecoratorForegroundColor;
 
     private UserListAdapter mSearchResultListAdapter;
     private TextSearchTask mTextSearchTask;
 
-    private ArrayList<Host> mSearchResult;
+    private BehaviorSubject<ArrayList<Integer>> mUserIds;
     private String mQuery;
 
     private ProgressDialog.Disposable mProgressDisposable;
-    private boolean mSearchSuccessful;
-
-    public static Fragment create(ArrayList<Host> users) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(KEY_SEARCH_RESULT, users);
-
-        Fragment fragment = new SearchFragment();
-        fragment.setArguments(bundle);
-        return fragment;
-    }
 
     public static Fragment create(String query) {
         Bundle bundle = new Bundle();
@@ -77,61 +75,43 @@ public class SearchFragment extends BaseFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
+                             @Nullable Bundle icicle) {
+        View view = inflater.inflate(R.layout.fragment_search_result, container, false);
         ButterKnife.bind(this, view);
 
-        // Checks if we already have the search result.
-        final Bundle args = getArguments();
-        ArrayList<Host> argsProvidedSearchResult =
-                args.getParcelableArrayList(KEY_SEARCH_RESULT);
-        ArrayList<Host> icicleProvidedSearchResult = savedInstanceState == null
-                ? null
-                : savedInstanceState.getParcelableArrayList(KEY_SEARCH_RESULT);
-        mSearchResult = argsProvidedSearchResult == null
-                ? icicleProvidedSearchResult
-                : argsProvidedSearchResult;
-        mSearchSuccessful = mSearchResult != null;
-        mSearchResult = mSearchResult != null ? mSearchResult : new ArrayList<>();
+        mUserIds = BehaviorSubject.create();
 
-        // TODO(saemy): Move to own fragment (which has a common base to this one).
-        boolean hasArgsProvidedSearchResult = argsProvidedSearchResult != null;
-        mLayoutSummary.setVisibility(hasArgsProvidedSearchResult ? View.VISIBLE : View.GONE);
-        mLblUsersAtAddress.setText(hasArgsProvidedSearchResult
-                ? getResources().getQuantityString(
-                    R.plurals.host_count, mSearchResult.size(), mSearchResult.size())
-                : "");
-        mLblMultipleUserAddress.setText(hasArgsProvidedSearchResult
-                ? mSearchResult.get(0).getLocation()
-                : "");
+        // Checks if we already have the search result.
+        boolean searchSuccessful = icicle != null && icicle.containsKey(KEY_USER_IDS);
+        if (searchSuccessful) {
+            mUserIds.onNext(icicle.getIntegerArrayList(KEY_USER_IDS));
+        }
 
         // Does the requested search if it did not finish yet.
-        mQuery = getArguments().getString(KEY_QUERY);
-        if (mQuery != null) {
-            if (!mSearchSuccessful) {
-                doTextSearch(mQuery);
-            }
+        final Bundle args = getArguments();
+        mQuery = args != null ? args.getString(KEY_QUERY) : null;
+        if (mQuery != null && !searchSuccessful) {
+            doTextSearch(mQuery);
         }
 
         // Initializes the search result list.
-        mSearchResultListAdapter = new UserListAdapter(getContext(), mQuery, mSearchResult);
+        Decorator decorator = new Decorator(mQuery, mDecoratorForegroundColor);
+        mSearchResultListAdapter = new UserListAdapter(getContext(), mComparator, decorator);
         mLstSearchResult.setAdapter(mSearchResultListAdapter);
+        mUserIds.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(userIds -> {
+                    List<Observable<Resource<Host>>> users = mUserRepository.get(userIds);
+                    mSearchResultListAdapter.resetDataset(users, 0);
+                });
 
         return view;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        boolean isConnected = Tools.isNetworkConnected(getContext());
-        mLblNoNetwork.setVisibility(isConnected ? View.GONE : View.VISIBLE);
-    }
-
-    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (mSearchSuccessful) {
-            outState.putParcelableArrayList(KEY_SEARCH_RESULT, mSearchResult);
+        ArrayList<Integer> userIds = mUserIds.getValue();
+        if (userIds != null) {
+            outState.putIntegerArrayList(KEY_USER_IDS, userIds);
         }
 
         if (mTextSearchTask != null) {
@@ -178,27 +158,18 @@ public class SearchFragment extends BaseFragment {
                 return;
             }
 
-            mSearchResult = (ArrayList<Host>) result;
-
-            // Sort so that available hosts come up first
-            Collections.sort(mSearchResult, (left, right) -> {
-                int ncaLeft = left.isNotCurrentlyAvailable() ? 1  : 0;
-                int ncaRight = right.isNotCurrentlyAvailable() ? 1 : 0;
-
-                return ncaLeft != ncaRight
-                        ? ncaLeft - ncaRight
-                        : left.getFullname().compareTo(right.getFullname()); // TODO(saemy): Something smarter?
-            });
-
-            mSearchResultListAdapter.resetDataset(mSearchResult);
+            List<Host> searchResult = (List<Host>) result;
+            ArrayList<Integer> userIds = new ArrayList<>(searchResult.size());
+            for (Host user : searchResult) {
+                userIds.add(user.getId());
+            }
+            mUserIds.onNext(userIds);
 
             mProgressDisposable.dispose();
 
-            if (mSearchResult.isEmpty()) {
+            if (searchResult.isEmpty()) {
                 DialogHelper.alert(getContext(), R.string.no_results);
             }
-
-            mSearchSuccessful = true;
         }
     }
 
@@ -210,4 +181,58 @@ public class SearchFragment extends BaseFragment {
         }
         return title;
     }
+
+    private final static Comparator<Host> mComparator = (left, right) -> {
+        int ncaLeft = left.isNotCurrentlyAvailable() ? 1  : 0;
+        int ncaRight = right.isNotCurrentlyAvailable() ? 1 : 0;
+
+        return ncaLeft != ncaRight
+                ? ncaLeft - ncaRight
+                : left.getFullname().compareTo(right.getFullname()); // TODO(saemy): Something smarter?
+    };
+
+    private static class Decorator implements UserListAdapter.Decorator {
+        private final String mQuery;
+        private final Pattern mQueryPattern;
+        @ColorInt private int mForegroundColor;
+
+        Decorator(String query, @ColorInt int foregroundColor) {
+            mQuery = query;
+            mQueryPattern = query != null
+                ? Pattern.compile(Pattern.quote(query), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)
+                : null;
+            mForegroundColor = foregroundColor;
+        }
+
+        @Override
+        public SpannableStringBuilder decorateFullname(String fullname) {
+            return mQueryPattern.matcher(fullname).find()
+                    ? getTextMatch(mQuery, fullname)
+                    : new SpannableStringBuilder(fullname);
+
+//           Toast.makeText(getContext(), "HostListAdp hostFullname = " + fullname + " - " + mQuery + " - " + mQueryPattern.matcher(fullname).find(), Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public SpannableStringBuilder decorateLocation(String location) {
+            final String locationLower = location.toLowerCase();
+            return mQueryPattern.matcher(locationLower).find()
+                    ? getTextMatch(mQuery, locationLower)
+                    : new SpannableStringBuilder(location);
+        }
+
+        private SpannableStringBuilder getTextMatch(String pattern, String match) {
+            final Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+            final Matcher matcher = p.matcher(match);
+
+            // TODO: ignore accents and other special characters
+            final SpannableStringBuilder spannable = new SpannableStringBuilder(match);
+            final ForegroundColorSpan span = new ForegroundColorSpan(mForegroundColor);
+            while (matcher.find()) {
+                spannable.setSpan(
+                        span, matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            return spannable;
+        }
+    };
 }

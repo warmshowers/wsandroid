@@ -633,8 +633,11 @@ public class MapFragment extends BaseFragment implements
      */
     @Override
     public void onClusterInfoWindowClick(Cluster<Host> cluster) {
-        ArrayList<Host> users = (ArrayList<Host>) cluster.getItems();
-        mNavigationController.navigateToUserList(users);
+        ArrayList<Integer> userIds = new ArrayList<>(cluster.getSize());
+        for (Host user : cluster.getItems()) {
+            userIds.add(user.getId());
+        }
+        mNavigationController.navigateToUserList(userIds);
     }
 
     @Override

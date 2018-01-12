@@ -2,6 +2,10 @@ package fi.bitrite.android.ws.repository;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -23,6 +27,14 @@ public class UserRepository extends Repository<Host> {
 
     public Observable<Resource<Host>> get(int userId) {
         return get(userId, ShouldSaveInDb.IF_ALREADY_IN_DB);
+    }
+    @NonNull
+    public List<Observable<Resource<Host>>> get(@NonNull Collection<Integer> userIds) {
+        List<Observable<Resource<Host>>> users = new ArrayList<>(userIds.size());
+        for (Integer userId : userIds) {
+            users.add(get(userId));
+        }
+        return users;
     }
 
     // Exposes it public.

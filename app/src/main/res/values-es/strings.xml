@@ -183,5 +183,6 @@
     <string name="title_fragment_favorites">Favoritos</string>
     <string name="title_fragment_messages">Mensajes</string>
     <string name="title_fragment_settings">Configuraciones</string>
+    <string name="title_fragment_users">Anfitrións</string>
 
 </resources>

@@ -15,11 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -34,7 +30,6 @@ import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class FavoriteUsersFragment extends BaseFragment {
 
@@ -48,7 +43,6 @@ public class FavoriteUsersFragment extends BaseFragment {
     @BindView(R.id.favorites_lbl_no_users) TextView mLblNoUsers;
 
     private UserListAdapter mUserListAdapter;
-    private List<Host> mFavoriteUsers = new ArrayList<>();
 
     public static Fragment create() {
         Bundle bundle = new Bundle();
@@ -64,7 +58,8 @@ public class FavoriteUsersFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_favorite_users, container, false);
         ButterKnife.bind(this, view);
 
-        mUserListAdapter = new UserListAdapter(getContext(), null, mFavoriteUsers);
+        mUserListAdapter = new UserListAdapter(
+                getContext(), UserListAdapter.COMPERATOR_FULLNAME_ASC, null);
         mLstUsers.setAdapter(mUserListAdapter);
 
         registerForContextMenu(mLstUsers);
@@ -80,7 +75,7 @@ public class FavoriteUsersFragment extends BaseFragment {
 
     @OnItemClick(R.id.favorites_lst_users)
     public void onUserClicked(int position) {
-        Host selectedUser = mFavoriteUsers.get(position);
+        Host selectedUser = mUserListAdapter.getUser(position);
         mNavigationController.navigateToUser(selectedUser.getId());
     }
 
@@ -88,7 +83,9 @@ public class FavoriteUsersFragment extends BaseFragment {
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
         if (view.getId() == mLstUsers.getId()) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            menu.setHeaderTitle(mFavoriteUsers.get(info.position).getFullname());
+            Host user = mUserListAdapter.getUser(info.position);
+
+            menu.setHeaderTitle(user.getFullname());
             menu.add(Menu.NONE, CONTEXT_MENU_DELETE, 0, R.string.delete);
         }
     }
@@ -99,7 +96,7 @@ public class FavoriteUsersFragment extends BaseFragment {
 
         switch (item.getItemId()) {
             case CONTEXT_MENU_DELETE:
-                Host user = mFavoriteUsers.get(info.position);
+                Host user = mUserListAdapter.getUser(info.position);
                 mFavoriteRepository.remove(user.getId());
                 updateFavoriteUsersList();
                 return true;
@@ -110,24 +107,7 @@ public class FavoriteUsersFragment extends BaseFragment {
 
     private void updateFavoriteUsersList() {
         List<Observable<Resource<Host>>> favorites = mFavoriteRepository.getFavorites();
-
-        Map<Integer, Host> hosts = new HashMap<>();
-        Observable.merge(favorites)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(hostResource -> {
-                    if (hostResource.data != null) {
-                        hosts.put(hostResource.data.getId(), hostResource.data);
-
-                        if (hosts.size() == favorites.size()) {
-                            mFavoriteUsers = new ArrayList<>(hosts.values());
-
-                            // Sort in order of name
-                            Collections.sort(mFavoriteUsers, (left, right) -> left.getFullname().compareTo(right.getFullname()));
-
-                            mUserListAdapter.resetDataset(mFavoriteUsers);
-                        }
-                    }
-                });
+        mUserListAdapter.resetDataset(favorites, 0);
 
         boolean hasFavorites = !favorites.isEmpty();
         mLblNoUsers.setVisibility(hasFavorites ? View.GONE : View.VISIBLE);

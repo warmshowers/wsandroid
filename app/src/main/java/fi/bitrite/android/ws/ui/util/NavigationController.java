@@ -23,6 +23,7 @@ import fi.bitrite.android.ws.ui.MessagesFragment;
 import fi.bitrite.android.ws.ui.SearchFragment;
 import fi.bitrite.android.ws.ui.SettingsFragment;
 import fi.bitrite.android.ws.ui.UserFragment;
+import fi.bitrite.android.ws.ui.UserListFragment;
 import io.reactivex.subjects.BehaviorSubject;
 
 /**
@@ -150,9 +151,9 @@ public class NavigationController {
                 ContactUserFragment.create(recipient), false);
     }
 
-    public void navigateToUserList(ArrayList<Host> users) {
-        navigateTo(NAVIGATION_TAG_MAIN + "/user_list-" + users.hashCode(),
-                SearchFragment.create(users), false);
+    public void navigateToUserList(ArrayList<Integer> userIds) {
+        navigateTo(NAVIGATION_TAG_MAIN + "/user_list-" + userIds.hashCode(),
+                UserListFragment.create(userIds), false);
     }
 
     public void navigateToSearch(String query) {

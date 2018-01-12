@@ -1,11 +1,10 @@
 package fi.bitrite.android.ws.ui.listadapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,39 +14,73 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Locale;
+import java.util.Map;
 
-import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.repository.Resource;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.subjects.BehaviorSubject;
 
 public class UserListAdapter extends ArrayAdapter<Host> {
 
-    private final String mQuery;
-    private final Pattern mQueryPattern;
+    public final static Comparator<? super Host> COMPERATOR_FULLNAME_ASC =
+            (left, right) -> left.getFullname().compareTo(right.getFullname());
+
+    private final Comparator<? super Host> mComparator;
+    private final Decorator mDecorator;
+
+    private BehaviorSubject<List<Host>> mUsers = BehaviorSubject.create();
 
     @BindView(R.id.user_list_icon) ImageView mIcon;
     @BindView(R.id.user_list_lbl_fullname) TextView mLblFullname;
     @BindView(R.id.user_list_lbl_location) TextView mLblLocation;
     @BindView(R.id.user_list_lbl_member_info) TextView mMemberInfo;
     @BindView(R.id.user_list_divider) View mDivider;
-    @BindColor(R.color.primaryColorAccent) int mForegroundColor;
 
-    public UserListAdapter(Context context, String query, List<Host> users) {
-        super(context, R.layout.item_user_list, users);
+    public UserListAdapter(@NonNull Context context, @Nullable Comparator<? super Host> comparator,
+                           @Nullable Decorator decorator) {
+        super(context, R.layout.item_user_list);
 
-        mQuery = TextUtils.isEmpty(query) ? null : query.toLowerCase();
+        mComparator = comparator;
+        mDecorator = decorator;
 
-        mQueryPattern = mQuery != null
-                ? Pattern.compile(Pattern.quote(mQuery), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)
-                : null;
+        mUsers.observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::resetDataset);
+    }
+
+    public void resetDataset(List<Observable<Resource<Host>>> users, Object ignored) {
+        @SuppressLint("UseSparseArrays") // We need loadedUsers.values()
+        final Map<Integer, Host> loadedUsers = new HashMap<>();
+
+        Observable.merge(users)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(userResource -> {
+                    final Host user = userResource.data;
+                    if (user != null) {
+                        loadedUsers.put(user.getId(), user);
+
+                        if (loadedUsers.size() == users.size()) { // All the users are loaded.
+                            mUsers.onNext(new ArrayList<>(loadedUsers.values()));
+                        }
+                    }
+                });
     }
 
     public void resetDataset(List<Host> users) {
+        if (mComparator != null) {
+            Collections.sort(users, mComparator);
+        }
+
         clear();
         addAll(users);
         notifyDataSetChanged();
@@ -65,24 +98,12 @@ public class UserListAdapter extends ArrayAdapter<Host> {
 
         ButterKnife.bind(this, convertView);
 
-        String hostFullname = user.getFullname();
-
-        // Emphasize the name or location if it's a match on the search
-        if (mQuery != null) {
-            final String cityString = user.getLocation().toLowerCase();
-
-            //TODO: Special caracters match in search but not in display
-            mLblLocation.setText(mQueryPattern.matcher(cityString).find()
-                    ? getTextMatch(mQuery, cityString)
-                    : user.getLocation());
-
-            //Toast.makeText(mContext, "HostListAdp hostFullname = " + hostFullname + " - " + mQuery + " - " + Pattern.compile(Pattern.quote(mQuery), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE).matcher(hostFullname).find(), Toast.LENGTH_SHORT).show();
-
-            mLblFullname.setText(mQueryPattern.matcher(hostFullname).find()
-                    ? getTextMatch(mQuery,hostFullname)
-                    : hostFullname);
+        // Decorates the shown fields.
+        if (mDecorator != null) {
+            mLblFullname.setText(mDecorator.decorateFullname(user.getFullname()));
+            mLblLocation.setText(mDecorator.decorateLocation(user.getLocation()));
         } else {
-            mLblFullname.setText(hostFullname);
+            mLblFullname.setText(user.getFullname());
             mLblLocation.setText(user.getLocation());
         }
 
@@ -98,7 +119,7 @@ public class UserListAdapter extends ArrayAdapter<Host> {
 
         DateFormat simpleDate = DateFormat.getDateInstance();
         String activeDate = simpleDate.format(user.getLastLoginAsDate());
-        String createdDate = new SimpleDateFormat("yyyy").format(user.getCreatedAsDate());
+        String createdDate = new SimpleDateFormat("yyyy", Locale.US).format(user.getCreatedAsDate());
 
         String memberString = getContext().getString(R.string.search_host_summary, createdDate, activeDate);
         mMemberInfo.setText(memberString);
@@ -106,17 +127,20 @@ public class UserListAdapter extends ArrayAdapter<Host> {
         return convertView;
     }
 
-    private SpannableStringBuilder getTextMatch(String mPattern, String mMatch) {
-        final Pattern p = Pattern.compile(mPattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-        final Matcher matcher = p.matcher(mMatch);
+    public BehaviorSubject<List<Host>> getUsers() {
+        return mUsers;
+    }
 
-        // TODO: ignore accents and other special characters
-        final SpannableStringBuilder spannable = new SpannableStringBuilder(mMatch);
-        final ForegroundColorSpan span = new ForegroundColorSpan(mForegroundColor);
-        while (matcher.find()) {
-            spannable.setSpan(
-                    span, matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        return spannable;
+    @Nullable
+    public Host getUser(int pos) {
+        List<Host> users = mUsers.getValue();
+        return users != null && users.size() > pos
+                ? users.get(pos)
+                : null;
+    }
+
+    public interface Decorator {
+        SpannableStringBuilder decorateFullname(String fullname);
+        SpannableStringBuilder decorateLocation(String location);
     }
 }

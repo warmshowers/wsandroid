@@ -189,5 +189,6 @@
     <string name="title_fragment_favorites">Favoris</string>
     <string name="title_fragment_messages">Messages</string>
     <string name="title_fragment_settings">Paramètres</string>
+    <string name="title_fragment_users">Hôtes</string>
 
 </resources>
