@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -27,6 +27,7 @@ import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.repository.Resource;
+import fi.bitrite.android.ws.ui.widget.UserCircleImageView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.BehaviorSubject;
@@ -41,11 +42,11 @@ public class UserListAdapter extends ArrayAdapter<Host> {
 
     private BehaviorSubject<List<Host>> mUsers = BehaviorSubject.create();
 
-    @BindView(R.id.user_list_icon) ImageView mIcon;
+    @BindView(R.id.user_list_layout) LinearLayout mLayout;
+    @BindView(R.id.user_list_icon) UserCircleImageView mIcon;
     @BindView(R.id.user_list_lbl_fullname) TextView mLblFullname;
     @BindView(R.id.user_list_lbl_location) TextView mLblLocation;
     @BindView(R.id.user_list_lbl_member_info) TextView mMemberInfo;
-    @BindView(R.id.user_list_divider) View mDivider;
 
     public UserListAdapter(@NonNull Context context, @Nullable Comparator<? super Host> comparator,
                            @Nullable Decorator decorator) {
@@ -68,10 +69,7 @@ public class UserListAdapter extends ArrayAdapter<Host> {
                     final Host user = userResource.data;
                     if (user != null) {
                         loadedUsers.put(user.getId(), user);
-
-                        if (loadedUsers.size() == users.size()) { // All the users are loaded.
-                            mUsers.onNext(new ArrayList<>(loadedUsers.values()));
-                        }
+                        mUsers.onNext(new ArrayList<>(loadedUsers.values()));
                     }
                 });
     }
@@ -107,15 +105,10 @@ public class UserListAdapter extends ArrayAdapter<Host> {
             mLblLocation.setText(user.getLocation());
         }
 
-        // Divider
-        // TODO(saemy): Automatic divider?
-        mDivider.setVisibility(position == 0 ? View.GONE : View.VISIBLE);
+        // Greys out unavailable users.
+        mLayout.setAlpha(user.isNotCurrentlyAvailable() ? 0.5f : 1.0f);
 
-        // Set the host icon to black if they're available, otherwise gray
-        mIcon.setImageResource(user.isNotCurrentlyAvailable()
-                ? R.drawable.ic_home_variant_grey600_24dp
-                : R.drawable.ic_home_variant_black_24dp);
-        mIcon.setAlpha(user.isNotCurrentlyAvailable() ? 0.5f : 1.0f);
+        mIcon.setUser(user);
 
         DateFormat simpleDate = DateFormat.getDateInstance();
         String activeDate = simpleDate.format(user.getLastLoginAsDate());
