@@ -64,7 +64,8 @@ abstract class Repository<T> {
             observables.add(loadFromDb(id).subscribeOn(Schedulers.io()));
         }
 
-        if (isNewCacheEntry || cacheEntry.freshness == Freshness.OLD) {
+        if (isNewCacheEntry || cacheEntry.freshness == Freshness.OLD ||
+                cacheEntry.data.getValue().isError()) {
             // We load it from the network.
             cacheEntry.freshness = Freshness.REFRESHING;
             observables.add(loadFromNetwork(id).subscribeOn(Schedulers.io()));
