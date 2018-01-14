@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.DateFormat;
@@ -286,7 +287,7 @@ public class UserFragment extends BaseFragment {
     }
     private void updateFeedbacksViewContent() {
         List<Feedback> feedbacks = mFeedbacks.getValue();
-        Collections.sort(feedbacks, (left, right) -> right.meetingDate.compareTo(left.meetingDate));
+        Collections.sort(feedbacks, (left, right) -> ObjectUtils.compare(right.meetingDate, left.meetingDate));
 
         mTblFeedback.setRows(feedbacks);
         mLblFeedback.setText(feedbacks.isEmpty()
