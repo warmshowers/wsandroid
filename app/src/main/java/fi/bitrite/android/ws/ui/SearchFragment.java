@@ -42,6 +42,7 @@ import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class SearchFragment extends BaseFragment {
@@ -62,6 +63,7 @@ public class SearchFragment extends BaseFragment {
     private BehaviorSubject<ArrayList<Integer>> mUserIds;
     private String mQuery;
 
+    private CompositeDisposable mDisposables;
     private ProgressDialog.Disposable mProgressDisposable;
 
     public static Fragment create(String query) {
@@ -79,32 +81,51 @@ public class SearchFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_search_result, container, false);
         ButterKnife.bind(this, view);
 
-        mUserIds = BehaviorSubject.create();
+        if (mQuery == null) {
+            // If we return from the UserFragment after clicking an entry, we often do not need to
+            // re-do all initialization here, as it is still around.
 
-        // Checks if we already have the search result.
-        boolean searchSuccessful = icicle != null && icicle.containsKey(KEY_USER_IDS);
-        if (searchSuccessful) {
-            mUserIds.onNext(icicle.getIntegerArrayList(KEY_USER_IDS));
-        }
+            mUserIds = BehaviorSubject.create();
 
-        // Does the requested search if it did not finish yet.
-        final Bundle args = getArguments();
-        mQuery = args != null ? args.getString(KEY_QUERY) : null;
-        if (mQuery != null && !searchSuccessful) {
-            doTextSearch(mQuery);
+            // Checks if we already have the search result.
+            boolean searchSuccessful = icicle != null && icicle.containsKey(KEY_USER_IDS);
+            if (searchSuccessful) {
+                mUserIds.onNext(icicle.getIntegerArrayList(KEY_USER_IDS));
+            }
+
+            // Does the requested search if it did not finish yet.
+            final Bundle args = getArguments();
+            mQuery = args != null ? args.getString(KEY_QUERY) : null;
+            if (mQuery != null && !searchSuccessful) {
+                doTextSearch(mQuery);
+            }
         }
 
         // Initializes the search result list.
         Decorator decorator = new Decorator(mQuery, mDecoratorForegroundColor);
         mSearchResultListAdapter = new UserListAdapter(getContext(), mComparator, decorator);
         mLstSearchResult.setAdapter(mSearchResultListAdapter);
-        mUserIds.observeOn(AndroidSchedulers.mainThread())
+
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mDisposables = new CompositeDisposable();
+        mDisposables.add(mUserIds.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userIds -> {
                     List<Observable<Resource<Host>>> users = mUserRepository.get(userIds);
                     mSearchResultListAdapter.resetDataset(users, 0);
-                });
+                }));
+    }
 
-        return view;
+    @Override
+    public void onPause() {
+        mDisposables.dispose();
+
+        super.onPause();
     }
 
     @Override
