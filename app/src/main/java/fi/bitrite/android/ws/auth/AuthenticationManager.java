@@ -8,16 +8,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.api_new.WarmshowersService;
 import fi.bitrite.android.ws.api_new.response.LoginResponse;
-import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.ui.AuthenticatorActivity;
-import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import retrofit2.Response;
@@ -32,7 +34,8 @@ public class AuthenticationManager {
 
     private final AccountManager mAccountManager;
     private final WarmshowersService mWarmshowersService;
-    private final LoggedInUserHelper mLoggedInUserHelper;
+
+    private final ReentrantReadWriteLock mAuthenticationManagerLock = new ReentrantReadWriteLock();
 
     private final BehaviorSubject<Account[]> mAccounts;
 
@@ -62,12 +65,10 @@ public class AuthenticationManager {
     }
 
     @Inject
-    public AuthenticationManager(
-            AccountManager accountManager, WarmshowersService warmshowersService,
-            LoggedInUserHelper loggedInUserHelper) {
+    public AuthenticationManager(AccountManager accountManager,
+                                 WarmshowersService warmshowersService) {
         mAccountManager = accountManager;
         mWarmshowersService = warmshowersService;
-        mLoggedInUserHelper = loggedInUserHelper;
 
         mAccounts = BehaviorSubject.createDefault(mAccountManager.getAccountsByType(ACCOUNT_TYPE));
         mAccountManager.addOnAccountsUpdatedListener(accounts -> {
@@ -96,7 +97,7 @@ public class AuthenticationManager {
                     String name = result.getString(AccountManager.KEY_ACCOUNT_NAME);
                     String type = result.getString(AccountManager.KEY_ACCOUNT_TYPE);
 
-                    // TODO(saemy): Choose this account as the active one.
+                    // TODO(saemy): Mark this account as the active one.
 
                     emitter.onSuccess(new Account(name, type));
                 } catch (Exception e) {
@@ -123,11 +124,17 @@ public class AuthenticationManager {
         return mWarmshowersService.login(username, password)
                 .subscribeOn(Schedulers.io())
                 .map(response -> {
-                    if (response.isSuccessful()) {
-                        LoginResponse loginResponse = response.body();
+                    if (!response.isSuccessful()) {
+                        return new LoginResult(response);
+                    }
+                    LoginResponse loginResponse = response.body();
 
-                        Account account = new Account(username, ACCOUNT_TYPE);
+                    Account account = new Account(username, ACCOUNT_TYPE);
 
+                    // (@link AccountManager#addAccountExplicitly} triggers notifications which in
+                    // turn try to access e.g. the userId of that account. We therefore synchronize
+                    // access to the AccountManager to avoid that race.
+                    return executeWithWriteLock(v -> {
                         if (!isExistingAccount(account)) {
                             // This explicitly does not save any password as it is stored in
                             // plaintext on the device. On rooted devices this is an issue! Instead,
@@ -136,7 +143,8 @@ public class AuthenticationManager {
 
                             // Sets the user id.
                             int userId = loginResponse.user.id;
-                            mAccountManager.setUserData(account, KEY_USER_ID, Integer.toString(userId));
+                            mAccountManager.setUserData(account, KEY_USER_ID,
+                                                        Integer.toString(userId));
                         }
 
                         // Updates the CSRF token.
@@ -146,23 +154,19 @@ public class AuthenticationManager {
                         // Fetches the auth token from the login response.
                         AuthToken authToken =
                                 new AuthToken(loginResponse.sessionName, loginResponse.sessionId);
-                        mAccountManager.setAuthToken(account, AUTH_TOKEN_TYPE, authToken.toString());
-
-                        // Saves our account information.
-                        Host loggedInUser = loginResponse.user.toHost();
-                        mLoggedInUserHelper.set(loggedInUser);
+                        mAccountManager.setAuthToken(account, AUTH_TOKEN_TYPE,
+                                                     authToken.toString());
 
                         // Fires the callback.
                         AuthData authData = new AuthData(account, authToken, csrfToken);
                         return new LoginResult(response, authData);
-                    } else {
-                        return new LoginResult(response);
-                    }
+                    });
                 });
     }
 
     private boolean isExistingAccount(@NonNull Account account) {
-        // Checks, if there already is an account with this username.
+        // The AccountManager does not need to be synchronized (see {@link #login}) as the set of
+        // accounts is not affected of any race.
         Account[] accounts = mAccountManager.getAccountsByType(ACCOUNT_TYPE);
         for (Account existingAccount : accounts) {
             if (existingAccount.equals(account)) {
@@ -191,10 +195,12 @@ public class AuthenticationManager {
      */
     @Nullable
     public AuthToken peekAuthToken(@NonNull Account account) {
-        String authTokenStr = mAccountManager.peekAuthToken(account, AUTH_TOKEN_TYPE);
-        return authTokenStr == null
-                ? null
-                : AuthToken.fromString(authTokenStr);
+        return executeWithReadLock(v -> {
+            String authTokenStr = mAccountManager.peekAuthToken(account, AUTH_TOKEN_TYPE);
+            return authTokenStr == null
+                    ? null
+                    : AuthToken.fromString(authTokenStr);
+        });
     }
 
     /**
@@ -221,17 +227,24 @@ public class AuthenticationManager {
                 }
             };
 
-            mAccountManager.getAuthToken(
-                    account, AUTH_TOKEN_TYPE, null, activity, accountManagerCallback, null);
+            executeWithReadLock(v -> {
+                mAccountManager.getAuthToken(
+                        account, AUTH_TOKEN_TYPE, null, activity, accountManagerCallback, null);
+                return null;
+            });
         });
     }
 
     public int getUserId(@NonNull Account account) {
-        String userIdStr = mAccountManager.getUserData(account, KEY_USER_ID);
-        return Integer.parseInt(userIdStr);
+        return executeWithReadLock(v -> {
+            String userIdStr = mAccountManager.getUserData(account, KEY_USER_ID);
+            return userIdStr != null
+                    ? Integer.parseInt(userIdStr)
+                    : fi.bitrite.android.ws.auth.AccountManager.UNKNOWN_USER_ID;
+        });
     }
     public String getCsrfToken(@NonNull Account account) {
-        return mAccountManager.getUserData(account, KEY_CSRF_TOKEN);
+        return executeWithReadLock(v -> mAccountManager.getUserData(account, KEY_CSRF_TOKEN));
     }
 
     /**
@@ -242,11 +255,17 @@ public class AuthenticationManager {
      * @param csrfToken The new token.
      */
     public void updateCsrfToken(@NonNull Account account, @NonNull String csrfToken) {
-        mAccountManager.setUserData(account, KEY_CSRF_TOKEN, csrfToken);
+        executeWithWriteLock(v -> {
+            mAccountManager.setUserData(account, KEY_CSRF_TOKEN, csrfToken);
+            return null;
+        });
     }
 
     public void invalidateAuthToken(@NonNull AuthToken authToken) {
-        mAccountManager.invalidateAuthToken(ACCOUNT_TYPE, authToken.toString());
+        executeWithWriteLock(v -> {
+            mAccountManager.invalidateAuthToken(ACCOUNT_TYPE, authToken.toString());
+            return null;
+        });
     }
 
     public void removeAccount(@NonNull String username) {
@@ -254,6 +273,28 @@ public class AuthenticationManager {
         removeAccount(account);
     }
     public void removeAccount(@NonNull Account account) {
-        mAccountManager.removeAccount(account, null, null);
+        executeWithWriteLock(v -> {
+            mAccountManager.removeAccount(account, null, null);
+            return null;
+        });
+    }
+
+
+    private <R> R executeWithReadLock(Function<Void, R> f) {
+        return executeWithLock(mAuthenticationManagerLock.readLock(), f);
+    }
+    private <R> R executeWithWriteLock(Function<Void, R> f) {
+        return executeWithLock(mAuthenticationManagerLock.writeLock(), f);
+    }
+    private static <R> R executeWithLock(Lock lock, Function<Void, R> f) {
+        try {
+            lock.lock();
+            return f.apply(null);
+        } catch (Exception e) {
+            // Ignore.
+            return null;
+        } finally {
+            lock.unlock();
+        }
     }
 }

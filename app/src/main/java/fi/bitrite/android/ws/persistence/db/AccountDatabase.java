@@ -23,13 +23,13 @@ public class AccountDatabase extends Database {
                            AccountManager accountManager) {
         super(context, schemaDefinition);
 
-        accountManager.getCurrentAccountId().subscribe(accountId -> {
+        accountManager.getCurrentUserId().subscribe(userId -> {
             // Closes the current db (if it is open).
             getDatabase().close();
 
-            if (accountId > 0) {
+            if (userId != AccountManager.UNKNOWN_USER_ID) {
                 // Opens the db for the new accountId.
-                getDatabase().open(getDbName(accountId));
+                getDatabase().open(getDbName(userId));
             }
         });
     }

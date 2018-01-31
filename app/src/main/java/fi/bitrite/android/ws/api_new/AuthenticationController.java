@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.support.annotation.WorkerThread;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
@@ -93,23 +94,20 @@ public class AuthenticationController {
 
     private Completable initAuthData(Observable<Account> accountSingle) {
         final AtomicReference<Account> account = new AtomicReference<>(); // To have a final variable...
-        return Completable.create(emitter -> {
-            accountSingle
-                    .flatMap(acc -> {
-                        account.set(acc);
+        return Completable.create(emitter -> accountSingle
+                .flatMap(acc -> {
+                    account.set(acc);
 
-                        // We disallow the user to change their account (the username field is not
-                        // editable).
-                        return mAuthenticationManager.getAuthToken(acc, mMainActivity).toObservable();
-                    })
-                    .subscribe(authToken -> {
-                        String csrfToken = mAuthenticationManager.getCsrfToken(account.get());
+                    // We disallow the user to change their account (the username field is disabled).
+                    return mAuthenticationManager.getAuthToken(acc, mMainActivity).toObservable();
+                })
+                .subscribe(authToken -> {
+                    String csrfToken = mAuthenticationManager.getCsrfToken(account.get());
 
-                        mAuthData.onNext(new AuthData(account.get(), authToken, csrfToken));
+                    mAuthData.onNext(new AuthData(account.get(), authToken, csrfToken));
 
-                        emitter.onComplete();
-                    }, emitter::onError);
-        });
+                    emitter.onComplete();
+                }, emitter::onError));
     }
 
     public BehaviorSubject<AuthData> getAuthData() {
@@ -125,7 +123,7 @@ public class AuthenticationController {
             new ResponseInterceptor.Handler() {
 
         /**
-         * Error handler from {@link ResponseInterceptor}.
+         * Error handler for {@link ResponseInterceptor}.
          *
          * Requests a new CSRF token from the API endpoint.
          * This method must be called on a background thread as we wait for the HTTP response to
@@ -163,7 +161,7 @@ public class AuthenticationController {
         }
 
         /**
-         * Error handler from {@link ResponseInterceptor}.
+         * Error handler for {@link ResponseInterceptor}.
          *
          * Invalidates the current authToken and re-authenticates the user to obtain a new auth
          * token from the API endpoint.
@@ -172,14 +170,16 @@ public class AuthenticationController {
          */
         @Override
         public boolean handleAuthTokenExpiration() {
+            final AuthData authData = mAuthData.getValue();
+
             // Invalidates the current auth token s.t. it gets updated.
-            mAuthenticationManager.invalidateAuthToken(mAuthData.getValue().authToken);
+            mAuthenticationManager.invalidateAuthToken(authData.authToken);
 
             // Resets the account container. This reloads the account which in turn requires the
             // auth token to be updated.
             // Waits for the auth token to show up.
             try {
-                initAuthData(Observable.just(mAuthData.getValue().account))
+                initAuthData(Observable.just(authData.account))
                         .blockingAwait();
 
                 return true;
@@ -189,7 +189,7 @@ public class AuthenticationController {
         }
 
         /**
-         * Handler from {@link ResponseInterceptor}.
+         * Handler for {@link ResponseInterceptor}.
          *
          * Waits until the auth token becomes available.
          *
@@ -197,10 +197,18 @@ public class AuthenticationController {
          */
         @Override
         public boolean waitForAuthToken() {
-            while (mAuthData.getValue() == null) {
-                mAuthData.blockingNext();
+            if (mAuthData.hasValue()) {
+                return true;
             }
-            // TODO(saemy): Handle error case (that currently leads to a endless loop).
+
+            // Maximal number of authData elements we are waiting for until we abort.
+            int maxIterations = 2;
+
+            Iterator<AuthData> it = mAuthData.blockingNext().iterator();
+            AuthData authData;
+            do {
+                authData = it.next();
+            } while (authData == null && --maxIterations > 0);
 
             return true;
         }
