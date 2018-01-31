@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.model;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Parcel;
+import android.text.TextUtils;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.yelp.parcelgen.JsonParser.DualCreator;
@@ -62,19 +63,19 @@ public class Host extends _Host {
     public String getLocation() {
 
         String location = "";
-        if (!getStreet().isEmpty()) {
+        if (!TextUtils.isEmpty(getStreet())) {
             location += getStreet() + "\n";
         }
 
-        if (!getAdditional().isEmpty()) {
+        if (!TextUtils.isEmpty(getAdditional())) {
             location += getAdditional() + "\n";
         }
         location += getCity() + ", " + getProvince().toUpperCase();
-        if (!getPostalCode().isEmpty()) {
+        if (!TextUtils.isEmpty(getPostalCode())) {
             location += " " + getPostalCode();
         }
 
-        if (!getCountry().isEmpty()) {
+        if (!TextUtils.isEmpty(getCountry())) {
             location += ", " + getCountry().toUpperCase();
         }
 
@@ -85,13 +86,13 @@ public class Host extends _Host {
         Resources r = context.getResources();
 
         String nearbyServices = "";
-        if (!getMotel().isEmpty()) {
+        if (!TextUtils.isEmpty(getMotel())) {
             nearbyServices += r.getString(R.string.nearby_service_accommodation) + ": " + getMotel() + ", ";
         }
-        if (!getBikeshop().isEmpty()) {
+        if (!TextUtils.isEmpty(getBikeshop())) {
             nearbyServices += r.getString(R.string.nearby_service_bikeshop) + ": " +getBikeshop() + ", ";
         }
-        if (!getCampground().isEmpty()) {
+        if (!TextUtils.isEmpty(getCampground())) {
             nearbyServices += r.getString(R.string.nearby_service_campground) + ": " +getCampground() + ", ";
         }
 
@@ -122,11 +123,11 @@ public class Host extends _Host {
     }
 
     private boolean hasService(String service) {
-        return !service.isEmpty() && service.equals("1");
+        return !TextUtils.isEmpty(service) && service.equals("1");
     }
 
     public boolean isNotCurrentlyAvailable() {
-        return getNotCurrentlyAvailable().equals("1");
+        return hasService(mNotCurrentlyAvailable);
     }
 
     public long getUpdated() {
