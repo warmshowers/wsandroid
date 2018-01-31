@@ -15,7 +15,7 @@ abstract class Dao {
     }
 
     void insertOrUpdate(SQLiteDatabase db, String table, ContentValues cv, int id) {
-        insertOrUpdate(db, table, cv, "id = ?", new String[] { Integer.toString(id) });
+        insertOrUpdate(db, table, cv, "id = ?", int2str(id));
     }
 
     void insertOrUpdate(SQLiteDatabase db, String table, ContentValues cv, String whereClause, String[] whereArgs) {
@@ -34,7 +34,7 @@ abstract class Dao {
         return mDb.executeNonTransactional(callback);
     }
 
-    String[] int2str(int... ints) {
+    static String[] int2str(int... ints) {
         String[] res = new String[ints.length];
         for (int i = 0; i < ints.length; ++i) {
             res[i] = String.valueOf(ints[i]);

@@ -27,4 +27,16 @@
         <item>@string/feedback_rating_negative</item>
     </string-array>
 
+    <array name="colors_message_author" translatable="false">
+        <item>@android:color/holo_orange_dark</item>
+        <item>@android:color/holo_blue_dark</item>
+        <item>@android:color/holo_green_dark</item>
+        <item>@android:color/holo_purple</item>
+        <item>@android:color/holo_red_dark</item>
+        <item>@android:color/holo_orange_light</item>
+        <item>@android:color/holo_blue_light</item>
+        <item>@android:color/holo_green_light</item>
+        <item>@android:color/holo_red_light</item>
+    </array>
+
 </resources>

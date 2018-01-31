@@ -7,7 +7,8 @@ import fi.bitrite.android.ws.ui.ContactUserFragment;
 import fi.bitrite.android.ws.ui.FavoriteUsersFragment;
 import fi.bitrite.android.ws.ui.FeedbackFragment;
 import fi.bitrite.android.ws.ui.MapFragment;
-import fi.bitrite.android.ws.ui.MessagesFragment;
+import fi.bitrite.android.ws.ui.MessageThreadFragment;
+import fi.bitrite.android.ws.ui.MessageThreadsFragment;
 import fi.bitrite.android.ws.ui.SearchFragment;
 import fi.bitrite.android.ws.ui.SettingsFragment;
 import fi.bitrite.android.ws.ui.UserFragment;
@@ -18,10 +19,10 @@ public abstract class MainActivityModule {
     abstract AboutFragment contributeAboutFragment();
 
     @ContributesAndroidInjector
-    abstract ContactUserFragment contributeHostContactFragment();
+    abstract ContactUserFragment contributeContactUserFragment();
 
     @ContributesAndroidInjector
-    abstract FavoriteUsersFragment contributeStarredHostTabFragment();
+    abstract FavoriteUsersFragment contributeFavoriteUsersFragment();
 
     @ContributesAndroidInjector
     abstract FeedbackFragment contributeFeedbackFragment();
@@ -30,14 +31,17 @@ public abstract class MainActivityModule {
     abstract MapFragment contributeMapFragment();
 
     @ContributesAndroidInjector
-    abstract MessagesFragment contributeMessagesTabFragment();
+    abstract MessageThreadFragment contributeMessageThreadFragment();
 
     @ContributesAndroidInjector
-    abstract SearchFragment contributeListSearchTabFragment();
+    abstract MessageThreadsFragment contributeMessageThreadsFragment();
+
+    @ContributesAndroidInjector
+    abstract SearchFragment contributeSearchFragment();
 
     @ContributesAndroidInjector
     abstract SettingsFragment contributeSettingsFragment();
 
     @ContributesAndroidInjector
-    abstract UserFragment contributeHostInformationFragment();
+    abstract UserFragment contributeUserFragment();
 }

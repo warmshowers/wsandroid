@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/message_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:layout_marginTop="7dp"
+    android:layout_marginBottom="7dp"
+    android:orientation="vertical"
+    tools:paddingLeft="@dimen/message_bubble_padding_big"
+    tools:paddingRight="@dimen/message_bubble_padding_small"
+    tools:layout_marginLeft="@dimen/message_bubble_margin_small"
+    tools:layout_marginRight="@dimen/message_bubble_margin_big"
+    tools:background="@drawable/message_incoming_bubble">
+
+    <TextView
+        android:id="@+id/message_lbl_sender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="12sp"
+    tools:text="John Snow"/>
+
+    <TextView
+        android:id="@+id/message_lbl_body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"/>
+
+    <TextView
+        android:id="@+id/message_lbl_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:textSize="12sp"
+        tools:text="15:03"/>
+</LinearLayout>

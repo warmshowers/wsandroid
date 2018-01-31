@@ -336,7 +336,7 @@ public class UserFragment extends BaseFragment {
 
         AtomicInteger numFinished = new AtomicInteger(0);
         Observable.merge(
-                mUserRepository.getUser(mUserId)
+                mUserRepository.get(mUserId)
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(hostResource -> {
                             if (hostResource.hasData()) {

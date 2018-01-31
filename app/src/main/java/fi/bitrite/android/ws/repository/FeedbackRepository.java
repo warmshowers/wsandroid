@@ -11,6 +11,7 @@ import fi.bitrite.android.ws.api_new.WarmshowersService;
 import fi.bitrite.android.ws.api_new.model.ApiFeedback;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.persistence.FeedbackDao;
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
@@ -32,8 +33,8 @@ public class FeedbackRepository extends Repository<List<Feedback>> {
         return super.get(recipientId, shouldSaveInDb);
     }
 
-    public void saveForRecipient(int recipientId, @NonNull List<Feedback> feedbacks) {
-        super.save(recipientId, feedbacks);
+    public Completable saveForRecipient(int recipientId, @NonNull List<Feedback> feedbacks) {
+        return super.save(recipientId, feedbacks);
     }
 
     @Override

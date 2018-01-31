@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class UserCircleImageView extends CircleImageView {
             0xff90a4ae
     );
 
-    public void setUsers(@Nullable List<Host> users) {
+    public void setUsers(@Nullable Collection<Host> users) {
         String url;
         String text;
         int color;

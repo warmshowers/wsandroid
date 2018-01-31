@@ -19,7 +19,8 @@ import fi.bitrite.android.ws.ui.FavoriteUsersFragment;
 import fi.bitrite.android.ws.ui.FeedbackFragment;
 import fi.bitrite.android.ws.ui.MainActivity;
 import fi.bitrite.android.ws.ui.MapFragment;
-import fi.bitrite.android.ws.ui.MessagesFragment;
+import fi.bitrite.android.ws.ui.MessageThreadFragment;
+import fi.bitrite.android.ws.ui.MessageThreadsFragment;
 import fi.bitrite.android.ws.ui.SearchFragment;
 import fi.bitrite.android.ws.ui.SettingsFragment;
 import fi.bitrite.android.ws.ui.UserFragment;
@@ -121,12 +122,12 @@ public class NavigationController {
     }
 
     public void navigateToMessageThreads() {
-        navigateTo(NAVIGATION_TAG_MESSAGE_THREADS, MessagesFragment.create(), true);
+        navigateTo(NAVIGATION_TAG_MESSAGE_THREADS, MessageThreadsFragment.create(), true);
     }
 
-    public void navigateToMessageThread(int messageThreadId) {
-//        navigateTo(NAVIGATION_TAG_MESSAGE_THREADS + '/' + messageThreadId,
-//                MessageThreadFragment.create(messageThreadId), false);
+    public void navigateToMessageThread(int threadId) {
+        navigateTo(NAVIGATION_TAG_MESSAGE_THREADS + '/' + threadId,
+                MessageThreadFragment.create(threadId), false);
     }
 
     public void navigateToSettings() {
@@ -147,7 +148,7 @@ public class NavigationController {
     }
 
     public void navigateToContactUser(Host recipient) {
-        navigateTo(NAVIGATION_TAG_MAIN + "/contact_user-" + recipient.getId(),
+        navigateTo(NAVIGATION_TAG_MAIN + "/user-" + recipient.getId() + "/contact",
                 ContactUserFragment.create(recipient), false);
     }
 
@@ -190,6 +191,14 @@ public class NavigationController {
         }
 
         fragmentTransaction.commitAllowingStateLoss(); // TODO(saemy): Do we want this?
+    }
+
+    /**
+     * Removes the top element of the backstack.
+     */
+    public NavigationController popBackStack() {
+        mFragmentManager.popBackStack();
+        return this;
     }
 
     /**

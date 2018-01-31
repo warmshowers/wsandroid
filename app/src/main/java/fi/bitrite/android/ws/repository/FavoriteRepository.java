@@ -29,7 +29,7 @@ public class FavoriteRepository {
 
         List<Observable<Resource<Host>>> favorites = new ArrayList<>(userIds.size());
         for (Integer userId : userIds) {
-            favorites.add(mUserRepository.getUser(userId));
+            favorites.add(mUserRepository.get(userId));
         }
 
         return favorites;

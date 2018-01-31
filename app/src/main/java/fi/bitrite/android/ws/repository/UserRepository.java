@@ -15,6 +15,7 @@ import fi.bitrite.android.ws.api_new.WarmshowersService;
 import fi.bitrite.android.ws.api_new.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.UserDao;
+import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
@@ -34,9 +35,13 @@ public class UserRepository extends Repository<Host> {
     }
     @NonNull
     public List<Observable<Resource<Host>>> get(@NonNull Collection<Integer> userIds) {
+        return get(userIds, ShouldSaveInDb.IF_ALREADY_IN_DB);
+    }
+    public List<Observable<Resource<Host>>> get(@NonNull Collection<Integer> userIds,
+                                                ShouldSaveInDb shouldSaveInDb) {
         List<Observable<Resource<Host>>> users = new ArrayList<>(userIds.size());
         for (Integer userId : userIds) {
-            users.add(get(userId));
+            users.add(get(userId, shouldSaveInDb));
         }
         return users;
     }
@@ -47,16 +52,13 @@ public class UserRepository extends Repository<Host> {
         return super.get(userId, shouldSaveInDb);
     }
 
-    public void save(@NonNull Host user) {
-        save(user.getId(), user);
+    public Completable save(@NonNull Host user) {
+        return save(user.getId(), user);
     }
 
     @Override
     void saveInDb(int id, @NonNull Host user) {
         mUserDao.save(user);
-    }
-    public Observable<Resource<Host>> getUser(int userId) {
-        return get(userId);
     }
 
     @Override

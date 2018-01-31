@@ -75,7 +75,7 @@ android {
 
     def doSignRelease = false
     signingConfigs {
-        development {
+        debug {
             storeFile file("../keystores/debug.keystore")
             storePassword "android"
             keyAlias "androiddebugkey"
@@ -104,6 +104,11 @@ android {
                 signingConfig signingConfigs.release
             }
         }
+    }
+
+    lintOptions {
+        // FIXME(saemy): Make this an error for release builds on travis.
+        warning 'MissingTranslation'
     }
 
     dexOptions {

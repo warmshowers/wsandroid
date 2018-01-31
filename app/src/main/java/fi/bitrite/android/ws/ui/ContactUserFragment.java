@@ -1,11 +1,9 @@
 package fi.bitrite.android.ws.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +12,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -25,14 +24,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.api_new.AuthenticationController;
-import fi.bitrite.android.ws.host.impl.RestHostContact;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.ui.util.DialogHelper;
+import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.util.Tools;
-import fi.bitrite.android.ws.util.http.HttpException;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * Responsible for letting the user type in a message and then sending it to an other user
@@ -42,7 +40,8 @@ public class ContactUserFragment extends BaseFragment {
 
     private final static String KEY_RECIPIENT = "recipient";
 
-    @Inject AuthenticationController mAuthenticationController;
+    @Inject MessageRepository mMessageRepository;
+    @Inject NavigationController mNavigationController;
 
     @BindView(R.id.contact_user_txt_subject) EditText mTxtSubject;
     @BindView(R.id.contact_user_txt_message) EditText mTxtMessage;
@@ -52,7 +51,6 @@ public class ContactUserFragment extends BaseFragment {
     private Host mRecipient;
 
     private ProgressDialog.Disposable mProgressDisposable;
-    private ContactUserTask mContactUserTask;
 
     public static Fragment create(Host recipient) {
         Bundle bundle = new Bundle();
@@ -86,8 +84,7 @@ public class ContactUserFragment extends BaseFragment {
     @OnClick(R.id.all_btn_submit)
     public void sendMessageToHost() {
         String subject = mTxtSubject.getText().toString();
-        String message = String.format("%s\n\n%s",
-                mTxtMessage.getText().toString(), getString(R.string.sent_from_android));
+        String message = mTxtMessage.getText().toString();
 
         if (TextUtils.isEmpty(subject) || TextUtils.isEmpty(message)) {
             DialogHelper.alert(getContext(), R.string.message_validation_error);
@@ -97,54 +94,36 @@ public class ContactUserFragment extends BaseFragment {
         mProgressDisposable = ProgressDialog.create(R.string.sending_message)
                 .show(getActivity());
 
-        mContactUserTask = new ContactUserTask();
-        mContactUserTask.execute(subject, message);
-    }
+        List<String> recipients = Collections.singletonList(mRecipient.getName());
+        mMessageRepository.createThread(subject, message, recipients)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(threadId -> {
+                    if (threadId == MessageRepository.STATUS_NEW_THREAD_ID_NOT_YET_KNOWN) {
+                        // We wait for the threadId to become available.
+                        return;
+                    }
 
-    private class ContactUserTask extends AsyncTask<String, Void, Object> {
+                    mProgressDisposable.dispose();
 
-        @Override
-        protected Object doInBackground(String... params) {
-            String subject = params[0];
-            String message = params[1];
+                    // The back action should take us from the message thread to the caller of this
+                    // fragment and not this form fragment itself.
+                    mNavigationController.popBackStack();
 
-            try {
-                RestHostContact contact = new RestHostContact(mAuthenticationController);
-                JSONObject result = contact.send(mRecipient.getName(), subject, message);
+                    if (threadId != MessageRepository.STATUS_NEW_THREAD_ID_NOT_IDENTIFIABLE) {
+                        // This is a valid threadId.
+                        mNavigationController.navigateToMessageThread(threadId);
+                    } else {
+                        // We just navigate to the thread list...
+                        mNavigationController.navigateToMessageThreads();
+                    }
+                }, throwable -> {
+                    mProgressDisposable.dispose();
 
-                JSONArray resultArray = result.getJSONArray("arrayresult");
-
-                if (!resultArray.getBoolean(0)) {
-                    throw new HttpException("Failed to send contact request, inappropriate result: " + resultArray);
-                }
-
-                return null;
-            } catch (Exception e) {
-                Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
-                return e;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            mProgressDisposable.dispose();
-
-            if (result instanceof Exception) {
-                RestClient.reportError(getContext(), result);
-                return;
-            }
-
-            showSuccessDialog();
-        }
-    }
-
-    private void showSuccessDialog() {
-        new AlertDialog.Builder(getContext())
-                .setMessage(getResources().getString(R.string.message_sent))
-                .setPositiveButton(getResources().getString(R.string.ok),
-                        (dialog, id) -> getActivity().getSupportFragmentManager().popBackStack())
-                .create()
-                .show();
+                    Toast.makeText(getContext(), R.string.message_thread_create_failed,
+                            Toast.LENGTH_LONG).show();
+                    Log.e(WSAndroidApplication.TAG,
+                            "Failed to create a new message thread: " + throwable.getMessage());
+                });
     }
 
     @Override
