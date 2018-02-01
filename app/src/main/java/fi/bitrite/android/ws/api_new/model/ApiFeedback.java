@@ -60,6 +60,7 @@ public class ApiFeedback {
             switch (value) {
                 case "Guest": return Feedback.Relation.Guest;
                 case "Host": return Feedback.Relation.Host;
+                case "Met Traveling": // Fall-through
                 case "Met_Traveling": return Feedback.Relation.MetWhileTraveling;
                 case "Other": return Feedback.Relation.Other;
 
