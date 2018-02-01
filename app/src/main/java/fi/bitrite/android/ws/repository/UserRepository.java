@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.api_new.WarmshowersService;
+import fi.bitrite.android.ws.api_new.model.ApiUser;
 import fi.bitrite.android.ws.api_new.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.UserDao;
@@ -78,15 +79,36 @@ public class UserRepository extends Repository<Host> {
         return mWarmshowersService.fetchUser(userId)
                 .subscribeOn(Schedulers.io())
                 .map(apiUserResponse -> {
-                    if (apiUserResponse.isSuccessful()) {
-                        return new LoadResult<>(
-                                LoadResult.Source.NETWORK, apiUserResponse.body().toHost());
-                    } else {
+                    if (!apiUserResponse.isSuccessful()) {
                         throw new Error(apiUserResponse.errorBody().toString());
                     }
+
+                    return new LoadResult<>(
+                            LoadResult.Source.NETWORK, apiUserResponse.body().toHost());
                 });
     }
 
+
+    public Observable<List<Integer>> searchByKeyword(String keyword) {
+        // TODO(saemy): Change the webservice s.t. it returns a total number of results to be able
+        //              to do paging.
+        return mWarmshowersService.searchUsersByKeyword(keyword, 0, 100)
+                .subscribeOn(Schedulers.io())
+                .map(apiResponse -> {
+                    if (!apiResponse.isSuccessful()) {
+                        throw new Error(apiResponse.errorBody().toString());
+                    }
+
+                    Collection<ApiUser> apiUsers = apiResponse.body().users.values();
+                    List<Integer> userIds = new ArrayList<>(apiUsers.size());
+                    for (ApiUser apiUser : apiUsers) {
+                        put(apiUser.id, Resource.success(apiUser.toHost()), Freshness.FRESH);
+                        userIds.add(apiUser.id);
+                    }
+
+                    return userIds;
+                });
+    }
 
     public Observable<List<UserSearchByLocationResponse.User>> searchByLocation(
             LatLng northEast, LatLng southWest) {
@@ -102,11 +124,11 @@ public class UserRepository extends Repository<Host> {
                 centerLon, WarmshowersService.SEARCH_USER_DEFAULT_LIMIT)
                 .subscribeOn(Schedulers.io())
                 .map(apiResponse -> {
-                    if (apiResponse.isSuccessful()) {
-                        return apiResponse.body().users;
-                    } else {
+                    if (!apiResponse.isSuccessful()) {
                         throw new Error(apiResponse.errorBody().toString());
                     }
+
+                    return apiResponse.body().users;
                 });
     }
 }

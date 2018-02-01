@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws.ui;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -29,10 +28,6 @@ import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.api_new.AuthenticationController;
-import fi.bitrite.android.ws.host.Search;
-import fi.bitrite.android.ws.host.impl.RestTextSearch;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
@@ -43,6 +38,7 @@ import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class SearchFragment extends BaseFragment {
@@ -50,7 +46,6 @@ public class SearchFragment extends BaseFragment {
     private static final String KEY_QUERY = "query";
     private static final String KEY_USER_IDS = "user_ids";
 
-    @Inject AuthenticationController mAuthenticationController;
     @Inject NavigationController mNavigationController;
     @Inject UserRepository mUserRepository;
 
@@ -58,7 +53,6 @@ public class SearchFragment extends BaseFragment {
     @BindColor(R.color.primaryColorAccent) int mDecoratorForegroundColor;
 
     private UserListAdapter mSearchResultListAdapter;
-    private TextSearchTask mTextSearchTask;
 
     private BehaviorSubject<ArrayList<Integer>> mUserIds;
     private String mQuery;
@@ -113,8 +107,7 @@ public class SearchFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        mDisposables = new CompositeDisposable();
-        mDisposables.add(mUserIds.observeOn(AndroidSchedulers.mainThread())
+        addDisposable(mUserIds.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userIds -> {
                     List<Observable<Resource<Host>>> users = mUserRepository.get(userIds);
                     mSearchResultListAdapter.resetDataset(users, 0);
@@ -124,6 +117,7 @@ public class SearchFragment extends BaseFragment {
     @Override
     public void onPause() {
         mDisposables.dispose();
+        mDisposables = null;
 
         super.onPause();
     }
@@ -135,9 +129,6 @@ public class SearchFragment extends BaseFragment {
             outState.putIntegerArrayList(KEY_USER_IDS, userIds);
         }
 
-        if (mTextSearchTask != null) {
-            mTextSearchTask.cancel(true);
-        }
         super.onSaveInstanceState(outState);
     }
 
@@ -145,53 +136,28 @@ public class SearchFragment extends BaseFragment {
         mProgressDisposable = ProgressDialog.create(R.string.performing_search)
                 .show(getActivity());
 
-        Search search = new RestTextSearch(mAuthenticationController, text);
-        mTextSearchTask = new TextSearchTask();
-        mTextSearchTask.execute(search);
+        addDisposable(mUserRepository.searchByKeyword(text)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(searchResult -> {
+                    ArrayList<Integer> userIds = new ArrayList<>(searchResult);
+                    mUserIds.onNext(userIds);
+
+                    mProgressDisposable.dispose();
+
+                    if (searchResult.isEmpty()) {
+                        DialogHelper.alert(getContext(), R.string.no_results);
+                    }
+                }, throwable -> {
+                    // TODO(saemy): Error handling.
+                    Log.e(WSAndroidApplication.TAG, throwable.getMessage());
+                    mProgressDisposable.dispose();
+                }));
     }
 
     @OnItemClick(R.id.search_lst_result)
     public void onUserClicked(int position) {
         Host user = (Host) mLstSearchResult.getItemAtPosition(position);
         mNavigationController.navigateToUser(user.getId());
-    }
-
-    private class TextSearchTask extends AsyncTask<Search, Void, Object> {
-
-        @Override
-        protected Object doInBackground(Search... params) {
-            try {
-                Search search = params[0];
-                return search.doSearch();
-            } catch (Exception e) {
-                Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
-                return e;
-            }
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        protected void onPostExecute(Object result) {
-            if (result instanceof Exception) {
-                mProgressDisposable.dispose();
-
-                RestClient.reportError(getContext(), result);
-                return;
-            }
-
-            List<Host> searchResult = (List<Host>) result;
-            ArrayList<Integer> userIds = new ArrayList<>(searchResult.size());
-            for (Host user : searchResult) {
-                userIds.add(user.getId());
-            }
-            mUserIds.onNext(userIds);
-
-            mProgressDisposable.dispose();
-
-            if (searchResult.isEmpty()) {
-                DialogHelper.alert(getContext(), R.string.no_results);
-            }
-        }
     }
 
     @Override
@@ -201,6 +167,13 @@ public class SearchFragment extends BaseFragment {
             title = title + ": \"" + mQuery + "\"";
         }
         return title;
+    }
+
+    private void addDisposable(Disposable disposable) {
+        if (mDisposables == null) {
+            mDisposables = new CompositeDisposable();
+        }
+        mDisposables.add(disposable);
     }
 
     private final static Comparator<Host> mComparator = (left, right) -> {
@@ -255,5 +228,5 @@ public class SearchFragment extends BaseFragment {
             }
             return spannable;
         }
-    };
+    }
 }

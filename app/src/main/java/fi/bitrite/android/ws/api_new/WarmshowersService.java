@@ -6,6 +6,7 @@ import fi.bitrite.android.ws.api_new.response.LoginResponse;
 import fi.bitrite.android.ws.api_new.response.MessageThreadListResponse;
 import fi.bitrite.android.ws.api_new.response.MessageThreadResponse;
 import fi.bitrite.android.ws.api_new.response.SendMessageResponse;
+import fi.bitrite.android.ws.api_new.response.UserSearchByKeywordResponse;
 import fi.bitrite.android.ws.api_new.response.UserSearchByLocationResponse;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -19,6 +20,8 @@ import retrofit2.http.Path;
 
 public interface WarmshowersService {
 
+    /// Auth
+
     @POST("services/rest/user/login")
     @FormUrlEncoded
     Observable<Response<LoginResponse>> login(@Field("username") String username,
@@ -27,13 +30,16 @@ public interface WarmshowersService {
     @GET("services/session/token")
     Observable<Response<String>> renewCsrfToken();
 
+
+    /// Users
+
     @GET("services/rest/user/{userId}")
     Observable<Response<ApiUser>> fetchUser(@Path("userId") int userId);
 
     @GET("user/{userId}/json_recommendations")
     Observable<Response<FeedbackResponse>> fetchFeedbackForRecipient(@Path("userId") int recipientId);
 
-    public final static int SEARCH_USER_DEFAULT_LIMIT = 800;
+    int SEARCH_USER_DEFAULT_LIMIT = 800;
 
     @POST("services/rest/hosts/by_location")
     @FormUrlEncoded
@@ -43,6 +49,15 @@ public interface WarmshowersService {
             @Field("centerlat") double centerLat, @Field("centerlon") double centerLon,
             // TODO(saemy): Add offset to the REST API.
             @Field("limit") int limit);
+
+    @POST("services/rest/hosts/by_keyword")
+    @FormUrlEncoded
+    Observable<Response<UserSearchByKeywordResponse>> searchUsersByKeyword(
+            @Field("keyword") String keyword, @Field("offset") int offset,
+            @Field("limit") int limit);
+
+
+    /// Messaging
 
     @POST("services/rest/message/get")
     Observable<Response<MessageThreadListResponse>> fetchMessageThreads();
