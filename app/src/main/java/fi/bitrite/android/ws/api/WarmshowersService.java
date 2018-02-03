@@ -1,14 +1,14 @@
-package fi.bitrite.android.ws.api_new;
+package fi.bitrite.android.ws.api;
 
-import fi.bitrite.android.ws.api_new.model.ApiUser;
-import fi.bitrite.android.ws.api_new.response.FeedbackResponse;
-import fi.bitrite.android.ws.api_new.response.LoginResponse;
-import fi.bitrite.android.ws.api_new.response.MessageThreadListResponse;
-import fi.bitrite.android.ws.api_new.response.MessageThreadResponse;
-import fi.bitrite.android.ws.api_new.response.PostFeedbackResponse;
-import fi.bitrite.android.ws.api_new.response.SendMessageResponse;
-import fi.bitrite.android.ws.api_new.response.UserSearchByKeywordResponse;
-import fi.bitrite.android.ws.api_new.response.UserSearchByLocationResponse;
+import fi.bitrite.android.ws.api.model.ApiUser;
+import fi.bitrite.android.ws.api.response.FeedbackResponse;
+import fi.bitrite.android.ws.api.response.LoginResponse;
+import fi.bitrite.android.ws.api.response.MessageThreadListResponse;
+import fi.bitrite.android.ws.api.response.MessageThreadResponse;
+import fi.bitrite.android.ws.api.response.PostFeedbackResponse;
+import fi.bitrite.android.ws.api.response.SendMessageResponse;
+import fi.bitrite.android.ws.api.response.UserSearchByKeywordResponse;
+import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.Feedback;
 import io.reactivex.Completable;
 import io.reactivex.Observable;

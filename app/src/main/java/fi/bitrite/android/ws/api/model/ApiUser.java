@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.api_new.model;
+package fi.bitrite.android.ws.api.model;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -40,7 +40,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.api.RestClient;
+import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
@@ -365,8 +365,7 @@ public class UserFragment extends BaseFragment {
                     }
                 }, throwable -> {
                     mDownloadUserInfoProgressDisposable.dispose();
-
-                    RestClient.reportError(getContext(), throwable);
+                    HttpErrorHelper.showErrorToast(getContext(), throwable);
                 });
     }
 

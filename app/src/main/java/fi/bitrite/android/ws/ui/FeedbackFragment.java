@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.api_new.WarmshowersService;
+import fi.bitrite.android.ws.api.WarmshowersService;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.repository.FeedbackRepository;
 import fi.bitrite.android.ws.repository.Resource;

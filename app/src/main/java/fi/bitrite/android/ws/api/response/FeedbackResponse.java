@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.api_new.response;
+package fi.bitrite.android.ws.api.response;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.bitrite.android.ws.api_new.model.ApiFeedback;
+import fi.bitrite.android.ws.api.model.ApiFeedback;
 
 @JsonAdapter(FeedbackResponse.Deserializer.class)
 public class FeedbackResponse {

@@ -4,11 +4,11 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import fi.bitrite.android.ws.api_new.ServiceFactory;
-import fi.bitrite.android.ws.api_new.WarmshowersService;
-import fi.bitrite.android.ws.api_new.interceptors.DefaultInterceptor;
-import fi.bitrite.android.ws.api_new.interceptors.HeaderInterceptor;
-import fi.bitrite.android.ws.api_new.interceptors.ResponseInterceptor;
+import fi.bitrite.android.ws.api.ServiceFactory;
+import fi.bitrite.android.ws.api.WarmshowersService;
+import fi.bitrite.android.ws.api.interceptors.DefaultInterceptor;
+import fi.bitrite.android.ws.api.interceptors.HeaderInterceptor;
+import fi.bitrite.android.ws.api.interceptors.ResponseInterceptor;
 
 @Module
 public class ServiceModule {

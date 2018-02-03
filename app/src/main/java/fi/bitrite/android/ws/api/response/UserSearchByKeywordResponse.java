@@ -1,11 +1,11 @@
-package fi.bitrite.android.ws.api_new.response;
+package fi.bitrite.android.ws.api.response;
 
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Map;
 
-import fi.bitrite.android.ws.api_new.model.ApiUser;
+import fi.bitrite.android.ws.api.model.ApiUser;
 
 public class UserSearchByKeywordResponse {
     // {

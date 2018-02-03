@@ -8,8 +8,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import fi.bitrite.android.ws.api_new.WarmshowersService;
-import fi.bitrite.android.ws.api_new.model.ApiFeedback;
+import fi.bitrite.android.ws.api.WarmshowersService;
+import fi.bitrite.android.ws.api.model.ApiFeedback;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.persistence.FeedbackDao;
 import io.reactivex.Completable;

@@ -11,9 +11,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import fi.bitrite.android.ws.api_new.WarmshowersService;
-import fi.bitrite.android.ws.api_new.model.ApiUser;
-import fi.bitrite.android.ws.api_new.response.UserSearchByLocationResponse;
+import fi.bitrite.android.ws.api.WarmshowersService;
+import fi.bitrite.android.ws.api.model.ApiUser;
+import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.UserDao;
 import io.reactivex.Completable;

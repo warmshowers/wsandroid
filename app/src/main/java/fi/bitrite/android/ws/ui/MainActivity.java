@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.api_new.AuthenticationController;
+import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.ui.listadapter.NavigationListAdapter;
 import fi.bitrite.android.ws.ui.model.NavigationItem;

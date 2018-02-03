@@ -136,8 +136,6 @@ android {
         targetSdkVersion 22
 
         multiDexEnabled true
-
-        useLibrary 'org.apache.http.legacy'
     }
 
     compileOptions {

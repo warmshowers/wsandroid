@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.api_new.response;
+package fi.bitrite.android.ws.api.response;
 
 import android.support.annotation.NonNull;
 

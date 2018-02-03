@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.api_new.typeadapter;
+package fi.bitrite.android.ws.api.typeadapter;
 
 
 import com.google.gson.JsonDeserializationContext;

@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
-import fi.bitrite.android.ws.api_new.AuthenticationController;
+import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.di.AppComponent;
 import fi.bitrite.android.ws.di.AppInjector;
 

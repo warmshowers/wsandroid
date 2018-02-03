@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.api_new.interceptors;
+package fi.bitrite.android.ws.api.interceptors;
 
 import android.os.Build;
 

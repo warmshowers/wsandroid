@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.api_new;
+package fi.bitrite.android.ws.api;
 
 import android.accounts.Account;
 import android.app.Activity;
@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import fi.bitrite.android.ws.api_new.interceptors.HeaderInterceptor;
-import fi.bitrite.android.ws.api_new.interceptors.ResponseInterceptor;
+import fi.bitrite.android.ws.api.interceptors.HeaderInterceptor;
+import fi.bitrite.android.ws.api.interceptors.ResponseInterceptor;
 import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.auth.AuthData;
 import fi.bitrite.android.ws.auth.AuthToken;
@@ -112,11 +112,6 @@ public class AuthenticationController {
 
     public BehaviorSubject<AuthData> getAuthData() {
         return mAuthData;
-    }
-
-    public ResponseInterceptor.Handler getResponseInterceptorHandler() {
-        // TODO(saemy): Remove this accessor when RestClient is no longer in use.
-        return mResponseInterceptorHandler;
     }
 
     private final ResponseInterceptor.Handler mResponseInterceptorHandler =

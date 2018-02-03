@@ -19,9 +19,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.api_new.WarmshowersService;
-import fi.bitrite.android.ws.api_new.response.MessageThreadListResponse;
-import fi.bitrite.android.ws.api_new.response.MessageThreadResponse;
+import fi.bitrite.android.ws.api.WarmshowersService;
+import fi.bitrite.android.ws.api.response.MessageThreadListResponse;
+import fi.bitrite.android.ws.api.response.MessageThreadResponse;
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
 import fi.bitrite.android.ws.persistence.MessageDao;

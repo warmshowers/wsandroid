@@ -1,10 +1,10 @@
-package fi.bitrite.android.ws.api_new;
+package fi.bitrite.android.ws.api;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import fi.bitrite.android.ws.api_new.typeadapter.RatingTypeAdapter;
-import fi.bitrite.android.ws.api_new.typeadapter.RelationTypeAdapter;
+import fi.bitrite.android.ws.api.typeadapter.RatingTypeAdapter;
+import fi.bitrite.android.ws.api.typeadapter.RelationTypeAdapter;
 import fi.bitrite.android.ws.model.Feedback;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;

@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-import fi.bitrite.android.ws.api_new.response.UserSearchByLocationResponse;
+import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.User;
 

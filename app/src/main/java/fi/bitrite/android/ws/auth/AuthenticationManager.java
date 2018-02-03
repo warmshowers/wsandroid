@@ -14,8 +14,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import fi.bitrite.android.ws.api_new.WarmshowersService;
-import fi.bitrite.android.ws.api_new.response.LoginResponse;
+import fi.bitrite.android.ws.api.WarmshowersService;
+import fi.bitrite.android.ws.api.response.LoginResponse;
 import fi.bitrite.android.ws.ui.AuthenticatorActivity;
 import io.reactivex.Observable;
 import io.reactivex.Single;
