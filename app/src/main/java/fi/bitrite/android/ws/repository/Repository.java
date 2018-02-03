@@ -170,6 +170,17 @@ abstract class Repository<T> {
     }
 
     /**
+     * Evicts the given entry from the cache and starts a reload.
+     */
+    Observable<Resource<T>> reload(int id, ShouldSaveInDb shouldSaveInDb) {
+        return reload(id, getRaw(id), shouldSaveInDb);
+    }
+    Observable<Resource<T>> reload(int id, T currentValue, ShouldSaveInDb shouldSaveInDb) {
+        put(id, Resource.loading(currentValue), Freshness.OLD);
+        return get(id, shouldSaveInDb);
+    }
+
+    /**
      * Puts the given element into the cache.
      */
     void put(int id, Resource<T> resource, Freshness freshness) {

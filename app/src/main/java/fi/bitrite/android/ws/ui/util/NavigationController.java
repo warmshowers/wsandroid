@@ -142,9 +142,9 @@ public class NavigationController {
         navigateTo(NAVIGATION_TAG_MAIN + "/user-" + userId, UserFragment.create(userId), false);
     }
 
-    public void navigateToFeedback(Host recipient) {
-        navigateTo(NAVIGATION_TAG_MAIN + "/feedback-" + recipient.getId(),
-                FeedbackFragment.create(recipient), false);
+    public void navigateToFeedback(int recipientId) {
+        navigateTo(NAVIGATION_TAG_MAIN + "/user-" + recipientId + "/feedback",
+                FeedbackFragment.create(recipientId), false);
     }
 
     public void navigateToContactUser(Host recipient) {

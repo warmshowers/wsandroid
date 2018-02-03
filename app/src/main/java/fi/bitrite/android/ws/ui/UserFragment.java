@@ -300,7 +300,7 @@ public class UserFragment extends BaseFragment {
     }
 
     private void sendFeedback(@NonNull Host user) {
-        mNavigationController.navigateToFeedback(user);
+        mNavigationController.navigateToFeedback(user.getId());
     }
 
     private void showHostOnMap(@NonNull Host user) {

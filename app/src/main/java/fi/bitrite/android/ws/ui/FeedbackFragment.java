@@ -1,7 +1,6 @@
 package fi.bitrite.android.ws.ui;
 
 import android.app.DatePickerDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,13 +16,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -32,13 +25,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.api.RestClient;
-import fi.bitrite.android.ws.api_new.AuthenticationController;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.api_new.WarmshowersService;
+import fi.bitrite.android.ws.model.Feedback;
+import fi.bitrite.android.ws.repository.FeedbackRepository;
+import fi.bitrite.android.ws.repository.Resource;
+import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.util.DialogHelper;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
-import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * Responsible for letting the user type in a message and then sending it to a host
@@ -46,13 +41,10 @@ import fi.bitrite.android.ws.util.Tools;
  */
 public class FeedbackFragment extends BaseFragment {
 
-    private final static String KEY_RECIPIENT = "recipient";
+    private final static String KEY_RECIPIENT_ID = "recipient_id";
 
-    // This value must match the "minimum number of words" in the node submission settings at
-    // https://www.warmshowers.org/admin/content/node-type/trust-referral
-    private final static int MIN_FEEDBACK_WORD_LENGTH = 10;
-
-    @Inject AuthenticationController mAuthenticationController;
+    @Inject FeedbackRepository mFeedbackRepository;
+    @Inject UserRepository mUserRepository;
 
     @BindView(R.id.feedback_txt_feedback) EditText mTxtFeedback;
     @BindView(R.id.feedback_txt_date_we_met) EditText mTxtDateWeMet;
@@ -68,11 +60,12 @@ public class FeedbackFragment extends BaseFragment {
     private DatePickerDialog mDatePickerDialog;
     private ProgressDialog.Disposable mProgressDisposable;
 
-    private Host mRecipient;
+    private int mRecipientId;
+    private String mRecipientFullname;
 
-    public static Fragment create(Host recipient) {
+    public static Fragment create(int recipientId) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(KEY_RECIPIENT, recipient);
+        bundle.putInt(KEY_RECIPIENT_ID, recipientId);
 
         Fragment fragment = new FeedbackFragment();
         fragment.setArguments(bundle);
@@ -92,7 +85,7 @@ public class FeedbackFragment extends BaseFragment {
         mDateWeMetMonth = now.get(Calendar.MONTH);
         mDateWeMetYear = now.get(Calendar.YEAR);
 
-        mRecipient = getArguments().getParcelable(KEY_RECIPIENT);
+        mRecipientId = getArguments().getInt(KEY_RECIPIENT_ID);
 
         mDatePickerDialog = new DatePickerDialog(getContext(), (v, year, monthOfYear, dayOfMonth) -> {
             mDateWeMetMonth = monthOfYear;
@@ -103,7 +96,15 @@ public class FeedbackFragment extends BaseFragment {
             mTxtDateWeMet.setText(Tools.getDateAsMY(getContext(), date.getTimeInMillis()));
         }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
 
-        mLblRating.setText(getString(R.string.lbl_feedback_overall_experience, mRecipient.getFullname()));
+        mUserRepository.get(mRecipientId)
+                .filter(Resource::hasData)
+                .map(userResource -> userResource.data)
+                .firstOrError()
+                .subscribe(recipient -> {
+                    mRecipientFullname = recipient.getFullname();
+                    mLblRating.setText(getString(
+                            R.string.lbl_feedback_overall_experience, mRecipientFullname));
+                });
 
         return view;
     }
@@ -117,10 +118,16 @@ public class FeedbackFragment extends BaseFragment {
         mBtnSubmit.setEnabled(isConnected);
     }
 
+    @OnClick(R.id.feedback_txt_date_we_met)
+    public void onDateWeMetClick() {
+        mDatePickerDialog.show();
+    }
+
     @OnClick(R.id.all_btn_submit)
     public void sendFeedback() {
         // Site requires 10 words in the feedback, so pre-enforce that.
-        if (mTxtFeedback.getText().toString().split("\\w+").length < MIN_FEEDBACK_WORD_LENGTH) {
+        final String body = mTxtFeedback.getText().toString();
+        if (body.split("\\w+").length < WarmshowersService.FEEDBACK_MIN_WORD_LENGTH) {
             DialogHelper.alert(getContext(), R.string.feedback_validation_error);
             return;
         }
@@ -137,93 +144,44 @@ public class FeedbackFragment extends BaseFragment {
 
         mProgressDisposable = ProgressDialog.create(R.string.sending_feedback)
                 .show(getActivity());
-        SendFeedbackTask task = new SendFeedbackTask();
-        task.execute();
+
+        Feedback.Relation relation = getSelectedRelation();
+        Feedback.Rating rating = getSelectedRating();
+
+        int dateWeMetMonth = mDateWeMetMonth + 1; // This is 0-based.
+        mFeedbackRepository.giveFeedback(mRecipientId, body, relation, rating, mDateWeMetYear,
+                                         dateWeMetMonth)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnEvent(t -> mProgressDisposable.dispose())
+                .subscribe(() -> getActivity().onBackPressed(), throwable -> {
+                    Log.e(WSAndroidApplication.TAG, "Failed to send feedback", throwable);
+                    new AlertDialog.Builder(getContext())
+                            .setMessage(R.string.feedback_error_sending)
+                            .create()
+                            .show();
+                });
     }
 
-    @OnClick(R.id.feedback_txt_date_we_met)
-    public void onDateWeMetClick() {
-        mDatePickerDialog.show();
-    }
-
-    private class SendFeedbackTask extends AsyncTask<Void, Void, Object> {
-        private final static String FEEDBACK_POST_URL =
-                GlobalInfo.warmshowersBaseUrl + "/services/rest/node";
-
-        @Override
-        protected Object doInBackground(Void[] params) {
-            try {
-
-                // See https://github.com/warmshowers/Warmshowers.org/wiki/Warmshowers-RESTful-Services-for-Mobile-Apps#create_feedback
-                List<NameValuePair> args = new ArrayList<NameValuePair>();
-
-                // Drupal 7 semantics for node creation
-//                args.add(new BasicNameValuePair("type", "trust_referral"));
-//                args.add(new BasicNameValuePair("field_member_i_trust[und][0][uid]", host.getName()));
-//                args.add(new BasicNameValuePair("body[und][0][value]", mTxtFeedback.getText().toString()));
-//                args.add(new BasicNameValuePair("field_guest_or_host[und]", mTranslator.getEnglishHostGuestOption(mSelRelation.getSelectedItemPosition())));
-//                args.add(new BasicNameValuePair("field_rating[und]", mTranslator.getEnglishRating(mSelRating.getSelectedItemPosition())));
-//                args.add(new BasicNameValuePair("field_hosting_date[und][0][value][year]", Integer.toString(mDateWeMetYear)));
-//                args.add(new BasicNameValuePair("field_hosting_date[und][0][value][month]", Integer.toString(mDateWeMetMonth + 1)));
-//                args.add(new BasicNameValuePair("field_hosting_date[und][0][value][day]", "15")); // D7 required day of month
-
-                // Keep in sync with R.array.feedback_relation_options.
-                String relationStr;
-                switch (mSelRelation.getSelectedItemPosition()) {
-                    case 0: relationStr = "Guest"; break;
-                    case 1: relationStr = "Host"; break;
-                    case 2: relationStr = "MetWhileTraveling"; break;
-                    case 3: relationStr = "Other"; break;
-                    default: throw new Exception("Invalid option.");
-                }
-
-                // Keep in sync with R.array.feedback_rating_options.
-                String ratingStr;
-                switch (mSelRating.getSelectedItemPosition()) {
-                    case 0: ratingStr = "Positive"; break;
-                    case 1: ratingStr = "Neutral"; break;
-                    case 2: ratingStr = "Negative"; break;
-                    default: throw new Exception("Invalid option.");
-                }
-
-                // Drupal 6 semantics for node creation, wrapped on server side
-                args.add(new BasicNameValuePair("node[type]", "trust_referral"));
-                args.add(new BasicNameValuePair("node[field_member_i_trust][0][uid][uid]", mRecipient.getName()));
-                args.add(new BasicNameValuePair("node[body]", mTxtFeedback.getText().toString()));
-                args.add(new BasicNameValuePair("node[field_guest_or_host][value]", relationStr));
-                args.add(new BasicNameValuePair("node[field_rating][value]", ratingStr));
-                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][year]", Integer.toString(mDateWeMetYear)));
-                args.add(new BasicNameValuePair("node[field_hosting_date][0][value][month]", Integer.toString(mDateWeMetMonth + 1)));
-
-                RestClient restClient = new RestClient(mAuthenticationController);
-                JSONObject result = restClient.post(FEEDBACK_POST_URL, args);
-
-                return null;
-            } catch (Exception e) {
-                Log.e(WSAndroidApplication.TAG, e.getMessage(), e);
-                return e;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            mProgressDisposable.dispose();
-
-            if (result instanceof Exception) {
-                RestClient.reportError(getContext(), result);
-                return;
-            }
-            showSuccessDialog();
+    private Feedback.Relation getSelectedRelation() {
+        // Keep in sync with R.array.feedback_relation_options.
+        switch (mSelRelation.getSelectedItemPosition()) {
+            case 0: return Feedback.Relation.Guest;
+            case 1: return Feedback.Relation.Host;
+            case 2: return Feedback.Relation.MetWhileTraveling; // FIXME(saemy): Serialized to "MetWhileTraveling"?
+            case 3: return Feedback.Relation.Other;
+            default: throw new RuntimeException("Invalid option.");
         }
     }
 
-    private void showSuccessDialog() {
-        new AlertDialog.Builder(getContext())
-                .setMessage(getResources().getString(R.string.feedback_sent, mRecipient.getFullname()))
-                .setPositiveButton(R.string.ok,
-                        (dialog, id) -> getActivity().getSupportFragmentManager().popBackStack())
-                .create()
-                .show();
+    private Feedback.Rating getSelectedRating() {
+        // Keep in sync with R.array.feedback_rating_options.
+        Feedback.Rating rating;
+        switch (mSelRating.getSelectedItemPosition()) {
+            case 0: return Feedback.Rating.Positive;
+            case 1: return Feedback.Rating.Neutral;
+            case 2: return Feedback.Rating.Negative;
+            default: throw new RuntimeException("Invalid option.");
+        }
     }
 
     @Override

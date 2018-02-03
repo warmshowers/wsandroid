@@ -177,10 +177,10 @@
     <string name="feedback_relation_guest">Gast</string>
     <string name="feedback_relation_met_while_traveling">Beim Reisen getroffen</string>
     <string name="feedback_relation_other">Andere</string>
-
     <string name="feedback_rating_positive">Positiv</string>
     <string name="feedback_rating_neutral">Neutral</string>
     <string name="feedback_rating_negative">Negativ</string>
+    <string name="feedback_error_sending">Senden des Feedbacks fehlgeschlagen.</string>
 
     <string name="navigation_item_map">Karte</string>
     <string name="navigation_item_favorites">Favoriten</string>

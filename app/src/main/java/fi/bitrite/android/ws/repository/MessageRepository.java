@@ -369,8 +369,7 @@ public class MessageRepository extends Repository<MessageThread> {
     }
     private Observable<Resource<MessageThread>> reloadThread(
             int threadId, @Nullable MessageThread thread) {
-        put(threadId, Resource.loading(thread), Freshness.OLD);
-        return get(threadId);
+        return reload(threadId, thread, ShouldSaveInDb.YES);
     }
 
     ///// Sending a message.

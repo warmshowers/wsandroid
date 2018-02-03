@@ -5,9 +5,11 @@ import fi.bitrite.android.ws.api_new.response.FeedbackResponse;
 import fi.bitrite.android.ws.api_new.response.LoginResponse;
 import fi.bitrite.android.ws.api_new.response.MessageThreadListResponse;
 import fi.bitrite.android.ws.api_new.response.MessageThreadResponse;
+import fi.bitrite.android.ws.api_new.response.PostFeedbackResponse;
 import fi.bitrite.android.ws.api_new.response.SendMessageResponse;
 import fi.bitrite.android.ws.api_new.response.UserSearchByKeywordResponse;
 import fi.bitrite.android.ws.api_new.response.UserSearchByLocationResponse;
+import fi.bitrite.android.ws.model.Feedback;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -68,6 +70,7 @@ public interface WarmshowersService {
 
     int MESSAGE_THREAD_STAUS_READ = 0;
     int MESSAGE_THREAD_STAUS_UNREAD = 1;
+
     @POST("services/rest/message/markThreadRead")
     @FormUrlEncoded
     Completable setMessageThreadReadStatus(@Field("thread_id") int threadId,
@@ -75,6 +78,7 @@ public interface WarmshowersService {
 
     /**
      * Creates a new thread.
+     *
      * @param recipientNames Comma separated list of usernames.
      */
     @POST("services/rest/message/send")
@@ -87,4 +91,24 @@ public interface WarmshowersService {
     @FormUrlEncoded
     Single<Response<SendMessageResponse>> sendMessage(@Field("thread_id") int threadId,
                                                       @Field("body") String body);
+
+
+    /// Feedback
+
+    // This value must match the "minimum number of words" in the node submission settings at
+    // https://www.warmshowers.org/admin/content/node-type/trust-referral
+    int FEEDBACK_MIN_WORD_LENGTH = 10;
+
+    String FEEDBACK_NODE_TYPE = "trust_referral";
+
+    @POST("services/rest/node")
+    @FormUrlEncoded
+    Single<Response<PostFeedbackResponse>> giveFeedback(
+            @Field("node[type]") String nodeType /* must be FEEDBACK_NODE_TYPE */,
+            @Field("node[field_member_i_trust][0][uid][uid]") String recipientName,
+            @Field("node[body]") String body,
+            @Field("node[field_guest_or_host][value]") Feedback.Relation relation,
+            @Field("node[field_rating][value]") Feedback.Rating rating,
+            @Field("node[field_hosting_date][0][value][year]") int yearWeMet,
+            @Field("node[field_hosting_date][0][value][month]") int monthWeMet);
 }

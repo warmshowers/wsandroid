@@ -163,7 +163,7 @@
     <string name="open_source_licenses">Open Source Licenses</string>
 
     <!-- new strings from 1.5.0beta3+ -->
-    <string name="title_fragment_feedback">Leaving Feedback</string>
+    <string name="title_fragment_feedback">Leave Feedback</string>
 
     <!-- new strings from 1.5.0beta5+ -->
     <string name="login_logout">Log out on this device</string>
@@ -180,10 +180,10 @@
     <string name="feedback_relation_guest">Guest</string>
     <string name="feedback_relation_met_while_traveling">Met while traveling</string>
     <string name="feedback_relation_other">Other</string>
-
     <string name="feedback_rating_positive">Positive</string>
     <string name="feedback_rating_neutral">Neutral</string>
     <string name="feedback_rating_negative">Negative</string>
+    <string name="feedback_error_sending">Failed to send your feedback</string>
 
     <string name="navigation_item_map">Map</string>
     <string name="navigation_item_favorites">Favorites</string>

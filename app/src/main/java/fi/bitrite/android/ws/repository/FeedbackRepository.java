@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.api_new.WarmshowersService;
 import fi.bitrite.android.ws.api_new.model.ApiFeedback;
@@ -16,8 +17,10 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 
+@Singleton
 public class FeedbackRepository extends Repository<List<Feedback>> {
     @Inject FeedbackDao mFeedbackDao;
+    @Inject UserRepository mUserRepository;
     @Inject WarmshowersService mWarmshowersService;
 
     @Inject
@@ -71,5 +74,35 @@ public class FeedbackRepository extends Repository<List<Feedback>> {
                         throw new Error(apiFeedbackResponse.errorBody().toString());
                     }
                 });
+    }
+
+    public Completable giveFeedback(
+            int recipientId, @NonNull String body, Feedback.Relation relation,
+            Feedback.Rating rating, int yearWeMet, int monthWeMet) {
+            return mUserRepository.get(recipientId)
+                    .subscribeOn(Schedulers.io())
+                    .filter(Resource::hasData)
+                    .map(userResource -> userResource.data)
+                    .firstOrError()
+                    .flatMap(recipient -> mWarmshowersService.giveFeedback(
+                            WarmshowersService.FEEDBACK_NODE_TYPE, recipient.getName(), body,
+                            relation, rating, yearWeMet, monthWeMet))
+                    .flatMapCompletable(apiResponse -> {
+                        if (!apiResponse.isSuccessful()) {
+                            throw new Error(apiResponse.errorBody().toString());
+                        }
+
+                        List<Feedback> feedbacks = getRaw(recipientId);
+                        if (feedbacks != null) {
+                            // We reload the feedbacks for this recipient as we already have them in
+                            // our cache.
+                            reload(recipientId, feedbacks, ShouldSaveInDb.IF_ALREADY_IN_DB)
+                                    .firstOrError()
+                                    .doOnError(t -> {})
+                                    .subscribe();
+                        }
+
+                        return Completable.complete();
+                    });
     }
 }

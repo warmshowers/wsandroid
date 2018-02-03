@@ -6,11 +6,14 @@ import com.google.gson.GsonBuilder;
 
 import java.util.Date;
 
-import fi.bitrite.android.ws.api_new.deserializer.BooleanDeserializer;
-import fi.bitrite.android.ws.api_new.deserializer.DateDeserializer;
+import fi.bitrite.android.ws.api_new.typeadapter.BooleanDeserializer;
+import fi.bitrite.android.ws.api_new.typeadapter.DateDeserializer;
+import fi.bitrite.android.ws.api_new.typeadapter.RatingTypeAdapter;
+import fi.bitrite.android.ws.api_new.typeadapter.RelationTypeAdapter;
 import fi.bitrite.android.ws.api_new.interceptors.DefaultInterceptor;
 import fi.bitrite.android.ws.api_new.interceptors.HeaderInterceptor;
 import fi.bitrite.android.ws.api_new.interceptors.ResponseInterceptor;
+import fi.bitrite.android.ws.model.Feedback;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -35,6 +38,8 @@ public class ServiceFactory {
                 .registerTypeAdapter(Date.class, new DateDeserializer())
                 .registerTypeAdapter(Boolean.class, booleanDeserializer)
                 .registerTypeAdapter(boolean.class, booleanDeserializer)
+                .registerTypeAdapter(Feedback.Relation.class, new RelationTypeAdapter())
+                .registerTypeAdapter(Feedback.Rating.class, new RatingTypeAdapter())
                 .create();
 
         return new Retrofit.Builder()
