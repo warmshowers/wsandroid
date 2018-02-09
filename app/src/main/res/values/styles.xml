@@ -12,14 +12,11 @@
         <item name="android:actionBarStyle">@style/WsActionBar</item>
         <item name="alertDialogTheme">@style/wsAppTheme.Dialog.Alert</item>
         <item name="android:spinnerItemStyle">@style/WsText.light</item>
-        <item name="colorButtonNormal">@color/button_dark</item>
         <item name="android:textAppearanceButton">@style/buttonStyle</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
 
         <!-- Option Panel Menu -->
         <item name="android:itemTextAppearance">@style/TextAppearance</item>
-
-
 
 
         <!-- Support library compatibility -->
@@ -89,6 +86,31 @@
         <item name="android:textColor">@color/primaryWhite</item>
     </style>
 
+    <style name="button_primary_raised" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="colorControlHighlight">@color/primaryColorAccent</item>
+        <item name="colorAccent">@color/primaryButtonDisable</item>
+        <item name="colorButtonNormal">@color/primaryColor</item>
+    </style>
+
+    <style name="button_primary_flat" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
+        <item name="colorAccent">@color/primaryColor</item>
+    </style>
+
+    <style name="button_accent_flat" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
+        <item name="colorAccent">@color/primaryColorAccent</item>
+    </style>
+
+    <style name="button_light_flat" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
+        <item name="colorAccent">@color/primaryTextColorLight</item>
+    </style>
+
     <!-- Text Styles -->
     <style name="WsPictureOverlayTitle" parent="@android:style/TextAppearance">
         <item name="android:layout_marginLeft">16dp</item>
@@ -103,7 +125,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="WsText" parent="@android:style/TextAppearance">
+    <style name="WsText" parent="@style/TextAppearance.AppCompat.Body1">
         <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:textSize">14sp</item>
     </style>

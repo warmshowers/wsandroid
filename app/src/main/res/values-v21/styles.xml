@@ -22,4 +22,11 @@
         <item name="color">@android:color/black</item>
     </style>
 
+    <style name="button_primary_raised" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="colorControlHighlight">@color/primaryColorAccent</item>
+        <item name="android:colorAccent">@color/primaryButtonDisable</item>
+        <item name="android:colorButtonNormal">@color/primaryColor</item>
+    </style>
+
 </resources>

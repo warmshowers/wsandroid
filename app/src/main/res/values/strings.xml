@@ -10,13 +10,16 @@
     <string name="no_starred_hosts">"You currently have no favorited hosts (hosts whose profiles are available offline). You can favorite hosts on the user information page."</string>
     <string name="list_search_hint">Name or city</string>
     <string name="no_results">Your search yielded no results.</string>
+    <string name="greeting">Hi there!</string>
     <string name="enter_credentials">Please log in using your Warmshowers.org credentials</string>
     <string name="view_details">View details</string>
     <string name="star">Star</string>
     <string name="close">Close</string>
     <string name="username_hint">Username or Email</string>
     <string name="password_hint">Password</string>
-    <string name="password">Password:</string>
+    <string name="button_text_forgot_password">Forgot your password?</string>
+    <string name="url_target_forgot_password">https://www.warmshowers.org/user/password</string>
+    <string name="button_text_login">Log in</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="description">About this member</string>

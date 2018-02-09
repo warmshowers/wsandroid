@@ -7,4 +7,9 @@
     <dimen name="message_bubble_margin_small">0dp</dimen>
     <dimen name="message_bubble_padding_big">27dp</dimen>
     <dimen name="message_bubble_padding_small">10dp</dimen>
+
+    <dimen name="minimum_height_touch_target">48dp</dimen>
+
+    <dimen name="single_host_marker_size">40dp</dimen>
+    <dimen name="custom_profile_padding">0dp</dimen>
 </resources>

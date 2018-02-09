@@ -20,6 +20,7 @@
     <string name="description">À propos de ce membre</string>
     <string name="disconnected_location_services">Déconnecté des services de localisation. Veuillez vous reconnecter.</string>
     <string name="distance_from_current">%1$d %2$s de votre position actuelle</string>
+    <string name="greeting">Salut!</string>
     <string name="enter_credentials">Veuillez entrer votre nom d\'utilisateur et mot de passe</string>
     <string name="error_retrieving_messages">Une erreur s\'est produite lors de la récupération des messages.</string>
     <string name="error_sending_message">Le message n\'a pu être envoyé. Vérifiez vos informations de connexion et votre connexion internet</string>
@@ -60,8 +61,10 @@
     <string name="no_starred_hosts">Vous n\'avez présentement aucun hôte favori (Profils d\'hôtes disponibles hors ligne). Vous pouvez ajouter des hôtes favoris en cliquant l\'icône étoile sur leur page d\'information.</string>
     <string name="no_unread_messages">Vous n\'avez aucun message non-lu.</string>
     <string name="ok">OK</string>
-    <string name="password">Mot de passe:</string>
     <string name="password_hint">Mot de passe</string>
+    <string name="button_text_login">Se connecter</string>
+    <string name="button_text_forgot_password">Mot de passe oublié?</string>
+    <string name="url_target_forgot_password">https://fr.warmshowers.org/user/password</string>
     <string name="performing_search">Recherche en cours…</string>
     <string name="preferred_notice"><u>Prévenir de préf.:</u></string>
     <string name="sending_message">Envoi du message…</string>

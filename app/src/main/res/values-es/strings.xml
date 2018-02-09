@@ -10,13 +10,16 @@
     <string name="no_starred_hosts">"No has agregado anfitriones a Favoritos (el perfil del anfitrión aparecerá sin conexión a internet). Puedes agregar anfitriones a Favoritos en la página de información del anfitrión presionando el ícono de estrella."</string>
     <string name="list_search_hint">Nombre o ciudad </string>
     <string name="no_results">Tu búsqueda no produjo resultados.</string>
+    <string name="greeting">¡Hola!</string>
     <string name="enter_credentials">Por favor, ingresa tu nombre de usuario (o email) y contraseña:</string>
     <string name="view_details">Ver detalles </string>
     <string name="star">Favoritos</string>
     <string name="close">Cerrar</string>
     <string name="username_hint">Usuario o Email</string>
     <string name="password_hint">Contraseña</string>
-    <string name="password">Contraseña:</string>
+    <string name="button_text_login">Entrar</string>
+    <string name="button_text_forgot_password">¿Has olvidado la contraseña?</string>
+    <string name="url_target_forgot_password">https://es.warmshowers.org/user/password</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
     <string name="description">Sobre este miembro</string>
