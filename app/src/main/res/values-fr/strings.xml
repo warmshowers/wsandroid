@@ -97,7 +97,8 @@
     <string name="parsing_error">Erreur dans l\'analyse de la réponse du serveur. Veuillez signaler cette recherche en utilisant le formulaire sur fr.warmshowers.org.</string>
     <string name="prefs_distance_unit">Unité de distance</string>
     <string name="prefs_distance_unit_summary">Voulez-vous afficher la distance en kilomètres ou en miles?</string>
-    <string name="prefs_ga_collect_stats_summary">Envoyer des données statistiques à Google Analytics aide les développeurs à comprendre l\'usage de l\'application et à l\'améliorer, mais vous pouvez désactiver cette option.</string>
+    <string name="prefs_ga_collect_stats_summary_on">Envoyer des données statistiques à Google Analytics aide les développeurs à comprendre l\'usage de l\'application et à l\'améliorer, mais vous pouvez désactiver cette option.</string>
+    <string name="prefs_ga_collect_stats_summary_off">Envoyer des données statistiques à Google Analytics aide les développeurs à comprendre l\'usage de l\'application et à l\'améliorer, mais vous pouvez désactiver cette option.</string>
     <string name="prefs_ga_collect_stats_title">Envoyer des données anonymes</string>
     <string name="send_message">Envoyer un message</string>
     <string name="star_this_host">Ajouter aux hôtes favoris</string>
@@ -155,7 +156,7 @@
     <string name="host_services_description">Services que l\'hôte peut offrir: %1$s</string>
     <string name="nearby_service_accommodation">Hôtel/Auberge</string>
     <string name="nearby_service_bikeshop">Magasin de vélos</string>
-    <string name="nearby_services_description"><Se></Se>rvices à proximité: %1$s</string>
+    <string name="nearby_services_description">Services à proximité: %1$s</string>
     <string name="nearby_service_campground">Camping</string>
     <string name="not_currently_available">Non disponible actuellement</string>
     <string name="currently_available">Disponible actuellement</string>

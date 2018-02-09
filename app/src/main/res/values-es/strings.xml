@@ -98,7 +98,8 @@
     <string name="prefs_distance_unit">Unidad de distancia</string>
     <string name="prefs_distance_unit_summary">¿Quieres la unidad de distancia en Kilómetros o en Millas? </string>
     <string name="prefs_ga_collect_stats_title">Enviar estadísticas anónimas </string>
-    <string name="prefs_ga_collect_stats_summary">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
+    <string name="prefs_ga_collect_stats_summary_on">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
+    <string name="prefs_ga_collect_stats_summary_off">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
     <string name="languages_spoken"><u>Idiomas:</u></string>
     <string name="map_network_not_connected">La red no está conectada, sólo se muestran los anfitriones destacados.</string>
     <string name="open_in_map_application">Abrir en aplicación de mapas</string>

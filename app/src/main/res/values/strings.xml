@@ -10,7 +10,7 @@
     <string name="no_starred_hosts">"You currently have no favorited hosts (hosts whose profiles are available offline). You can favorite hosts on the user information page."</string>
     <string name="list_search_hint">Name or city</string>
     <string name="no_results">Your search yielded no results.</string>
-    <string name="enter_credentials">Please enter your Warmshowers.org username (or email) and password:</string>
+    <string name="enter_credentials">Please log in using your Warmshowers.org credentials</string>
     <string name="view_details">View details</string>
     <string name="star">Star</string>
     <string name="close">Close</string>
@@ -99,7 +99,8 @@
     <string name="prefs_distance_unit">Unit of distance</string>
     <string name="prefs_distance_unit_summary">Do you want distances expressed in kilometers or in miles?</string>
     <string name="prefs_ga_collect_stats_title">Send anonymous statistics</string>
-    <string name="prefs_ga_collect_stats_summary">Sending statistics to Google Analytics helps the developers to understand usage and improve the app, but you can opt out.</string>
+    <string name="prefs_ga_collect_stats_summary_on">Sending statistics to Google Analytics helps the developers to understand usage and improve the app, but you can opt out.</string>
+    <string name="prefs_ga_collect_stats_summary_off">Currently, your usage is not tracked in order to be sent to Google Analytics to help developers in their improvement endeavours.</string>
     <string name="languages_spoken"><u>Languages spoken:</u></string>
     <string name="map_network_not_connected">Network is not connected, showing starred hosts only.</string>
     <string name="open_in_map_application">Open in maps application</string>
