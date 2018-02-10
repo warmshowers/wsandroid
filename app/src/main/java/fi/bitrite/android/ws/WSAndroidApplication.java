@@ -26,14 +26,15 @@ public class WSAndroidApplication extends Application implements HasActivityInje
 
     @Inject DispatchingAndroidInjector<Activity> mDispatchingAndroidInjector;
     @Inject AuthenticationController mAuthenticationController;
+    HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
 
-    // Google Analytics Support
-    public enum TrackerName {
-        APP_TRACKER,
-        GLOBAL_TRACKER
+    public static Context getAppContext() {
+        return WSAndroidApplication.mContext;
     }
 
-    HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+    public static AppComponent getAppComponent() {
+        return mAppInjector.getAppComponent();
+    }
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
         String PROPERTY_ID = getString(R.string.ga_property_id);
@@ -48,7 +49,6 @@ public class WSAndroidApplication extends Application implements HasActivityInje
         }
         return mTrackers.get(trackerId);
     }
-
 
     public void onCreate() {
         super.onCreate();
@@ -68,15 +68,14 @@ public class WSAndroidApplication extends Application implements HasActivityInje
         // Injected variables are available from this point.
     }
 
-    public static Context getAppContext() {
-        return WSAndroidApplication.mContext;
-    }
-    public static AppComponent getAppComponent() {
-        return mAppInjector.getAppComponent();
-    }
-
     @Override
     public DispatchingAndroidInjector<Activity> activityInjector() {
         return mDispatchingAndroidInjector;
+    }
+
+    // Google Analytics Support
+    public enum TrackerName {
+        APP_TRACKER,
+        GLOBAL_TRACKER
     }
 }

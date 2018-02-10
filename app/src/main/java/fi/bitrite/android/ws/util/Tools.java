@@ -65,7 +65,6 @@ public class Tools {
         if (BuildConfig.DEBUG) {
             boolean simulateDisconnected = PreferenceManager.getDefaultSharedPreferences(context)
                     .getBoolean("developer_no_network", false);
-            ;
             if (simulateDisconnected) {
                 return false;
             }
@@ -146,7 +145,6 @@ public class Tools {
      */
     public static String getDateAsMY(Context context, long timeInMillis) {
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NO_MONTH_DAY;
-        String result = DateUtils.formatDateTime(context, timeInMillis, flags);
-        return result;
+        return DateUtils.formatDateTime(context, timeInMillis, flags);
     }
 }

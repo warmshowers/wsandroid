@@ -19,6 +19,25 @@ import fi.bitrite.android.ws.R;
 
 public class Host extends _Host {
 
+    public static final DualCreator<Host> CREATOR = new DualCreator<Host>() {
+
+        public Host[] newArray(int size) {
+            return new Host[size];
+        }
+
+        public Host createFromParcel(Parcel source) {
+            Host object = new Host();
+            object.readFromParcel(source);
+            return object;
+        }
+
+        @Override
+        public Host parse(JSONObject obj) throws JSONException {
+            Host newInstance = new Host();
+            newInstance.readFromJson(obj);
+            return newInstance;
+        }
+    };
     private long mUpdated;
 
     public Host() {
@@ -39,26 +58,6 @@ public class Host extends _Host {
                 lawnspace, motel, sag, shower, storage, latitude, longitude, login, created,
                 languagesSpoken, picture, profilePictureSmall, profilePictureLarge);
     }
-
-    public static final DualCreator<Host> CREATOR = new DualCreator<Host>() {
-
-        public Host[] newArray(int size) {
-            return new Host[size];
-        }
-
-        public Host createFromParcel(Parcel source) {
-            Host object = new Host();
-            object.readFromParcel(source);
-            return object;
-        }
-
-        @Override
-        public Host parse(JSONObject obj) throws JSONException {
-            Host newInstance = new Host();
-            newInstance.readFromJson(obj);
-            return newInstance;
-        }
-    };
 
     public String getLocation() {
 
@@ -103,19 +102,19 @@ public class Host extends _Host {
         Resources r = context.getResources();
 
         if (hasService(getShower()))
-            sb.append(r.getString(R.string.host_service_shower) + ", ");
+            sb.append(r.getString(R.string.host_service_shower)).append(", ");
         if (hasService(getFood()))
-            sb.append(r.getString(R.string.host_services_food) + ", ");
+            sb.append(r.getString(R.string.host_services_food)).append(", ");
         if (hasService(getBed()))
-            sb.append(r.getString(R.string.host_services_bed) + ", ");
+            sb.append(r.getString(R.string.host_services_bed)).append(", ");
         if (hasService(getLaundry()))
-            sb.append(r.getString(R.string.host_service_laundry) + ", ");
+            sb.append(r.getString(R.string.host_service_laundry)).append(", ");
         if (hasService(getStorage()))
-            sb.append(r.getString(R.string.host_service_storage) + ", ");
+            sb.append(r.getString(R.string.host_service_storage)).append(", ");
         if (hasService(getKitchenUse()))
-            sb.append(r.getString(R.string.host_service_kitchen) + ", ");
+            sb.append(r.getString(R.string.host_service_kitchen)).append(", ");
         if (hasService(getLawnspace()))
-            sb.append(r.getString(R.string.host_service_tentspace) + ", ");
+            sb.append(r.getString(R.string.host_service_tentspace)).append(", ");
         if (hasService(getSag()))
             sb.append(context.getString(R.string.host_service_sag));
 

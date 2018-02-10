@@ -88,30 +88,27 @@ public class MapFragment extends BaseFragment implements
         GoogleApiClient.ConnectionCallbacks {
 
     private static final String KEY_MAP_TARGET_LAT_LNG = "map_target_lat_lng";
-
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private static final int REQUEST_RESOLVE_ERROR = 1001;
+    private static final String DIALOG_ERROR = "dialog_error";
+    private static final String TAG = "MapFragment";
     @Inject AuthenticationController mAuthenticationController;
     @Inject NavigationController mNavigationController;
     @Inject UserRepository mUserRepository;
     @Inject FavoriteRepository mFavoriteRepository;
-
+    Location mLastDeviceLocation;
+    String mDistanceUnit;
     private Unbinder mUnbinder;
-
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private ConcurrentSkipListSet<Integer> mClusteredUsers = new ConcurrentSkipListSet<>();
     private ClusterManager<ClusterUser> mClusterManager;
     private Cluster<ClusterUser> mLastClickedCluster;
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private static final int REQUEST_RESOLVE_ERROR = 1001;
-    private static final String DIALOG_ERROR = "dialog_error";
-
-    private static final String TAG = "MapFragment";
     private CameraPosition mLastCameraPosition = null;
     private boolean mResolvingError = false;
-    Location mLastDeviceLocation;
-    String mDistanceUnit;
     private boolean mIsOffline = false;
     private GoogleApiClient mGoogleApiClient;
-    enum ClusterStatus {none, some, all}
+    private Disposable mLoadOfflineUserDisposable;
+    private Toast mLastToast = null;
 
     public static MapFragment create() {
         MapFragment mapFragment = new MapFragment();
@@ -119,6 +116,7 @@ public class MapFragment extends BaseFragment implements
         mapFragment.setArguments(bundle);
         return mapFragment;
     }
+
     public static MapFragment create(LatLng latLng) {
         MapFragment mapFragment = create();
         mapFragment.getArguments().putParcelable(KEY_MAP_TARGET_LAT_LNG, latLng);
@@ -260,7 +258,6 @@ public class MapFragment extends BaseFragment implements
                 ActivityCompat.checkSelfPermission(getContext(), permission);
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -334,164 +331,14 @@ public class MapFragment extends BaseFragment implements
         }
     }
 
-    /**
-     * Add the title and snippet to the marker so that infoWindow can be rendered.
-     */
-    private class UserRenderer extends DefaultClusterRenderer<ClusterUser> {
-        private final IconGenerator mSingleLocationClusterIconGenerator = new IconGenerator(getActivity().getApplicationContext());
-        private final IconGenerator mSingleUserIconGenerator = new IconGenerator(getActivity().getApplicationContext());
-        private SparseArray<BitmapDescriptor> mIcons = new SparseArray<BitmapDescriptor>();
-        private BitmapDescriptor mSingleUserBitmapDescriptor;
-
-        public UserRenderer() {
-            super(getActivity().getApplicationContext(), mMap, mClusterManager);
-
-            View sameLocationMultiUserClusterView = getLayoutInflater().inflate(R.layout.marker_location_cluster, null);
-            View singleUserMarkerView = getLayoutInflater().inflate(R.layout.marker_location, null);
-            mSingleLocationClusterIconGenerator.setContentView(sameLocationMultiUserClusterView);
-            mSingleLocationClusterIconGenerator.setBackground(null);
-            mSingleUserIconGenerator.setContentView(singleUserMarkerView);
-            mSingleUserIconGenerator.setBackground(null);
-            mSingleUserBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(mSingleUserIconGenerator.makeIcon());
-
-        }
-
-        @Override
-        protected void onBeforeClusterRendered(Cluster<ClusterUser> cluster, MarkerOptions markerOptions) {
-
-            if (clusterLocationStatus(cluster) == ClusterStatus.all) {
-                int size = cluster.getSize();
-                BitmapDescriptor descriptor = mIcons.get(size);
-                if (descriptor == null) {
-                    // Cache new bitmaps
-                    descriptor = BitmapDescriptorFactory.fromBitmap(mSingleLocationClusterIconGenerator.makeIcon(String.valueOf(size)));
-                    mIcons.put(size, descriptor);
-                }
-                markerOptions.icon(descriptor);
-            } else {
-                super.onBeforeClusterRendered(cluster, markerOptions);
-            }
-        }
-
-        @Override
-        protected void onBeforeClusterItemRendered(ClusterUser user, MarkerOptions markerOptions) {
-            String street = user.street;
-            String snippet = user.city + ", " + user.province.toUpperCase();
-            if (street != null && street.length() > 0) {
-                snippet = street + "<br/>" + snippet;
-            }
-            if (mLastDeviceLocation != null) {
-                double distance = Tools.calculateDistanceBetween(user.latLng, mLastDeviceLocation, mDistanceUnit);
-                snippet += "<br/>" + getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
-            }
-            markerOptions.title(user.fullname).snippet(snippet);
-            markerOptions.icon(mSingleUserBitmapDescriptor);
-        }
-
-        @Override
-        protected boolean shouldRenderAsCluster(Cluster<ClusterUser> cluster) {
-            // Render as a cluster if all the items are at the exact same location, or if there are more than
-            // min_cluster_size in the cluster.
-            ClusterStatus status = clusterLocationStatus(cluster);
-            boolean renderAsCluster = status == ClusterStatus.all || status == ClusterStatus.some || cluster.getSize() >= getResources().getInteger(R.integer.min_cluster_size);
-            return renderAsCluster;
-        }
-
-        /**
-         * Attempt to determine the location status of items in the cluster, whether all in one location
-         * or in a variety of locations.
-         *
-         * @param cluster
-         * @return
-         */
-        protected ClusterStatus clusterLocationStatus(Cluster<ClusterUser> cluster) {
-
-            HashSet<String> latLngs = new HashSet<String>();
-            for (ClusterUser item : cluster.getItems()) {
-                latLngs.add(item.latLng.toString());
-            }
-
-            // if cluster size and latLngs size are same, all are unique locations, so 'none'
-            if (cluster.getSize() == latLngs.size()) {
-                return ClusterStatus.none;
-            }
-            // If there is only one unique location, then all are in same location.
-            else if (latLngs.size() == 1) {
-                return ClusterStatus.all;
-            }
-            // Otherwise it's a mix of same and other location
-            return ClusterStatus.some;
-        }
-    }
-
-
-    class ClusterInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
-        private View mPopup = null;
-        private LayoutInflater mInflater = null;
-
-        ClusterInfoWindowAdapter(LayoutInflater inflater) {
-            this.mInflater = inflater;
-        }
-
-        @Override
-        public View getInfoWindow(Marker marker) {
-            return null;
-        }
-
-        @Override
-        public View getInfoContents(Marker marker) {
-
-            StringBuilder hostList = new StringBuilder();
-            if (mPopup == null) {
-                mPopup = mInflater.inflate(R.layout.view_user_info_multiple, null);
-            }
-            TextView tv = (TextView) mPopup.findViewById(R.id.title);
-
-            if (mLastClickedCluster != null) {
-
-                if (mLastDeviceLocation != null) {
-                    double distance = Tools.calculateDistanceBetween(marker.getPosition(), mLastDeviceLocation, mDistanceUnit);
-                    TextView distance_tv = (TextView) mPopup.findViewById(R.id.distance_from_current);
-                    distance_tv.setText(Html.fromHtml(getString(R.string.distance_from_current, (int) distance, mDistanceUnit)));
-                }
-
-                ArrayList<ClusterUser> users = (ArrayList<ClusterUser>) mLastClickedCluster.getItems();
-                Collections.sort(users, (left, right) -> {
-                    int ncaLeft = left.isCurrentlyAvailable ? 0 : 1;
-                    int ncaRight = right.isCurrentlyAvailable ? 0 : 1;
-
-                    return ncaLeft != ncaRight
-                            ? ncaLeft - ncaRight
-                            : left.fullname.compareTo(right.fullname);
-
-                });
-
-                for (ClusterUser user : users) {
-                    hostList.append(user.fullname).append("<br/>");
-                }
-                hostList.append(getString(R.string.click_to_view_all));
-
-                String title = getResources().getQuantityString(R.plurals.hosts_at_location,
-                        users.size(), users.size(), users.get(0).getLocationStr());
-
-                tv.setText(Html.fromHtml(title));
-                tv = (TextView) mPopup.findViewById(R.id.snippet);
-                tv.setText(Html.fromHtml(hostList.toString()));
-            }
-
-            return (mPopup);
-        }
-    }
-
     protected void saveMapLocation(CameraPosition position) {
         SharedPreferences settings = getActivity().getSharedPreferences("map_last_location", 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putFloat("latitude", (float) position.target.latitude);
         editor.putFloat("longitude", (float) position.target.longitude);
-        editor.putFloat("zoom", (float) position.zoom);
+        editor.putFloat("zoom", position.zoom);
         editor.apply();
     }
-
 
     /**
      * Retrieve map location and zoom from saved preference. Returns null if none existed.
@@ -507,9 +354,9 @@ public class MapFragment extends BaseFragment implements
         float longitude = settings.getFloat("longitude", Float.parseFloat(getResources().getString(R.string.map_default_longitude)));
         float zoom = settings.getFloat("zoom", (float) getResources().getInteger(R.integer.map_initial_zoom));
 
-        CameraPosition position = new CameraPosition(new LatLng(latitude, longitude), zoom, 0, 0);
-        return position;
+        return new CameraPosition(new LatLng(latitude, longitude), zoom, 0, 0);
     }
+
     /**
      * If we can get a location, go to it with default zoom.
      */
@@ -519,7 +366,6 @@ public class MapFragment extends BaseFragment implements
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(gotoLatLng, zoom));
     }
 
-    private Disposable mLoadOfflineUserDisposable;
     @Override
     public void onCameraChange(CameraPosition position) {
         mLastCameraPosition = position;
@@ -668,6 +514,66 @@ public class MapFragment extends BaseFragment implements
         dialogFragment.show(getChildFragmentManager(), "errordialog");
     }
 
+    public void showMultihostSelectDialog(final ArrayList<ClusterUser> users) {
+        String[] mPossibleItems = new String[users.size()];
+
+        double distance = Tools.calculateDistanceBetween(users.get(0).latLng, mLastDeviceLocation, mDistanceUnit);
+        String distanceSummary = getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
+
+        LinearLayout customTitleView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_multiuser_dialog_header, null);
+        TextView titleView = customTitleView.findViewById(R.id.title);
+        titleView.setText(getResources().getQuantityString(R.plurals.hosts_at_location,
+                users.size(), users.size(), users.get(0).getStreetCityAddressStr()));
+
+        TextView distanceView = customTitleView.findViewById(R.id.distance_from_current);
+        distanceView.setText(distanceSummary);
+
+        for (int i = 0; i < users.size(); i++) {
+            mPossibleItems[i] = users.get(i).fullname;
+        }
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setCustomTitle(customTitleView);
+
+        alertDialogBuilder
+                .setNegativeButton(R.string.ok, (dialog, which) -> {
+                })
+                .setItems(mPossibleItems, (dialog, index) -> {
+                    ClusterUser user = users.get(index);
+                    mNavigationController.navigateToUser(user.id);
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private void sendMessage(@StringRes final int messageId) {
+        if (mLastToast != null) {
+            mLastToast.cancel();
+        }
+
+        mLastToast = Toast.makeText(getContext(), messageId, Toast.LENGTH_SHORT);
+        mLastToast.show();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.map_actions, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager =
+                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+    }
+
+    @Override
+    protected CharSequence getTitle() {
+        return getString(R.string.app_title);
+    }
+
+    enum ClusterStatus {none, some, all}
+
     /* A fragment to display an error dialog */
     public static class ErrorDialogFragment extends DialogFragment {
         private final CompletableSubject mCompletable = CompletableSubject.create();
@@ -700,7 +606,152 @@ public class MapFragment extends BaseFragment implements
         }
     }
 
+    /**
+     * Add the title and snippet to the marker so that infoWindow can be rendered.
+     */
+    private class UserRenderer extends DefaultClusterRenderer<ClusterUser> {
+        private final IconGenerator mSingleLocationClusterIconGenerator = new IconGenerator(getActivity().getApplicationContext());
+        private final IconGenerator mSingleUserIconGenerator = new IconGenerator(getActivity().getApplicationContext());
+        private SparseArray<BitmapDescriptor> mIcons = new SparseArray<>();
+        private BitmapDescriptor mSingleUserBitmapDescriptor;
 
+        public UserRenderer() {
+            super(getActivity().getApplicationContext(), mMap, mClusterManager);
+
+            View sameLocationMultiUserClusterView = getLayoutInflater().inflate(R.layout.marker_location_cluster, null);
+            View singleUserMarkerView = getLayoutInflater().inflate(R.layout.marker_location, null);
+            mSingleLocationClusterIconGenerator.setContentView(sameLocationMultiUserClusterView);
+            mSingleLocationClusterIconGenerator.setBackground(null);
+            mSingleUserIconGenerator.setContentView(singleUserMarkerView);
+            mSingleUserIconGenerator.setBackground(null);
+            mSingleUserBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(mSingleUserIconGenerator.makeIcon());
+
+        }
+
+        @Override
+        protected void onBeforeClusterRendered(Cluster<ClusterUser> cluster, MarkerOptions markerOptions) {
+
+            if (clusterLocationStatus(cluster) == ClusterStatus.all) {
+                int size = cluster.getSize();
+                BitmapDescriptor descriptor = mIcons.get(size);
+                if (descriptor == null) {
+                    // Cache new bitmaps
+                    descriptor = BitmapDescriptorFactory.fromBitmap(mSingleLocationClusterIconGenerator.makeIcon(String.valueOf(size)));
+                    mIcons.put(size, descriptor);
+                }
+                markerOptions.icon(descriptor);
+            } else {
+                super.onBeforeClusterRendered(cluster, markerOptions);
+            }
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(ClusterUser user, MarkerOptions markerOptions) {
+            String street = user.street;
+            String snippet = user.city + ", " + user.province.toUpperCase();
+            if (street != null && street.length() > 0) {
+                snippet = street + "<br/>" + snippet;
+            }
+            if (mLastDeviceLocation != null) {
+                double distance = Tools.calculateDistanceBetween(user.latLng, mLastDeviceLocation, mDistanceUnit);
+                snippet += "<br/>" + getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
+            }
+            markerOptions.title(user.fullname).snippet(snippet);
+            markerOptions.icon(mSingleUserBitmapDescriptor);
+        }
+
+        @Override
+        protected boolean shouldRenderAsCluster(Cluster<ClusterUser> cluster) {
+            // Render as a cluster if all the items are at the exact same location, or if there are more than
+            // min_cluster_size in the cluster.
+            ClusterStatus status = clusterLocationStatus(cluster);
+            return status == ClusterStatus.all || status == ClusterStatus.some || cluster.getSize() >= getResources().getInteger(R.integer.min_cluster_size);
+        }
+
+        /**
+         * Attempt to determine the location status of items in the cluster, whether all in one location
+         * or in a variety of locations.
+         *
+         * @param cluster
+         * @return
+         */
+        protected ClusterStatus clusterLocationStatus(Cluster<ClusterUser> cluster) {
+
+            HashSet<String> latLngs = new HashSet<>();
+            for (ClusterUser item : cluster.getItems()) {
+                latLngs.add(item.latLng.toString());
+            }
+
+            // if cluster size and latLngs size are same, all are unique locations, so 'none'
+            if (cluster.getSize() == latLngs.size()) {
+                return ClusterStatus.none;
+            }
+            // If there is only one unique location, then all are in same location.
+            else if (latLngs.size() == 1) {
+                return ClusterStatus.all;
+            }
+            // Otherwise it's a mix of same and other location
+            return ClusterStatus.some;
+        }
+    }
+
+    class ClusterInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+        private View mPopup = null;
+        private LayoutInflater mInflater = null;
+
+        ClusterInfoWindowAdapter(LayoutInflater inflater) {
+            this.mInflater = inflater;
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return null;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+
+            StringBuilder hostList = new StringBuilder();
+            if (mPopup == null) {
+                mPopup = mInflater.inflate(R.layout.view_user_info_multiple, null);
+            }
+            TextView tv = mPopup.findViewById(R.id.title);
+
+            if (mLastClickedCluster != null) {
+
+                if (mLastDeviceLocation != null) {
+                    double distance = Tools.calculateDistanceBetween(marker.getPosition(), mLastDeviceLocation, mDistanceUnit);
+                    TextView distance_tv = mPopup.findViewById(R.id.distance_from_current);
+                    distance_tv.setText(Html.fromHtml(getString(R.string.distance_from_current, (int) distance, mDistanceUnit)));
+                }
+
+                ArrayList<ClusterUser> users = (ArrayList<ClusterUser>) mLastClickedCluster.getItems();
+                Collections.sort(users, (left, right) -> {
+                    int ncaLeft = left.isCurrentlyAvailable ? 0 : 1;
+                    int ncaRight = right.isCurrentlyAvailable ? 0 : 1;
+
+                    return ncaLeft != ncaRight
+                            ? ncaLeft - ncaRight
+                            : left.fullname.compareTo(right.fullname);
+
+                });
+
+                for (ClusterUser user : users) {
+                    hostList.append(user.fullname).append("<br/>");
+                }
+                hostList.append(getString(R.string.click_to_view_all));
+
+                String title = getResources().getQuantityString(R.plurals.hosts_at_location,
+                        users.size(), users.size(), users.get(0).getLocationStr());
+
+                tv.setText(Html.fromHtml(title));
+                tv = mPopup.findViewById(R.id.snippet);
+                tv.setText(Html.fromHtml(hostList.toString()));
+            }
+
+            return (mPopup);
+        }
+    }
 
     /**
      * InfoWindowAdapter to present info about a single host marker.
@@ -735,65 +786,6 @@ public class MapFragment extends BaseFragment implements
 
             return mPopup;
         }
-    }
-
-    public void showMultihostSelectDialog(final ArrayList<ClusterUser> users) {
-        String[] mPossibleItems = new String[users.size()];
-
-        double distance = Tools.calculateDistanceBetween(users.get(0).latLng, mLastDeviceLocation, mDistanceUnit);
-        String distanceSummary = getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
-
-        LinearLayout customTitleView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_multiuser_dialog_header, null);
-        TextView titleView = (TextView) customTitleView.findViewById(R.id.title);
-        titleView.setText(getResources().getQuantityString(R.plurals.hosts_at_location,
-                users.size(), users.size(), users.get(0).getStreetCityAddressStr()));
-
-        TextView distanceView = (TextView) customTitleView.findViewById(R.id.distance_from_current);
-        distanceView.setText(distanceSummary);
-
-        for (int i = 0; i < users.size(); i++) {
-            mPossibleItems[i] = users.get(i).fullname;
-        }
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        alertDialogBuilder.setCustomTitle(customTitleView);
-
-        alertDialogBuilder
-                .setNegativeButton(R.string.ok, (dialog, which) -> {})
-                .setItems(mPossibleItems, (dialog, index) -> {
-                    ClusterUser user = users.get(index);
-                    mNavigationController.navigateToUser(user.id);
-                });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
-
-    private Toast mLastToast = null;
-    private void sendMessage(@StringRes final int messageId) {
-        if (mLastToast != null) {
-            mLastToast.cancel();
-        }
-
-        mLastToast = Toast.makeText(getContext(), messageId, Toast.LENGTH_SHORT);
-        mLastToast.show();
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.map_actions, menu);
-
-        // Get the SearchView and set the searchable configuration
-        SearchManager searchManager =
-                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
-    }
-
-    @Override
-    protected CharSequence getTitle() {
-        return getString(R.string.app_title);
     }
 }
 
