@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -39,31 +40,6 @@ public class AuthenticationManager {
 
     private final BehaviorSubject<Account[]> mAccounts;
 
-    public class LoginResult {
-        private final Response<LoginResponse> mResponse;
-        private final AuthData mAuthData;
-
-        LoginResult(Response<LoginResponse> response) {
-            this(response, null);
-        }
-        LoginResult(Response<LoginResponse> response, AuthData authData) {
-            mAuthData = authData;
-            mResponse = response;
-        }
-
-        public boolean isSuccessful() {
-            return mResponse.isSuccessful();
-        }
-        public Response<LoginResponse> response() {
-            return mResponse;
-        }
-
-        @Nullable
-        public AuthData authData() {
-            return mAuthData;
-        }
-    }
-
     @Inject
     public AuthenticationManager(AccountManager accountManager,
                                  WarmshowersService warmshowersService) {
@@ -73,10 +49,22 @@ public class AuthenticationManager {
         mAccounts = BehaviorSubject.createDefault(mAccountManager.getAccountsByType(ACCOUNT_TYPE));
         mAccountManager.addOnAccountsUpdatedListener(accounts -> {
             Account[] newAccounts = mAccountManager.getAccountsByType(ACCOUNT_TYPE);
-            if (!mAccounts.getValue().equals(newAccounts)) {
+            if (!Arrays.equals(mAccounts.getValue(), newAccounts)) {
                 mAccounts.onNext(newAccounts);
             }
         }, null, false);
+    }
+
+    private static <R> R executeWithLock(Lock lock, Function<Void, R> f) {
+        try {
+            lock.lock();
+            return f.apply(null);
+        } catch (Exception e) {
+            // Ignore.
+            return null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -286,15 +274,31 @@ public class AuthenticationManager {
     private <R> R executeWithWriteLock(Function<Void, R> f) {
         return executeWithLock(mAuthenticationManagerLock.writeLock(), f);
     }
-    private static <R> R executeWithLock(Lock lock, Function<Void, R> f) {
-        try {
-            lock.lock();
-            return f.apply(null);
-        } catch (Exception e) {
-            // Ignore.
-            return null;
-        } finally {
-            lock.unlock();
+
+    public class LoginResult {
+        private final Response<LoginResponse> mResponse;
+        private final AuthData mAuthData;
+
+        LoginResult(Response<LoginResponse> response) {
+            this(response, null);
+        }
+
+        LoginResult(Response<LoginResponse> response, AuthData authData) {
+            mAuthData = authData;
+            mResponse = response;
+        }
+
+        public boolean isSuccessful() {
+            return mResponse.isSuccessful();
+        }
+
+        public Response<LoginResponse> response() {
+            return mResponse;
+        }
+
+        @Nullable
+        public AuthData authData() {
+            return mAuthData;
         }
     }
 }
