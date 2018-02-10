@@ -20,6 +20,7 @@ repositories {
 
 ext {
     androidMapsUtilsVersion = '0.3.4'
+    assertjVersion = '3.9.0'
     butterknifeVersion = '8.8.1'
     constraintLayoutVersion = '1.0.2'
     daggerVersion = '2.13'
@@ -33,6 +34,7 @@ ext {
     picassoVersion = '2.5.2'
     playServicesVersion = '11.6.2'
     retrofitVersion = '2.3.0'
+    robolectricVersion = '3.7'
     rxAndroidVersion = '2.0.1'
     rxJavaVersion = '2.1.7'
     supportLibVersion = '27.0.1'
@@ -72,6 +74,8 @@ dependencies {
 
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.json:json:$jsonVersion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
 }
 
 android {
@@ -118,6 +122,12 @@ android {
     dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
         preDexLibraries = isPreDexEnabled && !isTravisBuild
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
     }
 
     sourceSets {
