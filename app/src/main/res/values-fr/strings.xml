@@ -63,8 +63,6 @@
     <string name="ok">OK</string>
     <string name="password_hint">Mot de passe</string>
     <string name="button_text_login">Se connecter</string>
-    <string name="button_text_forgot_password">Mot de passe oublié?</string>
-    <string name="url_target_forgot_password">https://fr.warmshowers.org/user/password</string>
     <string name="performing_search">Recherche en cours…</string>
     <string name="preferred_notice"><u>Prévenir de préf.:</u></string>
     <string name="sending_message">Envoi du message…</string>
@@ -194,5 +192,10 @@
     <string name="title_fragment_messages">Messages</string>
     <string name="title_fragment_settings">Paramètres</string>
     <string name="title_fragment_users">Hôtes</string>
+
+    <string name="button_text_forgot_password">Mot de passe oublié?</string>
+    <string name="url_target_forgot_password">https://fr.warmshowers.org/user/password</string>
+
+    <string name="content_description_avatar">Votre photo de profil</string>
 
 </resources>

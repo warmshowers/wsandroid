@@ -17,8 +17,6 @@
     <string name="close">Close</string>
     <string name="username_hint">Username or Email</string>
     <string name="password_hint">Password</string>
-    <string name="button_text_forgot_password">Forgot your password?</string>
-    <string name="url_target_forgot_password">https://www.warmshowers.org/user/password</string>
     <string name="button_text_login">Log in</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -208,4 +206,9 @@
     <string name="message_mark_unread">Mark unread</string>
     <string name="message_mark_read">Mark read</string>
     <string name="message_send_failed">Failed to send the message.</string>
+
+    <string name="button_text_forgot_password">Forgot your password?</string>
+    <string name="url_target_forgot_password">https://www.warmshowers.org/user/password</string>
+
+    <string name="content_description_avatar">Your avatar</string>
 </resources>

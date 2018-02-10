@@ -18,8 +18,6 @@
     <string name="username_hint">Usuario o Email</string>
     <string name="password_hint">Contraseña</string>
     <string name="button_text_login">Entrar</string>
-    <string name="button_text_forgot_password">¿Has olvidado la contraseña?</string>
-    <string name="url_target_forgot_password">https://es.warmshowers.org/user/password</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
     <string name="description">Sobre este miembro</string>
@@ -188,5 +186,10 @@
     <string name="title_fragment_messages">Mensajes</string>
     <string name="title_fragment_settings">Configuraciones</string>
     <string name="title_fragment_users">Anfitrións</string>
+
+    <string name="button_text_forgot_password">¿Has olvidado la contraseña?</string>
+    <string name="url_target_forgot_password">https://es.warmshowers.org/user/password</string>
+
+    <string name="content_description_avatar">Tu foto de perfil</string>
 
 </resources>

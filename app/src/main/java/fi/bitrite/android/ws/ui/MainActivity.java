@@ -102,7 +102,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 R.string.drawer_open, R.string.drawer_close);
         // The drawer toggle breaks the click listener on the home button (when it is displayed as
         // up). We fix that.
-        mDrawerToggle.setToolbarNavigationClickListener(view -> { onSupportNavigateUp(); });
+        mDrawerToggle.setToolbarNavigationClickListener(view -> onSupportNavigateUp());
+        mDrawerToggle.getDrawerArrowDrawable().setColor(getResources().getColor(android.R.color.white));
+        mDrawerToggle.setDrawerSlideAnimationEnabled(false);
+
 
         mMainLayout.addDrawerListener(mDrawerToggle);
 
@@ -183,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         setIntent(intent);
         handleSearchIntent(intent);
     }
+
     private void handleSearchIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
@@ -207,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void onFragmentBackStackChanged(){
+    private void onFragmentBackStackChanged() {
         boolean showHomeAsUp = mNavigationController.isShowHomeAsUp();
 
         // We disable the drawer indicator if we want to show the up action. This decorates the home

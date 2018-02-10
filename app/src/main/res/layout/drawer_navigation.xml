@@ -1,72 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
-    android:layout_gravity="start"
     android:layout_width="240dp"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#fff"
+    android:layout_gravity="start"
+    android:background="#FFF"
+    android:clickable="true"
     android:focusable="true"
-    android:clickable="true">
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/nav_drawer_header"
         android:layout_width="match_parent"
         android:layout_height="230dp"
-        android:background="#FF777777">
+        android:background="#F777"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/nav_img_user_photo"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:contentDescription="@string/content_description_avatar"
+            android:scaleType="centerCrop"
             android:src="@drawable/default_hostinfo_profile"
-            android:scaleType="centerCrop" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:paddingTop="8dp"
+            android:background="#C555"
+            android:orientation="vertical"
             android:paddingBottom="8dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:background="#CC555555">
+            android:paddingTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/nav_lbl_fullname"
+                style="@style/WsPictureOverlayTitle.Medium"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:ellipsize="end"
+                android:lines="1"
+                android:maxLines="1"
+                tools:text="Username" />
 
-                <TextView
-                    android:id="@+id/nav_lbl_fullname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/WsPictureOverlayTitle.Medium"
-                    tools:text="Username"/>
+            <TextView
+                android:id="@+id/nav_lbl_username"
+                style="@style/WsPictureOverlayTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                tools:text="user@email.com" />
 
-
-                <TextView
-                    android:id="@+id/nav_lbl_username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/WsPictureOverlayTitle"
-                    android:lines="1"
-                    android:ellipsize="end"
-                    tools:text="user@email.com"/>
-
-            </LinearLayout>
         </LinearLayout>
-    </RelativeLayout>
+    </android.support.constraint.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingBottom="8dp"
         android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nav_drawer_header">
 
         <ListView
             android:id="@+id/nav_lst_primary_navigation"
@@ -74,15 +81,15 @@
             android:layout_height="match_parent"
             android:divider="@null"
             android:dividerHeight="0dp"
-            tools:listitem="@layout/item_navigation"/>
+            tools:listitem="@layout/item_navigation" />
 
         <!-- Divider -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="#1f000000"/>
+            android:layout_marginTop="8dp"
+            android:background="#1f000000" />
 
         <ListView
             android:id="@+id/nav_lst_secondary_navigation"
@@ -90,6 +97,6 @@
             android:layout_height="match_parent"
             android:divider="@null"
             android:dividerHeight="0dp"
-            tools:listitem="@layout/item_navigation"/>
+            tools:listitem="@layout/item_navigation" />
     </LinearLayout>
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
