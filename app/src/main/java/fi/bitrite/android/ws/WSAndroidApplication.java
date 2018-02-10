@@ -2,7 +2,6 @@ package fi.bitrite.android.ws;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.preference.PreferenceManager;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -21,16 +20,11 @@ import fi.bitrite.android.ws.di.AppInjector;
 public class WSAndroidApplication extends Application implements HasActivityInjector {
 
     public static final String TAG = "WSAndroidApplication";
-    private static Context mContext;
     private static AppInjector mAppInjector;
 
     @Inject DispatchingAndroidInjector<Activity> mDispatchingAndroidInjector;
     @Inject AuthenticationController mAuthenticationController;
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
-
-    public static Context getAppContext() {
-        return WSAndroidApplication.mContext;
-    }
 
     public static AppComponent getAppComponent() {
         return mAppInjector.getAppComponent();
@@ -52,8 +46,6 @@ public class WSAndroidApplication extends Application implements HasActivityInje
 
     public void onCreate() {
         super.onCreate();
-
-        mContext = getApplicationContext();
 
         // Set automatic activity reports, per http://stackoverflow.com/a/24983778/215713
         GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
