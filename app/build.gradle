@@ -150,6 +150,8 @@ android {
         targetSdkVersion 22
 
         multiDexEnabled true
+
+        vectorDrawables.useSupportLibrary = true
     }
 
     compileOptions {
