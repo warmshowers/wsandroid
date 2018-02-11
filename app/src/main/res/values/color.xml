@@ -7,9 +7,9 @@
     <color name="primaryColorAccent">#9ccc65</color>
     <color name="primaryColorAccentLight">#c5e1a5</color>
 
-    <color name="primaryTextColor">#DF000000</color>
-    <color name="primaryTextColorLight">#8A000000</color>
-    <color name="primaryTextColorDisable">#42000000</color>
+    <color name="primaryTextColor">#3D3D46</color>
+    <color name="primaryTextColorLight">#8A3D3D46</color>
+    <color name="primaryTextColorDisable">#423D3D46</color>
 
     <color name="primaryButtonDisable">#1e000000</color>
 
