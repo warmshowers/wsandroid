@@ -3,8 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="message_bubble_margin_big">48dp</dimen>
-    <dimen name="message_bubble_margin_small">8dp</dimen>
+    <dimen name="message_bubble_margin_big">72dp</dimen>
+    <dimen name="message_bubble_margin_small">12dp</dimen>
     <dimen name="message_bubble_padding_big">12dp</dimen>
     <dimen name="message_bubble_padding_small">8dp</dimen>
 
