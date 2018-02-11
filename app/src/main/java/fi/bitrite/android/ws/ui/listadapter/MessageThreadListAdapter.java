@@ -48,15 +48,47 @@ public class MessageThreadListAdapter extends
     private final NavigationController mNavigationController;
     private final UserRepository mUserRepository;
 
+    public MessageThreadListAdapter(
+            LoggedInUserHelper loggedInUserHelper, MessageRepository messageRepository,
+            NavigationController navigationController, UserRepository userRepository) {
+        mUserRepository = userRepository;
+        mMessageRepository = messageRepository;
+        mLoggedInUserHelper = loggedInUserHelper;
+        mNavigationController = navigationController;
+    }
+
+    @Override
+    protected ItemBinding createBinding(ViewGroup parent) {
+        return new ItemBinding(parent);
+    }
+
+    @Override
+    protected void sort(List<MessageThread> threads) {
+        Collections.sort(threads, (left, right) -> right.lastUpdated.compareTo(left.lastUpdated));
+    }
+
+    @Override
+    protected boolean areItemsTheSame(MessageThread left, MessageThread right) {
+        return left.id == right.id;
+    }
+
+    @Override
+    protected boolean areContentsTheSame(MessageThread left, MessageThread right) {
+        return left.id == right.id &&
+                left.subject.equals(right.subject) &&
+                left.started.equals(right.started) &&
+                left.isUnread() == right.isUnread() &&
+                left.lastUpdated.equals(right.lastUpdated);
+    }
+
     class ItemBinding implements DataBoundListAdapter.ViewDataBinding<MessageThread> {
 
+        private final View mRoot;
         @BindView(R.id.thread_icon) UserCircleImageView mIcon;
         @BindView(R.id.thread_lbl_participants) TextView mLblParticipants;
         @BindView(R.id.thread_lbl_last_updated) TextView mLblLastUpdated;
         @BindView(R.id.thread_lbl_subject) TextView mLblSubject;
         @BindView(R.id.thread_lbl_preview) TextView mLblPreview;
-
-        private final View mRoot;
         private MessageThread mThread;
         private CompositeDisposable mDisposables = new CompositeDisposable();
 
@@ -95,27 +127,9 @@ public class MessageThreadListAdapter extends
                     0, DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_ABBREV_RELATIVE)
                     .toString());
 
-            // Fetches the participants (excludes the logged in user).
-            Set<Integer> participantIds = new HashSet<>(thread.participantIds);
-            Host loggedInUser = mLoggedInUserHelper.get();
-            int loggedInUserId = loggedInUser != null ? loggedInUser.getId() : -1;
-            participantIds.remove(loggedInUserId);
-            if (participantIds.isEmpty()) {
-                // No participants known -> search the messages.
-                for (Message message : thread.messages) {
-                    participantIds.add(message.authorId);
-                }
-                participantIds.remove(loggedInUserId); // Remove ourselves.
-
-                if (participantIds.isEmpty() && loggedInUser != null) {
-                    // Still no participants known -> just add ourselves.
-                    participantIds.add(loggedInUserId);
-                }
-                // TODO(saemy): Should we handle the case where there is still no participant?
-            }
             @SuppressLint("UseSparseArrays") Map<Integer, Host> participants = new HashMap<>();
             mDisposables.add(Observable.merge(
-                    mUserRepository.get(participantIds, UserRepository.ShouldSaveInDb.YES))
+                    mUserRepository.get(getParticipantIdsWithoutCurrentUser(thread), UserRepository.ShouldSaveInDb.YES))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(userResource -> {
                         Host user = userResource.data;
@@ -154,17 +168,47 @@ public class MessageThreadListAdapter extends
             mRoot.setOnClickListener(view -> mNavigationController.navigateToMessageThread(thread.id));
         }
 
+        /**
+         * Gets the IDs of users participating in the message thread while excluding the currently
+         * logged in user.
+         *
+         * @param thread Message thread whose participating users are to be returned
+         * @return Set of User IDs participating, excluding currently logged in user
+         */
+        private Set<Integer> getParticipantIdsWithoutCurrentUser(MessageThread thread) {
+            final Set<Integer> participantIds = new HashSet<>(thread.participantIds);
+            final Host loggedInUser = mLoggedInUserHelper.get();
+            int loggedInUserId = loggedInUser != null ? loggedInUser.getId() : -1;
+            participantIds.remove(loggedInUserId);
+
+            if (participantIds.isEmpty()) {
+                // No participants known -> search the messages.
+                for (Message message : thread.messages) {
+                    participantIds.add(message.authorId);
+                }
+                participantIds.remove(loggedInUserId); // Remove ourselves.
+
+                if (participantIds.isEmpty() && loggedInUser != null) {
+                    // Still no participants known -> just add ourselves.
+                    participantIds.add(loggedInUserId);
+                }
+                // TODO(saemy): Should we handle the case where there is still no participant?
+            }
+
+            return participantIds;
+        }
+
         private void onCreateContextMenu(ContextMenu menu, View v,
                                          ContextMenu.ContextMenuInfo menuInfo) {
             if (mThread == null) {
                 return;
             }
 
-            MenuItem item = menu.add(Menu.NONE, v.getId(), Menu.NONE, mThread.isUnread()
+            final MenuItem unreadStatus = menu.add(Menu.NONE, v.getId(), Menu.NONE, mThread.isUnread()
                     ? R.string.message_mark_read
                     : R.string.message_mark_unread);
 
-            item.setOnMenuItemClickListener(menuItem -> {
+            unreadStatus.setOnMenuItemClickListener(menuItem -> {
                 if (mThread == null) {
                     return false;
                 }
@@ -176,40 +220,28 @@ public class MessageThreadListAdapter extends
                 }
                 return true;
             });
+
+            final MenuItem showProfile = menu.add(Menu.NONE, v.getId(), Menu.NONE,
+                    getParticipantIdsWithoutCurrentUser(mThread).size() == 1
+                            ? R.string.menu_goto_profile
+                            : R.string.menu_goto_profiles
+            );
+
+            showProfile.setOnMenuItemClickListener(menuItem -> {
+                if (mThread == null) {
+                    return false;
+                }
+
+                final ArrayList<Integer> participantIds = new ArrayList<>(getParticipantIdsWithoutCurrentUser(mThread));
+
+                if (participantIds.size() > 1) {
+                    mNavigationController.navigateToUserList(participantIds);
+                } else {
+                    mNavigationController.navigateToUser(participantIds.get(0));
+                }
+
+                return true;
+            });
         }
-    }
-
-
-    public MessageThreadListAdapter(
-            LoggedInUserHelper loggedInUserHelper, MessageRepository messageRepository,
-            NavigationController navigationController, UserRepository userRepository) {
-        mUserRepository = userRepository;
-        mMessageRepository = messageRepository;
-        mLoggedInUserHelper = loggedInUserHelper;
-        mNavigationController = navigationController;
-    }
-
-    @Override
-    protected ItemBinding createBinding(ViewGroup parent) {
-        return new ItemBinding(parent);
-    }
-
-    @Override
-    protected void sort(List<MessageThread> threads) {
-        Collections.sort(threads, (left, right) -> right.lastUpdated.compareTo(left.lastUpdated));
-    }
-
-    @Override
-    protected boolean areItemsTheSame(MessageThread left, MessageThread right) {
-        return left.id == right.id;
-    }
-
-    @Override
-    protected boolean areContentsTheSame(MessageThread left, MessageThread right) {
-        return left.id == right.id &&
-                left.subject.equals(right.subject) &&
-                left.started.equals(right.started) &&
-                left.isUnread() == right.isUnread() &&
-                left.lastUpdated.equals(right.lastUpdated);
     }
 }
