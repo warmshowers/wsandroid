@@ -1,48 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/backgroundLightGrey"
     android:orientation="vertical"
-    android:padding="7dp">
+    android:paddingTop="8dp">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/thread_lst_messages"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:scrollbars="vertical"
         app:layoutManager="LinearLayoutManager"
         app:stackFromEnd="true"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/item_message"/>
+        tools:listitem="@layout/item_message" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="7dp">
+        android:layout_marginTop="8dp"
+        android:background="@android:color/white"
+        android:minHeight="@dimen/minimum_height_touch_target"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/thread_edt_new_message"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:minHeight="42dp"
             style="@style/WsInputText"
-            android:hint="@string/message_new_hint"
-            android:inputType="text|textMultiLine|textCapSentences|textAutoCorrect"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_weight="1"
             android:background="@android:color/white"
-            android:padding="7dp"/>
+            android:hint="@string/message_new_hint"
+            android:inputType="text|textMultiLine|textCapSentences|textAutoCorrect" />
 
         <ImageButton
             android:id="@+id/all_btn_submit"
-            android:layout_width="40dp"
-            android:layout_height="42dp"
-            android:src="@android:drawable/ic_menu_send"
-            android:layout_gravity="bottom"
-            android:layout_marginLeft="4dp"/>
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@null"
+            android:contentDescription="@string/send_message"
+            android:paddingEnd="12dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="12dp"
+            android:paddingStart="0dp"
+            app:srcCompat="@drawable/ic_send_black_24dp" />
     </LinearLayout>
 </LinearLayout>

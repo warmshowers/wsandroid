@@ -5,6 +5,7 @@
     <color name="primaryColor">#0097a7</color>
     <color name="primaryColorDark">#006064</color>
     <color name="primaryColorAccent">#9ccc65</color>
+    <color name="primaryColorAccentLight">#c5e1a5</color>
 
     <color name="primaryTextColor">#DF000000</color>
     <color name="primaryTextColorLight">#8A000000</color>
@@ -20,7 +21,7 @@
     <color name="greyColorDark">#455A64</color>
     <color name="greyColorAccent">#00B0FF</color>
 
-    <color name="backgroundLightGrey">#F1F1F1</color>
+    <color name="backgroundLightGrey">#EFEFEF</color>
     <color name="textWarning">#B40D12</color>
     <color name="dividerColor">#CCC</color>
 </resources>

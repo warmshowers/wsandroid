@@ -46,26 +46,68 @@ public class MessageListAdapter extends
 
     private boolean mIsGroupChat;
 
+    public MessageListAdapter(LoggedInUserHelper loggedInUserHelper, UserRepository userRepository) {
+        mLoggedInUserHelper = loggedInUserHelper;
+        mUserRepository = userRepository;
+    }
+
+    @Override
+    public Completable replaceRx(List<Message> messages) {
+        mIsGroupChat = false;
+        Set<Integer> participantIds = new HashSet<>();
+        for (Message message : messages) {
+            participantIds.add(message.authorId);
+
+            if (participantIds.size() > 2) {
+                mIsGroupChat = true;
+                break;
+            }
+        }
+
+        return super.replaceRx(messages);
+    }
+
+    @Override
+    protected ItemBinding createBinding(ViewGroup parent) {
+        return new ItemBinding(parent);
+    }
+
+    @Override
+    protected void sort(List<Message> messages) {
+        Collections.sort(messages, COMPARATOR);
+    }
+
+    @Override
+    protected boolean areItemsTheSame(Message left, Message right) {
+        return left.id == right.id;
+    }
+
+    @Override
+    protected boolean areContentsTheSame(Message left, Message right) {
+        return left.id == right.id &&
+                left.threadId == right.threadId &&
+                left.authorId == right.authorId &&
+                left.date.equals(right.date) &&
+                left.body.equals(right.body);
+    }
+
     class ItemBinding implements
             DataBoundListAdapter.ViewDataBinding<Message> {
 
+        private final View mRoot;
+        private final int[] mParticipantColors;
+        private final SparseIntArray mParticipantColorMap = new SparseIntArray();
         @BindView(R.id.message_lbl_sender) TextView mLblSender;
         @BindView(R.id.message_lbl_body) TextView mLblBody;
         @BindView(R.id.message_lbl_date) TextView mLblDate;
-
         @BindDimen(R.dimen.message_bubble_padding_big) int mPaddingBubbleBig;
         @BindDimen(R.dimen.message_bubble_padding_small) int mPaddingBubbleSmall;
         @BindDimen(R.dimen.message_bubble_margin_big) int mMarginBubbleBig;
         @BindDimen(R.dimen.message_bubble_margin_small) int mMarginBubbleSmall;
         @BindDrawable(R.drawable.message_incoming_bubble) Drawable mDrawableBubbleIncoming;
         @BindDrawable(R.drawable.message_outgoing_bubble) Drawable mDrawableBubbleOutgoing;
-
-        private final View mRoot;
         private CompositeDisposable mDisposables = new CompositeDisposable();
-
-        private final int[] mParticipantColors;
         private int mNextParticipantColorIdx = 0;
-        private final SparseIntArray mParticipantColorMap = new SparseIntArray();
 
 
         ItemBinding(ViewGroup parent) {
@@ -110,8 +152,7 @@ public class MessageListAdapter extends
             mRoot.setLayoutParams(lp);
 
             // Sets the background of the bubble.
-            mRoot.setBackgroundDrawable(
-                    isIncoming ? mDrawableBubbleIncoming : mDrawableBubbleOutgoing);
+            mRoot.setBackground(isIncoming ? mDrawableBubbleIncoming : mDrawableBubbleOutgoing);
 
             // Shows the sender if the message is incoming and this is a group chat.
             boolean showSender = isIncoming && mIsGroupChat;
@@ -153,50 +194,5 @@ public class MessageListAdapter extends
             }
             return color;
         }
-    }
-
-    public MessageListAdapter(LoggedInUserHelper loggedInUserHelper, UserRepository userRepository) {
-        mLoggedInUserHelper = loggedInUserHelper;
-        mUserRepository = userRepository;
-    }
-
-    @Override
-    public Completable replaceRx(List<Message> messages) {
-        mIsGroupChat = false;
-        Set<Integer> participantIds = new HashSet<>();
-        for (Message message : messages) {
-            participantIds.add(message.authorId);
-
-            if (participantIds.size() > 2) {
-                mIsGroupChat = true;
-                break;
-            }
-        }
-
-        return super.replaceRx(messages);
-    }
-
-    @Override
-    protected ItemBinding createBinding(ViewGroup parent) {
-        return new ItemBinding(parent);
-    }
-
-    @Override
-    protected void sort(List<Message> messages) {
-        Collections.sort(messages, COMPARATOR);
-    }
-
-    @Override
-    protected boolean areItemsTheSame(Message left, Message right) {
-        return left.id == right.id;
-    }
-
-    @Override
-    protected boolean areContentsTheSame(Message left, Message right) {
-        return left.id == right.id &&
-                left.threadId == right.threadId &&
-                left.authorId == right.authorId &&
-                left.date.equals(right.date) &&
-                left.body.equals(right.body);
     }
 }
