@@ -89,10 +89,10 @@
     <string name="parsing_error">Fehler bei der Datenverarbeitung. Bitte melde diese Suche mithilfe das Kontaktformulars auf warmshowers.org.</string>
     <string name="unknown_exception">Unbekannter Fehler, bitte melde mithilfe des warmshowers.org-Kontaktformulars, wie dieser auftrat: %1$s</string>
     <string name="send_message">Nachricht senden</string>
-    <string name="view_on_map">Auf der Warmshowers-Karte ansehen</string>
-    <string name="view_in_maps_app">In der Karten-App sehen</string>
+    <string name="view_on_map">Auf der Karte anzeigen</string>
+    <string name="view_in_maps_app">In Karten-App anzeigen</string>
     <string name="action_settings">Einstellungen</string>
-    <string name="leave_feedback">Hinterlasse dein Feedback für diesen Gastgeber</string>
+    <string name="leave_feedback">Feedback hinterlassen</string>
     <string name="leave_feedback_for">Hinterlasse dein Feedback für %1$s</string>
     <string name="viewMessagesOnSite">Nachrichten auf der Webseite sehen</string>
     <string name="messages_on_site">Nachrichten auf der Webseite</string>
@@ -207,7 +207,8 @@
     <string name="button_text_forgot_password">Passwort vergessen?</string>
     <string name="url_target_forgot_password">https://de.warmshowers.org/user/password</string>
 
-    <string name="content_description_avatar">Dein Avatar</string>
+    <string name="content_description_your_avatar">Dein Avatar</string>
+    <string name="content_description_avatar_of_var">Avatar von %s</string>
 
     <string name="menu_goto_profile">Profil ansehen</string>
     <string name="menu_goto_profiles">Profile ansehen</string>

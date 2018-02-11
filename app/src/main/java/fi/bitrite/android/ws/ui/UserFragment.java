@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -57,6 +58,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 
+import static android.graphics.PorterDuff.Mode.MULTIPLY;
+
 /**
  * Activity that fetches host information and shows it to the user.
  * The information is retrieved either from the device storage (for starred hosts)
@@ -67,19 +70,19 @@ public class UserFragment extends BaseFragment {
 
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER = "user";
-
+    private final BehaviorSubject<MaybeNull<Host>> mUser =
+            BehaviorSubject.createDefault(new MaybeNull<>());
+    private final BehaviorSubject<List<Feedback>> mFeedbacks = BehaviorSubject.create();
+    private final BehaviorSubject<Boolean> mFavorite = BehaviorSubject.create();
     @Inject NavigationController mNavigationController;
     @Inject FavoriteRepository mFavoriteRepository;
     @Inject FeedbackRepository mFeedbackRepository;
     @Inject UserRepository mUserRepository;
-
     @BindView(R.id.user_layout_details) LinearLayout mLayoutDetails;
     @BindView(R.id.user_img_photo) ImageView mImgPhoto;
     @BindView(R.id.user_lbl_name) TextView mLblName;
-
     @BindView(R.id.user_img_favorite) ImageView mImgFavorite;
     @BindView(R.id.user_ckb_favorite) CheckBox mCkbFavorite;
-
     @BindView(R.id.user_lbl_availability) TextView mLblAvailability;
     @BindView(R.id.user_img_availability) ImageView mImgAvailability;
     @BindView(R.id.user_lbl_login_info) TextView mLblLoginInfo;
@@ -89,21 +92,12 @@ public class UserFragment extends BaseFragment {
     @BindView(R.id.user_lbl_services) TextView mLblServices;
     @BindView(R.id.user_lbl_nearby_services) TextView mLblNearbyServices;
     @BindView(R.id.user_lbl_comments) TextView mLblComments;
-
     @BindView(R.id.user_lbl_feedback) TextView mLblFeedback;
     @BindView(R.id.user_tbl_feedback) FeedbackTable mTblFeedback;
-
     @BindColor(R.color.primaryColorAccent) int mFavoritedColor;
     @BindColor(R.color.primaryTextColor) int mNonFavoritedColor;
-
     private ProgressDialog.Disposable mDownloadUserInfoProgressDisposable;
-
     private int mUserId;
-
-    private final BehaviorSubject<MaybeNull<Host>> mUser =
-            BehaviorSubject.createDefault(new MaybeNull<>());
-    private final BehaviorSubject<List<Feedback>> mFeedbacks = BehaviorSubject.create();
-    private final BehaviorSubject<Boolean> mFavorite = BehaviorSubject.create();
     private CompositeDisposable mDisposables;
 
     private boolean mDbFavoriteStatus;
@@ -223,9 +217,12 @@ public class UserFragment extends BaseFragment {
         // Set the user icon to black if they're available, otherwise gray
         boolean isAvailable = !user.isNotCurrentlyAvailable();
         mImgAvailability.setAlpha(isAvailable ? 1.0f : 0.5f);
-        mImgAvailability.setImageResource(isAvailable
-                ? R.drawable.ic_home_variant_black_24dp
-                : R.drawable.ic_home_variant_grey600_24dp);
+        mImgAvailability.setImageResource(R.drawable.ic_home_grey600_24dp);
+        mImgAvailability.setColorFilter(isAvailable
+                        ? Color.parseColor("#F000")
+                        : Color.parseColor("#FF757575"),
+                MULTIPLY);
+
         mLblAvailability.setText(isAvailable
                 ? R.string.currently_available
                 : R.string.not_currently_available);
@@ -283,8 +280,10 @@ public class UserFragment extends BaseFragment {
                     .load(url)
                     .placeholder(R.drawable.default_hostinfo_profile)
                     .into(mImgPhoto);
+            mImgPhoto.setContentDescription(getString(R.string.content_description_avatar_of_var, user.getName()));
         }
     }
+
     private void updateFeedbacksViewContent() {
         List<Feedback> feedbacks = mFeedbacks.getValue();
         Collections.sort(feedbacks, (left, right) -> ObjectUtils.compare(right.meetingDate, left.meetingDate));

@@ -23,7 +23,7 @@
             android:id="@+id/nav_img_user_photo"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:contentDescription="@string/content_description_avatar"
+            android:contentDescription="@string/content_description_your_avatar"
             android:scaleType="centerCrop"
             android:src="@drawable/default_hostinfo_profile"
             app:layout_constraintBottom_toBottomOf="parent"

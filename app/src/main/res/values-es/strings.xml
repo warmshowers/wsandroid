@@ -190,6 +190,7 @@
     <string name="button_text_forgot_password">¿Has olvidado la contraseña?</string>
     <string name="url_target_forgot_password">https://es.warmshowers.org/user/password</string>
 
-    <string name="content_description_avatar">Tu foto de perfil</string>
+    <string name="content_description_your_avatar">Tu foto de perfil</string>
+    <string name="content_description_avatar_of_var">Foto de perfil de %s</string>
 
 </resources>

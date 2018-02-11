@@ -89,10 +89,10 @@
     <string name="parsing_error">Error parsing response from server. Please report this search using the contact form at warmshowers.org.</string>
     <string name="unknown_exception">Unknown error, please report to warmshowers.org contact form: %1$s</string>
     <string name="send_message">Send message</string>
-    <string name="view_on_map">View on WarmShowers map</string>
+    <string name="view_on_map">View on map</string>
     <string name="view_in_maps_app">View in map application</string>
     <string name="action_settings">Settings</string>
-    <string name="leave_feedback">Leave feedback for this user</string>
+    <string name="leave_feedback">Leave feedback</string>
     <string name="leave_feedback_for">Leave feedback for %1$s</string>
     <string name="viewMessagesOnSite">View messages on site</string>
     <string name="messages_on_site">Messages on site</string>
@@ -210,7 +210,8 @@
     <string name="button_text_forgot_password">Forgot your password?</string>
     <string name="url_target_forgot_password">https://www.warmshowers.org/user/password</string>
 
-    <string name="content_description_avatar">Your avatar</string>
+    <string name="content_description_your_avatar">Your avatar</string>
+    <string name="content_description_avatar_of_var">%s’s avatar</string>
 
     <string name="menu_goto_profile">Show profile</string>
     <string name="menu_goto_profiles">Show profiles</string>

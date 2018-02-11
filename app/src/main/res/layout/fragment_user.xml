@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/primaryWhite"
@@ -25,6 +24,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:baselineAlignBottom="true"
+                android:contentDescription="@string/content_description_avatar_of_var"
                 android:scaleType="centerCrop"
                 android:src="@drawable/default_hostinfo_profile" />
 
@@ -74,7 +74,8 @@
                         style="@style/WsListIcon"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_action_favorite_outline" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_favorite_outline_grey600_24dp" />
 
                     <TextView
                         style="@style/WsText.subHead"
@@ -82,8 +83,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="56dp"
-                        android:text="@string/favorite_host"
-                        />
+                        android:text="@string/favorite_host" />
 
                     <CheckBox
                         android:id="@+id/user_ckb_favorite"
@@ -123,7 +123,8 @@
                     <ImageView
                         android:id="@+id/user_img_availability"
                         style="@style/WsListIcon"
-                        android:src="@drawable/ic_home_variant_black_24dp" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_home_grey600_24dp" />
 
                     <TextView
                         android:id="@+id/user_lbl_availability"
@@ -172,7 +173,8 @@
                     <ImageView
                         style="@style/WsListIcon"
                         android:layout_gravity="top"
-                        android:src="@drawable/ic_action_place" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_place_grey600_24dp" />
 
                     <TextView
                         android:id="@+id/user_lbl_location"
@@ -220,7 +222,8 @@
 
                     <ImageView
                         style="@style/WsListIcon"
-                        android:src="@drawable/ic_action_info_outline" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_info_outline_grey600_24dp" />
 
                     <TextView
                         style="@style/WsText.subHead"
@@ -268,7 +271,8 @@
 
                     <ImageView
                         style="@style/WsListIcon"
-                        android:src="@drawable/ic_action_list" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_format_list_bulleted_grey600_24dp" />
 
                     <TextView
                         style="@style/WsText.subHead"
@@ -324,7 +328,8 @@
 
                     <ImageView
                         style="@style/WsListIcon"
-                        android:src="@drawable/ic_action_people" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_people_grey600_24dp" />
 
                     <TextView
                         android:id="@+id/user_lbl_feedback"
