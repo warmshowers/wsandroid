@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -152,7 +153,7 @@ public class MessageListAdapter extends
             mRoot.setLayoutParams(lp);
 
             // Sets the background of the bubble.
-            mRoot.setBackground(isIncoming ? mDrawableBubbleIncoming : mDrawableBubbleOutgoing);
+            ViewCompat.setBackground(mRoot, isIncoming ? mDrawableBubbleIncoming : mDrawableBubbleOutgoing);
 
             // Shows the sender if the message is incoming and this is a group chat.
             boolean showSender = isIncoming && mIsGroupChat;

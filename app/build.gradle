@@ -145,7 +145,7 @@ android {
         versionName "1.5.1"
         versionCode 39 // Always increase when changing versionName.
 
-        minSdkVersion 16
+        minSdkVersion 14
         compileSdkVersion 26 // also update in .travis.yml
         targetSdkVersion 22
 
