@@ -4,8 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
-
-import org.apache.commons.lang3.StringUtils;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -166,7 +165,7 @@ public class MessageDao extends Dao {
         }
 
         executeTransactional(db -> {
-            String threadIdsStr = StringUtils.join(threadIds, ",");
+            String threadIdsStr = TextUtils.join(",", threadIds);
             db.execSQL("DELETE FROM " + ThreadTable.NAME + " WHERE id NOT IN (" + threadIdsStr + ")");
             return null;
         });

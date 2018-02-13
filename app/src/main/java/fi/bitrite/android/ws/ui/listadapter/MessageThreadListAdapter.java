@@ -14,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -133,7 +131,7 @@ public class MessageThreadListAdapter extends
                                     ? participant.getName()
                                     : participant.getFullname());
                         }
-                        mLblParticipants.setText(StringUtils.join(names, ", "));
+                        mLblParticipants.setText(TextUtils.join(", ", names));
 
                         mRoot.setVisibility(View.VISIBLE);
                     }));
