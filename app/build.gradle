@@ -75,6 +75,8 @@ dependencies {
     testImplementation "org.assertj:assertj-core:$assertjVersion"
     testImplementation "org.json:json:$jsonVersion"
     testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "org.robolectric:shadows-multidex:$robolectricVersion"
+    testImplementation "org.robolectric:shadows-supportv4:$robolectricVersion"
     testImplementation "junit:junit:$junitVersion"
 }
 
