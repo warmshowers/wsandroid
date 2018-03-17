@@ -7,7 +7,7 @@
     android:background="#FFFF">
 
     <RelativeLayout
-        android:id="@+id/favorites_lbl_no_users"
+        android:id="@+id/favorites_rellayout_no_users"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/backgroundLightGrey"

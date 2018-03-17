@@ -123,13 +123,19 @@ public class MessageThreadListAdapter extends
             mLblSubject.setText(thread.subject);
 
             mLblLastUpdated.setText(DateUtils.getRelativeTimeSpanString(
-                    thread.lastUpdated.getTime(), new Date().getTime(),
-                    0, DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_ABBREV_RELATIVE)
-                    .toString());
+                    thread.lastUpdated.getTime(),
+                    new Date().getTime(),
+                    0,
+                    DateUtils.FORMAT_NUMERIC_DATE
+                            | DateUtils.FORMAT_SHOW_YEAR
+                            | DateUtils.FORMAT_ABBREV_RELATIVE)
+                    .toString()
+            );
 
             @SuppressLint("UseSparseArrays") Map<Integer, Host> participants = new HashMap<>();
             mDisposables.add(Observable.merge(
-                    mUserRepository.get(getParticipantIdsWithoutCurrentUser(thread), UserRepository.ShouldSaveInDb.YES))
+                    mUserRepository.get(getParticipantIdsWithoutCurrentUser(thread),
+                            UserRepository.ShouldSaveInDb.YES))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(userResource -> {
                         Host user = userResource.data;
@@ -165,7 +171,9 @@ public class MessageThreadListAdapter extends
             }
 
             // Registers the onClick listener.
-            mRoot.setOnClickListener(view -> mNavigationController.navigateToMessageThread(thread.id));
+            mRoot.setOnClickListener(
+                    view -> mNavigationController.navigateToMessageThread(thread.id)
+            );
         }
 
         /**
@@ -204,9 +212,12 @@ public class MessageThreadListAdapter extends
                 return;
             }
 
-            final MenuItem unreadStatus = menu.add(Menu.NONE, v.getId(), Menu.NONE, mThread.isUnread()
-                    ? R.string.message_mark_read
-                    : R.string.message_mark_unread);
+            final MenuItem unreadStatus = menu.add(
+                    Menu.NONE, v.getId(),
+                    Menu.NONE, mThread.isUnread()
+                            ? R.string.message_mark_read
+                            : R.string.message_mark_unread
+            );
 
             unreadStatus.setOnMenuItemClickListener(menuItem -> {
                 if (mThread == null) {
@@ -232,7 +243,9 @@ public class MessageThreadListAdapter extends
                     return false;
                 }
 
-                final ArrayList<Integer> participantIds = new ArrayList<>(getParticipantIdsWithoutCurrentUser(mThread));
+                final ArrayList<Integer> participantIds = new ArrayList<>(
+                        getParticipantIdsWithoutCurrentUser(mThread)
+                );
 
                 if (participantIds.size() > 1) {
                     mNavigationController.navigateToUserList(participantIds);

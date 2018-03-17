@@ -231,6 +231,7 @@ public class AuthenticationManager {
                     : fi.bitrite.android.ws.auth.AccountManager.UNKNOWN_USER_ID;
         });
     }
+
     public String getCsrfToken(@NonNull Account account) {
         return executeWithReadLock(v -> mAccountManager.getUserData(account, KEY_CSRF_TOKEN));
     }
@@ -260,6 +261,7 @@ public class AuthenticationManager {
         Account account = new Account(username, ACCOUNT_TYPE);
         removeAccount(account);
     }
+
     public void removeAccount(@NonNull Account account) {
         executeWithWriteLock(v -> {
             mAccountManager.removeAccount(account, null, null);
@@ -267,10 +269,10 @@ public class AuthenticationManager {
         });
     }
 
-
     private <R> R executeWithReadLock(Function<Void, R> f) {
         return executeWithLock(mAuthenticationManagerLock.readLock(), f);
     }
+
     private <R> R executeWithWriteLock(Function<Void, R> f) {
         return executeWithLock(mAuthenticationManagerLock.writeLock(), f);
     }

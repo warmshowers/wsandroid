@@ -39,7 +39,7 @@ public class FavoriteUsersFragment extends BaseFragment {
     @Inject UserRepository mUserRepository;
 
     @BindView(R.id.favorites_lst_users) ListView mLstUsers;
-    @BindView(R.id.favorites_lbl_no_users) View mLblNoUsers;
+    @BindView(R.id.favorites_rellayout_no_users) View mLblNoUsers;
 
     private UserListAdapter mUserListAdapter;
 

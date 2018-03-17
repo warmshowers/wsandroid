@@ -117,9 +117,8 @@ abstract class Repository<T> {
                     }
                 } else {
                     // We got the data from the network.
-                    boolean shouldSave =
-                            shouldSaveInDb == ShouldSaveInDb.YES ||
-                                    (isInDb.get() && shouldSaveInDb == ShouldSaveInDb.IF_ALREADY_IN_DB);
+                    boolean shouldSave = shouldSaveInDb == ShouldSaveInDb.YES ||
+                            (isInDb.get() && shouldSaveInDb == ShouldSaveInDb.IF_ALREADY_IN_DB);
                     if (shouldSave) {
                         // We save it to the db.
                         saveInDb(id, result.data);
@@ -255,9 +254,9 @@ abstract class Repository<T> {
     class CacheEntry {
         final BehaviorSubject<Resource<T>> data = BehaviorSubject.create();
 
-        /**
+        /*
          * Whether the user is loaded from the Warmshowers service or from the local db only.
-         * <p>
+         *
          * This is initialized as REFRESHING to avoid a race in #get().
          */
         Freshness freshness = Freshness.REFRESHING;

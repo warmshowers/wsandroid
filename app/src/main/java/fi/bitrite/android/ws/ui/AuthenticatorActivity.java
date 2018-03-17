@@ -33,7 +33,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  * verifying them against the Warmshowers web service and storing
  * them on the device using Android's custom account facilities.
  */
-public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity implements Injectable {
+public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
+        implements Injectable {
 
     @Inject AuthenticationManager mAuthenticationManager;
 
@@ -98,7 +99,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity 
      */
     @VisibleForTesting
     boolean areAllInputsNotEmpty() {
-        return !TextUtils.isEmpty(mTxtUsername.getText()) && !TextUtils.isEmpty(mTxtPassword.getText());
+        return !TextUtils.isEmpty(mTxtUsername.getText())
+                && !TextUtils.isEmpty(mTxtPassword.getText());
     }
 
     /**
@@ -132,7 +134,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity 
                     Bundle response = new Bundle();
                     response.putString(AccountManager.KEY_ACCOUNT_NAME, username);
 
-                    String accountType = getIntent().getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
+                    String accountType =
+                            getIntent().getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
                     response.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
 
                     boolean isAlreadyLoggedIn = 406 == result.response().code();
@@ -161,14 +164,20 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity 
                     } else {
                         mProgressDisposable.dispose();
 
-                        Toast.makeText(this, R.string.authentication_failed, Toast.LENGTH_LONG)
-                                .show();
+                        Toast.makeText(
+                                this,
+                                R.string.authentication_failed,
+                                Toast.LENGTH_LONG
+                        ).show();
                     }
                 }, error -> {
                     mProgressDisposable.dispose();
 
-                    Toast.makeText(this, R.string.http_server_access_failure, Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(
+                            this,
+                            R.string.http_server_access_failure,
+                            Toast.LENGTH_SHORT
+                    ).show();
                 });
     }
 

@@ -2,7 +2,9 @@ package fi.bitrite.android.ws;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDex;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -63,6 +65,12 @@ public class WSAndroidApplication extends Application implements HasActivityInje
     @Override
     public DispatchingAndroidInjector<Activity> activityInjector() {
         return mDispatchingAndroidInjector;
+    }
+
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(context);
+        MultiDex.install(this);
     }
 
     // Google Analytics Support

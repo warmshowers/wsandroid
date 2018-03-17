@@ -219,7 +219,7 @@ public class UserFragment extends BaseFragment {
         mImgAvailability.setAlpha(isAvailable ? 1.0f : 0.5f);
         mImgAvailability.setImageResource(R.drawable.ic_home_grey600_24dp);
         mImgAvailability.setColorFilter(isAvailable
-                        ? Color.parseColor("#F000")
+                        ? Color.parseColor("#FF000000")
                         : Color.parseColor("#FF757575"),
                 MULTIPLY);
 
@@ -233,7 +233,8 @@ public class UserFragment extends BaseFragment {
 
         mLblLoginInfo.setText(getString(R.string.search_host_summary, createdDate, activeDate));
         mLblLimitations.setText(getString(
-                R.string.host_limitations, user.getMaxCyclists(), user.getLanguagesSpoken()));
+                R.string.host_limitations, user.getMaxCyclists(), user.getLanguagesSpoken())
+        );
 
 
         // Host location section
@@ -280,13 +281,17 @@ public class UserFragment extends BaseFragment {
                     .load(url)
                     .placeholder(R.drawable.default_hostinfo_profile)
                     .into(mImgPhoto);
-            mImgPhoto.setContentDescription(getString(R.string.content_description_avatar_of_var, user.getName()));
+            mImgPhoto.setContentDescription(getString(
+                    R.string.content_description_avatar_of_var, user.getName())
+            );
         }
     }
 
     private void updateFeedbacksViewContent() {
         List<Feedback> feedbacks = mFeedbacks.getValue();
-        Collections.sort(feedbacks, (left, right) -> ObjectUtils.compare(right.meetingDate, left.meetingDate));
+        Collections.sort(feedbacks,
+                (left, right) -> ObjectUtils.compare(right.meetingDate, left.meetingDate)
+        );
 
         mTblFeedback.setRows(feedbacks);
         mLblFeedback.setText(feedbacks.isEmpty()

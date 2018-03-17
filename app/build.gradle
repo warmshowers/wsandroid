@@ -49,6 +49,8 @@ dependencies {
     implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:cardview-v7:$supportLibVersion"
+    implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
+    implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:multidex:$multidexVersion"
     implementation "com.android.support:preference-v14:$supportLibVersion"
     implementation "com.android.support:support-v4:$supportLibVersion"
@@ -69,13 +71,11 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
     implementation "org.apache.commons:commons-lang3:$lang3Version"
-    implementation "com.android.support:design:$supportLibVersion"
-    implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
 
-    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
     testImplementation "org.json:json:$jsonVersion"
     testImplementation "org.robolectric:robolectric:$robolectricVersion"
-    testImplementation "org.assertj:assertj-core:$assertjVersion"
+    testImplementation "junit:junit:$junitVersion"
 }
 
 android {
