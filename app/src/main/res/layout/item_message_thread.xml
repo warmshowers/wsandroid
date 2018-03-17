@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/minimum_height_touch_target"
-    android:paddingTop="2dp">
+    android:paddingBottom="4dp"
+    android:paddingTop="4dp">
 
     <fi.bitrite.android.ws.ui.widget.UserCircleImageView
         android:id="@+id/thread_icon"
@@ -32,7 +33,6 @@
         android:paddingStart="0dp"
         android:singleLine="true"
         android:textSize="17sp"
-        app:layout_constraintBottom_toTopOf="@+id/thread_lbl_subject"
         app:layout_constraintEnd_toStartOf="@+id/thread_lbl_last_updated"
         app:layout_constraintStart_toEndOf="@+id/thread_icon"
         app:layout_constraintTop_toTopOf="parent"
@@ -58,15 +58,14 @@
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:ellipsize="middle"
-        android:gravity="center_vertical"
         android:singleLine="true"
         android:textColor="@color/primaryTextColor"
         android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/thread_lbl_preview"
         app:layout_constraintEnd_toStartOf="@+id/thread_lbl_last_updated"
         app:layout_constraintStart_toStartOf="@+id/thread_lbl_preview"
-        app:layout_constraintTop_toBottomOf="@+id/thread_lbl_last_updated"
+        app:layout_constraintTop_toBottomOf="@+id/thread_lbl_participants"
         tools:text="Two cyclists are looking for a stay for three nights in Dushanbe" />
 
     <TextView
@@ -74,6 +73,7 @@
         style="@style/TextAppearance.AppCompat.Caption"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/primaryTextColorLight"
