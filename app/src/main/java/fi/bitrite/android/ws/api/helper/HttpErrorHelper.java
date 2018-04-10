@@ -34,8 +34,12 @@ public class HttpErrorHelper {
                 .show();
 
         String exceptionDescription = throwable.toString();
-        if (throwable.getMessage() != null) exceptionDescription += " Message:" + throwable.getMessage();
-        if (throwable.getCause() != null) exceptionDescription += " Cause: " + throwable.getCause().toString();
+        if (throwable.getMessage() != null) {
+            exceptionDescription += " Message:" + throwable.getMessage();
+        }
+        if (throwable.getCause() != null) {
+            exceptionDescription += " Cause: " + throwable.getCause().toString();
+        }
         Tools.gaReportException(context, "RestClient Exception: ", exceptionDescription);
     }
 }

@@ -5,7 +5,7 @@
         <item name="km">Kilometer</item>
         <item name="mi">Meilen</item>
     </string-array>
-    
+
     <string-array name="distanceUnitValues">
         <item name="km">km</item>
         <item name="mi">mi</item>

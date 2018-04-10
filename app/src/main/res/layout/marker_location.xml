@@ -4,14 +4,14 @@
 
     android:layout_width="@dimen/single_host_marker_size"
     android:layout_height="@dimen/single_host_marker_size"
-    android:foregroundGravity="center_horizontal" >
+    android:foregroundGravity="center_horizontal">
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="@dimen/single_host_marker_size"
         android:layout_height="@dimen/single_host_marker_size"
-        android:src="@drawable/map_markers_single"
+        android:paddingTop="6dp"
         android:scaleType="centerCrop"
-        android:paddingTop="6dp" />
+        android:src="@drawable/map_markers_single" />
 
 </FrameLayout>

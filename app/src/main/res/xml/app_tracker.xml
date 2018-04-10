@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="TypographyDashes">
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="TypographyDashes">
 
     <!-- The apps Analytics Tracking Id -->
     <!-- TODO: Figure out how to use the strings version of this -->

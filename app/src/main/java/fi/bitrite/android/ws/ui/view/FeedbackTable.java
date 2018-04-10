@@ -103,7 +103,8 @@ public class FeedbackTable extends TableLayout {
     private String formatMeetingDate(@Nullable Date meetingDate) {
         return meetingDate != null
                 ? DateUtils.formatDateTime(getContext(), meetingDate.getTime(),
-                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NO_MONTH_DAY)
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR
+                | DateUtils.FORMAT_NO_MONTH_DAY)
                 : "";
     }
 

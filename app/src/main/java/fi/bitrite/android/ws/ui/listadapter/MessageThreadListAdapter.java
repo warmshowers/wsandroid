@@ -74,21 +74,22 @@ public class MessageThreadListAdapter extends
 
     @Override
     protected boolean areContentsTheSame(MessageThread left, MessageThread right) {
-        return left.id == right.id &&
-                left.subject.equals(right.subject) &&
-                left.started.equals(right.started) &&
-                left.isUnread() == right.isUnread() &&
-                left.lastUpdated.equals(right.lastUpdated);
+        return left.id == right.id
+               && left.subject.equals(right.subject)
+               && left.started.equals(right.started)
+               && left.isUnread() == right.isUnread()
+               && left.lastUpdated.equals(right.lastUpdated);
     }
 
     class ItemBinding implements DataBoundListAdapter.ViewDataBinding<MessageThread> {
 
-        private final View mRoot;
         @BindView(R.id.thread_icon) UserCircleImageView mIcon;
         @BindView(R.id.thread_lbl_participants) TextView mLblParticipants;
         @BindView(R.id.thread_lbl_last_updated) TextView mLblLastUpdated;
         @BindView(R.id.thread_lbl_subject) TextView mLblSubject;
         @BindView(R.id.thread_lbl_preview) TextView mLblPreview;
+
+        private final View mRoot;
         private MessageThread mThread;
         private CompositeDisposable mDisposables = new CompositeDisposable();
 
@@ -127,10 +128,8 @@ public class MessageThreadListAdapter extends
                     new Date().getTime(),
                     0,
                     DateUtils.FORMAT_NUMERIC_DATE
-                            | DateUtils.FORMAT_SHOW_YEAR
-                            | DateUtils.FORMAT_ABBREV_RELATIVE)
-                    .toString()
-            );
+                    | DateUtils.FORMAT_SHOW_YEAR
+                    | DateUtils.FORMAT_ABBREV_RELATIVE).toString());
 
             @SuppressLint("UseSparseArrays") Map<Integer, Host> participants = new HashMap<>();
             mDisposables.add(Observable.merge(
@@ -172,8 +171,7 @@ public class MessageThreadListAdapter extends
 
             // Registers the onClick listener.
             mRoot.setOnClickListener(
-                    view -> mNavigationController.navigateToMessageThread(thread.id)
-            );
+                    view -> mNavigationController.navigateToMessageThread(thread.id));
         }
 
         /**
@@ -212,12 +210,10 @@ public class MessageThreadListAdapter extends
                 return;
             }
 
-            final MenuItem unreadStatus = menu.add(
-                    Menu.NONE, v.getId(),
-                    Menu.NONE, mThread.isUnread()
+            final MenuItem unreadStatus =
+                    menu.add(Menu.NONE, v.getId(), Menu.NONE, mThread.isUnread()
                             ? R.string.message_mark_read
-                            : R.string.message_mark_unread
-            );
+                            : R.string.message_mark_unread);
 
             unreadStatus.setOnMenuItemClickListener(menuItem -> {
                 if (mThread == null) {
@@ -243,9 +239,8 @@ public class MessageThreadListAdapter extends
                     return false;
                 }
 
-                final ArrayList<Integer> participantIds = new ArrayList<>(
-                        getParticipantIdsWithoutCurrentUser(mThread)
-                );
+                final ArrayList<Integer> participantIds =
+                        new ArrayList<>(getParticipantIdsWithoutCurrentUser(mThread));
 
                 if (participantIds.size() > 1) {
                     mNavigationController.navigateToUserList(participantIds);

@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws.api.response;
 
-
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Map;

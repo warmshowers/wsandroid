@@ -55,7 +55,7 @@ public class FeedbackDao extends Dao {
         return executeNonTransactional(db -> {
 
             try (Cursor cursor = db.query(TABLE_NAME, DEFAULT_COLUMNS,
-                    "sender_id = ?", new String[] { Integer.toString(senderId) },
+                    "sender_id = ?", new String[]{ Integer.toString(senderId) },
                     null, null, null)) {
 
                 return parseFeedbackList(cursor);

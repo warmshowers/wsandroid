@@ -8,12 +8,12 @@
         android:entryValues="@array/distanceUnitValues"
         android:key="distance_unit"
         android:persistent="true"
-        android:title="@string/prefs_distance_unit"/>
+        android:title="@string/prefs_distance_unit" />
 
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="ga_collect_stats"
         android:summaryOff="@string/prefs_ga_collect_stats_summary_off"
         android:summaryOn="@string/prefs_ga_collect_stats_summary_on"
-        android:title="@string/prefs_ga_collect_stats_title"/>
+        android:title="@string/prefs_ga_collect_stats_title" />
 </PreferenceScreen>

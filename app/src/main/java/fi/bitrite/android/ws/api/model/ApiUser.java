@@ -75,7 +75,8 @@ public class ApiUser {
     public CommentNotifySettings commentNotifySettings;
     @SerializedName("privatemsg_disabled") public boolean isPrivateMessagingDisabled;
     @SerializedName("profile_image_profile_picture") public String profilePictureUrl_179x200;
-    @SerializedName("profile_image_mobile_profile_photo_std") public String profilePictureUrl_400x400;
+    @SerializedName("profile_image_mobile_profile_photo_std") public String
+            profilePictureUrl_400x400;
     @SerializedName("profile_image_mobile_photo_456") public String profilePictureUrl_456x342;
     @SerializedName("profile_image_map_infoWindow") public String profilePictureUrl_50x50;
 
@@ -102,6 +103,6 @@ public class ApiUser {
     }
 
     private static String dte2s(Date value) {
-        return Long.toString(value.getTime()/1000); // In seconds
+        return Long.toString(value.getTime() / 1000); // In seconds
     }
 }

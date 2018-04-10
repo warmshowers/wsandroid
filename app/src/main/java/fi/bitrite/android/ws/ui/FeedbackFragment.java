@@ -87,14 +87,15 @@ public class FeedbackFragment extends BaseFragment {
 
         mRecipientId = getArguments().getInt(KEY_RECIPIENT_ID);
 
-        mDatePickerDialog = new DatePickerDialog(getContext(), (v, year, monthOfYear, dayOfMonth) -> {
-            mDateWeMetMonth = monthOfYear;
-            mDateWeMetYear = year;
+        mDatePickerDialog =
+                new DatePickerDialog(getContext(), (v, year, monthOfYear, dayOfMonth) -> {
+                    mDateWeMetMonth = monthOfYear;
+                    mDateWeMetYear = year;
 
-            Calendar date = Calendar.getInstance();
-            date.set(year, monthOfYear, dayOfMonth);
-            mTxtDateWeMet.setText(Tools.getDateAsMY(getContext(), date.getTimeInMillis()));
-        }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+                    Calendar date = Calendar.getInstance();
+                    date.set(year, monthOfYear, dayOfMonth);
+                    mTxtDateWeMet.setText(Tools.getDateAsMY(getContext(), date.getTimeInMillis()));
+                }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
 
         mUserRepository.get(mRecipientId)
                 .filter(Resource::hasData)
@@ -150,7 +151,7 @@ public class FeedbackFragment extends BaseFragment {
 
         int dateWeMetMonth = mDateWeMetMonth + 1; // This is 0-based.
         mFeedbackRepository.giveFeedback(mRecipientId, body, relation, rating, mDateWeMetYear,
-                                         dateWeMetMonth)
+                dateWeMetMonth)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnEvent(t -> mProgressDisposable.dispose())
                 .subscribe(() -> getActivity().onBackPressed(), throwable -> {

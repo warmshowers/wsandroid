@@ -173,7 +173,8 @@ public class NavigationController {
         // Empties the backstack if requested.
         if (deleteBackStack && mFragmentManager.getBackStackEntryCount() > 0) {
             int firstFragmentId = mFragmentManager.getBackStackEntryAt(0).getId();
-            mFragmentManager.popBackStack(firstFragmentId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            mFragmentManager.popBackStack(firstFragmentId,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
 
         // We need to manually update the top level tag if we do not add to the backstack as our
@@ -213,7 +214,7 @@ public class NavigationController {
         }
 
 
-        BackStackEntry entry = mFragmentManager.getBackStackEntryAt(backStackSize-1);
+        BackStackEntry entry = mFragmentManager.getBackStackEntryAt(backStackSize - 1);
         String tag = entry.getName();
 
         // messageThreads/4324 -> [ "messageThreads", "4324" ]

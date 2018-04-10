@@ -87,10 +87,15 @@ public class AuthenticatorActivityTest {
 
     @Test
     public void onCreate_withPresetUsername_disablesUsernameInput() throws Exception {
-        final Intent intent = new Intent(RuntimeEnvironment.application, AuthenticatorActivity.class);
+        final Intent intent =
+                new Intent(RuntimeEnvironment.application, AuthenticatorActivity.class);
         intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, "username123");
 
-        final AuthenticatorActivity activity = Robolectric.buildActivity(AuthenticatorActivity.class, intent).create().visible().get();
+        final AuthenticatorActivity activity =
+                Robolectric.buildActivity(AuthenticatorActivity.class, intent)
+                        .create()
+                        .visible()
+                        .get();
 
         final EditText intentActivityUsername = activity.findViewById(R.id.auth_txt_username);
         final EditText intentActivityPassword = activity.findViewById(R.id.auth_txt_password);

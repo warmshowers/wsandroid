@@ -98,6 +98,12 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
             mOnClickSubject.onNext(mNavigationItem);
         }
 
+        boolean hasView() {
+            return mView != null;
+        }
+        View getView() {
+            return mView;
+        }
         void setView(View view) {
             mView = view;
             ButterKnife.bind(this, view);
@@ -115,14 +121,6 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
                         : mColorInactive;
                 mNavigationItemLayout.setBackgroundColor(backgroundColor);
             });
-        }
-
-        boolean hasView() {
-            return mView != null;
-        }
-
-        View getView() {
-            return mView;
         }
     }
 }

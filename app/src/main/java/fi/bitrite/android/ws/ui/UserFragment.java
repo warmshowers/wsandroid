@@ -70,19 +70,19 @@ public class UserFragment extends BaseFragment {
 
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER = "user";
-    private final BehaviorSubject<MaybeNull<Host>> mUser =
-            BehaviorSubject.createDefault(new MaybeNull<>());
-    private final BehaviorSubject<List<Feedback>> mFeedbacks = BehaviorSubject.create();
-    private final BehaviorSubject<Boolean> mFavorite = BehaviorSubject.create();
+
     @Inject NavigationController mNavigationController;
     @Inject FavoriteRepository mFavoriteRepository;
     @Inject FeedbackRepository mFeedbackRepository;
     @Inject UserRepository mUserRepository;
+
     @BindView(R.id.user_layout_details) LinearLayout mLayoutDetails;
     @BindView(R.id.user_img_photo) ImageView mImgPhoto;
     @BindView(R.id.user_lbl_name) TextView mLblName;
+
     @BindView(R.id.user_img_favorite) ImageView mImgFavorite;
     @BindView(R.id.user_ckb_favorite) CheckBox mCkbFavorite;
+
     @BindView(R.id.user_lbl_availability) TextView mLblAvailability;
     @BindView(R.id.user_img_availability) ImageView mImgAvailability;
     @BindView(R.id.user_lbl_login_info) TextView mLblLoginInfo;
@@ -92,12 +92,21 @@ public class UserFragment extends BaseFragment {
     @BindView(R.id.user_lbl_services) TextView mLblServices;
     @BindView(R.id.user_lbl_nearby_services) TextView mLblNearbyServices;
     @BindView(R.id.user_lbl_comments) TextView mLblComments;
+
     @BindView(R.id.user_lbl_feedback) TextView mLblFeedback;
     @BindView(R.id.user_tbl_feedback) FeedbackTable mTblFeedback;
+
     @BindColor(R.color.primaryColorAccent) int mFavoritedColor;
     @BindColor(R.color.primaryTextColor) int mNonFavoritedColor;
+
     private ProgressDialog.Disposable mDownloadUserInfoProgressDisposable;
+
     private int mUserId;
+
+    private final BehaviorSubject<MaybeNull<Host>> mUser =
+            BehaviorSubject.createDefault(new MaybeNull<>());
+    private final BehaviorSubject<List<Feedback>> mFeedbacks = BehaviorSubject.create();
+    private final BehaviorSubject<Boolean> mFavorite = BehaviorSubject.create();
     private CompositeDisposable mDisposables;
 
     private boolean mDbFavoriteStatus;
@@ -233,8 +242,7 @@ public class UserFragment extends BaseFragment {
 
         mLblLoginInfo.setText(getString(R.string.search_host_summary, createdDate, activeDate));
         mLblLimitations.setText(getString(
-                R.string.host_limitations, user.getMaxCyclists(), user.getLanguagesSpoken())
-        );
+                R.string.host_limitations, user.getMaxCyclists(), user.getLanguagesSpoken()));
 
 
         // Host location section
@@ -271,7 +279,8 @@ public class UserFragment extends BaseFragment {
         String nearbyServices = user.getNearbyServices(getContext());
         mLblNearbyServices.setVisibility(nearbyServices.isEmpty() ? View.GONE : View.VISIBLE);
         if (!nearbyServices.isEmpty()) {
-            mLblNearbyServices.setText(getString(R.string.nearby_services_description, nearbyServices));
+            mLblNearbyServices.setText(
+                    getString(R.string.nearby_services_description, nearbyServices));
         }
 
         // If we're connected and there is a picture, get host picture.
@@ -281,17 +290,15 @@ public class UserFragment extends BaseFragment {
                     .load(url)
                     .placeholder(R.drawable.default_hostinfo_profile)
                     .into(mImgPhoto);
-            mImgPhoto.setContentDescription(getString(
-                    R.string.content_description_avatar_of_var, user.getName())
-            );
+            mImgPhoto.setContentDescription(
+                    getString(R.string.content_description_avatar_of_var, user.getName()));
         }
     }
 
     private void updateFeedbacksViewContent() {
         List<Feedback> feedbacks = mFeedbacks.getValue();
         Collections.sort(feedbacks,
-                (left, right) -> ObjectUtils.compare(right.meetingDate, left.meetingDate)
-        );
+                (left, right) -> ObjectUtils.compare(right.meetingDate, left.meetingDate));
 
         mTblFeedback.setRows(feedbacks);
         mLblFeedback.setText(feedbacks.isEmpty()

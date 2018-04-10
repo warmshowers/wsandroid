@@ -79,30 +79,30 @@ public class FeedbackRepository extends Repository<List<Feedback>> {
     public Completable giveFeedback(
             int recipientId, @NonNull String body, Feedback.Relation relation,
             Feedback.Rating rating, int yearWeMet, int monthWeMet) {
-            return mUserRepository.get(recipientId)
-                    .subscribeOn(Schedulers.io())
-                    .filter(Resource::hasData)
-                    .map(userResource -> userResource.data)
-                    .firstOrError()
-                    .flatMap(recipient -> mWarmshowersService.giveFeedback(
-                            WarmshowersService.FEEDBACK_NODE_TYPE, recipient.getName(), body,
-                            relation, rating, yearWeMet, monthWeMet))
-                    .flatMapCompletable(apiResponse -> {
-                        if (!apiResponse.isSuccessful()) {
-                            throw new Error(apiResponse.errorBody().toString());
-                        }
+        return mUserRepository.get(recipientId)
+                .subscribeOn(Schedulers.io())
+                .filter(Resource::hasData)
+                .map(userResource -> userResource.data)
+                .firstOrError()
+                .flatMap(recipient -> mWarmshowersService.giveFeedback(
+                        WarmshowersService.FEEDBACK_NODE_TYPE, recipient.getName(), body,
+                        relation, rating, yearWeMet, monthWeMet))
+                .flatMapCompletable(apiResponse -> {
+                    if (!apiResponse.isSuccessful()) {
+                        throw new Error(apiResponse.errorBody().toString());
+                    }
 
-                        List<Feedback> feedbacks = getRaw(recipientId);
-                        if (feedbacks != null) {
-                            // We reload the feedbacks for this recipient as we already have them in
-                            // our cache.
-                            reload(recipientId, feedbacks, ShouldSaveInDb.IF_ALREADY_IN_DB)
-                                    .firstOrError()
-                                    .doOnError(t -> {})
-                                    .subscribe();
-                        }
+                    List<Feedback> feedbacks = getRaw(recipientId);
+                    if (feedbacks != null) {
+                        // We reload the feedbacks for this recipient as we already have them in
+                        // our cache.
+                        reload(recipientId, feedbacks, ShouldSaveInDb.IF_ALREADY_IN_DB)
+                                .firstOrError()
+                                .doOnError(t -> {})
+                                .subscribe();
+                    }
 
-                        return Completable.complete();
-                    });
+                    return Completable.complete();
+                });
     }
 }

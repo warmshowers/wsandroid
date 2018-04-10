@@ -6,13 +6,13 @@
         <item name="km">Kilometers</item>
         <item name="mi">Miles</item>
     </string-array>
-    
+
     <string-array name="distanceUnitValues">
         <item name="km">km</item>
         <item name="mi">mi</item>
     </string-array>
 
-     <!-- Keep in sync with @{link FeedbackFragment}. -->
+    <!-- Keep in sync with @{link FeedbackFragment}. -->
     <string-array name="feedback_relation_options" translatable="false">
         <item>@string/feedback_relation_host</item>
         <item>@string/feedback_relation_guest</item>

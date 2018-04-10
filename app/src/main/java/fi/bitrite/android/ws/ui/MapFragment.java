@@ -88,25 +88,30 @@ public class MapFragment extends BaseFragment implements
         GoogleApiClient.ConnectionCallbacks {
 
     private static final String KEY_MAP_TARGET_LAT_LNG = "map_target_lat_lng";
-    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     private static final String DIALOG_ERROR = "dialog_error";
     private static final String TAG = "MapFragment";
+
     @Inject AuthenticationController mAuthenticationController;
     @Inject NavigationController mNavigationController;
     @Inject UserRepository mUserRepository;
     @Inject FavoriteRepository mFavoriteRepository;
-    Location mLastDeviceLocation;
-    String mDistanceUnit;
+
     private Unbinder mUnbinder;
+
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private ConcurrentSkipListSet<Integer> mClusteredUsers = new ConcurrentSkipListSet<>();
     private ClusterManager<ClusterUser> mClusterManager;
     private Cluster<ClusterUser> mLastClickedCluster;
+
     private CameraPosition mLastCameraPosition = null;
     private boolean mResolvingError = false;
+    private Location mLastDeviceLocation;
+    private String mDistanceUnit;
     private boolean mIsOffline = false;
     private GoogleApiClient mGoogleApiClient;
+
     private Disposable mLoadOfflineUserDisposable;
     private Toast mLastToast = null;
 
@@ -116,7 +121,6 @@ public class MapFragment extends BaseFragment implements
         mapFragment.setArguments(bundle);
         return mapFragment;
     }
-
     public static MapFragment create(LatLng latLng) {
         MapFragment mapFragment = create();
         mapFragment.getArguments().putParcelable(KEY_MAP_TARGET_LAT_LNG, latLng);
@@ -217,7 +221,7 @@ public class MapFragment extends BaseFragment implements
         if (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             mMap.setMyLocationEnabled(true); // Requires ACCESS_FINE_LOCATION
         } else {
-            requestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION }, 0);
+            requestPermissions(new String[]{ Manifest.permission.ACCESS_FINE_LOCATION }, 0);
         }
 
         mMap.setOnCameraChangeListener(this);
@@ -249,15 +253,16 @@ public class MapFragment extends BaseFragment implements
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
         mClusterManager.setRenderer(new UserRenderer());
         mMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
-        mClusterManager.getClusterMarkerCollection().setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
-        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(new SingleUserInfoWindowAdapter(getLayoutInflater()));
+        mClusterManager.getClusterMarkerCollection()
+                .setOnInfoWindowAdapter(new ClusterInfoWindowAdapter(getLayoutInflater()));
+        mClusterManager.getMarkerCollection()
+                .setOnInfoWindowAdapter(new SingleUserInfoWindowAdapter(getLayoutInflater()));
     }
 
     private boolean hasPermission(String permission) {
         return PackageManager.PERMISSION_GRANTED ==
-                ActivityCompat.checkSelfPermission(getContext(), permission);
+               ActivityCompat.checkSelfPermission(getContext(), permission);
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -280,7 +285,8 @@ public class MapFragment extends BaseFragment implements
      */
     @Override
     public void onConnected(Bundle connectionHint) {
-        Log.i(TAG, "Connected to Google Play services mLastCameraPosition==" + (mLastCameraPosition != null));
+        Log.i(TAG, "Connected to Google Play services mLastCameraPosition==" +
+                   (mLastCameraPosition != null));
 
         mLastDeviceLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
@@ -288,8 +294,10 @@ public class MapFragment extends BaseFragment implements
         if (mLastDeviceLocation == null) {
             mLastDeviceLocation = new Location("default");
 
-            mLastDeviceLocation.setLatitude(Double.parseDouble(getString(R.string.map_default_latitude)));
-            mLastDeviceLocation.setLongitude(Double.parseDouble(getString(R.string.map_default_longitude)));
+            mLastDeviceLocation.setLatitude(
+                    Double.parseDouble(getString(R.string.map_default_latitude)));
+            mLastDeviceLocation.setLongitude(
+                    Double.parseDouble(getString(R.string.map_default_longitude)));
         }
 
         // mMap may not yet be initialized in some cases; Connect happens before map setup.
@@ -350,9 +358,12 @@ public class MapFragment extends BaseFragment implements
         if (!settings.contains("latitude")) {
             return null;
         }
-        float latitude = settings.getFloat("latitude", Float.parseFloat(getResources().getString(R.string.map_default_latitude)));
-        float longitude = settings.getFloat("longitude", Float.parseFloat(getResources().getString(R.string.map_default_longitude)));
-        float zoom = settings.getFloat("zoom", (float) getResources().getInteger(R.integer.map_initial_zoom));
+        float latitude = settings.getFloat("latitude",
+                Float.parseFloat(getResources().getString(R.string.map_default_latitude)));
+        float longitude = settings.getFloat("longitude",
+                Float.parseFloat(getResources().getString(R.string.map_default_longitude)));
+        float zoom = settings.getFloat("zoom",
+                (float) getResources().getInteger(R.integer.map_initial_zoom));
 
         return new CameraPosition(new LatLng(latitude, longitude), zoom, 0, 0);
     }
@@ -361,7 +372,8 @@ public class MapFragment extends BaseFragment implements
      * If we can get a location, go to it with default zoom.
      */
     void setMapToCurrentLocation() {
-        LatLng gotoLatLng = new LatLng(mLastDeviceLocation.getLatitude(), mLastDeviceLocation.getLongitude());
+        LatLng gotoLatLng =
+                new LatLng(mLastDeviceLocation.getLatitude(), mLastDeviceLocation.getLongitude());
         float zoom = (float) getResources().getInteger(R.integer.map_initial_zoom); // Default
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(gotoLatLng, zoom));
     }
@@ -475,9 +487,11 @@ public class MapFragment extends BaseFragment implements
         if (!bounds.southwest.equals(bounds.northeast)) {
             // Offset from edge of map in pixels when exploding cluster
             View mapView = getChildFragmentManager().findFragmentById(R.id.map).getView();
-            int padding_percent = getResources().getInteger(R.integer.cluster_explode_padding_percent);
+            int padding_percent =
+                    getResources().getInteger(R.integer.cluster_explode_padding_percent);
             int padding = Math.min(mapView.getHeight(), mapView.getWidth()) * padding_percent / 100;
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, mapView.getWidth(), mapView.getHeight(), padding);
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, mapView.getWidth(),
+                    mapView.getHeight(), padding);
             mMap.animateCamera(cu);
             return true;
         }
@@ -492,7 +506,7 @@ public class MapFragment extends BaseFragment implements
     public void onClusterInfoWindowClick(Cluster<ClusterUser> cluster) {
         ArrayList<Integer> userIds = new ArrayList<>(cluster.getSize());
         for (ClusterUser user : cluster.getItems()) {
-           userIds.add(user.id);
+            userIds.add(user.id);
         }
         mNavigationController.navigateToUserList(userIds);
     }
@@ -517,10 +531,14 @@ public class MapFragment extends BaseFragment implements
     public void showMultihostSelectDialog(final ArrayList<ClusterUser> users) {
         String[] mPossibleItems = new String[users.size()];
 
-        double distance = Tools.calculateDistanceBetween(users.get(0).latLng, mLastDeviceLocation, mDistanceUnit);
-        String distanceSummary = getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
+        double distance = Tools.calculateDistanceBetween(users.get(0).latLng, mLastDeviceLocation,
+                mDistanceUnit);
+        String distanceSummary =
+                getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
 
-        LinearLayout customTitleView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_multiuser_dialog_header, null);
+        LinearLayout customTitleView =
+                (LinearLayout) getLayoutInflater().inflate(R.layout.view_multiuser_dialog_header,
+                        null);
         TextView titleView = customTitleView.findViewById(R.id.title);
         titleView.setText(getResources().getQuantityString(R.plurals.hosts_at_location,
                 users.size(), users.size(), users.get(0).getStreetCityAddressStr()));
@@ -563,7 +581,8 @@ public class MapFragment extends BaseFragment implements
                 (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
     }
 
@@ -610,33 +629,39 @@ public class MapFragment extends BaseFragment implements
      * Add the title and snippet to the marker so that infoWindow can be rendered.
      */
     private class UserRenderer extends DefaultClusterRenderer<ClusterUser> {
-        private final IconGenerator mSingleLocationClusterIconGenerator = new IconGenerator(getActivity().getApplicationContext());
-        private final IconGenerator mSingleUserIconGenerator = new IconGenerator(getActivity().getApplicationContext());
+        private final IconGenerator mSingleLocationClusterIconGenerator =
+                new IconGenerator(getActivity().getApplicationContext());
+        private final IconGenerator mSingleUserIconGenerator =
+                new IconGenerator(getActivity().getApplicationContext());
         private SparseArray<BitmapDescriptor> mIcons = new SparseArray<>();
         private BitmapDescriptor mSingleUserBitmapDescriptor;
 
         public UserRenderer() {
             super(getActivity().getApplicationContext(), mMap, mClusterManager);
 
-            View sameLocationMultiUserClusterView = getLayoutInflater().inflate(R.layout.marker_location_cluster, null);
+            View sameLocationMultiUserClusterView =
+                    getLayoutInflater().inflate(R.layout.marker_location_cluster, null);
             View singleUserMarkerView = getLayoutInflater().inflate(R.layout.marker_location, null);
             mSingleLocationClusterIconGenerator.setContentView(sameLocationMultiUserClusterView);
             mSingleLocationClusterIconGenerator.setBackground(null);
             mSingleUserIconGenerator.setContentView(singleUserMarkerView);
             mSingleUserIconGenerator.setBackground(null);
-            mSingleUserBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(mSingleUserIconGenerator.makeIcon());
+            mSingleUserBitmapDescriptor =
+                    BitmapDescriptorFactory.fromBitmap(mSingleUserIconGenerator.makeIcon());
 
         }
 
         @Override
-        protected void onBeforeClusterRendered(Cluster<ClusterUser> cluster, MarkerOptions markerOptions) {
+        protected void onBeforeClusterRendered(Cluster<ClusterUser> cluster,
+                                               MarkerOptions markerOptions) {
 
             if (clusterLocationStatus(cluster) == ClusterStatus.all) {
                 int size = cluster.getSize();
                 BitmapDescriptor descriptor = mIcons.get(size);
                 if (descriptor == null) {
                     // Cache new bitmaps
-                    descriptor = BitmapDescriptorFactory.fromBitmap(mSingleLocationClusterIconGenerator.makeIcon(String.valueOf(size)));
+                    descriptor = BitmapDescriptorFactory.fromBitmap(
+                            mSingleLocationClusterIconGenerator.makeIcon(String.valueOf(size)));
                     mIcons.put(size, descriptor);
                 }
                 markerOptions.icon(descriptor);
@@ -653,8 +678,10 @@ public class MapFragment extends BaseFragment implements
                 snippet = street + "<br/>" + snippet;
             }
             if (mLastDeviceLocation != null) {
-                double distance = Tools.calculateDistanceBetween(user.latLng, mLastDeviceLocation, mDistanceUnit);
-                snippet += "<br/>" + getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
+                double distance = Tools.calculateDistanceBetween(user.latLng, mLastDeviceLocation,
+                        mDistanceUnit);
+                snippet += "<br/>" + getString(R.string.distance_from_current, (int) distance,
+                        mDistanceUnit);
             }
             markerOptions.title(user.fullname).snippet(snippet);
             markerOptions.icon(mSingleUserBitmapDescriptor);
@@ -665,7 +692,8 @@ public class MapFragment extends BaseFragment implements
             // Render as a cluster if all the items are at the exact same location, or if there are more than
             // min_cluster_size in the cluster.
             ClusterStatus status = clusterLocationStatus(cluster);
-            return status == ClusterStatus.all || status == ClusterStatus.some || cluster.getSize() >= getResources().getInteger(R.integer.min_cluster_size);
+            return status == ClusterStatus.all || status == ClusterStatus.some
+                   || cluster.getSize() >= getResources().getInteger(R.integer.min_cluster_size);
         }
 
         /**
@@ -676,7 +704,6 @@ public class MapFragment extends BaseFragment implements
          * @return
          */
         protected ClusterStatus clusterLocationStatus(Cluster<ClusterUser> cluster) {
-
             HashSet<String> latLngs = new HashSet<>();
             for (ClusterUser item : cluster.getItems()) {
                 latLngs.add(item.latLng.toString());
@@ -710,7 +737,6 @@ public class MapFragment extends BaseFragment implements
 
         @Override
         public View getInfoContents(Marker marker) {
-
             StringBuilder hostList = new StringBuilder();
             if (mPopup == null) {
                 mPopup = mInflater.inflate(R.layout.view_user_info_multiple, null);
@@ -718,14 +744,17 @@ public class MapFragment extends BaseFragment implements
             TextView tv = mPopup.findViewById(R.id.title);
 
             if (mLastClickedCluster != null) {
-
                 if (mLastDeviceLocation != null) {
-                    double distance = Tools.calculateDistanceBetween(marker.getPosition(), mLastDeviceLocation, mDistanceUnit);
+                    double distance = Tools.calculateDistanceBetween(marker.getPosition(),
+                            mLastDeviceLocation, mDistanceUnit);
                     TextView distance_tv = mPopup.findViewById(R.id.distance_from_current);
-                    distance_tv.setText(Html.fromHtml(getString(R.string.distance_from_current, (int) distance, mDistanceUnit)));
+                    distance_tv.setText(Html.fromHtml(
+                            getString(R.string.distance_from_current, (int) distance,
+                                    mDistanceUnit)));
                 }
 
-                ArrayList<ClusterUser> users = (ArrayList<ClusterUser>) mLastClickedCluster.getItems();
+                ArrayList<ClusterUser> users =
+                        (ArrayList<ClusterUser>) mLastClickedCluster.getItems();
                 Collections.sort(users, (left, right) -> {
                     int ncaLeft = left.isCurrentlyAvailable ? 0 : 1;
                     int ncaRight = right.isCurrentlyAvailable ? 0 : 1;

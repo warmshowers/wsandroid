@@ -18,8 +18,8 @@ public class AuthData {
     }
 
     public boolean isValid() {
-        return account != null &&
-                authToken != null &&
-                csrfToken != null;
+        return account != null
+               && authToken != null
+               && csrfToken != null;
     }
 }

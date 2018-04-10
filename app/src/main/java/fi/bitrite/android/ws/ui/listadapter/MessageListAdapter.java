@@ -37,7 +37,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class MessageListAdapter extends
-    DataBoundListAdapter<Message, MessageListAdapter.ItemBinding> {
+        DataBoundListAdapter<Message, MessageListAdapter.ItemBinding> {
 
     public final static Comparator<Message> COMPARATOR =
             (left, right) -> left.date.compareTo(right.date);
@@ -47,7 +47,8 @@ public class MessageListAdapter extends
 
     private boolean mIsGroupChat;
 
-    public MessageListAdapter(LoggedInUserHelper loggedInUserHelper, UserRepository userRepository) {
+    public MessageListAdapter(LoggedInUserHelper loggedInUserHelper,
+                              UserRepository userRepository) {
         mLoggedInUserHelper = loggedInUserHelper;
         mUserRepository = userRepository;
     }
@@ -85,30 +86,33 @@ public class MessageListAdapter extends
 
     @Override
     protected boolean areContentsTheSame(Message left, Message right) {
-        return left.id == right.id &&
-                left.threadId == right.threadId &&
-                left.authorId == right.authorId &&
-                left.date.equals(right.date) &&
-                left.body.equals(right.body);
+        return left.id == right.id
+               && left.threadId == right.threadId
+               && left.authorId == right.authorId
+               && left.date.equals(right.date)
+               && left.body.equals(right.body);
     }
 
     class ItemBinding implements
             DataBoundListAdapter.ViewDataBinding<Message> {
 
-        private final View mRoot;
-        private final int[] mParticipantColors;
-        private final SparseIntArray mParticipantColorMap = new SparseIntArray();
         @BindView(R.id.message_lbl_sender) TextView mLblSender;
         @BindView(R.id.message_lbl_body) TextView mLblBody;
         @BindView(R.id.message_lbl_date) TextView mLblDate;
+
         @BindDimen(R.dimen.message_bubble_padding_big) int mPaddingBubbleBig;
         @BindDimen(R.dimen.message_bubble_padding_small) int mPaddingBubbleSmall;
         @BindDimen(R.dimen.message_bubble_margin_big) int mMarginBubbleBig;
         @BindDimen(R.dimen.message_bubble_margin_small) int mMarginBubbleSmall;
         @BindDrawable(R.drawable.message_incoming_bubble) Drawable mDrawableBubbleIncoming;
         @BindDrawable(R.drawable.message_outgoing_bubble) Drawable mDrawableBubbleOutgoing;
+
+        private final View mRoot;
         private CompositeDisposable mDisposables = new CompositeDisposable();
+
+        private final int[] mParticipantColors;
         private int mNextParticipantColorIdx = 0;
+        private final SparseIntArray mParticipantColorMap = new SparseIntArray();
 
 
         ItemBinding(ViewGroup parent) {
@@ -147,13 +151,15 @@ public class MessageListAdapter extends
                     mRoot.getPaddingBottom());
 
             // Sets the margin of the bubble.
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)mRoot.getLayoutParams();
+            ViewGroup.MarginLayoutParams lp =
+                    (ViewGroup.MarginLayoutParams) mRoot.getLayoutParams();
             lp.leftMargin = isIncoming ? mMarginBubbleSmall : mMarginBubbleBig;
             lp.rightMargin = isIncoming ? mMarginBubbleBig : mMarginBubbleSmall;
             mRoot.setLayoutParams(lp);
 
             // Sets the background of the bubble.
-            ViewCompat.setBackground(mRoot, isIncoming ? mDrawableBubbleIncoming : mDrawableBubbleOutgoing);
+            ViewCompat.setBackground(mRoot,
+                    isIncoming ? mDrawableBubbleIncoming : mDrawableBubbleOutgoing);
 
             // Shows the sender if the message is incoming and this is a group chat.
             boolean showSender = isIncoming && mIsGroupChat;
@@ -170,8 +176,8 @@ public class MessageListAdapter extends
                                     ? ""
                                     // TODO(saemy): Eventually, put accessor performing this null-check into User.
                                     : TextUtils.isEmpty(user.getName())
-                                    ? user.getFullname()
-                                    : user.getName());
+                                            ? user.getFullname()
+                                            : user.getName());
                         }));
             }
 
@@ -180,16 +186,18 @@ public class MessageListAdapter extends
             mLblDate.setText(message.status == Message.STATUS_OUTGOING
                     ? "..." // Its not sent yet. // TODO(saemy): Add an hourglass icon?
                     : DateUtils.getRelativeTimeSpanString(
-                        message.date.getTime(), new Date().getTime(),
-                        0, DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_ABBREV_RELATIVE)
-                    .toString());
+                            message.date.getTime(), new Date().getTime(),
+                            0, DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_YEAR
+                               | DateUtils.FORMAT_ABBREV_RELATIVE)
+                            .toString());
         }
 
         @ColorInt
         private int getSenderColor(int authorId) {
             int color = mParticipantColorMap.get(authorId, -1);
             if (color == -1) {
-                mNextParticipantColorIdx = (mNextParticipantColorIdx+1) % mParticipantColors.length;
+                mNextParticipantColorIdx =
+                        (mNextParticipantColorIdx + 1) % mParticipantColors.length;
                 color = mParticipantColors[mNextParticipantColorIdx];
                 mParticipantColorMap.put(authorId, color);
             }

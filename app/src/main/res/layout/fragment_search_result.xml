@@ -4,12 +4,12 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#fff">
+    android:background="#fff"
+    android:orientation="vertical">
 
     <ListView
         android:id="@+id/search_lst_result"
-        android:divider="@null"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:divider="@null" />
 </LinearLayout>

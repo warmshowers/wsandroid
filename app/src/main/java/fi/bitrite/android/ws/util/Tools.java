@@ -59,8 +59,8 @@ public class Tools {
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
+        boolean isConnected = activeNetwork != null
+                              && activeNetwork.isConnectedOrConnecting();
 
         if (BuildConfig.DEBUG) {
             boolean simulateDisconnected = PreferenceManager.getDefaultSharedPreferences(context)
@@ -86,9 +86,9 @@ public class Tools {
                 .getTracker(WSAndroidApplication.TrackerName.APP_TRACKER);
 
         exceptionTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory(category)
-                        .setAction(action)
-                        .build()
+                .setCategory(category)
+                .setAction(action)
+                .build()
         );
     }
 
@@ -99,11 +99,10 @@ public class Tools {
      * @param view
      * @param boundBoxInDp
      */
-    static public void scaleImage(ImageView view, int boundBoxInDp)
-    {
+    static public void scaleImage(ImageView view, int boundBoxInDp) {
         // Get the ImageView and its bitmap
         Drawable drawing = view.getDrawable();
-        Bitmap bitmap = ((BitmapDrawable)drawing).getBitmap();
+        Bitmap bitmap = ((BitmapDrawable) drawing).getBitmap();
 
         // Get current dimensions
         int width = bitmap.getWidth();
@@ -144,7 +143,8 @@ public class Tools {
      * @return
      */
     public static String getDateAsMY(Context context, long timeInMillis) {
-        int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NO_MONTH_DAY;
+        int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR
+                    | DateUtils.FORMAT_NO_MONTH_DAY;
         return DateUtils.formatDateTime(context, timeInMillis, flags);
     }
 }

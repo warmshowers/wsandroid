@@ -78,7 +78,7 @@ public class Resource<T> {
         if (status != resource.status) {
             return false;
         }
-        if (error != null ? !error.equals(resource.error): resource.error != null) {
+        if (error != null ? !error.equals(resource.error) : resource.error != null) {
             return false;
         }
         return data != null ? data.equals(resource.data) : resource.data == null;
@@ -95,9 +95,9 @@ public class Resource<T> {
     @Override
     public String toString() {
         return "Resource{" +
-                "status=" + status +
-                ", error='" + error + '\'' +
-                ", data=" + data +
-                '}';
+               "status=" + status +
+               ", error='" + error + '\'' +
+               ", data=" + data +
+               '}';
     }
 }

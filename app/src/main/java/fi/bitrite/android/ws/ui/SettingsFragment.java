@@ -29,14 +29,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
     @Override
     public void onResume() {
         super.onResume();
-        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        getPreferenceManager().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
 
         mActionBarTitleHelper.set(getString(R.string.title_fragment_settings));
     }
 
     @Override
     public void onPause() {
-        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        getPreferenceManager().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
         super.onPause();
     }
 

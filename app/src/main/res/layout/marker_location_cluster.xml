@@ -10,19 +10,19 @@
         android:id="@+id/image"
         android:layout_width="@dimen/single_host_marker_size"
         android:layout_height="@dimen/single_host_marker_size"
-        android:src="@drawable/map_markers_multiple"
+        android:paddingTop="6dp"
         android:scaleType="centerCrop"
-        android:paddingTop="6dp" />
+        android:src="@drawable/map_markers_multiple" />
 
     <TextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/SingleLocationClusterIcon.TextAppearance"
-        android:text="27"
-        android:alpha=".8"
         android:layout_gravity="center_horizontal"
+        android:alpha=".8"
         android:gravity="center"
-        android:paddingTop="7dp" />
+        android:paddingTop="7dp"
+        android:text="27"
+        android:textAppearance="@style/SingleLocationClusterIcon.TextAppearance" />
 
 </FrameLayout>

@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws.persistence.db;
 
-
 import android.content.Context;
 
 import fi.bitrite.android.ws.persistence.schema.SchemaDefinition;

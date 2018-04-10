@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws.api.typeadapter;
 
-
 import android.annotation.SuppressLint;
 
 import com.google.gson.JsonDeserializationContext;

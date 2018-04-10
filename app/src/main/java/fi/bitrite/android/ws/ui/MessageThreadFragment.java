@@ -97,7 +97,7 @@ public class MessageThreadFragment extends BaseFragment {
                     mMessageListAdapter.replaceRx(thread.messages)
                             .observeOn(AndroidSchedulers.mainThread())
                             .andThen((CompletableSource) emitter -> {
-                                mLstMessage.scrollToPosition(thread.messages.size()-1);
+                                mLstMessage.scrollToPosition(thread.messages.size() - 1);
                                 emitter.onComplete();
                             })
                             .subscribe();
@@ -133,7 +133,8 @@ public class MessageThreadFragment extends BaseFragment {
                         throwable -> {
                             // This should not happen, if there is no network connection we schedule
                             // sending the message for when it is back.
-                            Toast.makeText(getContext(), R.string.message_send_failed, Toast.LENGTH_SHORT)
+                            Toast.makeText(getContext(), R.string.message_send_failed,
+                                    Toast.LENGTH_SHORT)
                                     .show();
                         });
     }

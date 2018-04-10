@@ -13,6 +13,6 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/item_message_thread"/>
+        tools:listitem="@layout/item_message_thread" />
 
 </android.support.v4.widget.SwipeRefreshLayout>

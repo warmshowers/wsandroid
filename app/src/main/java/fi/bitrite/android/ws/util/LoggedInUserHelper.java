@@ -21,15 +21,17 @@ public class LoggedInUserHelper {
     public LoggedInUserHelper(AccountManager accountManager, UserRepository userRepository) {
         accountManager.getCurrentUserId().subscribe(userId -> {
             if (userId != AccountManager.UNKNOWN_USER_ID) {
-                userRepository.get(userId, UserRepository.ShouldSaveInDb.YES).subscribe(resource -> {
-                    Host user = resource.data;
-                    if  (user == null) {
-                        Log.e(LoggedInUserHelper.class.getName(), resource.error.getMessage());
-                        return;
-                    }
+                userRepository.get(userId, UserRepository.ShouldSaveInDb.YES)
+                        .subscribe(resource -> {
+                            Host user = resource.data;
+                            if (user == null) {
+                                Log.e(LoggedInUserHelper.class.getName(),
+                                        resource.error.getMessage());
+                                return;
+                            }
 
-                    mLoggedInUser.onNext(new MaybeNull<>(user));
-                }); // FIXME(saemy): Error handling.
+                            mLoggedInUser.onNext(new MaybeNull<>(user));
+                        }); // FIXME(saemy): Error handling.
             } else {
                 mLoggedInUser.onNext(new MaybeNull<>());
             }

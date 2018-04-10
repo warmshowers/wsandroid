@@ -55,18 +55,6 @@ public class AuthenticationManager {
         }, null, false);
     }
 
-    private static <R> R executeWithLock(Lock lock, Function<Void, R> f) {
-        try {
-            lock.lock();
-            return f.apply(null);
-        } catch (Exception e) {
-            // Ignore.
-            return null;
-        } finally {
-            lock.unlock();
-        }
-    }
-
     /**
      * Creates a new account, the {@link AuthenticatorActivity} is
      * shown to the user.
@@ -94,8 +82,9 @@ public class AuthenticationManager {
             };
 
             // Asks the user to create the new account. This is done by showing the login page.
-            mAccountManager.addAccount(ACCOUNT_TYPE, AUTH_TOKEN_TYPE, null, options,
-                    activity, accountManagerCallback, null);
+            mAccountManager.addAccount(
+                    ACCOUNT_TYPE, AUTH_TOKEN_TYPE, null, options, activity, accountManagerCallback,
+                    null);
         }).toObservable();
     }
 
@@ -131,8 +120,8 @@ public class AuthenticationManager {
 
                             // Sets the user id.
                             int userId = loginResponse.user.id;
-                            mAccountManager.setUserData(account, KEY_USER_ID,
-                                                        Integer.toString(userId));
+                            mAccountManager.setUserData(
+                                    account, KEY_USER_ID, Integer.toString(userId));
                         }
 
                         // Updates the CSRF token.
@@ -142,8 +131,8 @@ public class AuthenticationManager {
                         // Fetches the auth token from the login response.
                         AuthToken authToken =
                                 new AuthToken(loginResponse.sessionName, loginResponse.sessionId);
-                        mAccountManager.setAuthToken(account, AUTH_TOKEN_TYPE,
-                                                     authToken.toString());
+                        mAccountManager.setAuthToken(
+                                account, AUTH_TOKEN_TYPE, authToken.toString());
 
                         // Fires the callback.
                         AuthData authData = new AuthData(account, authToken, csrfToken);
@@ -275,6 +264,17 @@ public class AuthenticationManager {
 
     private <R> R executeWithWriteLock(Function<Void, R> f) {
         return executeWithLock(mAuthenticationManagerLock.writeLock(), f);
+    }
+    private static <R> R executeWithLock(Lock lock, Function<Void, R> f) {
+        try {
+            lock.lock();
+            return f.apply(null);
+        } catch (Exception e) {
+            // Ignore.
+            return null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public class LoginResult {

@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws.api.response;
 
-
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -50,7 +49,8 @@ public class UserSearchByLocationResponse {
         @SerializedName("notcurrentlyavailable") public boolean notCurrentlyAvailable;
 
         @SerializedName("profile_image_profile_picture") public String profilePictureUrl_179x200;
-        @SerializedName("profile_image_mobile_profile_photo_std") public String profilePictureUrl_400x400;
+        @SerializedName("profile_image_mobile_profile_photo_std") public String
+                profilePictureUrl_400x400;
         @SerializedName("profile_image_mobile_photo_456") public String profilePictureUrl_456x342;
         @SerializedName("profile_image_map_infoWindow") public String profilePictureUrl_50x50;
 
@@ -60,7 +60,8 @@ public class UserSearchByLocationResponse {
                     null, false, false, false, false, false, false, false, false, lastAccess,
                     created, !notCurrentlyAvailable,
                     new fi.bitrite.android.ws.model.User.Location(latitude, longitude), null,
-                    new fi.bitrite.android.ws.model.User.Picture(profilePictureUrl_179x200, profilePictureUrl_400x400),
+                    new fi.bitrite.android.ws.model.User.Picture(profilePictureUrl_179x200,
+                            profilePictureUrl_400x400),
                     isStarred);
         }
     }

@@ -52,7 +52,7 @@ public class MessageDao extends Dao {
         final static String NAME = "message_thread_participant";
 
         final static String[] DEFAULT_COLUMNS = {
-                "thread_id",  "user_id",
+                "thread_id", "user_id",
         };
 
         final static int COL_IDX_THREAD_ID = 0;
@@ -167,7 +167,8 @@ public class MessageDao extends Dao {
 
         executeTransactional(db -> {
             String threadIdsStr = StringUtils.join(threadIds, ",");
-            db.execSQL("DELETE FROM " + ThreadTable.NAME + " WHERE id NOT IN (" + threadIdsStr + ")");
+            db.execSQL("DELETE FROM " + ThreadTable.NAME +
+                       " WHERE id NOT IN (" + threadIdsStr + ")");
             return null;
         });
     }

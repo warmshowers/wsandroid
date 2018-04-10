@@ -26,7 +26,7 @@ public class WSAndroidApplication extends Application implements HasActivityInje
 
     @Inject DispatchingAndroidInjector<Activity> mDispatchingAndroidInjector;
     @Inject AuthenticationController mAuthenticationController;
-    HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
+    private final HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
 
     public static AppComponent getAppComponent() {
         return mAppInjector.getAppComponent();
@@ -38,9 +38,11 @@ public class WSAndroidApplication extends Application implements HasActivityInje
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            Tracker t = (trackerId == TrackerName.APP_TRACKER) ? analytics.newTracker(R.xml.app_tracker)
-                    : (trackerId == TrackerName.GLOBAL_TRACKER) ? analytics.newTracker(R.xml.global_tracker) :
-                    analytics.newTracker(PROPERTY_ID);
+            Tracker t = (trackerId == TrackerName.APP_TRACKER)
+                    ? analytics.newTracker(R.xml.app_tracker)
+                    : (trackerId == TrackerName.GLOBAL_TRACKER)
+                            ? analytics.newTracker(R.xml.global_tracker)
+                            : analytics.newTracker(PROPERTY_ID);
             mTrackers.put(trackerId, t);
         }
         return mTrackers.get(trackerId);

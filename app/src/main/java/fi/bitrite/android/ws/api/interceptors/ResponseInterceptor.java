@@ -48,7 +48,8 @@ public class ResponseInterceptor implements Interceptor {
         return handleResponse(chain, response, 0);
     }
 
-    private Response handleResponse(Chain chain, Response response, int lastResponseCode) throws IOException {
+    private Response handleResponse(Chain chain, Response response, int lastResponseCode)
+            throws IOException {
         // No handler, no error resolving.
         if (handler == null) {
             return response;

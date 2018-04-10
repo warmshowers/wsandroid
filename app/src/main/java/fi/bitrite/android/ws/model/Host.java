@@ -60,63 +60,71 @@ public class Host extends _Host {
     }
 
     public String getLocation() {
-
-        String location = "";
+        StringBuilder location = new StringBuilder();
         if (!TextUtils.isEmpty(getStreet())) {
-            location += getStreet() + "\n";
+            location.append(getStreet()).append('\n');
         }
 
         if (!TextUtils.isEmpty(getAdditional())) {
-            location += getAdditional() + "\n";
+            location.append(getAdditional()).append('\n');
         }
-        location += getCity() + ", " + getProvince().toUpperCase();
+        location.append(getCity()).append(", ").append(getProvince().toUpperCase());
         if (!TextUtils.isEmpty(getPostalCode())) {
-            location += " " + getPostalCode();
+            location.append(' ').append(getPostalCode());
         }
 
         if (!TextUtils.isEmpty(getCountry())) {
-            location += ", " + getCountry().toUpperCase();
+            location.append(", ").append(getCountry().toUpperCase());
         }
 
-        return location;
+        return location.toString();
     }
 
     public String getNearbyServices(Context context) {
         Resources r = context.getResources();
 
-        String nearbyServices = "";
+        StringBuilder nearbyServices = new StringBuilder();
         if (!TextUtils.isEmpty(getMotel())) {
-            nearbyServices += r.getString(R.string.nearby_service_accommodation) + ": " + getMotel() + ", ";
+            nearbyServices.append(r.getString(R.string.nearby_service_accommodation))
+                    .append(": ").append(getMotel()).append(", ");
         }
         if (!TextUtils.isEmpty(getBikeshop())) {
-            nearbyServices += r.getString(R.string.nearby_service_bikeshop) + ": " +getBikeshop() + ", ";
+            nearbyServices.append(r.getString(R.string.nearby_service_bikeshop))
+                    .append(": ").append(getBikeshop()).append(", ");
         }
         if (!TextUtils.isEmpty(getCampground())) {
-            nearbyServices += r.getString(R.string.nearby_service_campground) + ": " +getCampground() + ", ";
+            nearbyServices.append(r.getString(R.string.nearby_service_campground))
+                    .append(": ").append(getCampground()).append(", ");
         }
 
-        return nearbyServices;
+        return nearbyServices.toString();
     }
     public String getHostServices(Context context) {
         StringBuilder sb = new StringBuilder();
         Resources r = context.getResources();
 
-        if (hasService(getShower()))
+        if (hasService(getShower())) {
             sb.append(r.getString(R.string.host_service_shower)).append(", ");
-        if (hasService(getFood()))
+        }
+        if (hasService(getFood())) {
             sb.append(r.getString(R.string.host_services_food)).append(", ");
-        if (hasService(getBed()))
+        }
+        if (hasService(getBed())) {
             sb.append(r.getString(R.string.host_services_bed)).append(", ");
-        if (hasService(getLaundry()))
+        }
+        if (hasService(getLaundry())) {
             sb.append(r.getString(R.string.host_service_laundry)).append(", ");
-        if (hasService(getStorage()))
+        }
+        if (hasService(getStorage())) {
             sb.append(r.getString(R.string.host_service_storage)).append(", ");
-        if (hasService(getKitchenUse()))
+        }
+        if (hasService(getKitchenUse())) {
             sb.append(r.getString(R.string.host_service_kitchen)).append(", ");
-        if (hasService(getLawnspace()))
+        }
+        if (hasService(getLawnspace())) {
             sb.append(r.getString(R.string.host_service_tentspace)).append(", ");
-        if (hasService(getSag()))
-            sb.append(context.getString(R.string.host_service_sag));
+        }
+        if (hasService(getSag())) { sb.append(context.getString(R.string.host_service_sag)); }
 
         return sb.toString();
     }
@@ -146,12 +154,12 @@ public class Host extends _Host {
     }
 
     public String getStreetCityAddress() {
-        String result = "";
-        if (mStreet != null && mStreet.length() > 0) {
-            result = mStreet + ", ";
+        StringBuilder result = new StringBuilder();
+        if (!TextUtils.isEmpty(mStreet)) {
+            result.append(mStreet).append(", ");
         }
-        result += mCity + ", " + mProvince.toUpperCase();
-        return result;
+        result.append(mCity).append(", ").append(mProvince.toUpperCase());
+        return result.toString();
     }
 
     public Date getCreatedAsDate() {

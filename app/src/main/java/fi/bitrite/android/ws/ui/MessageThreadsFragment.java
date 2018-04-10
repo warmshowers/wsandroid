@@ -91,7 +91,8 @@ public class MessageThreadsFragment extends BaseFragment {
 
         // Add dividers between message threads in the recycler view.
         LinearLayoutManager layoutManager = (LinearLayoutManager) mThreadList.getLayoutManager();
-        mThreadList.addItemDecoration(new DividerItemDecoration(mThreadList.getContext(), layoutManager.getOrientation()));
+        mThreadList.addItemDecoration(new DividerItemDecoration(mThreadList.getContext(),
+                layoutManager.getOrientation()));
 
         if (icicle != null) {
             mThreadListState = icicle.getParcelable(ICICLE_KEY_THREADS_STATE);
@@ -103,12 +104,12 @@ public class MessageThreadsFragment extends BaseFragment {
         mMessageRepository.reloadThreads()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> mSwipeRefresh.setRefreshing(false),
-                           throwable -> {
-                               mSwipeRefresh.setRefreshing(false);
+                        throwable -> {
+                            mSwipeRefresh.setRefreshing(false);
 
-                               Toast.makeText(getContext(), R.string.messages_reload_failed,
-                                              Toast.LENGTH_SHORT).show();
-                           });
+                            Toast.makeText(getContext(), R.string.messages_reload_failed,
+                                    Toast.LENGTH_SHORT).show();
+                        });
     }
 
     @SuppressLint("UseSparseArrays")

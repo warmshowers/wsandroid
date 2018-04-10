@@ -103,9 +103,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         // The drawer toggle breaks the click listener on the home button (when it is displayed as
         // up). We fix that.
         mDrawerToggle.setToolbarNavigationClickListener(view -> onSupportNavigateUp());
-        mDrawerToggle.getDrawerArrowDrawable().setColor(
-                getResources().getColor(android.R.color.white)
-        );
+        mDrawerToggle.getDrawerArrowDrawable()
+                .setColor(getResources().getColor(android.R.color.white));
         mDrawerToggle.setDrawerSlideAnimationEnabled(false);
 
 
@@ -116,19 +115,15 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         //
         // Primary navigation.
         NavigationListAdapter primaryNavigationListAdapter = NavigationListAdapter.create(
-                this,
-                mPrimaryNavigationItems,
-                mNavigationController.getTopLevelNavigationItemTag()
-        );
+                this, mPrimaryNavigationItems,
+                mNavigationController.getTopLevelNavigationItemTag());
         primaryNavigationListAdapter.getOnClickSubject().subscribe(this::onNavigationItemClicked);
         mPrimaryNavigationList.setAdapter(primaryNavigationListAdapter);
 
         // Secondary navigation.
         NavigationListAdapter secondaryNavigationListAdapter = NavigationListAdapter.create(
-                this,
-                mSecondaryNavigationItems,
-                mNavigationController.getTopLevelNavigationItemTag()
-        );
+                this, mSecondaryNavigationItems,
+                mNavigationController.getTopLevelNavigationItemTag());
         secondaryNavigationListAdapter.getOnClickSubject().subscribe(this::onNavigationItemClicked);
         mSecondaryNavigationList.setAdapter(secondaryNavigationListAdapter);
 
@@ -170,7 +165,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                         if (TextUtils.isEmpty(profilePhotoUrl)) {
                             mImgUserPhoto.setImageResource(R.drawable.default_hostinfo_profile);
                         } else {
-                            Picasso.with(this).load(profilePhotoUrl).into(mImgUserPhoto); // largeUrl
+                            Picasso.with(this)
+                                    .load(profilePhotoUrl)
+                                    .into(mImgUserPhoto); // largeUrl
                         }
                     } else {
                         // TODO(saemy): What to show?

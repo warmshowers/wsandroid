@@ -55,11 +55,10 @@ public class AccountManager {
     public BehaviorSubject<MaybeNull<Account>> getCurrentAccount() {
         return mCurrentAccount;
     }
-    public Observable<Integer> getCurrentUserId() {
-        return mCurrentUserId;
-    }
-
     public void setCurrentAccount(Account account) {
         mCurrentAccount.onNext(new MaybeNull<>(account));
+    }
+    public Observable<Integer> getCurrentUserId() {
+        return mCurrentUserId;
     }
 }

@@ -6,13 +6,13 @@ import com.google.gson.GsonBuilder;
 
 import java.util.Date;
 
+import fi.bitrite.android.ws.api.interceptors.DefaultInterceptor;
+import fi.bitrite.android.ws.api.interceptors.HeaderInterceptor;
+import fi.bitrite.android.ws.api.interceptors.ResponseInterceptor;
 import fi.bitrite.android.ws.api.typeadapter.BooleanDeserializer;
 import fi.bitrite.android.ws.api.typeadapter.DateDeserializer;
 import fi.bitrite.android.ws.api.typeadapter.RatingTypeAdapter;
 import fi.bitrite.android.ws.api.typeadapter.RelationTypeAdapter;
-import fi.bitrite.android.ws.api.interceptors.DefaultInterceptor;
-import fi.bitrite.android.ws.api.interceptors.HeaderInterceptor;
-import fi.bitrite.android.ws.api.interceptors.ResponseInterceptor;
 import fi.bitrite.android.ws.model.Feedback;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;

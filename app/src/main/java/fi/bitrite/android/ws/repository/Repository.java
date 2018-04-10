@@ -18,7 +18,6 @@ import io.reactivex.subjects.BehaviorSubject;
 abstract class Repository<T> {
     private final BehaviorSubject<List<Observable<Resource<T>>>> mAllObservable =
             BehaviorSubject.create();
-
     private final ConcurrentMap<Integer, CacheEntry> mCache = new ConcurrentHashMap<>();
 
     Completable save(int id, @NonNull T data) {
@@ -37,7 +36,6 @@ abstract class Repository<T> {
             emitter.onComplete();
         }).subscribeOn(Schedulers.io());
     }
-
     abstract void saveInDb(int id, @NonNull T data);
 
     /**
@@ -74,8 +72,8 @@ abstract class Repository<T> {
         }
 
         Resource<T> resource = cacheEntry.data.getValue();
-        if (isNewCacheEntry || cacheEntry.freshness == Freshness.OLD ||
-                resource == null || resource.isError()) {
+        if (isNewCacheEntry || cacheEntry.freshness == Freshness.OLD
+            || resource == null || resource.isError()) {
             // We load it from the network.
 
             Observable<LoadResult<T>> lfn = loadFromNetwork(id);
@@ -117,8 +115,8 @@ abstract class Repository<T> {
                     }
                 } else {
                     // We got the data from the network.
-                    boolean shouldSave = shouldSaveInDb == ShouldSaveInDb.YES ||
-                            (isInDb.get() && shouldSaveInDb == ShouldSaveInDb.IF_ALREADY_IN_DB);
+                    boolean shouldSave = shouldSaveInDb == ShouldSaveInDb.YES
+                            || (isInDb.get() && shouldSaveInDb == ShouldSaveInDb.IF_ALREADY_IN_DB);
                     if (shouldSave) {
                         // We save it to the db.
                         saveInDb(id, result.data);
@@ -153,7 +151,6 @@ abstract class Repository<T> {
     Observable<Resource<T>> reload(int id, ShouldSaveInDb shouldSaveInDb) {
         return reload(id, getRaw(id), shouldSaveInDb);
     }
-
     Observable<Resource<T>> reload(int id, T currentValue, ShouldSaveInDb shouldSaveInDb) {
         put(id, Resource.loading(currentValue), Freshness.OLD);
         return get(id, shouldSaveInDb);
@@ -186,7 +183,6 @@ abstract class Repository<T> {
         }
         notifyAllChanged();
     }
-
     void popExcept(List<Integer> ids) {
         for (Integer entryId : mCache.keySet()) {
             if (!ids.contains(entryId)) {
@@ -212,7 +208,6 @@ abstract class Repository<T> {
     }
 
     abstract Observable<LoadResult<T>> loadFromDb(int id);
-
     abstract Observable<LoadResult<T>> loadFromNetwork(int id);
 
     enum Freshness {
@@ -229,7 +224,6 @@ abstract class Repository<T> {
 
     static class LoadResult<T> {
         final Source source;
-
         final T data;
 
         LoadResult(Source source, T data) {
@@ -240,7 +234,6 @@ abstract class Repository<T> {
         boolean isFromDb() {
             return source == Source.DB;
         }
-
         boolean isFromNetwork() {
             return source == Source.NETWORK;
         }
@@ -254,7 +247,7 @@ abstract class Repository<T> {
     class CacheEntry {
         final BehaviorSubject<Resource<T>> data = BehaviorSubject.create();
 
-        /*
+        /**
          * Whether the user is loaded from the Warmshowers service or from the local db only.
          *
          * This is initialized as REFRESHING to avoid a race in #get().

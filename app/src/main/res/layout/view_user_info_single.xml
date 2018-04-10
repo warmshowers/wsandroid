@@ -2,28 +2,28 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
 
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@android:color/background_light"
-    android:padding="16dp"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/WsText.subHead"
-        android:text="Title Placeholder"
         android:id="@+id/title"
-        android:textColor="@color/primaryColorAccent"
-        android:gravity="center_horizontal" />
-
-    <TextView
+        style="@style/WsText.subHead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/WsText"
-        android:text="Snippet placeholder"
+        android:gravity="center_horizontal"
+        android:text="Title Placeholder"
+        android:textColor="@color/primaryColorAccent" />
+
+    <TextView
         android:id="@+id/snippet"
-        android:gravity="center_horizontal" />
+        style="@style/WsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Snippet placeholder" />
 
 </LinearLayout>

@@ -100,7 +100,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
     @VisibleForTesting
     boolean areAllInputsNotEmpty() {
         return !TextUtils.isEmpty(mTxtUsername.getText())
-                && !TextUtils.isEmpty(mTxtPassword.getText());
+               && !TextUtils.isEmpty(mTxtPassword.getText());
     }
 
     /**
@@ -164,20 +164,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                     } else {
                         mProgressDisposable.dispose();
 
-                        Toast.makeText(
-                                this,
-                                R.string.authentication_failed,
-                                Toast.LENGTH_LONG
-                        ).show();
+                        Toast.makeText(this, R.string.authentication_failed, Toast.LENGTH_LONG)
+                                .show();
                     }
                 }, error -> {
                     mProgressDisposable.dispose();
 
-                    Toast.makeText(
-                            this,
-                            R.string.http_server_access_failure,
-                            Toast.LENGTH_SHORT
-                    ).show();
+                    Toast.makeText(this, R.string.http_server_access_failure, Toast.LENGTH_SHORT)
+                            .show();
                 });
     }
 
