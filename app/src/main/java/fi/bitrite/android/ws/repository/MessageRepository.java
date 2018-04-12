@@ -4,9 +4,8 @@ package fi.bitrite.android.ws.repository;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
+import android.text.TextUtils;
 import android.util.Log;
-
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -111,7 +110,7 @@ public class MessageRepository extends Repository<MessageThread> {
     public Observable<Integer> createThread(String subject, String message,
                                             List<String> recipients) {
         return Observable.<Integer>create(emitter -> {
-            String recipientNames = StringUtils.join(recipients, ',');
+            String recipientNames = TextUtils.join(",", recipients);
             mWarmshowersService.createMessageThread(recipientNames, subject, message)
                     .subscribe(response -> {
                         if (!response.isSuccessful()) {

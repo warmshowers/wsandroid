@@ -24,9 +24,6 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +49,7 @@ import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.ui.view.FeedbackTable;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.MaybeNull;
+import fi.bitrite.android.ws.util.ObjectUtils;
 import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -260,7 +258,7 @@ public class UserFragment extends BaseFragment {
 
         mLblPhone.setVisibility(phones.isEmpty() ? View.GONE : View.VISIBLE);
         if (!phones.isEmpty()) {
-            mLblPhone.setText(StringUtils.join(phones, '\n'));
+            mLblPhone.setText(TextUtils.join("\n", phones));
             Linkify.addLinks(mLblPhone, Linkify.ALL);
         }
 
