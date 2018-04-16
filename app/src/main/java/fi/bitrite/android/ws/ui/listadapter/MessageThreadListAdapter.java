@@ -75,7 +75,7 @@ public class MessageThreadListAdapter extends
         return left.id == right.id
                && left.subject.equals(right.subject)
                && left.started.equals(right.started)
-               && left.isUnread() == right.isUnread()
+               && left.isRead() == right.isRead()
                && left.lastUpdated.equals(right.lastUpdated);
     }
 
@@ -114,7 +114,7 @@ public class MessageThreadListAdapter extends
             mRoot.setVisibility(View.GONE);
 
             // Bold if unread.
-            int tf = thread.isUnread() ? Typeface.BOLD : Typeface.NORMAL;
+            int tf = thread.isRead() ? Typeface.NORMAL : Typeface.BOLD;
             mLblParticipants.setTypeface(null, tf);
             mLblLastUpdated.setTypeface(null, tf);
             mLblSubject.setTypeface(null, tf);
@@ -162,7 +162,7 @@ public class MessageThreadListAdapter extends
                         Collections.max(thread.messages, MessageListAdapter.COMPARATOR);
                 mLblPreview.setText(Html.fromHtml(newestMessage.body));
 
-                if (newestMessage.status == Message.STATUS_OUTGOING) {
+                if (!newestMessage.isPushed) {
                     mLblLastUpdated.setText("..."); // TODO(saemy): Add a hourglass icon?
                 }
             }
@@ -208,21 +208,22 @@ public class MessageThreadListAdapter extends
                 return;
             }
 
-            final MenuItem unreadStatus =
-                    menu.add(Menu.NONE, v.getId(), Menu.NONE, mThread.isUnread()
-                            ? R.string.message_mark_read
-                            : R.string.message_mark_unread);
+            final MenuItem readStatus =
+                    menu.add(Menu.NONE, v.getId(), Menu.NONE, mThread.isRead()
+                            ? R.string.message_mark_unread
+                            : R.string.message_mark_read);
 
-            unreadStatus.setOnMenuItemClickListener(menuItem -> {
+            readStatus.setOnMenuItemClickListener(menuItem -> {
                 if (mThread == null) {
                     return false;
                 }
 
-                if (mThread.isUnread()) {
-                    mMessageRepository.markThreadAsRead(mThread.id).subscribe();
-                } else {
-                    mMessageRepository.markThreadAsUnread(mThread.id).subscribe();
-                }
+                (mThread.isRead()
+                         ? mMessageRepository.markThreadAsUnread(mThread.id)
+                         : mMessageRepository.markThreadAsRead(mThread.id))
+                        .onErrorComplete() // TODO(saemy): Error handling.
+                        .subscribe();
+
                 return true;
             });
 

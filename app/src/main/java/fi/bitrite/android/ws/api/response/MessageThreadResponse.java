@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import fi.bitrite.android.ws.model.MessageThread;
+import fi.bitrite.android.ws.util.Pushable;
 
 public class MessageThreadResponse {
     public class Participant {
@@ -20,11 +21,11 @@ public class MessageThreadResponse {
         @SerializedName("author") public int authorId;
         @SerializedName("timestamp") public Date date;
         public String body;
-        public boolean isNew; // unused
+        public boolean isNew;
 
         public fi.bitrite.android.ws.model.Message toMessage(int threadId) {
-            return new fi.bitrite.android.ws.model.Message(id, threadId, authorId, date, body,
-                    fi.bitrite.android.ws.model.Message.STATUS_SYNCED);
+            return new fi.bitrite.android.ws.model.Message(
+                    id, threadId, authorId, date, body, isNew, true);
         }
     }
 
@@ -33,7 +34,8 @@ public class MessageThreadResponse {
     public List<Participant> participants;
     public List<Message> messages;
 
-    public MessageThread toMessageThread(int unreadStatus, Date started, Date lastUpdated) {
+    public MessageThread toMessageThread(Pushable<Boolean> readStatus, Date started,
+                                         Date lastUpdated) {
         // Prepares the participants.
         List<Integer> participantIds = new ArrayList<>(participants.size());
         for (Participant participant : participants) {
@@ -47,6 +49,6 @@ public class MessageThreadResponse {
         }
 
         return new MessageThread(
-                id, subject, started, unreadStatus, participantIds, msgs, lastUpdated);
+                id, subject, started, readStatus, participantIds, msgs, lastUpdated);
     }
 }

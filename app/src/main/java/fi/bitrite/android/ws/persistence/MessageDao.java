@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import javax.inject.Singleton;
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
 import fi.bitrite.android.ws.persistence.converters.DateConverter;
+import fi.bitrite.android.ws.persistence.converters.PushableConverter;
 import fi.bitrite.android.ws.persistence.db.AccountDatabase;
 
 @Singleton
@@ -46,6 +48,11 @@ public class MessageDao extends Dao {
         final static int COL_IDX_DATE = 3;
         final static int COL_IDX_BODY = 4;
         final static int COL_IDX_STATUS = 5;
+
+        /* Whether this message is new and a notification should be shown for it. */
+        private final static byte STATUS_BIT_IS_NEW = 0;
+        /* Whether this message is already pushed to the webservice. */
+        private final static byte STATUS_BIT_IS_PUSHED = 1;
     }
     private static class ParticipantTable {
         final static String NAME = "message_thread_participant";
@@ -104,10 +111,14 @@ public class MessageDao extends Dao {
             for (Integer participantId : thread.participantIds) {
                 saveParticipant(db, thread.id, participantId);
             }
+            deleteParticipantsExcept(db, thread.id, thread.participantIds);
 
+            List<Integer> messageIds = new ArrayList<>(thread.messages.size());
             for (Message message : thread.messages) {
+                messageIds.add(message.id);
                 saveMessage(db, message);
             }
+            deleteMessagesExcept(db, thread.id, messageIds);
 
             return null;
         });
@@ -117,7 +128,7 @@ public class MessageDao extends Dao {
         cv.put("id", thread.id);
         cv.put("subject", thread.subject);
         cv.put("started", DateConverter.dateToLong(thread.started));
-        cv.put("read_status", thread.readStatus);
+        cv.put("read_status", PushableConverter.pushableToInt(thread.isRead));
         cv.put("last_updated", DateConverter.dateToLong(thread.lastUpdated));
 
         insertOrUpdate(db, ThreadTable.NAME, cv, thread.id);
@@ -137,7 +148,9 @@ public class MessageDao extends Dao {
         cv.put("author_id", message.authorId);
         cv.put("date", DateConverter.dateToLong(message.date));
         cv.put("body", message.body);
-        cv.put("status", message.status);
+        int status = (message.isNew ? 1 : 0) << MessageTable.STATUS_BIT_IS_NEW |
+                (message.isPushed ? 1 : 0) << MessageTable.STATUS_BIT_IS_PUSHED;
+        cv.put("status", status);
 
         insertOrUpdate(db, MessageTable.NAME, cv, message.id);
     }
@@ -172,12 +185,20 @@ public class MessageDao extends Dao {
         });
     }
 
-    public void deletePushedTemporaryMessages(int threadId) {
-        executeTransactional(db -> {
-            db.delete(MessageTable.NAME, "thread_id = ? AND status = ? AND id < 0",
-                    int2str(threadId, Message.STATUS_SYNCED));
-            return null;
-        });
+    private void deleteParticipantsExcept(SQLiteDatabase db, int threadId,
+                                          Collection<Integer> participantIds) {
+        String participantIdsStr = TextUtils.join(",", participantIds);
+        db.execSQL("DELETE FROM " + ParticipantTable.NAME +
+                   " WHERE thread_id = " + threadId +
+                   " AND user_id NOT IN (" + participantIdsStr + ")");
+    }
+
+    private void deleteMessagesExcept(SQLiteDatabase db, int threadId,
+                                      Collection<Integer> messageIds) {
+        String messageIdsStr = TextUtils.join(",", messageIds);
+        db.execSQL("DELETE FROM " + MessageTable.NAME +
+                   " WHERE thread_id = " + threadId +
+                   " AND id NOT IN (" + messageIdsStr + ")");
     }
 
     private static MessageThread getThreadFromCursor(@NonNull SQLiteDatabase db,
@@ -191,7 +212,8 @@ public class MessageDao extends Dao {
                 threadId,
                 c.getString(ThreadTable.COL_IDX_SUBJECT),
                 DateConverter.longToDate(c.getLong(ThreadTable.COL_IDX_STARTED)),
-                c.getInt(ThreadTable.COL_IDX_READ_STATUS), participantIds, messages,
+                PushableConverter.intToBooleanPushable(c.getInt(ThreadTable.COL_IDX_READ_STATUS)),
+                participantIds, messages,
                 DateConverter.longToDate(c.getLong(ThreadTable.COL_IDX_LAST_UPDATED)));
     }
     private static List<Integer> loadParticipants(@NonNull SQLiteDatabase db, int threadId) {
@@ -212,13 +234,17 @@ public class MessageDao extends Dao {
                 "thread_id = ?", int2str(threadId), null, null, null, null)) {
             if (cursor.moveToFirst()) {
                 do {
+                    int status = cursor.getInt(MessageTable.COL_IDX_STATUS);
+                    boolean isNew = (status & (1 << MessageTable.STATUS_BIT_IS_NEW)) != 0;
+                    boolean isPushed = (status & (1 << MessageTable.STATUS_BIT_IS_PUSHED)) != 0;
+
                     messages.add(new Message(
                             cursor.getInt(MessageTable.COL_IDX_ID),
                             cursor.getInt(MessageTable.COL_IDX_THREAD_ID),
                             cursor.getInt(MessageTable.COL_IDX_AUTHOR_ID),
                             DateConverter.longToDate(cursor.getLong(MessageTable.COL_IDX_DATE)),
                             cursor.getString(MessageTable.COL_IDX_BODY),
-                            cursor.getInt(MessageTable.COL_IDX_STATUS)));
+                            isNew, isPushed));
                 } while (cursor.moveToNext());
             }
         }

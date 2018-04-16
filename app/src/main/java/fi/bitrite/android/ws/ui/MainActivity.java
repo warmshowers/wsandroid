@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.ui;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -39,6 +40,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+
+    private static final String KEY_MESSAGE_THREAD_ID = "thread_id";
 
     private final List<NavigationItem> mPrimaryNavigationItems = Arrays.asList(
             // Map
@@ -82,6 +85,16 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private ActionBarDrawerToggle mDrawerToggle;
 
     private CompositeDisposable mDisposables;
+
+    /**
+     * Creates an intent that sends, when used, the user to that message thread. This is needed for
+     * notifications.
+     */
+    public static Intent createForMessageThread(Context context, int threadId) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra(KEY_MESSAGE_THREAD_ID, threadId);
+        return intent;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,11 +151,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         }
 
         if (savedInstanceState == null) {
-//            currentNavigationItemId.setValue(NAVIGATION_ITEM_MAP);
             mNavigationController.navigateToMainFragment();
         }
 
-        handleSearchIntent(getIntent());
+        handleActionIntents(getIntent());
     }
 
     @Override
@@ -189,13 +201,24 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
+        handleActionIntents(intent);
+    }
+    private void handleActionIntents(Intent intent) {
         handleSearchIntent(intent);
+        handleMessageThreadIntent(intent);
     }
 
     private void handleSearchIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             mNavigationController.navigateToSearch(query);
+        }
+    }
+    private void handleMessageThreadIntent(Intent intent) {
+        int threadId = intent.getIntExtra(KEY_MESSAGE_THREAD_ID, -1);
+        if (threadId != -1) {
+            // TODO(saemy): Ensure back action is to message threads.
+            mNavigationController.navigateToMessageThread(threadId);
         }
     }
 
@@ -241,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             return true;
         }
 
+        // FIXME(saemy): This should move one level up in the tag-uri of the navigation controller.
         getSupportFragmentManager().popBackStack();
         return true;
     }
