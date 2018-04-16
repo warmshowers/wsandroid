@@ -38,7 +38,7 @@ public class FavoriteDao extends Dao {
         return executeNonTransactional(db -> {
             List<Integer> favoriteUserIds = new ArrayList<>();
 
-            try (Cursor cursor = db.query(TABLE_NAME, new String[] { "user_id" },
+            try (Cursor cursor = db.query(TABLE_NAME, new String[]{ "user_id" },
                     null, null, null, null, null)) {
 
                 if (cursor.moveToFirst()) {
@@ -55,7 +55,7 @@ public class FavoriteDao extends Dao {
 
     public boolean exists(int userId) {
         return executeNonTransactional(db -> {
-            try(Cursor c = db.query(TABLE_NAME, null, "user_id = ?", int2str(userId),
+            try (Cursor c = db.query(TABLE_NAME, null, "user_id = ?", int2str(userId),
                     null, null, null, null)) {
                 return c.moveToFirst();
             }

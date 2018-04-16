@@ -177,7 +177,7 @@ public class SearchFragment extends BaseFragment {
     }
 
     private final static Comparator<Host> mComparator = (left, right) -> {
-        int ncaLeft = left.isNotCurrentlyAvailable() ? 1  : 0;
+        int ncaLeft = left.isNotCurrentlyAvailable() ? 1 : 0;
         int ncaRight = right.isNotCurrentlyAvailable() ? 1 : 0;
 
         return ncaLeft != ncaRight
@@ -193,8 +193,9 @@ public class SearchFragment extends BaseFragment {
         Decorator(String query, @ColorInt int foregroundColor) {
             mQuery = query;
             mQueryPattern = query != null
-                ? Pattern.compile(Pattern.quote(query), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)
-                : null;
+                    ? Pattern.compile(Pattern.quote(query),
+                    Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)
+                    : null;
             mForegroundColor = foregroundColor;
         }
 
@@ -216,7 +217,8 @@ public class SearchFragment extends BaseFragment {
         }
 
         private SpannableStringBuilder getTextMatch(String pattern, String match) {
-            final Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+            final Pattern p =
+                    Pattern.compile(pattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
             final Matcher matcher = p.matcher(match);
 
             // TODO: ignore accents and other special characters

@@ -31,21 +31,21 @@ public class AppInjector {
         wsApp.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-                if (activity instanceof HasSupportFragmentInjector ||
-                        activity instanceof Injectable) {
+                if (activity instanceof HasSupportFragmentInjector
+                    || activity instanceof Injectable) {
                     AndroidInjection.inject(activity);
                 }
                 if (activity instanceof FragmentActivity) {
-                   FragmentManager.FragmentLifecycleCallbacks cb =
-                           new FragmentManager.FragmentLifecycleCallbacks() {
-                               @Override
-                               public void onFragmentCreated(
-                                       FragmentManager fm, Fragment f, Bundle savedInstanceState) {
-                                   if (f instanceof Injectable) {
-                                       AndroidSupportInjection.inject(f);
-                                   }
-                               }
-                           };
+                    FragmentManager.FragmentLifecycleCallbacks cb =
+                            new FragmentManager.FragmentLifecycleCallbacks() {
+                                @Override
+                                public void onFragmentCreated(
+                                        FragmentManager fm, Fragment f, Bundle savedInstanceState) {
+                                    if (f instanceof Injectable) {
+                                        AndroidSupportInjection.inject(f);
+                                    }
+                                }
+                            };
                     ((FragmentActivity) activity).getSupportFragmentManager()
                             .registerFragmentLifecycleCallbacks(cb, true);
                 }

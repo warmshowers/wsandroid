@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -36,7 +37,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class MessageListAdapter extends
-    DataBoundListAdapter<Message, MessageListAdapter.ItemBinding> {
+        DataBoundListAdapter<Message, MessageListAdapter.ItemBinding> {
 
     public final static Comparator<Message> COMPARATOR =
             (left, right) -> left.date.compareTo(right.date);
@@ -45,6 +46,52 @@ public class MessageListAdapter extends
     private final UserRepository mUserRepository;
 
     private boolean mIsGroupChat;
+
+    public MessageListAdapter(LoggedInUserHelper loggedInUserHelper,
+                              UserRepository userRepository) {
+        mLoggedInUserHelper = loggedInUserHelper;
+        mUserRepository = userRepository;
+    }
+
+    @Override
+    public Completable replaceRx(List<Message> messages) {
+        mIsGroupChat = false;
+        Set<Integer> participantIds = new HashSet<>();
+        for (Message message : messages) {
+            participantIds.add(message.authorId);
+
+            if (participantIds.size() > 2) {
+                mIsGroupChat = true;
+                break;
+            }
+        }
+
+        return super.replaceRx(messages);
+    }
+
+    @Override
+    protected ItemBinding createBinding(ViewGroup parent) {
+        return new ItemBinding(parent);
+    }
+
+    @Override
+    protected void sort(List<Message> messages) {
+        Collections.sort(messages, COMPARATOR);
+    }
+
+    @Override
+    protected boolean areItemsTheSame(Message left, Message right) {
+        return left.id == right.id;
+    }
+
+    @Override
+    protected boolean areContentsTheSame(Message left, Message right) {
+        return left.id == right.id
+               && left.threadId == right.threadId
+               && left.authorId == right.authorId
+               && left.date.equals(right.date)
+               && left.body.equals(right.body);
+    }
 
     class ItemBinding implements
             DataBoundListAdapter.ViewDataBinding<Message> {
@@ -104,13 +151,14 @@ public class MessageListAdapter extends
                     mRoot.getPaddingBottom());
 
             // Sets the margin of the bubble.
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)mRoot.getLayoutParams();
+            ViewGroup.MarginLayoutParams lp =
+                    (ViewGroup.MarginLayoutParams) mRoot.getLayoutParams();
             lp.leftMargin = isIncoming ? mMarginBubbleSmall : mMarginBubbleBig;
             lp.rightMargin = isIncoming ? mMarginBubbleBig : mMarginBubbleSmall;
             mRoot.setLayoutParams(lp);
 
             // Sets the background of the bubble.
-            mRoot.setBackgroundDrawable(
+            ViewCompat.setBackground(mRoot,
                     isIncoming ? mDrawableBubbleIncoming : mDrawableBubbleOutgoing);
 
             // Shows the sender if the message is incoming and this is a group chat.
@@ -128,8 +176,8 @@ public class MessageListAdapter extends
                                     ? ""
                                     // TODO(saemy): Eventually, put accessor performing this null-check into User.
                                     : TextUtils.isEmpty(user.getName())
-                                    ? user.getFullname()
-                                    : user.getName());
+                                            ? user.getFullname()
+                                            : user.getName());
                         }));
             }
 
@@ -138,65 +186,22 @@ public class MessageListAdapter extends
             mLblDate.setText(message.status == Message.STATUS_OUTGOING
                     ? "..." // Its not sent yet. // TODO(saemy): Add an hourglass icon?
                     : DateUtils.getRelativeTimeSpanString(
-                        message.date.getTime(), new Date().getTime(),
-                        0, DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_ABBREV_RELATIVE)
-                    .toString());
+                            message.date.getTime(), new Date().getTime(),
+                            0, DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_YEAR
+                               | DateUtils.FORMAT_ABBREV_RELATIVE)
+                            .toString());
         }
 
         @ColorInt
         private int getSenderColor(int authorId) {
             int color = mParticipantColorMap.get(authorId, -1);
             if (color == -1) {
-                mNextParticipantColorIdx = (mNextParticipantColorIdx+1) % mParticipantColors.length;
+                mNextParticipantColorIdx =
+                        (mNextParticipantColorIdx + 1) % mParticipantColors.length;
                 color = mParticipantColors[mNextParticipantColorIdx];
                 mParticipantColorMap.put(authorId, color);
             }
             return color;
         }
-    }
-
-    public MessageListAdapter(LoggedInUserHelper loggedInUserHelper, UserRepository userRepository) {
-        mLoggedInUserHelper = loggedInUserHelper;
-        mUserRepository = userRepository;
-    }
-
-    @Override
-    public Completable replaceRx(List<Message> messages) {
-        mIsGroupChat = false;
-        Set<Integer> participantIds = new HashSet<>();
-        for (Message message : messages) {
-            participantIds.add(message.authorId);
-
-            if (participantIds.size() > 2) {
-                mIsGroupChat = true;
-                break;
-            }
-        }
-
-        return super.replaceRx(messages);
-    }
-
-    @Override
-    protected ItemBinding createBinding(ViewGroup parent) {
-        return new ItemBinding(parent);
-    }
-
-    @Override
-    protected void sort(List<Message> messages) {
-        Collections.sort(messages, COMPARATOR);
-    }
-
-    @Override
-    protected boolean areItemsTheSame(Message left, Message right) {
-        return left.id == right.id;
-    }
-
-    @Override
-    protected boolean areContentsTheSame(Message left, Message right) {
-        return left.id == right.id &&
-                left.threadId == right.threadId &&
-                left.authorId == right.authorId &&
-                left.date.equals(right.date) &&
-                left.body.equals(right.body);
     }
 }

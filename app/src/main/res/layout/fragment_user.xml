@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:scrollbars="vertical"
-    android:background="@color/primaryWhite">
+    android:background="@color/primaryWhite"
+    android:scrollbars="vertical">
 
     <LinearLayout
         android:id="@+id/user_layout_details"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:paddingBottom="20dp">
+        android:paddingBottom="20dp"
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -24,16 +25,17 @@
                 android:id="@+id/user_img_photo"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:baselineAlignBottom="true"
+                android:contentDescription="@string/content_description_avatar_of_var"
                 android:scaleType="centerCrop"
-                android:src="@drawable/default_hostinfo_profile"
-                android:baselineAlignBottom="true" />
+                android:src="@drawable/default_hostinfo_profile" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="bottom"
-                android:paddingBottom="10dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="10dp">
 
                 <TextView
                     android:id="@+id/user_lbl_name"
@@ -41,21 +43,21 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="72dp"
                     android:layout_marginRight="20dp"
-                    android:textSize="36dp"
-                    android:textColor="@android:color/white"
                     android:shadowColor="@android:color/black"
                     android:shadowRadius="8"
-                    android:text="Member Name bla bla bla bla" />
+                    android:text="Member Name bla bla bla bla"
+                    android:textColor="@android:color/white"
+                    android:textSize="36sp" />
 
             </LinearLayout>
         </RelativeLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -74,45 +76,45 @@
                         style="@style/WsListIcon"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/ic_action_favorite_outline" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_favorite_outline_grey600_24dp" />
 
                     <TextView
+                        style="@style/WsText.subHead"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        style="@style/WsText.subHead"
                         android:layout_marginLeft="56dp"
-                        android:text="@string/favorite_host"
-                        />
+                        android:text="@string/favorite_host" />
 
                     <CheckBox
                         android:id="@+id/user_ckb_favorite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="false"
+                        android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"/>
+                        android:checked="false" />
                 </RelativeLayout>
 
             </LinearLayout>
 
             <View
-                android:layout_height="1dp"
                 android:layout_width="match_parent"
-                android:background="@color/primaryTextColorLight"
-                android:alpha="0.2"
+                android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginLeft="72dp"
-                android:layout_marginRight="0dp" />
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="8dp"
+                android:alpha="0.2"
+                android:background="@color/primaryTextColorLight" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -123,33 +125,34 @@
                     <ImageView
                         android:id="@+id/user_img_availability"
                         style="@style/WsListIcon"
-                        android:src="@drawable/ic_home_variant_black_24dp" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_home_grey600_24dp" />
 
                     <TextView
                         android:id="@+id/user_lbl_availability"
+                        style="@style/WsText.subHead"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="32dp"
-                        android:text="Currently Available"
-                        style="@style/WsText.subHead" />
+                        android:text="Currently Available" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/user_lbl_login_info"
+                    style="@style/WsText.caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="56dp"
-                    style="@style/WsText.caption"
                     android:text="Member since 2005, Last login January 1, 2015" />
 
 
                 <TextView
                     android:id="@+id/user_lbl_limitations"
+                    style="@style/WsText.caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="56dp"
-                    style="@style/WsText.caption"
                     android:text="Max guests: 3, Languages: English, Spanish" />
 
             </LinearLayout>
@@ -160,8 +163,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -172,16 +175,17 @@
                     <ImageView
                         style="@style/WsListIcon"
                         android:layout_gravity="top"
-                        android:src="@drawable/ic_action_place" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_place_grey600_24dp" />
 
                     <TextView
                         android:id="@+id/user_lbl_location"
+                        style="@style/WsText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
                         android:layout_marginLeft="32dp"
-                        android:text="848 Montclair Drive\nPalisade, CO 81526 USA"
-                        style="@style/WsText" />
+                        android:text="848 Montclair Drive\nPalisade, CO 81526 USA" />
 
                 </LinearLayout>
 
@@ -195,14 +199,14 @@
             </LinearLayout>
 
             <View
-                android:layout_height="1dp"
                 android:layout_width="match_parent"
-                android:background="@color/primaryTextColorLight"
-                android:alpha="0.2"
+                android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginLeft="72dp"
-                android:layout_marginRight="0dp" />
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="8dp"
+                android:alpha="0.2"
+                android:background="@color/primaryTextColorLight" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -220,44 +224,45 @@
 
                     <ImageView
                         style="@style/WsListIcon"
-                        android:src="@drawable/ic_action_info_outline" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_info_outline_grey600_24dp" />
 
                     <TextView
+                        style="@style/WsText.subHead"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="32dp"
-                        android:text="@string/hostinfo_profile"
-                        style="@style/WsText.subHead" />
+                        android:text="@string/hostinfo_profile" />
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/user_lbl_comments"
+                    style="@style/WsText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="56dp"
-                    android:text="Dummy about me text"
-                    style="@style/WsText"/>
+                    android:text="Dummy about me text" />
 
             </LinearLayout>
 
             <View
-                android:layout_height="1dp"
                 android:layout_width="match_parent"
-                android:background="@color/primaryTextColorLight"
-                android:alpha="0.2"
+                android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginLeft="72dp"
-                android:layout_marginRight="0dp" />
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="8dp"
+                android:alpha="0.2"
+                android:background="@color/primaryTextColorLight" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -268,53 +273,54 @@
 
                     <ImageView
                         style="@style/WsListIcon"
-                        android:src="@drawable/ic_action_list" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_format_list_bulleted_grey600_24dp" />
 
                     <TextView
+                        style="@style/WsText.subHead"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="32dp"
-                        android:text="@string/hostinfo_details"
-                        style="@style/WsText.subHead" />
+                        android:text="@string/hostinfo_details" />
 
                 </LinearLayout>
 
                 <TextView
                     android:id="@+id/user_lbl_services"
+                    style="@style/WsText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="56dp"
-                    style="@style/WsText"
                     android:text="Services this user may offer: " />
 
                 <TextView
                     android:id="@+id/user_lbl_nearby_services"
+                    style="@style/WsText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="56dp"
-                    style="@style/WsText"
                     android:text="Nearby services" />
 
             </LinearLayout>
 
             <View
-                android:layout_height="1dp"
                 android:layout_width="match_parent"
-                android:background="@color/primaryTextColorLight"
-                android:alpha="0.2"
+                android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginLeft="72dp"
-                android:layout_marginRight="0dp" />
+                android:layout_marginRight="0dp"
+                android:layout_marginTop="8dp"
+                android:alpha="0.2"
+                android:background="@color/primaryTextColorLight" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp">
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -324,16 +330,17 @@
 
                     <ImageView
                         style="@style/WsListIcon"
-                        android:src="@drawable/ic_action_people" />
+                        android:importantForAccessibility="no"
+                        app:srcCompat="@drawable/ic_people_grey600_24dp" />
 
                     <TextView
                         android:id="@+id/user_lbl_feedback"
+                        style="@style/WsText.subHead"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="32dp"
-                        android:text="Feedback"
-                        style="@style/WsText.subHead" />
+                        android:text="Feedback" />
                 </LinearLayout>
 
                 <fi.bitrite.android.ws.ui.view.FeedbackTable

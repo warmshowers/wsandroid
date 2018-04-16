@@ -140,7 +140,8 @@ public class UserDao extends Dao {
         cv.put("has_food", s2b(user.getFood()));
         cv.put("last_access", DateConverter.dateToLong(user.getLastLoginAsDate()));
         cv.put("created", DateConverter.dateToLong(user.getCreatedAsDate()));
-        cv.put("currently_available", !s2b(user.getNotCurrentlyAvailable())); // NOT_currently_available
+        cv.put("currently_available",
+                !s2b(user.getNotCurrentlyAvailable())); // NOT_currently_available
         cv.put("spoken_languages", user.getLanguagesSpoken());
         cv.put("latitude", Double.parseDouble(user.getLatitude()));
         cv.put("longitude", Double.parseDouble(user.getLongitude()));
@@ -167,7 +168,7 @@ public class UserDao extends Dao {
         return Double.toString(d);
     }
     private static String dte2s(Date d) {
-        return i2s((int)(d.getTime() / 1000));
+        return i2s((int) (d.getTime() / 1000));
     }
 
     private static boolean s2b(String s) {

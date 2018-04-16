@@ -10,13 +10,14 @@
     <string name="no_starred_hosts">"You currently have no favorited hosts (hosts whose profiles are available offline). You can favorite hosts on the user information page."</string>
     <string name="list_search_hint">Name or city</string>
     <string name="no_results">Your search yielded no results.</string>
-    <string name="enter_credentials">Please enter your Warmshowers.org username (or email) and password:</string>
+    <string name="greeting">Hi there!</string>
+    <string name="enter_credentials">Please log in using your Warmshowers.org credentials</string>
     <string name="view_details">View details</string>
     <string name="star">Star</string>
     <string name="close">Close</string>
     <string name="username_hint">Username or Email</string>
     <string name="password_hint">Password</string>
-    <string name="password">Password:</string>
+    <string name="button_text_login">Log in</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="description">About this member</string>
@@ -69,7 +70,7 @@
         <item quantity="one">%1$d user at %2$s</item>
         <item quantity="other">%1$d hosts at %2$s</item>
     </plurals>
-	<string name="view_on_site">View on website</string>
+    <string name="view_on_site">View on website</string>
     <plurals name="host_count">
         <item quantity="one">%1$d user at this location</item>
         <item quantity="other">%1$d hosts at this location</item>
@@ -88,10 +89,10 @@
     <string name="parsing_error">Error parsing response from server. Please report this search using the contact form at warmshowers.org.</string>
     <string name="unknown_exception">Unknown error, please report to warmshowers.org contact form: %1$s</string>
     <string name="send_message">Send message</string>
-    <string name="view_on_map">View on WarmShowers map</string>
+    <string name="view_on_map">View on map</string>
     <string name="view_in_maps_app">View in map application</string>
     <string name="action_settings">Settings</string>
-    <string name="leave_feedback">Leave feedback for this user</string>
+    <string name="leave_feedback">Leave feedback</string>
     <string name="leave_feedback_for">Leave feedback for %1$s</string>
     <string name="viewMessagesOnSite">View messages on site</string>
     <string name="messages_on_site">Messages on site</string>
@@ -99,7 +100,8 @@
     <string name="prefs_distance_unit">Unit of distance</string>
     <string name="prefs_distance_unit_summary">Do you want distances expressed in kilometers or in miles?</string>
     <string name="prefs_ga_collect_stats_title">Send anonymous statistics</string>
-    <string name="prefs_ga_collect_stats_summary">Sending statistics to Google Analytics helps the developers to understand usage and improve the app, but you can opt out.</string>
+    <string name="prefs_ga_collect_stats_summary_on">Sending statistics to Google Analytics helps the developers to understand usage and improve the app, but you can opt out.</string>
+    <string name="prefs_ga_collect_stats_summary_off">Currently, your usage is not tracked in order to be sent to Google Analytics to help developers in their improvement endeavours.</string>
     <string name="languages_spoken"><u>Languages spoken:</u></string>
     <string name="map_network_not_connected">Network is not connected, showing starred hosts only.</string>
     <string name="open_in_map_application">Open in maps application</string>
@@ -204,4 +206,14 @@
     <string name="message_mark_unread">Mark unread</string>
     <string name="message_mark_read">Mark read</string>
     <string name="message_send_failed">Failed to send the message.</string>
+
+    <string name="button_text_forgot_password">Forgot your password?</string>
+    <string name="url_target_forgot_password">https://www.warmshowers.org/user/password</string>
+
+    <string name="content_description_your_avatar">Your avatar</string>
+    <string name="content_description_avatar_of_var">%s’s avatar</string>
+
+    <string name="menu_goto_profile">Show profile</string>
+    <string name="menu_goto_profiles">Show profiles</string>
+
 </resources>

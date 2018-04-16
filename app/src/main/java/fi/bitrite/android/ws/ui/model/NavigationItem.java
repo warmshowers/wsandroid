@@ -12,7 +12,8 @@ public class NavigationItem {
     @DrawableRes public final int iconResourceId;
     @StringRes public final int labelResourceId;
 
-    public NavigationItem(String tag, @DrawableRes int iconResourceId, @StringRes int labelResourceId) {
+    public NavigationItem(String tag, @DrawableRes int iconResourceId,
+                          @StringRes int labelResourceId) {
         this.tag = tag;
         this.iconResourceId = iconResourceId;
         this.labelResourceId = labelResourceId;

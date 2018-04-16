@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -40,7 +39,7 @@ public class FavoriteUsersFragment extends BaseFragment {
     @Inject UserRepository mUserRepository;
 
     @BindView(R.id.favorites_lst_users) ListView mLstUsers;
-    @BindView(R.id.favorites_lbl_no_users) TextView mLblNoUsers;
+    @BindView(R.id.favorites_rellayout_no_users) View mLblNoUsers;
 
     private UserListAdapter mUserListAdapter;
 
@@ -92,7 +91,8 @@ public class FavoriteUsersFragment extends BaseFragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        AdapterView.AdapterContextMenuInfo info =
+                (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         switch (item.getItemId()) {
             case CONTEXT_MENU_DELETE:

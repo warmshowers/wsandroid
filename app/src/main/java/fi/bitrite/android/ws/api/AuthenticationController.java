@@ -49,10 +49,10 @@ public class AuthenticationController {
         mAuthenticationManager = authenticationManager;
         mWarmshowersService = warmshowersService;
 
-        mAuthData
-                .filter(AuthData::isValid)
+        mAuthData.filter(AuthData::isValid)
                 .subscribe(authData -> {
-                    headerInterceptor.setSessionCookie(authData.authToken.name, authData.authToken.id);
+                    headerInterceptor.setSessionCookie(authData.authToken.name,
+                            authData.authToken.id);
                     headerInterceptor.setCsrfToken(authData.csrfToken);
                 });
 
@@ -93,7 +93,8 @@ public class AuthenticationController {
     }
 
     private Completable initAuthData(Observable<Account> accountSingle) {
-        final AtomicReference<Account> account = new AtomicReference<>(); // To have a final variable...
+        final AtomicReference<Account> account =
+                new AtomicReference<>(); // To have a final variable...
         return Completable.create(emitter -> accountSingle
                 .flatMap(acc -> {
                     account.set(acc);
@@ -114,8 +115,7 @@ public class AuthenticationController {
         return mAuthData;
     }
 
-    private final ResponseInterceptor.Handler mResponseInterceptorHandler =
-            new ResponseInterceptor.Handler() {
+    private final ResponseInterceptor.Handler mResponseInterceptorHandler = new ResponseInterceptor.Handler() {
 
         /**
          * Error handler for {@link ResponseInterceptor}.
@@ -131,7 +131,8 @@ public class AuthenticationController {
         public boolean handleCsrfValidationError() throws IOException {
             // Waits for the response to become available.
             try {
-                Response<String> response = mWarmshowersService.renewCsrfToken().blockingFirst();
+                Response<String> response =
+                        mWarmshowersService.renewCsrfToken().blockingFirst();
 
                 if (response.isSuccessful()) {
                     Account account = mAuthData.getValue().account;

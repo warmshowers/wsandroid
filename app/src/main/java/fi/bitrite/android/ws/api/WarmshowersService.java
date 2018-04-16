@@ -39,7 +39,8 @@ public interface WarmshowersService {
     Observable<Response<ApiUser>> fetchUser(@Path("userId") int userId);
 
     @GET("user/{userId}/json_recommendations")
-    Observable<Response<FeedbackResponse>> fetchFeedbackForRecipient(@Path("userId") int recipientId);
+    Observable<Response<FeedbackResponse>> fetchFeedbackForRecipient(
+            @Path("userId") int recipientId);
 
     int SEARCH_USER_DEFAULT_LIMIT = 800;
 
@@ -66,7 +67,8 @@ public interface WarmshowersService {
 
     @POST("services/rest/message/getThread")
     @FormUrlEncoded
-    Observable<Response<MessageThreadResponse>> fetchMessageThread(@Field("thread_id") int threadId);
+    Observable<Response<MessageThreadResponse>> fetchMessageThread(
+            @Field("thread_id") int threadId);
 
     int MESSAGE_THREAD_STAUS_READ = 0;
     int MESSAGE_THREAD_STAUS_UNREAD = 1;

@@ -18,9 +18,8 @@ public abstract class BaseFragment extends Fragment implements Injectable {
         setTitle(getTitle());
     }
 
+    protected abstract CharSequence getTitle();
     protected void setTitle(CharSequence title) {
         mActionBarTitleHelper.set(title);
     }
-
-    protected abstract CharSequence getTitle();
 }

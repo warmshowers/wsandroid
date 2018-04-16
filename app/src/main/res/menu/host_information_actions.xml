@@ -1,9 +1,10 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ws="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menuSendMessage"
-        android:icon="@drawable/ic_action_email"
+        android:icon="@drawable/ic_mail_white_24dp"
         android:title="@string/send_message"
         ws:showAsAction="always" />
 

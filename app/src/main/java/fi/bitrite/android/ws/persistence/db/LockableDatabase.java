@@ -20,7 +20,7 @@ import fi.bitrite.android.ws.persistence.schema.SchemaDefinition;
  * Forked from https://github.com/k9mail/k-9/blob/master/k9mail/src/main/java/com/fsck/k9/mailstore/LockableDatabase.java
  */
 public class LockableDatabase {
-    private final static String TAG =  LockableDatabase.class.getName();
+    private final static String TAG = LockableDatabase.class.getName();
 
     /**
      * Callback interface for DB operations. Concept is similar to Spring
@@ -228,7 +228,7 @@ public class LockableDatabase {
             deleted |= new File(database.getPath() + "-journal").delete();
         }
         if (!deleted) {
-            Log.i(TAG,"deleteDatabase(): No files deleted.");
+            Log.i(TAG, "deleteDatabase(): No files deleted.");
         }
     }
 }

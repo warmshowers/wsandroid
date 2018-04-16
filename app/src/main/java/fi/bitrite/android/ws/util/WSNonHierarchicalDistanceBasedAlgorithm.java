@@ -39,15 +39,18 @@ import fi.bitrite.android.ws.R;
  * <p/>
  * Clusters have the center of the first element (not the centroid of the items within it).
  */
-public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> implements Algorithm<T> {
+public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem>
+        implements Algorithm<T> {
+    private Context mContext;
+
     // Turning this down makes for more markers and less clusters
     // 20 seems to make too many clusters. 100 was the original default.
-    private Context mContext;
     private static int MAX_DISTANCE_AT_ZOOM = 80;
 
     public WSNonHierarchicalDistanceBasedAlgorithm(Context context) {
         mContext = context;
-        MAX_DISTANCE_AT_ZOOM = mContext.getResources().getInteger(R.integer.map_algo_max_distance_at_zoom);
+        MAX_DISTANCE_AT_ZOOM =
+                mContext.getResources().getInteger(R.integer.map_algo_max_distance_at_zoom);
     }
 
     /**
@@ -60,11 +63,12 @@ public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> impl
      */
     private final PointQuadTree<QuadItem<T>> mQuadTree = new PointQuadTree<QuadItem<T>>(0, 1, 0, 1);
 
-    private static final SphericalMercatorProjection PROJECTION = new SphericalMercatorProjection(1);
+    private static final SphericalMercatorProjection PROJECTION =
+            new SphericalMercatorProjection(1);
 
     @Override
     public void addItem(T item) {
-        final QuadItem<T> quadItem = new QuadItem<T>(item);
+        final QuadItem<T> quadItem = new QuadItem<>(item);
         synchronized (mQuadTree) {
             mItems.add(quadItem);
             mQuadTree.add(quadItem);
@@ -88,7 +92,8 @@ public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> impl
 
     @Override
     public void removeItem(T item) {
-        throw new UnsupportedOperationException("NonHierarchicalDistanceBasedAlgorithm.remove not implemented");
+        throw new UnsupportedOperationException(
+                "NonHierarchicalDistanceBasedAlgorithm.remove not implemented");
     }
 
     @Override
@@ -100,7 +105,7 @@ public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> impl
         final Set<QuadItem<T>> visitedCandidates = new HashSet<QuadItem<T>>();
         final Set<Cluster<T>> results = new HashSet<Cluster<T>>();
         final Map<QuadItem<T>, Double> distanceToCluster = new HashMap<QuadItem<T>, Double>();
-        final Map<QuadItem<T>, StaticCluster<T>> itemToCluster = new HashMap<QuadItem<T>, StaticCluster<T>>();
+        final Map<QuadItem<T>, StaticCluster<T>> itemToCluster = new HashMap<>();
 
         synchronized (mQuadTree) {
             for (QuadItem<T> candidate : mItems) {
@@ -119,7 +124,8 @@ public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> impl
                     distanceToCluster.put(candidate, 0d);
                     continue;
                 }
-                StaticCluster<T> cluster = new StaticCluster<T>(candidate.mClusterItem.getPosition());
+                StaticCluster<T> cluster =
+                        new StaticCluster<>(candidate.mClusterItem.getPosition());
                 results.add(cluster);
 
                 for (QuadItem<T> clusterItem : clusterItems) {

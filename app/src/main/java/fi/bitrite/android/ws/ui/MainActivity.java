@@ -102,7 +102,11 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                 R.string.drawer_open, R.string.drawer_close);
         // The drawer toggle breaks the click listener on the home button (when it is displayed as
         // up). We fix that.
-        mDrawerToggle.setToolbarNavigationClickListener(view -> { onSupportNavigateUp(); });
+        mDrawerToggle.setToolbarNavigationClickListener(view -> onSupportNavigateUp());
+        mDrawerToggle.getDrawerArrowDrawable()
+                .setColor(getResources().getColor(android.R.color.white));
+        mDrawerToggle.setDrawerSlideAnimationEnabled(false);
+
 
         mMainLayout.addDrawerListener(mDrawerToggle);
 
@@ -111,13 +115,15 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         //
         // Primary navigation.
         NavigationListAdapter primaryNavigationListAdapter = NavigationListAdapter.create(
-                this, mPrimaryNavigationItems, mNavigationController.getTopLevelNavigationItemTag());
+                this, mPrimaryNavigationItems,
+                mNavigationController.getTopLevelNavigationItemTag());
         primaryNavigationListAdapter.getOnClickSubject().subscribe(this::onNavigationItemClicked);
         mPrimaryNavigationList.setAdapter(primaryNavigationListAdapter);
 
         // Secondary navigation.
         NavigationListAdapter secondaryNavigationListAdapter = NavigationListAdapter.create(
-                this, mSecondaryNavigationItems, mNavigationController.getTopLevelNavigationItemTag());
+                this, mSecondaryNavigationItems,
+                mNavigationController.getTopLevelNavigationItemTag());
         secondaryNavigationListAdapter.getOnClickSubject().subscribe(this::onNavigationItemClicked);
         mSecondaryNavigationList.setAdapter(secondaryNavigationListAdapter);
 
@@ -159,7 +165,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                         if (TextUtils.isEmpty(profilePhotoUrl)) {
                             mImgUserPhoto.setImageResource(R.drawable.default_hostinfo_profile);
                         } else {
-                            Picasso.with(this).load(profilePhotoUrl).into(mImgUserPhoto); // largeUrl
+                            Picasso.with(this)
+                                    .load(profilePhotoUrl)
+                                    .into(mImgUserPhoto); // largeUrl
                         }
                     } else {
                         // TODO(saemy): What to show?
@@ -183,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         setIntent(intent);
         handleSearchIntent(intent);
     }
+
     private void handleSearchIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
@@ -207,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void onFragmentBackStackChanged(){
+    private void onFragmentBackStackChanged() {
         boolean showHomeAsUp = mNavigationController.isShowHomeAsUp();
 
         // We disable the drawer indicator if we want to show the up action. This decorates the home

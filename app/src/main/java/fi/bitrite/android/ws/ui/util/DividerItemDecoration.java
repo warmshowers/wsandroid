@@ -18,6 +18,9 @@ import android.widget.LinearLayout;
  * between items of a {@link android.support.v7.widget.LinearLayoutManager}. It supports both
  * {@link #HORIZONTAL} and {@link #VERTICAL} orientations.
  *
+ * This allows to have the last divider removed which is impossible in the version in the Android
+ * support library.
+ *
  * <pre>
  *     mDividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
  *             mLayoutManager.getOrientation(), false, false);
@@ -54,7 +57,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         mDivider = a.getDrawable(0);
         if (mDivider == null) {
             Log.w(TAG, "@android:attr/listDivider was not set in the theme used for this "
-                    + "DividerItemDecoration. Please set that attribute all call setDrawable()");
+                       + "DividerItemDecoration. Please set that attribute all call setDrawable()");
         }
         a.recycle();
         setOrientation(orientation);

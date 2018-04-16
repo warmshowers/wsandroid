@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     android:id="@+id/navigation_item_layout"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="48dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:gravity="center_vertical">
+    android:paddingRight="16dp">
 
     <ImageView
         android:id="@+id/icon_menu_item"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_map_grey600_24dp"/>
+        app:srcCompat="@drawable/ic_map_grey600_24dp" />
 
     <TextView
+        android:id="@+id/lbl_menu_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Menu Text"
-        android:id="@+id/lbl_menu_item"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"/>
+        android:text="Menu Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 </LinearLayout>

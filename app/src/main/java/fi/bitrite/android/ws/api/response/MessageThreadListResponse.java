@@ -74,7 +74,7 @@ public class MessageThreadListResponse {
 
             MessageThreadListResponse result = new MessageThreadListResponse();
 
-            Type collectionType = new TypeToken<List<Thread>>(){}.getType();
+            Type collectionType = new TypeToken<List<Thread>>() {}.getType();
             result.messageThreads = context.deserialize(jsonElement, collectionType);
 
             return result;

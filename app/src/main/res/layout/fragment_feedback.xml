@@ -9,29 +9,29 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:divider="@drawable/divider"
+        android:dividerPadding="-16dp"
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:divider="@drawable/divider"
-        android:dividerPadding="-16dp"
         android:showDividers="middle">
 
         <TextView
             android:id="@+id/all_lbl_no_network_warning"
             style="@style/WsText.warning"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/not_connected_to_network"/>
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/not_connected_to_network" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/activity_horizontal_margin"
-            android:paddingBottom="@dimen/activity_horizontal_margin">
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_horizontal_margin">
 
             <TextView
                 android:id="@+id/feedback_lbl_rating"
@@ -44,9 +44,9 @@
                 android:id="@+id/feedback_sel_rating"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:background="#00ffffff"
                 android:entries="@array/feedback_rating_options"
-                android:spinnerMode="dropdown"
-                android:background="#00ffffff"/>
+                android:spinnerMode="dropdown" />
 
         </LinearLayout>
 
@@ -54,29 +54,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/activity_horizontal_margin"
-            android:paddingBottom="@dimen/activity_horizontal_margin">
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_horizontal_margin">
 
             <TextView
                 style="@style/WsText.subHead"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/label_feedback_for_this_member"/>
+                android:text="@string/label_feedback_for_this_member" />
 
             <EditText
                 android:id="@+id/feedback_txt_feedback"
                 style="@style/WsInputText"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="#00ffffff"
-                android:padding="0dp"
                 android:layout_marginTop="8dp"
+                android:background="#00ffffff"
                 android:enabled="true"
                 android:focusable="true"
                 android:gravity="top"
                 android:hint="@string/feedback_hint"
                 android:inputType="text|textMultiLine|textCapSentences|textAutoCorrect"
-                android:minLines="3" />
+                android:minLines="3"
+                android:padding="0dp" />
 
         </LinearLayout>
 
@@ -84,25 +84,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/activity_horizontal_margin"
-            android:paddingBottom="@dimen/activity_horizontal_margin">
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_horizontal_margin">
 
             <TextView
+                style="@style/WsText.subHead"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/WsText.subHead"
-                android:text="@string/feedback_date_we_met"
-                android:focusable="false" />
+                android:focusable="false"
+                android:text="@string/feedback_date_we_met" />
 
             <EditText
                 android:id="@+id/feedback_txt_date_we_met"
                 style="@style/WsText.light"
-                android:background="#00ffffff"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:focusable="false"
                 android:paddingTop="10dp"
-                android:text="May 2010"
-                android:focusable="false"/>
+                android:text="May 2010" />
 
         </LinearLayout>
 
@@ -110,34 +110,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingTop="@dimen/activity_horizontal_margin"
-            android:paddingBottom="@dimen/activity_horizontal_margin">
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_horizontal_margin">
 
             <TextView
+                style="@style/WsText.subHead"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                style="@style/WsText.subHead"
                 android:text="@string/feedback_how_we_met_prompt" />
 
             <Spinner
                 android:id="@+id/feedback_sel_relation"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:background="#00ffffff"
                 android:entries="@array/feedback_relation_options"
                 android:prompt="@string/feedback_how_we_met_prompt"
-                android:spinnerMode="dropdown"
-                android:background="#00ffffff"/>
+                android:spinnerMode="dropdown" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:orientation="vertical"
-            android:paddingTop="@dimen/activity_horizontal_margin"
             android:paddingBottom="@dimen/activity_horizontal_margin"
 
-            android:gravity="right">
+            android:paddingTop="@dimen/activity_horizontal_margin">
 
             <Button
                 android:id="@+id/all_btn_submit"

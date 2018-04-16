@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -39,31 +40,6 @@ public class AuthenticationManager {
 
     private final BehaviorSubject<Account[]> mAccounts;
 
-    public class LoginResult {
-        private final Response<LoginResponse> mResponse;
-        private final AuthData mAuthData;
-
-        LoginResult(Response<LoginResponse> response) {
-            this(response, null);
-        }
-        LoginResult(Response<LoginResponse> response, AuthData authData) {
-            mAuthData = authData;
-            mResponse = response;
-        }
-
-        public boolean isSuccessful() {
-            return mResponse.isSuccessful();
-        }
-        public Response<LoginResponse> response() {
-            return mResponse;
-        }
-
-        @Nullable
-        public AuthData authData() {
-            return mAuthData;
-        }
-    }
-
     @Inject
     public AuthenticationManager(AccountManager accountManager,
                                  WarmshowersService warmshowersService) {
@@ -73,7 +49,7 @@ public class AuthenticationManager {
         mAccounts = BehaviorSubject.createDefault(mAccountManager.getAccountsByType(ACCOUNT_TYPE));
         mAccountManager.addOnAccountsUpdatedListener(accounts -> {
             Account[] newAccounts = mAccountManager.getAccountsByType(ACCOUNT_TYPE);
-            if (!mAccounts.getValue().equals(newAccounts)) {
+            if (!Arrays.equals(mAccounts.getValue(), newAccounts)) {
                 mAccounts.onNext(newAccounts);
             }
         }, null, false);
@@ -106,8 +82,9 @@ public class AuthenticationManager {
             };
 
             // Asks the user to create the new account. This is done by showing the login page.
-            mAccountManager.addAccount(ACCOUNT_TYPE, AUTH_TOKEN_TYPE, null, options,
-                    activity, accountManagerCallback, null);
+            mAccountManager.addAccount(
+                    ACCOUNT_TYPE, AUTH_TOKEN_TYPE, null, options, activity, accountManagerCallback,
+                    null);
         }).toObservable();
     }
 
@@ -143,8 +120,8 @@ public class AuthenticationManager {
 
                             // Sets the user id.
                             int userId = loginResponse.user.id;
-                            mAccountManager.setUserData(account, KEY_USER_ID,
-                                                        Integer.toString(userId));
+                            mAccountManager.setUserData(
+                                    account, KEY_USER_ID, Integer.toString(userId));
                         }
 
                         // Updates the CSRF token.
@@ -154,8 +131,8 @@ public class AuthenticationManager {
                         // Fetches the auth token from the login response.
                         AuthToken authToken =
                                 new AuthToken(loginResponse.sessionName, loginResponse.sessionId);
-                        mAccountManager.setAuthToken(account, AUTH_TOKEN_TYPE,
-                                                     authToken.toString());
+                        mAccountManager.setAuthToken(
+                                account, AUTH_TOKEN_TYPE, authToken.toString());
 
                         // Fires the callback.
                         AuthData authData = new AuthData(account, authToken, csrfToken);
@@ -243,6 +220,7 @@ public class AuthenticationManager {
                     : fi.bitrite.android.ws.auth.AccountManager.UNKNOWN_USER_ID;
         });
     }
+
     public String getCsrfToken(@NonNull Account account) {
         return executeWithReadLock(v -> mAccountManager.getUserData(account, KEY_CSRF_TOKEN));
     }
@@ -272,6 +250,7 @@ public class AuthenticationManager {
         Account account = new Account(username, ACCOUNT_TYPE);
         removeAccount(account);
     }
+
     public void removeAccount(@NonNull Account account) {
         executeWithWriteLock(v -> {
             mAccountManager.removeAccount(account, null, null);
@@ -279,10 +258,10 @@ public class AuthenticationManager {
         });
     }
 
-
     private <R> R executeWithReadLock(Function<Void, R> f) {
         return executeWithLock(mAuthenticationManagerLock.readLock(), f);
     }
+
     private <R> R executeWithWriteLock(Function<Void, R> f) {
         return executeWithLock(mAuthenticationManagerLock.writeLock(), f);
     }
@@ -295,6 +274,33 @@ public class AuthenticationManager {
             return null;
         } finally {
             lock.unlock();
+        }
+    }
+
+    public class LoginResult {
+        private final Response<LoginResponse> mResponse;
+        private final AuthData mAuthData;
+
+        LoginResult(Response<LoginResponse> response) {
+            this(response, null);
+        }
+
+        LoginResult(Response<LoginResponse> response, AuthData authData) {
+            mAuthData = authData;
+            mResponse = response;
+        }
+
+        public boolean isSuccessful() {
+            return mResponse.isSuccessful();
+        }
+
+        public Response<LoginResponse> response() {
+            return mResponse;
+        }
+
+        @Nullable
+        public AuthData authData() {
+            return mAuthData;
         }
     }
 }

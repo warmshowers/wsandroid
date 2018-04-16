@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDex;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
@@ -21,19 +22,15 @@ import fi.bitrite.android.ws.di.AppInjector;
 public class WSAndroidApplication extends Application implements HasActivityInjector {
 
     public static final String TAG = "WSAndroidApplication";
-    private static Context mContext;
     private static AppInjector mAppInjector;
 
     @Inject DispatchingAndroidInjector<Activity> mDispatchingAndroidInjector;
     @Inject AuthenticationController mAuthenticationController;
+    private final HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
 
-    // Google Analytics Support
-    public enum TrackerName {
-        APP_TRACKER,
-        GLOBAL_TRACKER
+    public static AppComponent getAppComponent() {
+        return mAppInjector.getAppComponent();
     }
-
-    HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
         String PROPERTY_ID = getString(R.string.ga_property_id);
@@ -41,19 +38,18 @@ public class WSAndroidApplication extends Application implements HasActivityInje
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            Tracker t = (trackerId == TrackerName.APP_TRACKER) ? analytics.newTracker(R.xml.app_tracker)
-                    : (trackerId == TrackerName.GLOBAL_TRACKER) ? analytics.newTracker(R.xml.global_tracker) :
-                    analytics.newTracker(PROPERTY_ID);
+            Tracker t = (trackerId == TrackerName.APP_TRACKER)
+                    ? analytics.newTracker(R.xml.app_tracker)
+                    : (trackerId == TrackerName.GLOBAL_TRACKER)
+                            ? analytics.newTracker(R.xml.global_tracker)
+                            : analytics.newTracker(PROPERTY_ID);
             mTrackers.put(trackerId, t);
         }
         return mTrackers.get(trackerId);
     }
 
-
     public void onCreate() {
         super.onCreate();
-
-        mContext = getApplicationContext();
 
         // Set automatic activity reports, per http://stackoverflow.com/a/24983778/215713
         GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
@@ -68,15 +64,20 @@ public class WSAndroidApplication extends Application implements HasActivityInje
         // Injected variables are available from this point.
     }
 
-    public static Context getAppContext() {
-        return WSAndroidApplication.mContext;
-    }
-    public static AppComponent getAppComponent() {
-        return mAppInjector.getAppComponent();
-    }
-
     @Override
     public DispatchingAndroidInjector<Activity> activityInjector() {
         return mDispatchingAndroidInjector;
+    }
+
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(context);
+        MultiDex.install(this);
+    }
+
+    // Google Analytics Support
+    public enum TrackerName {
+        APP_TRACKER,
+        GLOBAL_TRACKER
     }
 }

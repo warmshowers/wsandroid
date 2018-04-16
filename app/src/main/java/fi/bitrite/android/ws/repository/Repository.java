@@ -16,29 +16,6 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 
 abstract class Repository<T> {
-    enum Freshness {
-        OLD,
-        REFRESHING,
-        FRESH,
-    };
-
-    public enum ShouldSaveInDb {
-        YES,
-        NO,
-        IF_ALREADY_IN_DB
-    };
-
-    class CacheEntry {
-        final BehaviorSubject<Resource<T>> data = BehaviorSubject.create();
-
-        /**
-         * Whether the user is loaded from the Warmshowers service or from the local db only.
-         *
-         * This is initialized as REFRESHING to avoid a race in #get().
-         */
-        Freshness freshness = Freshness.REFRESHING;
-    }
-
     private final BehaviorSubject<List<Observable<Resource<T>>>> mAllObservable =
             BehaviorSubject.create();
     private final ConcurrentMap<Integer, CacheEntry> mCache = new ConcurrentHashMap<>();
@@ -95,8 +72,8 @@ abstract class Repository<T> {
         }
 
         Resource<T> resource = cacheEntry.data.getValue();
-        if (isNewCacheEntry || cacheEntry.freshness == Freshness.OLD ||
-                resource == null || resource.isError()) {
+        if (isNewCacheEntry || cacheEntry.freshness == Freshness.OLD
+            || resource == null || resource.isError()) {
             // We load it from the network.
 
             Observable<LoadResult<T>> lfn = loadFromNetwork(id);
@@ -138,9 +115,8 @@ abstract class Repository<T> {
                     }
                 } else {
                     // We got the data from the network.
-                    boolean shouldSave =
-                            shouldSaveInDb == ShouldSaveInDb.YES ||
-                            (isInDb.get() && shouldSaveInDb == ShouldSaveInDb.IF_ALREADY_IN_DB);
+                    boolean shouldSave = shouldSaveInDb == ShouldSaveInDb.YES
+                            || (isInDb.get() && shouldSaveInDb == ShouldSaveInDb.IF_ALREADY_IN_DB);
                     if (shouldSave) {
                         // We save it to the db.
                         saveInDb(id, result.data);
@@ -209,9 +185,9 @@ abstract class Repository<T> {
     }
     void popExcept(List<Integer> ids) {
         for (Integer entryId : mCache.keySet()) {
-           if (!ids.contains(entryId)) {
-               mCache.remove(entryId);
-           }
+            if (!ids.contains(entryId)) {
+                mCache.remove(entryId);
+            }
         }
         notifyAllChanged();
     }
@@ -234,12 +210,19 @@ abstract class Repository<T> {
     abstract Observable<LoadResult<T>> loadFromDb(int id);
     abstract Observable<LoadResult<T>> loadFromNetwork(int id);
 
-    static class LoadResult<T> {
-        enum Source {
-            DB,
-            NETWORK,
-        };
+    enum Freshness {
+        OLD,
+        REFRESHING,
+        FRESH,
+    }
 
+    public enum ShouldSaveInDb {
+        YES,
+        NO,
+        IF_ALREADY_IN_DB
+    }
+
+    static class LoadResult<T> {
         final Source source;
         final T data;
 
@@ -254,5 +237,21 @@ abstract class Repository<T> {
         boolean isFromNetwork() {
             return source == Source.NETWORK;
         }
+
+        enum Source {
+            DB,
+            NETWORK,
+        }
+    }
+
+    class CacheEntry {
+        final BehaviorSubject<Resource<T>> data = BehaviorSubject.create();
+
+        /**
+         * Whether the user is loaded from the Warmshowers service or from the local db only.
+         *
+         * This is initialized as REFRESHING to avoid a race in #get().
+         */
+        Freshness freshness = Freshness.REFRESHING;
     }
 }

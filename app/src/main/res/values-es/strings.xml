@@ -10,13 +10,14 @@
     <string name="no_starred_hosts">"No has agregado anfitriones a Favoritos (el perfil del anfitrión aparecerá sin conexión a internet). Puedes agregar anfitriones a Favoritos en la página de información del anfitrión presionando el ícono de estrella."</string>
     <string name="list_search_hint">Nombre o ciudad </string>
     <string name="no_results">Tu búsqueda no produjo resultados.</string>
+    <string name="greeting">¡Hola!</string>
     <string name="enter_credentials">Por favor, ingresa tu nombre de usuario (o email) y contraseña:</string>
     <string name="view_details">Ver detalles </string>
     <string name="star">Favoritos</string>
     <string name="close">Cerrar</string>
     <string name="username_hint">Usuario o Email</string>
     <string name="password_hint">Contraseña</string>
-    <string name="password">Contraseña:</string>
+    <string name="button_text_login">Entrar</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
     <string name="description">Sobre este miembro</string>
@@ -98,7 +99,8 @@
     <string name="prefs_distance_unit">Unidad de distancia</string>
     <string name="prefs_distance_unit_summary">¿Quieres la unidad de distancia en Kilómetros o en Millas? </string>
     <string name="prefs_ga_collect_stats_title">Enviar estadísticas anónimas </string>
-    <string name="prefs_ga_collect_stats_summary">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
+    <string name="prefs_ga_collect_stats_summary_on">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
+    <string name="prefs_ga_collect_stats_summary_off">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
     <string name="languages_spoken"><u>Idiomas:</u></string>
     <string name="map_network_not_connected">La red no está conectada, sólo se muestran los anfitriones destacados.</string>
     <string name="open_in_map_application">Abrir en aplicación de mapas</string>
@@ -184,5 +186,11 @@
     <string name="title_fragment_messages">Mensajes</string>
     <string name="title_fragment_settings">Configuraciones</string>
     <string name="title_fragment_users">Anfitrións</string>
+
+    <string name="button_text_forgot_password">¿Has olvidado la contraseña?</string>
+    <string name="url_target_forgot_password">https://es.warmshowers.org/user/password</string>
+
+    <string name="content_description_your_avatar">Tu foto de perfil</string>
+    <string name="content_description_avatar_of_var">Foto de perfil de %s</string>
 
 </resources>

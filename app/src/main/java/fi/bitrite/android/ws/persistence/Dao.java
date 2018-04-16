@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws.persistence;
 
-
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
@@ -18,8 +17,9 @@ abstract class Dao {
         insertOrUpdate(db, table, cv, "id = ?", int2str(id));
     }
 
-    void insertOrUpdate(SQLiteDatabase db, String table, ContentValues cv, String whereClause, String[] whereArgs) {
-        long id =  db.insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
+    void insertOrUpdate(SQLiteDatabase db, String table, ContentValues cv, String whereClause,
+                        String[] whereArgs) {
+        long id = db.insertWithOnConflict(table, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
         if (id == -1) {
             // The column already exists -> we do an update.
             db.update(table, cv, whereClause, whereArgs);

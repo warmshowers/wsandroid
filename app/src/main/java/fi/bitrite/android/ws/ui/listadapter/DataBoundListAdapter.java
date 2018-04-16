@@ -114,17 +114,20 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
                             }
 
                             @Override
-                            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                            public boolean areItemsTheSame(int oldItemPosition,
+                                                           int newItemPosition) {
                                 T oldItem = oldItems.get(oldItemPosition);
                                 T newItem = update.get(newItemPosition);
                                 return DataBoundListAdapter.this.areItemsTheSame(oldItem, newItem);
                             }
 
                             @Override
-                            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                            public boolean areContentsTheSame(int oldItemPosition,
+                                                              int newItemPosition) {
                                 T oldItem = oldItems.get(oldItemPosition);
                                 T newItem = update.get(newItemPosition);
-                                return DataBoundListAdapter.this.areContentsTheSame(oldItem, newItem);
+                                return DataBoundListAdapter.this.areContentsTheSame(oldItem,
+                                        newItem);
                             }
                         })))
                         .subscribeOn(Schedulers.computation())

@@ -32,7 +32,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType,
                              String authTokenType, String[] requiredFeatures,
-                             Bundle options) throws NetworkErrorException{
+                             Bundle options) throws NetworkErrorException {
         final Intent intent = new Intent(context, AuthenticatorActivity.class)
                 // Used by {@link AuthenticatorActivity}.
                 .putExtra(AccountManager.KEY_ACCOUNT_TYPE, accountType)

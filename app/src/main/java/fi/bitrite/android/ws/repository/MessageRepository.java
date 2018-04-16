@@ -38,6 +38,9 @@ import io.reactivex.schedulers.Schedulers;
 @Singleton
 public class MessageRepository extends Repository<MessageThread> {
 
+    public final static int STATUS_NEW_THREAD_ID_NOT_YET_KNOWN = 0;
+    public final static int STATUS_NEW_THREAD_ID_NOT_IDENTIFIABLE = -1;
+
     private final LoggedInUserHelper mLoggedInUserHelper;
     private final MessageDao mMessageDao;
     private final WarmshowersService mWarmshowersService;
@@ -67,7 +70,6 @@ public class MessageRepository extends Repository<MessageThread> {
     public Observable<List<Observable<Resource<MessageThread>>>> getAll() {
         return super.getAll();
     }
-
     public Observable<Resource<MessageThread>> get(int threadId) {
         return super.get(threadId, ShouldSaveInDb.YES);
     }
@@ -90,8 +92,6 @@ public class MessageRepository extends Repository<MessageThread> {
                 }).ignoreElements();
     }
 
-    public final static int STATUS_NEW_THREAD_ID_NOT_YET_KNOWN = 0;
-    public final static int STATUS_NEW_THREAD_ID_NOT_IDENTIFIABLE = -1;
     /**
      * Creates a new message thread.
      *
@@ -182,7 +182,7 @@ public class MessageRepository extends Repository<MessageThread> {
 
             // Saves the thread in the db.
             save(threadId, thread)
-                    .blockingAwait();
+                    .blockingAwait(); // TODO(saemy): Remove blocking.
 
             // We persisted the message. This is enough for success. We eventually post it to the
             // server.
@@ -282,7 +282,9 @@ public class MessageRepository extends Repository<MessageThread> {
                     int unreadStatus = currentThread != null
                             ? currentThread.readStatus : MessageThread.STATUS_READ;
                     Date started = currentThread != null ? currentThread.started : new Date();
-                    Date lastUpdated = currentThread != null ? currentThread.lastUpdated : new Date();
+                    Date lastUpdated = currentThread != null
+                            ? currentThread.lastUpdated
+                            : new Date();
 
                     MessageThread newThread =
                             apiThread.toMessageThread(unreadStatus, started, lastUpdated);
@@ -316,10 +318,10 @@ public class MessageRepository extends Repository<MessageThread> {
             // We use some heuristics here as the webservice does not change lastUpdated on e.g.
             // read status changes.
             MessageThread dbThread = getRaw(apiThread.id);
-            boolean updateNeeded = dbThread == null || // New thread
-                    dbThread.isUnread() != apiThread.isUnread() ||
-                    dbThread.lastUpdated.before(apiThread.lastUpdated) ||
-                    !dbThread.subject.equals(apiThread.subject);
+            boolean updateNeeded = dbThread == null // New thread
+                                   || dbThread.isUnread() != apiThread.isUnread()
+                                   || dbThread.lastUpdated.before(apiThread.lastUpdated)
+                                   || !dbThread.subject.equals(apiThread.subject);
             if (updateNeeded) {
                 // Pushes the current value to the cache. (This is needed since the API response for
                 // the single thread does not include the 'started' and 'last_update' fields.
@@ -329,8 +331,8 @@ public class MessageRepository extends Repository<MessageThread> {
 
                 // Refetches the thread.
                 reloadThread(temporary.id, temporary);
-            } else if (dbThread.readStatus == MessageThread.STATUS_READ_NOT_YET_PUSHED ||
-                    dbThread.readStatus == MessageThread.STATUS_UNREAD_NOT_YET_PUSHED) {
+            } else if (dbThread.readStatus == MessageThread.STATUS_READ_NOT_YET_PUSHED
+                       || dbThread.readStatus == MessageThread.STATUS_UNREAD_NOT_YET_PUSHED) {
                 // This is the followup of #setThreadReadStatus(). We must push the thread's
                 // read status upstream now that we know that the network is around and no
                 // update was made. If it fails again, we just push it the next time.

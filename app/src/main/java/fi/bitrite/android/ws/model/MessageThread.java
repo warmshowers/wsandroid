@@ -30,7 +30,7 @@ public class MessageThread {
                 lastUpdated);
     }
     public MessageThread(int id, String subject, Date started, int readStatus,
-        List<Integer> participantIds, List<Message> messages, Date lastUpdated) {
+                         List<Integer> participantIds, List<Message> messages, Date lastUpdated) {
         this.id = id;
         this.subject = subject;
         this.started = started;

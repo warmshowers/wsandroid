@@ -106,20 +106,25 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
     public CircleImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, defStyle, 0);
+        TypedArray a =
+                context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, defStyle, 0);
 
-        mBorderWidth = a.getDimensionPixelSize(R.styleable.CircleImageView_civ_border_width, DEFAULT_BORDER_WIDTH);
-        mBorderColor = a.getColor(R.styleable.CircleImageView_civ_border_color, DEFAULT_BORDER_COLOR);
-        mBorderOverlay = a.getBoolean(R.styleable.CircleImageView_civ_border_overlay, DEFAULT_BORDER_OVERLAY);
+        mBorderWidth = a.getDimensionPixelSize(R.styleable.CircleImageView_civ_border_width,
+                DEFAULT_BORDER_WIDTH);
+        mBorderColor =
+                a.getColor(R.styleable.CircleImageView_civ_border_color, DEFAULT_BORDER_COLOR);
+        mBorderOverlay = a.getBoolean(R.styleable.CircleImageView_civ_border_overlay,
+                DEFAULT_BORDER_OVERLAY);
 
         if (a.hasValue(R.styleable.CircleImageView_civ_circle_background_color)) {
-            mCircleBackgroundColor = a.getColor(R.styleable.CircleImageView_civ_circle_background_color,
-                    DEFAULT_CIRCLE_BACKGROUND_COLOR);
+            mCircleBackgroundColor =
+                    a.getColor(R.styleable.CircleImageView_civ_circle_background_color,
+                            DEFAULT_CIRCLE_BACKGROUND_COLOR);
         }
 
         a.recycle();
 
-        final int[] ATTRS = new int[] { android.R.attr.textColor, android.R.attr.text };
+        final int[] ATTRS = new int[]{ android.R.attr.textColor, android.R.attr.text };
         a = context.obtainStyledAttributes(attrs, ATTRS);
 
         mTextColor = a.getColor(0, DEFAULT_TEXT_COLOR);
@@ -153,7 +158,8 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
     @Override
     public void setScaleType(ScaleType scaleType) {
         if (scaleType != SCALE_TYPE) {
-            throw new IllegalArgumentException(String.format("ScaleType %s not supported.", scaleType));
+            throw new IllegalArgumentException(
+                    String.format("ScaleType %s not supported.", scaleType));
         }
     }
 
@@ -174,7 +180,8 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
         if (mBitmap == null) {
             // Draws the text.
             if (mCircleBackgroundColor != Color.TRANSPARENT) {
-                canvas.drawCircle(mDrawableRect.centerX(), mDrawableRect.centerY(), mDrawableRadius, mCircleBackgroundPaint);
+                canvas.drawCircle(mDrawableRect.centerX(), mDrawableRect.centerY(), mDrawableRadius,
+                        mCircleBackgroundPaint);
             }
 
             if (!TextUtils.isEmpty(mText)) {
@@ -196,12 +203,14 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
                 getDrawable().draw(mCanvas);
             }
 
-            canvas.drawCircle(mDrawableRect.centerX(), mDrawableRect.centerY(), mDrawableRadius, mBitmapPaint);
+            canvas.drawCircle(mDrawableRect.centerX(), mDrawableRect.centerY(), mDrawableRadius,
+                    mBitmapPaint);
         }
 
         // Draws the border.
         if (mBorderWidth > 0) {
-            canvas.drawCircle(mBorderRect.centerX(), mBorderRect.centerY(), mBorderRadius, mBorderPaint);
+            canvas.drawCircle(mBorderRect.centerX(), mBorderRect.centerY(), mBorderRadius,
+                    mBorderPaint);
         }
     }
 
@@ -346,6 +355,10 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
     }
 
     @Override
+    public ColorFilter getColorFilter() {
+        return mColorFilter;
+    }
+    @Override
     public void setColorFilter(ColorFilter cf) {
         if (cf == mColorFilter) {
             return;
@@ -355,12 +368,6 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
         applyColorFilter();
         invalidate();
     }
-
-    @Override
-    public ColorFilter getColorFilter() {
-        return mColorFilter;
-    }
-
     private void applyColorFilter() {
         if (mBitmapPaint != null) {
             mBitmapPaint.setColorFilter(mColorFilter);
@@ -380,9 +387,11 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
             Bitmap bitmap;
 
             if (drawable instanceof ColorDrawable) {
-                bitmap = Bitmap.createBitmap(COLORDRAWABLE_DIMENSION, COLORDRAWABLE_DIMENSION, BITMAP_CONFIG);
+                bitmap = Bitmap.createBitmap(COLORDRAWABLE_DIMENSION, COLORDRAWABLE_DIMENSION,
+                        BITMAP_CONFIG);
             } else {
-                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), BITMAP_CONFIG);
+                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                        drawable.getIntrinsicHeight(), BITMAP_CONFIG);
             }
 
             return bitmap;
@@ -430,7 +439,8 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
         mBorderPaint.setStrokeWidth(mBorderWidth);
 
         mBorderRect.set(calculateBounds());
-        mBorderRadius = Math.min((mBorderRect.height() - mBorderWidth) / 2.0f, (mBorderRect.width() - mBorderWidth) / 2.0f);
+        mBorderRadius = Math.min((mBorderRect.height() - mBorderWidth) / 2.0f,
+                (mBorderRect.width() - mBorderWidth) / 2.0f);
 
         mCircleBackgroundPaint.setStyle(Paint.Style.FILL);
         mCircleBackgroundPaint.setAntiAlias(true);
@@ -457,7 +467,7 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
     }
 
     private RectF calculateBounds() {
-        int availableWidth  = getWidth() - getPaddingLeft() - getPaddingRight();
+        int availableWidth = getWidth() - getPaddingLeft() - getPaddingRight();
         int availableHeight = getHeight() - getPaddingTop() - getPaddingBottom();
 
         int sideLength = Math.min(availableWidth, availableHeight);
@@ -484,7 +494,8 @@ public class CircleImageView extends android.support.v7.widget.AppCompatImageVie
         }
 
         mShaderMatrix.setScale(scale, scale);
-        mShaderMatrix.postTranslate((int) (dx + 0.5f) + mDrawableRect.left, (int) (dy + 0.5f) + mDrawableRect.top);
+        mShaderMatrix.postTranslate((int) (dx + 0.5f) + mDrawableRect.left,
+                (int) (dy + 0.5f) + mDrawableRect.top);
 
         mBitmapShader.setLocalMatrix(mShaderMatrix);
     }

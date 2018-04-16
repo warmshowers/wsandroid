@@ -1,10 +1,10 @@
 package fi.bitrite.android.ws.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Automatically generated Parcelable implementation for _Host.
@@ -49,7 +49,15 @@ import android.os.Parcelable;
     protected String mProfilePictureSmall = "";
     protected String mProfilePictureLarge = "";
 
-    protected _Host(int id, String name, String fullname, String street, String additional, String city, String province, String postalCode, String country, String mobilePhone, String homePhone, String workPhone, String comments, String preferredNotice, String maxCyclists, String notCurrentlyAvailable, String bed, String bikeshop, String campground, String food, String kitchenUse, String laundry, String lawnspace, String motel, String sag, String shower, String storage, String latitude, String longitude, String login, String created, String languagesSpoken, String picture, String profilePictureSmall, String profilePictureLarge) {
+    protected _Host(int id, String name, String fullname, String street, String additional,
+                    String city, String province, String postalCode, String country,
+                    String mobilePhone, String homePhone, String workPhone, String comments,
+                    String preferredNotice, String maxCyclists, String notCurrentlyAvailable,
+                    String bed, String bikeshop, String campground, String food, String kitchenUse,
+                    String laundry, String lawnspace, String motel, String sag, String shower,
+                    String storage, String latitude, String longitude, String login, String created,
+                    String languagesSpoken, String picture, String profilePictureSmall,
+                    String profilePictureLarge) {
         this();
         mId = id;
         mName = name;

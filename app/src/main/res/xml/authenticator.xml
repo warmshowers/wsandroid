@@ -4,5 +4,5 @@
 
     android:accountType="org.warmshowers"
     android:icon="@drawable/ic_launcher"
-    android:smallIcon="@drawable/ic_launcher"
-    android:label="@string/label" />
+    android:label="@string/label"
+    android:smallIcon="@drawable/ic_launcher" />

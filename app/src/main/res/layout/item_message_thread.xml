@@ -1,68 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="7dp">
+    android:minHeight="@dimen/minimum_height_touch_target"
+    android:paddingBottom="4dp"
+    android:paddingTop="4dp">
 
     <fi.bitrite.android.ws.ui.widget.UserCircleImageView
         android:id="@+id/thread_icon"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_gravity="center"/>
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/thread_lbl_preview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/thread_lbl_participants"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingLeft="7dp"
-        android:paddingStart="7dp"
-        android:orientation="vertical">
+        android:ellipsize="middle"
+        android:fontFamily="sans-serif-medium"
+        android:paddingEnd="4dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="4dp"
+        android:paddingStart="0dp"
+        android:singleLine="true"
+        android:textSize="17sp"
+        app:layout_constraintEnd_toStartOf="@+id/thread_lbl_last_updated"
+        app:layout_constraintStart_toEndOf="@+id/thread_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="John Snow" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+    <TextView
+        android:id="@+id/thread_lbl_last_updated"
+        style="@style/WsText.light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        app:layout_constraintBottom_toTopOf="@+id/thread_lbl_subject"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/thread_lbl_participants"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1d" />
 
-            <TextView
-                android:id="@+id/thread_lbl_participants"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                style="@style/WsText.subHead"
-                android:singleLine="true"
-                android:ellipsize="end"
-                tools:textStyle="bold"
-                tools:text="John Snow"/>
+    <TextView
+        android:id="@+id/thread_lbl_subject"
+        style="@style/TextAppearance.AppCompat.Subhead"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="middle"
+        android:singleLine="true"
+        android:textColor="@color/primaryTextColor"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/thread_lbl_last_updated"
+        app:layout_constraintStart_toStartOf="@+id/thread_lbl_preview"
+        app:layout_constraintTop_toBottomOf="@+id/thread_lbl_participants"
+        tools:text="Two cyclists are looking for a stay for three nights in Dushanbe" />
 
-            <TextView
-                android:id="@+id/thread_lbl_last_updated"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|end"
-                style="@style/WsText.light"
-                android:singleLine="true"
-                tools:text="1d"/>
-        </LinearLayout>
+    <TextView
+        android:id="@+id/thread_lbl_preview"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/primaryTextColorLight"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/thread_lbl_last_updated"
+        app:layout_constraintStart_toEndOf="@+id/thread_icon"
+        app:layout_constraintTop_toBottomOf="@+id/thread_lbl_subject"
+        tools:text="Sure, you can come to our house! Our doors are always open - whenever you arrive." />
 
-        <TextView
-            android:id="@+id/thread_lbl_subject"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/WsText"
-            android:singleLine="true"
-            android:ellipsize="middle"
-            tools:text="Two cyclists are looking for a stay for three nights in Dushanbe"/>
-
-        <TextView
-            android:id="@+id/thread_lbl_preview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/WsText.light"
-            android:singleLine="true"
-            android:ellipsize="end"
-            tools:text="Sure, you can come to our house! Our doors are always open - whenever you arrive."/>
-    </LinearLayout>
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

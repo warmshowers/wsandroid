@@ -112,9 +112,11 @@ public class UserListAdapter extends ArrayAdapter<Host> {
 
         DateFormat simpleDate = DateFormat.getDateInstance();
         String activeDate = simpleDate.format(user.getLastLoginAsDate());
-        String createdDate = new SimpleDateFormat("yyyy", Locale.US).format(user.getCreatedAsDate());
+        String createdDate =
+                new SimpleDateFormat("yyyy", Locale.US).format(user.getCreatedAsDate());
 
-        String memberString = getContext().getString(R.string.search_host_summary, createdDate, activeDate);
+        String memberString =
+                getContext().getString(R.string.search_host_summary, createdDate, activeDate);
         mMemberInfo.setText(memberString);
 
         return convertView;

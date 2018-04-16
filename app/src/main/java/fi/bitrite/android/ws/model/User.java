@@ -78,7 +78,7 @@ public class User {
     private boolean hasSag;
     private boolean hasBed;
     private boolean hasLaundry;
-     private boolean hasFood;
+    private boolean hasFood;
 
     private final Date lastAccess;
     private final Date created;
