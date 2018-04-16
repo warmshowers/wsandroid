@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,6 +29,7 @@ import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.MessageThreadListAdapter;
+import fi.bitrite.android.ws.ui.util.DividerItemDecoration;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import io.reactivex.Observable;
@@ -91,8 +91,9 @@ public class MessageThreadsFragment extends BaseFragment {
 
         // Add dividers between message threads in the recycler view.
         LinearLayoutManager layoutManager = (LinearLayoutManager) mThreadList.getLayoutManager();
-        mThreadList.addItemDecoration(new DividerItemDecoration(mThreadList.getContext(),
-                layoutManager.getOrientation()));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
+                mThreadList.getContext(), layoutManager.getOrientation(), false);
+        mThreadList.addItemDecoration(dividerItemDecoration);
 
         if (icicle != null) {
             mThreadListState = icicle.getParcelable(ICICLE_KEY_THREADS_STATE);
