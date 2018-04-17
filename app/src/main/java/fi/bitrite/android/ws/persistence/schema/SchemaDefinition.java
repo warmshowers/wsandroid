@@ -35,6 +35,16 @@ public abstract class SchemaDefinition {
         }
     }
 
+    /**
+     * Just delete everything in case of a downgrade.
+     */
+    public final void downgradeDatabase(@NonNull final SQLiteDatabase db) {
+        Log.i(TAG, String.format(Locale.US, "Downgrading database from version %d to version %d",
+                db.getVersion(), getVersion()));
+        db.setVersion(0);
+        doDbUpgrade(db);
+    }
+
     private void doDbUpgrade(@NonNull final SQLiteDatabase db) {
         Log.i(TAG, String.format(Locale.US, "Upgrading database from version %d to version %d",
                 db.getVersion(), getVersion()));

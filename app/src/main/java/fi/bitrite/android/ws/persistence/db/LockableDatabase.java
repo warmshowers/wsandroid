@@ -163,8 +163,10 @@ public class LockableDatabase {
         try {
             mDb = mContext.openOrCreateDatabase(dbName, Context.MODE_PRIVATE, null);
 
-            if (mDb.getVersion() != mSchemaDefinition.getVersion()) {
+            if (mSchemaDefinition.getVersion() > mDb.getVersion()) {
                 mSchemaDefinition.upgradeDatabase(mDb);
+            } else if (mSchemaDefinition.getVersion() < mDb.getVersion()) {
+                mSchemaDefinition.downgradeDatabase(mDb);
             }
         } finally {
             unlockWrite();
