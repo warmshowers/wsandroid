@@ -22,14 +22,14 @@ ext {
     androidMapsUtilsVersion = '0.3.4'
     assertjVersion = '3.9.0'
     butterknifeVersion = '8.8.1'
-    constraintLayoutVersion = '1.0.2'
+    constraintLayoutVersion = '1.1.0'
     daggerVersion = '2.13'
     gsonVersion = '2.8.1'
     guavaVersion = '20.0'
     jsonVersion = '20170516'
     junitVersion = '4.12'
     materialDialogsVersion = '0.9.6.0' // Depends on the android support lib. Their version must match ours.
-    multidexVersion = '1.0.1'
+    multidexVersion = '1.0.3'
     picassoVersion = '2.5.2'
     playServicesVersion = '11.6.2'
     retrofitVersion = '2.3.0'
@@ -79,7 +79,7 @@ dependencies {
 }
 
 android {
-    buildToolsVersion "27.0.1" // also update in .travis.yml
+    buildToolsVersion "27.0.3" // also update in .travis.yml
 
     def doSignRelease = false
     signingConfigs {
