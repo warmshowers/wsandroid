@@ -3,16 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
-        android:defaultValue="km"
-        android:entries="@array/distanceUnits"
-        android:entryValues="@array/distanceUnitValues"
-        android:key="distance_unit"
-        android:persistent="true"
-        android:title="@string/prefs_distance_unit" />
+        android:defaultValue="@string/prefs_distance_unit_default"
+        android:entries="@array/prefs_distance_unit_entries"
+        android:entryValues="@array/prefs_distance_unit_entry_values"
+        android:key="@string/prefs_distance_unit_key"
+        android:summary="@string/prefs_distance_unit_summary"
+        android:title="@string/prefs_distance_unit_title" />
 
     <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="ga_collect_stats"
+        android:defaultValue="@bool/prefs_ga_collect_stats_default"
+        android:key="@string/prefs_ga_collect_stats_key"
         android:summaryOff="@string/prefs_ga_collect_stats_summary_off"
         android:summaryOn="@string/prefs_ga_collect_stats_summary_on"
         android:title="@string/prefs_ga_collect_stats_title" />

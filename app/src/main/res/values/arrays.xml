@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
-
-    <string-array name="distanceUnits">
-        <item name="km">Kilometers</item>
-        <item name="mi">Miles</item>
+    <!-- Untranslated distance unit values. -->
+    <string-array name="prefs_distance_unit_entry_values">
+        <item name="km">@string/distance_unit_kilometers_short_raw</item>
+        <item name="mi">@string/distance_unit_miles_short_raw</item>
     </string-array>
 
-    <string-array name="distanceUnitValues">
-        <item name="km">km</item>
-        <item name="mi">mi</item>
+    <string-array name="prefs_distance_unit_entries">
+        <item name="km">@string/distance_unit_kilometers_long</item>
+        <item name="mi">@string/distance_unit_miles_long</item>
     </string-array>
 
     <!-- Keep in sync with @{link FeedbackFragment}. -->
