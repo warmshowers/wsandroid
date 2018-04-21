@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -19,6 +18,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -30,9 +30,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -71,6 +73,7 @@ import fi.bitrite.android.ws.repository.SettingsRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.model.ClusterUser;
 import fi.bitrite.android.ws.ui.util.NavigationController;
+import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.WSNonHierarchicalDistanceBasedAlgorithm;
 import io.reactivex.Observable;
@@ -83,17 +86,15 @@ public class MapFragment extends BaseFragment implements
         ClusterManager.OnClusterInfoWindowClickListener<ClusterUser>,
         ClusterManager.OnClusterItemClickListener<ClusterUser>,
         ClusterManager.OnClusterItemInfoWindowClickListener<ClusterUser>,
-        GoogleMap.OnCameraChangeListener,
-        GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ConnectionCallbacks {
+        GoogleMap.OnCameraChangeListener {
 
     private static final String KEY_MAP_TARGET_LAT_LNG = "map_target_lat_lng";
-    private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     private static final String DIALOG_ERROR = "dialog_error";
     private static final String TAG = "MapFragment";
 
     @Inject AuthenticationController mAuthenticationController;
+    @Inject LoggedInUserHelper mLoggedInUserHelper;
     @Inject NavigationController mNavigationController;
     @Inject UserRepository mUserRepository;
     @Inject FavoriteRepository mFavoriteRepository;
@@ -106,17 +107,13 @@ public class MapFragment extends BaseFragment implements
     private ClusterManager<ClusterUser> mClusterManager;
     private Cluster<ClusterUser> mLastClickedCluster;
 
-    private CameraPosition mLastCameraPosition = null;
-    private boolean mResolvingError = false;
-    private Location mLastDeviceLocation;
-    private SettingsRepository.DistanceUnit mDistanceUnit;
-    private String mDistanceUnitShort;
     private boolean mIsOffline = false;
-    private GoogleApiClient mGoogleApiClient;
 
     private Disposable mLoadOfflineUserDisposable;
     private Toast mLastToast = null;
 
+    private SettingsRepository.DistanceUnit mDistanceUnit;
+    private String mDistanceUnitShort;
     private final SharedPreferences.OnSharedPreferenceChangeListener mOnSettingsChangeListener =
             (unused, key) -> {
                 if (key == null || key.equals(mSettingsRepository.getDistanceUnitKey())) {
@@ -124,6 +121,32 @@ public class MapFragment extends BaseFragment implements
                     mDistanceUnitShort = mSettingsRepository.getDistanceUnitShort();
                 }
             };
+
+    private static final int POSITION_PRIORITY_ESTIMATE = 0;
+    private static final int POSITION_PRIORITY_LAST_DEVICE_POSITION = 1;
+    private static final int POSITION_PRIORITY_LAST_STORED = 2;
+    private static final int POSITION_PRIORITY_FORCED = 100;
+
+    private int mLastPositionType = -1;
+    private CameraPosition mLastCameraPosition = null;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Location mLastDeviceLocation;
+    private final LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            if (locationResult == null) {
+                return;
+            }
+
+            mLastDeviceLocation = locationResult.getLastLocation();
+            // FIXME(saemy): Clear cluster info window cache as the distance to this distance is not
+            //               re-calculated.
+
+            // As we know more location details, we do (another) initial map move. This does not
+            // affect the current location, if we already moved to a more detailed location.
+            doInitialMapMove();
+        }
+    };
 
     public static MapFragment create() {
         MapFragment mapFragment = new MapFragment();
@@ -143,11 +166,7 @@ public class MapFragment extends BaseFragment implements
 
         setHasOptionsMenu(true);
 
-        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
     }
 
     @Nullable
@@ -169,12 +188,20 @@ public class MapFragment extends BaseFragment implements
         // Register the settings change listener. That does an initial call to the handler.
         mSettingsRepository.registerOnChangeListener(mOnSettingsChangeListener);
 
+        LocationRequest locationRequest = new LocationRequest()
+                .setInterval(60000)
+                .setFastestInterval(60000)
+                .setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        mFusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, null);
+
         setUpMapIfNeeded();
     }
 
     @Override
     public void onPause() {
-        mSettingsRepository.unregisterOnChangeListener(mOnSettingsChangeListener);
+        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        mSettingsRepository.registerOnChangeListener(mOnSettingsChangeListener);
+
         super.onPause();
     }
 
@@ -216,9 +243,6 @@ public class MapFragment extends BaseFragment implements
             supportMapFragment.getMapAsync(map -> {
                 mMap = map;
                 setUpMap();
-
-                // Can't connect until here because location will need map to act
-                mGoogleApiClient.connect();
             });
         }
     }
@@ -236,21 +260,7 @@ public class MapFragment extends BaseFragment implements
 
         mMap.setOnCameraChangeListener(this);
 
-        // If we were launched with an intent asking us to zoom to a member
-        LatLng targetLatLng = getArguments().getParcelable(KEY_MAP_TARGET_LAT_LNG);
-
-        CameraPosition position;
-        if (targetLatLng != null) {
-            float showHostZoom = getResources().getInteger(R.integer.map_showhost_zoom);
-            position = new CameraPosition(targetLatLng, showHostZoom, 0, 0);
-        } else {
-            // Fetches the last location from the settings.
-            position = mSettingsRepository.getLastMapLocation(false);
-        }
-        if (position != null) {
-            // The move will end up setting mLastCameraPosition.
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(position));
-        }
+        doInitialMapMove();
 
         mClusterManager = new ClusterManager<>(getContext(), mMap);
         mClusterManager.setAlgorithm(new PreCachingAlgorithmDecorator<>(
@@ -285,78 +295,57 @@ public class MapFragment extends BaseFragment implements
     }
 
     /**
-     * This is where google play services gets connected and we can now find recent location.
-     * <p/>
-     * Note that all the complex stuff about connecting to Google Play Services (just to get location)
-     * is from http://developer.android.com/training/location/retrieve-current.html and I don't actually
-     * know how to test it.
-     *
-     * @param connectionHint
+     * Moves the map to the given location if the given priority is newer than the current one.
+     * A default value for zoom is used if the given value is less than zero.
      */
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        Log.i(TAG, "Connected to Google Play services mLastCameraPosition==" +
-                   (mLastCameraPosition != null));
+    private void moveMapToLocation(LatLng latLng, float zoom, int positionPriority) {
+        if (mMap == null || latLng == null) {
+            return;
+        }
 
-        mLastDeviceLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastPositionType < positionPriority) {
+            mLastPositionType = positionPriority;
+
+            if (zoom < 0) {
+                zoom = getResources().getInteger(R.integer.prefs_map_location_zoom_default);
+            }
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        }
+    }
+    private void doInitialMapMove() {
+        float showHostZoom = getResources().getInteger(R.integer.map_showhost_zoom);
+
+        // If we were launched with an intent asking us to zoom to a member
+        LatLng targetLatLng = getArguments().getParcelable(KEY_MAP_TARGET_LAT_LNG);
+        if (targetLatLng != null) {
+            moveMapToLocation(targetLatLng, showHostZoom, POSITION_PRIORITY_FORCED);
+            return;
+        }
+
+        // Fetches the last location from the settings (but no default yet).
+        CameraPosition savedLocation = mSettingsRepository.getLastMapLocation(false);
+        if (savedLocation != null) {
+            moveMapToLocation(
+                    savedLocation.target, savedLocation.zoom, POSITION_PRIORITY_LAST_STORED);
+            return;
+        }
+
+        if (mLastDeviceLocation != null) {
+            moveMapToLocation(Tools.locationToLatLng(mLastDeviceLocation), showHostZoom,
+                    POSITION_PRIORITY_LAST_DEVICE_POSITION);
+            return;
+        }
 
         // If we are now connected, but still don't have a location, use a bogus default.
-        if (mLastDeviceLocation == null) {
-            mLastDeviceLocation = new Location("default");
-
-            mLastDeviceLocation.setLatitude(
-                    Double.parseDouble(getString(R.string.map_default_latitude)));
-            mLastDeviceLocation.setLongitude(
-                    Double.parseDouble(getString(R.string.map_default_longitude)));
+        Host loggedInUser = mLoggedInUserHelper.get();
+        if (loggedInUser != null && loggedInUser.getLatLng() != null) {
+            moveMapToLocation(loggedInUser.getLatLng(), showHostZoom, POSITION_PRIORITY_ESTIMATE);
+            return;
         }
 
-        // mMap may not yet be initialized in some cases; Connect happens before map setup.
-        if (mMap != null) {
-            //mMap.setMyLocationEnabled(true);
-
-            if (mSettingsRepository.getLastMapLocation(false) == null) {
-                setMapToCurrentLocation();
-            }
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.i(TAG, "Disconnected from play services");
-
-        Toast.makeText(getContext(), getString(R.string.disconnected_location_services),
-                Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        if (connectionResult.hasResolution()) {
-            try {
-                // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(
-                        getActivity(), CONNECTION_FAILURE_RESOLUTION_REQUEST);
-                /*
-                 */
-            } catch (IntentSender.SendIntentException e) {
-                // Thrown if Google Play services canceled the original PendingIntent.
-
-                // Log the error
-                e.printStackTrace();
-            }
-        } else {
-            // If no resolution is onSuccess, display a dialog to the  user with the error.
-            showErrorDialog(connectionResult.getErrorCode());
-        }
-    }
-
-    /**
-     * If we can get a location, go to it with default zoom.
-     */
-    void setMapToCurrentLocation() {
-        LatLng gotoLatLng =
-                new LatLng(mLastDeviceLocation.getLatitude(), mLastDeviceLocation.getLongitude());
-        float zoom = (float) getResources().getInteger(R.integer.map_initial_zoom);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(gotoLatLng, zoom));
+        // Fetches the default last location from the settings.
+        savedLocation = mSettingsRepository.getLastMapLocation(true);
+        moveMapToLocation(savedLocation.target, savedLocation.zoom, POSITION_PRIORITY_ESTIMATE);
     }
 
     @Override
@@ -505,27 +494,34 @@ public class MapFragment extends BaseFragment implements
     /* Creates a dialog for an error message */
     private void showErrorDialog(int errorCode) {
         ErrorDialogFragment dialogFragment = ErrorDialogFragment.create(errorCode);
-        dialogFragment.getCompletable().subscribe(() -> mResolvingError = false);
         dialogFragment.show(getChildFragmentManager(), "errordialog");
+    }
+
+    /**
+     * Returns the distance to given point or -1 if the current position is unknown.
+     */
+    private double calculateDistanceTo(LatLng latLng) {
+        return mLastDeviceLocation != null
+                ? Tools.calculateDistanceBetween(
+                Tools.latLngToLocation(latLng), mLastDeviceLocation, mDistanceUnit)
+                : -1;
     }
 
     public void showMultihostSelectDialog(final ArrayList<ClusterUser> users) {
         String[] mPossibleItems = new String[users.size()];
 
-        double distance = Tools.calculateDistanceBetween(users.get(0).latLng, mLastDeviceLocation,
-                mDistanceUnit);
+        double distance = calculateDistanceTo(users.get(0).latLng);
         String distanceSummary =
                 getString(R.string.distance_from_current, (int) distance, mDistanceUnitShort);
 
-        LinearLayout customTitleView =
-                (LinearLayout) getLayoutInflater().inflate(R.layout.view_multiuser_dialog_header,
-                        null);
+        LinearLayout customTitleView = (LinearLayout) getLayoutInflater().inflate(
+                R.layout.view_multiuser_dialog_header, null);
         TextView titleView = customTitleView.findViewById(R.id.title);
         titleView.setText(getResources().getQuantityString(R.plurals.hosts_at_location,
                 users.size(), users.size(), users.get(0).getStreetCityAddressStr()));
 
         TextView distanceView = customTitleView.findViewById(R.id.distance_from_current);
-        distanceView.setText(distanceSummary);
+        distanceView.setText(distance >= 0 ? distanceSummary : "");
 
         for (int i = 0; i < users.size(); i++) {
             mPossibleItems[i] = users.get(i).fullname;
@@ -653,18 +649,19 @@ public class MapFragment extends BaseFragment implements
 
         @Override
         protected void onBeforeClusterItemRendered(ClusterUser user, MarkerOptions markerOptions) {
-            String street = user.street;
-            String snippet = user.city + ", " + user.province.toUpperCase();
-            if (street != null && street.length() > 0) {
-                snippet = street + "<br/>" + snippet;
+            StringBuilder snippet = new StringBuilder();
+            if (!TextUtils.isEmpty(user.street)) {
+                snippet.append(user.street).append("<br/>");
             }
-            if (mLastDeviceLocation != null) {
-                double distance = Tools.calculateDistanceBetween(user.latLng, mLastDeviceLocation,
-                        mDistanceUnit);
-                snippet += "<br/>" + getString(R.string.distance_from_current, (int) distance,
-                        mDistanceUnitShort);
+            snippet.append(user.city).append(", ").append(user.province.toUpperCase());
+
+            double distance = calculateDistanceTo(user.latLng);
+            if (distance >= 0) {
+                snippet.append("<br/>").append(getString(
+                        R.string.distance_from_current, (int) distance, mDistanceUnitShort));
             }
-            markerOptions.title(user.fullname).snippet(snippet);
+
+            markerOptions.title(user.fullname).snippet(snippet.toString());
             markerOptions.icon(mSingleUserBitmapDescriptor);
         }
 
@@ -725,14 +722,12 @@ public class MapFragment extends BaseFragment implements
             TextView tv = mPopup.findViewById(R.id.title);
 
             if (mLastClickedCluster != null) {
-                if (mLastDeviceLocation != null) {
-                    double distance = Tools.calculateDistanceBetween(marker.getPosition(),
-                            mLastDeviceLocation, mDistanceUnit);
-                    TextView distance_tv = mPopup.findViewById(R.id.distance_from_current);
-                    distance_tv.setText(Html.fromHtml(
-                            getString(R.string.distance_from_current, (int) distance,
-                                    mDistanceUnitShort)));
-                }
+                double distance = calculateDistanceTo(marker.getPosition());
+                TextView distance_tv = mPopup.findViewById(R.id.distance_from_current);
+                distance_tv.setText(distance >= 0
+                        ? Html.fromHtml(getString(
+                        R.string.distance_from_current, (int) distance, mDistanceUnitShort))
+                        : "");
 
                 ArrayList<ClusterUser> users =
                         (ArrayList<ClusterUser>) mLastClickedCluster.getItems();

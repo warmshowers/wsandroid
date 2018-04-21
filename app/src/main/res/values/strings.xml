@@ -76,11 +76,8 @@
         <item quantity="other">%1$d hosts at this location</item>
     </plurals>
     <string name="click_to_view_all"><strong>Click to view all</strong></string>
-    <string name="map_default_latitude">46.8625</string>
-    <string name="map_default_longitude">-114.011667</string>
     <string name="alert_neutral_button">OK</string>
     <string name="title_fragment_contact_user">"Message to %1$s"</string>
-    <string name="disconnected_location_services">Disconnected from Google Play services. Please re-connect.</string>
     <string name="hosts_dont_load">Host locations don\'t load at this zoom level\nZoom in</string>
     <!-- Distance from current has 2 args, number and units -->
     <string name="distance_from_current">"%1$d %2$s from current location"</string>
@@ -118,6 +115,11 @@
     <string name="prefscat_dev_title">Developer settings</string>
     <string name="prefs_dev_simulate_no_network_key" translatable="false">dev_simulate_no_network</string>
     <string name="prefs_dev_simulate_no_network_title">Simulate no net</string>
+
+    <!-- The center of the Americas. -->
+    <!-- FIXME(saemy): Use the home address of the logged in user. -->
+    <string name="prefs_map_location_latitude_default">21.0000</string>
+    <string name="prefs_map_location_longitude_default">-81.0000</string>
 
     <string name="languages_spoken"><u>Languages spoken:</u></string>
     <string name="map_network_not_connected">Network is not connected, showing starred hosts only.</string>

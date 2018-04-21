@@ -47,13 +47,22 @@ public class Tools {
         float meters = l1.distanceTo(l2);
         return (int) (meters / factor);
     }
-
-    static public int calculateDistanceBetween(LatLng l1, Location l2,
+    static public int calculateDistanceBetween(LatLng l1, LatLng l2,
                                                SettingsRepository.DistanceUnit distanceUnit) {
+        return calculateDistanceBetween(latLngToLocation(l1), latLngToLocation(l2), distanceUnit);
+    }
+
+    static public LatLng locationToLatLng(Location location) {
+        return new LatLng(location.getLatitude(), location.getLongitude());
+    }
+    static public Location latLngToLocation(LatLng latLng) {
+        if (latLng == null) {
+            return null;
+        }
         Location location = new Location("fromlatlng");
-        location.setLatitude(l1.latitude);
-        location.setLongitude(l1.longitude);
-        return calculateDistanceBetween(location, l2, distanceUnit);
+        location.setLatitude(latLng.latitude);
+        location.setLongitude(latLng.longitude);
+        return location;
     }
 
     // TODO(saemy): Make reactive.

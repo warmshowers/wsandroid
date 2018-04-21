@@ -61,10 +61,10 @@ public class SettingsRepository {
         mDefaultDevSimulateNoNetwork = res.getBoolean(R.bool.prefs_dev_simulate_no_network_default);
 
         mDefaultMapLocationLatitude =
-                Float.parseFloat(res.getString(R.string.map_default_latitude));
+                Float.parseFloat(res.getString(R.string.prefs_map_location_latitude_default));
         mDefaultMapLocationLongitude =
-                Float.parseFloat(res.getString(R.string.map_default_longitude));
-        mDefaultMapLocationZoom = res.getInteger(R.integer.map_initial_zoom);
+                Float.parseFloat(res.getString(R.string.prefs_map_location_longitude_default));
+        mDefaultMapLocationZoom = res.getInteger(R.integer.prefs_map_location_zoom_default);
 
         mDistanceUnitKilometerRaw = res.getString(R.string.distance_unit_kilometers_short_raw);
         mDistanceUnitMilesRaw = res.getString(R.string.distance_unit_miles_short_raw);

@@ -76,11 +76,8 @@
         <item quantity="other">%1$d Gastgeber an diesem Ort</item>
     </plurals>
     <string name="click_to_view_all"><strong>Klicken, um alle zu sehen</strong></string>
-    <string name="map_default_latitude">46.8625</string>
-    <string name="map_default_longitude">-114.011667</string>
     <string name="alert_neutral_button">OK</string>
     <string name="title_fragment_contact_user">"Nachricht an %1$s"</string>
-    <string name="disconnected_location_services">Nicht mehr mit den Google-Play-Diensten verbunden. Bitte verbinden Sie sich erneut.</string>
     <string name="hosts_dont_load">Um Datenvolumen zu sparen, werden Gastgeberorte in dieser Zoomstufe nicht geladen.\nBitte vergrößern.</string>
     <!-- Distance from current has 2 args, number and units -->
     <string name="distance_from_current">%1$d %2$s von der aktuellen Position</string>
@@ -111,6 +108,11 @@
 
     <string name="prefscat_dev_title">Entwicklereinstellungen</string>
     <string name="prefs_dev_simulate_no_network_title">Simuliere kein Netzwerk</string>
+
+    <!-- Non-english speakers might prefer the default location to be over Africa, Europe & Central Asia. -->
+    <!-- Sorry to all Brits (who default to the US) and rest of the non-western world. -->
+    <string name="prefs_map_location_latitude_default">40.0000</string>
+    <string name="prefs_map_location_longitude_default">28.0000</string>
 
     <string name="languages_spoken"><u>Gesprochene Sprachen:</u></string>
     <string name="map_network_not_connected">Netzwerk ist nicht verbunden, nur markierte Gastgeber werden angezeigt.</string>

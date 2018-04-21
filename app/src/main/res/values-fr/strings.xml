@@ -18,7 +18,6 @@
     <string name="title_fragment_contact_user">Message à %1$s</string>
     <string name="delete">Supprimer</string>
     <string name="description">À propos de ce membre</string>
-    <string name="disconnected_location_services">Déconnecté des services de localisation. Veuillez vous reconnecter.</string>
     <string name="distance_from_current">%1$d %2$s de votre position actuelle</string>
     <string name="greeting">Salut!</string>
     <string name="enter_credentials">Veuillez entrer votre nom d\'utilisateur et mot de passe</string>
@@ -89,8 +88,6 @@
     <string name="languages_spoken"><u>Langue(s) parlée(s):</u></string>
     <string name="leave_feedback">Laisser une recommandation</string>
     <string name="leave_feedback_for">Laisser une recommandation pour %1$s</string>
-    <string name="map_default_latitude">46.8625</string>
-    <string name="map_default_longitude">-114.011667</string>
     <string name="map_network_not_connected">Pas de connexion au réseau, affichage des hôtes favoris seulement</string>
     <string name="messages_on_site">Messages sur le site</string>
     <string name="no_account">Les paramêtres du compte n\'ont pas été configurés. Paramètres -> Comptes</string>
@@ -107,6 +104,11 @@
     <string name="prefs_ga_collect_stats_summary_on">Envoyer des données statistiques à Google Analytics aide les développeurs à comprendre l\'usage de l\'application et à l\'améliorer, mais vous pouvez désactiver cette option.</string>
     <string name="prefs_ga_collect_stats_summary_off">Envoyer des données statistiques à Google Analytics aide les développeurs à comprendre l\'usage de l\'application et à l\'améliorer, mais vous pouvez désactiver cette option.</string>
     <string name="prefs_ga_collect_stats_title">Envoyer des données anonymes</string>
+
+    <!-- Non-english speakers might prefer the default location to be over Africa, Europe & Central Asia. -->
+    <!-- Sorry to all Brits (who default to the US) and rest of the non-western world. -->
+    <string name="prefs_map_location_latitude_default">40.0000</string>
+    <string name="prefs_map_location_longitude_default">28.0000</string>
 
     <string name="send_message">Envoyer un message</string>
     <string name="star_this_host">Ajouter aux hôtes favoris</string>

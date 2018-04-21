@@ -4,7 +4,7 @@
     <integer name="cluster_explode_padding_percent">20</integer>
 
     <!-- Zoom on original map view if nothing is stored for context -->
-    <integer name="map_initial_zoom">9</integer>
+    <integer name="prefs_map_location_zoom_default">0</integer>
 
     <!-- Zoom when showing a member's location -->
     <integer name="map_showhost_zoom">15</integer>
