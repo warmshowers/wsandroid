@@ -95,7 +95,7 @@
     <string name="parsing_error">Erreur dans l\'analyse de la réponse du serveur. Veuillez signaler cette recherche en utilisant le formulaire sur fr.warmshowers.org.</string>
 
     <string name="prefs_distance_unit_title">Unité de distance</string>
-    <string name="prefs_distance_unit_summary">Afficher la distance en %1$s.</string>
+    <string name="prefs_distance_unit_summary">Afficher la distance en %1$s</string>
     <string name="distance_unit_kilometers_long">Kilomètres</string>
     <string name="distance_unit_miles_long">Miles</string>
     <string name="distance_unit_kilometers_short">km</string>

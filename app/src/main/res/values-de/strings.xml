@@ -96,15 +96,23 @@
 
     <!-- Einstellungen -->
     <string name="prefs_distance_unit_title">Längeneinheit</string>
-    <string name="prefs_distance_unit_summary">Zeige Entfernungen in %1$s an.</string>
+    <string name="prefs_distance_unit_summary">Zeige Entfernungen in %1$s an</string>
     <string name="distance_unit_kilometers_long">Kilometer</string>
     <string name="distance_unit_miles_long">Meilen</string>
     <string name="distance_unit_kilometers_short">km</string>
     <string name="distance_unit_miles_short">mi</string>
 
+    <string name="prefs_message_refresh_interval_min_title">Aktualisierungsintervall für Nachrichten</string>
+    <plurals name="prefs_message_refresh_interval_min_summary">
+        <item quantity="one">Jede Minute</item>
+        <item quantity="other">Alle %d Minuten</item>
+    </plurals>
+    <string name="prefs_message_refresh_interval_min_summary_disabled">Deaktiviert</string>
+    <string name="prefs_message_refresh_interval_min_dialog_message">Wähle, all wieviele Minuten deine Mitteilungen automatisch vom Server geladen werden sollen.</string>
+
     <string name="prefs_ga_collect_stats_title">Anonyme Benutzungsstatistiken senden</string>
-    <string name="prefs_ga_collect_stats_summary_on">Nutzungsstatistiken werden gelegentlich an Google Analytics gesendet, um den Entwickelnden die Verbesserung der App zu erleichtern.</string>
-    <string name="prefs_ga_collect_stats_summary_off">Gerade werden keine Statistiken zur Verbesserung der App an Google Analytics versandt.</string>
+    <string name="prefs_ga_collect_stats_summary_on">Nutzungsstatistiken werden gelegentlich an Google Analytics gesendet, um den Entwickelnden die Verbesserung der App zu erleichtern</string>
+    <string name="prefs_ga_collect_stats_summary_off">Gerade werden keine Statistiken zur Verbesserung der App an Google Analytics versandt</string>
 
     <string name="prefscat_dev_title">Entwicklereinstellungen</string>
     <string name="prefs_dev_simulate_no_network_title">Simuliere kein Netzwerk</string>
@@ -225,4 +233,6 @@
 
     <string name="menu_goto_profile">Profil ansehen</string>
     <string name="menu_goto_profiles">Profile ansehen</string>
+
+    <string name="enable">Aktiviert</string>
 </resources>

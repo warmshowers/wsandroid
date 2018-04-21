@@ -19,7 +19,6 @@ import dagger.android.HasActivityInjector;
 import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.di.AppComponent;
 import fi.bitrite.android.ws.di.AppInjector;
-import fi.bitrite.android.ws.ui.MessageNotificationController;
 
 public class WSAndroidApplication extends Application implements HasActivityInjector {
 
@@ -28,7 +27,6 @@ public class WSAndroidApplication extends Application implements HasActivityInje
 
     @Inject AuthenticationController mAuthenticationController;
     @Inject DispatchingAndroidInjector<Activity> mDispatchingAndroidInjector;
-    @Inject MessageNotificationController mMessageNotificationController; // FIXME(saemy): Move to service
 
     private final HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
 
