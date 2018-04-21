@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -68,6 +67,7 @@ import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
+import fi.bitrite.android.ws.repository.SettingsRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.model.ClusterUser;
 import fi.bitrite.android.ws.ui.util.NavigationController;
@@ -97,6 +97,7 @@ public class MapFragment extends BaseFragment implements
     @Inject NavigationController mNavigationController;
     @Inject UserRepository mUserRepository;
     @Inject FavoriteRepository mFavoriteRepository;
+    @Inject SettingsRepository mSettingsRepository;
 
     private Unbinder mUnbinder;
 
@@ -108,12 +109,21 @@ public class MapFragment extends BaseFragment implements
     private CameraPosition mLastCameraPosition = null;
     private boolean mResolvingError = false;
     private Location mLastDeviceLocation;
-    private String mDistanceUnit;
+    private SettingsRepository.DistanceUnit mDistanceUnit;
+    private String mDistanceUnitShort;
     private boolean mIsOffline = false;
     private GoogleApiClient mGoogleApiClient;
 
     private Disposable mLoadOfflineUserDisposable;
     private Toast mLastToast = null;
+
+    private final SharedPreferences.OnSharedPreferenceChangeListener mOnSettingsChangeListener =
+            (unused, key) -> {
+                if (key == null || key.equals(mSettingsRepository.getDistanceUnitKey())) {
+                    mDistanceUnit = mSettingsRepository.getDistanceUnit();
+                    mDistanceUnitShort = mSettingsRepository.getDistanceUnitShort();
+                }
+            };
 
     public static MapFragment create() {
         MapFragment mapFragment = new MapFragment();
@@ -132,15 +142,6 @@ public class MapFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(getContext());
-        mDistanceUnit = sharedPreferences.getString("distance_unit", "km");
-        sharedPreferences.registerOnSharedPreferenceChangeListener((unused, key) -> {
-            if ("distance_unit".equals(key)) {
-                mDistanceUnit = sharedPreferences.getString("distance_unit", "km");
-            }
-        });
 
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                 .addConnectionCallbacks(this)
@@ -165,13 +166,22 @@ public class MapFragment extends BaseFragment implements
     public void onResume() {
         super.onResume();
 
+        // Register the settings change listener. That does an initial call to the handler.
+        mSettingsRepository.registerOnChangeListener(mOnSettingsChangeListener);
+
         setUpMapIfNeeded();
+    }
+
+    @Override
+    public void onPause() {
+        mSettingsRepository.unregisterOnChangeListener(mOnSettingsChangeListener);
+        super.onPause();
     }
 
     @Override
     public void onStop() {
         if (mLastCameraPosition != null) {
-            saveMapLocation(mLastCameraPosition);
+            mSettingsRepository.setLastMapLocation(mLastCameraPosition);
         }
 
         super.onStop();
@@ -235,7 +245,7 @@ public class MapFragment extends BaseFragment implements
             position = new CameraPosition(targetLatLng, showHostZoom, 0, 0);
         } else {
             // Fetches the last location from the settings.
-            position = getSavedCameraPosition();
+            position = mSettingsRepository.getLastMapLocation(false);
         }
         if (position != null) {
             // The move will end up setting mLastCameraPosition.
@@ -304,7 +314,7 @@ public class MapFragment extends BaseFragment implements
         if (mMap != null) {
             //mMap.setMyLocationEnabled(true);
 
-            if (getSavedCameraPosition() == null) {
+            if (mSettingsRepository.getLastMapLocation(false) == null) {
                 setMapToCurrentLocation();
             }
         }
@@ -339,42 +349,13 @@ public class MapFragment extends BaseFragment implements
         }
     }
 
-    protected void saveMapLocation(CameraPosition position) {
-        SharedPreferences settings = getActivity().getSharedPreferences("map_last_location", 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putFloat("latitude", (float) position.target.latitude);
-        editor.putFloat("longitude", (float) position.target.longitude);
-        editor.putFloat("zoom", position.zoom);
-        editor.apply();
-    }
-
-    /**
-     * Retrieve map location and zoom from saved preference. Returns null if none existed.
-     *
-     * @return
-     */
-    protected CameraPosition getSavedCameraPosition() {
-        SharedPreferences settings = getActivity().getSharedPreferences("map_last_location", 0);
-        if (!settings.contains("latitude")) {
-            return null;
-        }
-        float latitude = settings.getFloat("latitude",
-                Float.parseFloat(getResources().getString(R.string.map_default_latitude)));
-        float longitude = settings.getFloat("longitude",
-                Float.parseFloat(getResources().getString(R.string.map_default_longitude)));
-        float zoom = settings.getFloat("zoom",
-                (float) getResources().getInteger(R.integer.map_initial_zoom));
-
-        return new CameraPosition(new LatLng(latitude, longitude), zoom, 0, 0);
-    }
-
     /**
      * If we can get a location, go to it with default zoom.
      */
     void setMapToCurrentLocation() {
         LatLng gotoLatLng =
                 new LatLng(mLastDeviceLocation.getLatitude(), mLastDeviceLocation.getLongitude());
-        float zoom = (float) getResources().getInteger(R.integer.map_initial_zoom); // Default
+        float zoom = (float) getResources().getInteger(R.integer.map_initial_zoom);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(gotoLatLng, zoom));
     }
 
@@ -534,7 +515,7 @@ public class MapFragment extends BaseFragment implements
         double distance = Tools.calculateDistanceBetween(users.get(0).latLng, mLastDeviceLocation,
                 mDistanceUnit);
         String distanceSummary =
-                getString(R.string.distance_from_current, (int) distance, mDistanceUnit);
+                getString(R.string.distance_from_current, (int) distance, mDistanceUnitShort);
 
         LinearLayout customTitleView =
                 (LinearLayout) getLayoutInflater().inflate(R.layout.view_multiuser_dialog_header,
@@ -681,7 +662,7 @@ public class MapFragment extends BaseFragment implements
                 double distance = Tools.calculateDistanceBetween(user.latLng, mLastDeviceLocation,
                         mDistanceUnit);
                 snippet += "<br/>" + getString(R.string.distance_from_current, (int) distance,
-                        mDistanceUnit);
+                        mDistanceUnitShort);
             }
             markerOptions.title(user.fullname).snippet(snippet);
             markerOptions.icon(mSingleUserBitmapDescriptor);
@@ -750,7 +731,7 @@ public class MapFragment extends BaseFragment implements
                     TextView distance_tv = mPopup.findViewById(R.id.distance_from_current);
                     distance_tv.setText(Html.fromHtml(
                             getString(R.string.distance_from_current, (int) distance,
-                                    mDistanceUnit)));
+                                    mDistanceUnitShort)));
                 }
 
                 ArrayList<ClusterUser> users =

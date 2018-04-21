@@ -96,11 +96,18 @@
     <string name="no_account">Les paramêtres du compte n\'ont pas été configurés. Paramètres -> Comptes</string>
     <string name="open_in_map_application">Ouvrir dans l\'application Maps</string>
     <string name="parsing_error">Erreur dans l\'analyse de la réponse du serveur. Veuillez signaler cette recherche en utilisant le formulaire sur fr.warmshowers.org.</string>
-    <string name="prefs_distance_unit">Unité de distance</string>
-    <string name="prefs_distance_unit_summary">Voulez-vous afficher la distance en kilomètres ou en miles?</string>
+
+    <string name="prefs_distance_unit_title">Unité de distance</string>
+    <string name="prefs_distance_unit_summary">Afficher la distance en %1$s.</string>
+    <string name="distance_unit_kilometers_long">Kilomètres</string>
+    <string name="distance_unit_miles_long">Miles</string>
+    <string name="distance_unit_kilometers_short">km</string>
+    <string name="distance_unit_miles_short">mi</string>
+
     <string name="prefs_ga_collect_stats_summary_on">Envoyer des données statistiques à Google Analytics aide les développeurs à comprendre l\'usage de l\'application et à l\'améliorer, mais vous pouvez désactiver cette option.</string>
     <string name="prefs_ga_collect_stats_summary_off">Envoyer des données statistiques à Google Analytics aide les développeurs à comprendre l\'usage de l\'application et à l\'améliorer, mais vous pouvez désactiver cette option.</string>
     <string name="prefs_ga_collect_stats_title">Envoyer des données anonymes</string>
+
     <string name="send_message">Envoyer un message</string>
     <string name="star_this_host">Ajouter aux hôtes favoris</string>
     <string name="unknown_exception">Erreur inconnue, veuillez signaler dans la formulaire de contact de warmshowers.org: %1$s</string>
@@ -198,5 +205,4 @@
 
     <string name="content_description_your_avatar">Votre photo de profil</string>
     <string name="content_description_avatar_of_var">Photo du profil de %s</string>
-
 </resources>

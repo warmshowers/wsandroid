@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.repository.SettingsRepository;
 
 /**
  * General simple tools, mostly public methods.
@@ -37,20 +38,22 @@ public class Tools {
      *
      * @param l1
      * @param l2
-     * @param units (mi or km)
+     * @param distanceUnit (mi or km)
      * @return
      */
-    static public int calculateDistanceBetween(Location l1, Location l2, String units) {
-        double factor = units.equals("mi") ? 1609.34 : 1000;
+    static public int calculateDistanceBetween(Location l1, Location l2,
+                                               SettingsRepository.DistanceUnit distanceUnit) {
+        double factor = distanceUnit == SettingsRepository.DistanceUnit.MILES ? 1609.34 : 1000;
         float meters = l1.distanceTo(l2);
         return (int) (meters / factor);
     }
 
-    static public int calculateDistanceBetween(LatLng l1, Location l2, String units) {
+    static public int calculateDistanceBetween(LatLng l1, Location l2,
+                                               SettingsRepository.DistanceUnit distanceUnit) {
         Location location = new Location("fromlatlng");
         location.setLatitude(l1.latitude);
         location.setLongitude(l1.longitude);
-        return calculateDistanceBetween(location, l2, units);
+        return calculateDistanceBetween(location, l2, distanceUnit);
     }
 
     // TODO(saemy): Make reactive.
@@ -63,6 +66,7 @@ public class Tools {
                               && activeNetwork.isConnectedOrConnecting();
 
         if (BuildConfig.DEBUG) {
+            // FIXME(saemy): Get from SettingsRepository
             boolean simulateDisconnected = PreferenceManager.getDefaultSharedPreferences(context)
                     .getBoolean("developer_no_network", false);
             if (simulateDisconnected) {
