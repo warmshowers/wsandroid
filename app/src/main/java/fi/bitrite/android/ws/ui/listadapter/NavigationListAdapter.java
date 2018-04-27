@@ -2,16 +2,18 @@ package fi.bitrite.android.ws.ui.listadapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindColor;
 import butterknife.BindView;
@@ -20,7 +22,7 @@ import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.ui.model.NavigationItem;
 import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -74,7 +76,7 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
         private final BehaviorSubject<String> mCurrentTag;
         private final Subject<NavigationItem> mOnClickSubject;
 
-        private Disposable mCurrentTagDisposable;
+        private CompositeDisposable mDisposables = new CompositeDisposable();
 
         private View mView;
 
@@ -83,7 +85,9 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
 
         @BindView(R.id.icon_menu_item) ImageView mIcon;
         @BindView(R.id.lbl_menu_item) TextView mLabel;
-        @BindView(R.id.navigation_item_layout) LinearLayout mNavigationItemLayout;
+        @BindView(R.id.layout_navigation_item) ConstraintLayout mLayoutNavigationItem;
+        @BindView(R.id.layout_menu_item_notification_count) FrameLayout mLayoutNotificationCount;
+        @BindView(R.id.txt_menu_item_notification_count) TextView mTxtNotificationCount;
 
         Item(NavigationItem navigationItem, BehaviorSubject<String> currentTag,
              Subject<NavigationItem> onClickSubject) {
@@ -92,7 +96,7 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
             mOnClickSubject = onClickSubject;
         }
 
-        @OnClick(R.id.navigation_item_layout)
+        @OnClick(R.id.layout_navigation_item)
         public void onClick() {
             // Informs the observers about this click event.
             mOnClickSubject.onNext(mNavigationItem);
@@ -111,16 +115,22 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
             mLabel.setText(mNavigationItem.labelResourceId);
 
             // Disconnect from old notifications.
-            if (mCurrentTagDisposable != null) {
-                mCurrentTagDisposable.dispose();
-            }
+            mDisposables.dispose();
+            mDisposables = new CompositeDisposable();
 
-            mCurrentTagDisposable = mCurrentTag.subscribe(currentItemTag -> {
+            mDisposables.add(mCurrentTag.subscribe(currentItemTag -> {
                 int backgroundColor = currentItemTag.equals(mNavigationItem.tag)
                         ? mColorActive
                         : mColorInactive;
-                mNavigationItemLayout.setBackgroundColor(backgroundColor);
-            });
+                mLayoutNavigationItem.setBackgroundColor(backgroundColor);
+            }));
+
+            mDisposables.add(mNavigationItem.notificationCount.subscribe(notificationCount -> {
+                mLayoutNotificationCount.setVisibility(
+                        notificationCount > 0 ? View.VISIBLE : View.GONE);
+                mTxtNotificationCount.setText(
+                        String.format(Locale.getDefault(), "%d", notificationCount));
+            }));
         }
     }
 }
