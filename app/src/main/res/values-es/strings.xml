@@ -95,13 +95,13 @@
     <string name="messages_on_site">Mensajes en la página</string>
 
     <string name="prefs_distance_unit_title">Unidad de distancia</string>
-    <string name="prefs_distance_unit_summary">Denunciar distancias en %1$s.</string>
+    <string name="prefs_distance_unit_summary">Denunciar distancias en %1$s</string>
     <string name="distance_unit_kilometers_long">Kilómetros</string>
     <string name="distance_unit_miles_long">Millas</string>
     <string name="distance_unit_kilometers_short">km</string>
     <string name="distance_unit_miles_short">mi</string>
 
-    <string name="prefs_ga_collect_stats_title">Enviar estadísticas anónimas </string>
+    <string name="prefs_ga_collect_stats_title">Enviar estadísticas anónimas</string>
     <string name="prefs_ga_collect_stats_summary_on">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
     <string name="prefs_ga_collect_stats_summary_off">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
 

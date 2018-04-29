@@ -10,7 +10,7 @@ import fi.bitrite.android.ws.persistence.schema.migrations.account.AccountMigrat
 
 @Singleton
 public class AccountSchemaDefinition extends SchemaDefinition {
-    private final static int VERSION = 1;
+    private final static int VERSION = 2;
 
     @Inject
     AccountSchemaDefinition(AccountMigrations accountMigrations) {

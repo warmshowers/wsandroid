@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.repository;
 
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
@@ -8,9 +9,13 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -24,7 +29,9 @@ import fi.bitrite.android.ws.api.response.MessageThreadResponse;
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
 import fi.bitrite.android.ws.persistence.MessageDao;
+import fi.bitrite.android.ws.util.ComparablePair;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
+import fi.bitrite.android.ws.util.Pushable;
 import io.reactivex.Completable;
 import io.reactivex.CompletableSource;
 import io.reactivex.Observable;
@@ -46,7 +53,7 @@ public class MessageRepository extends Repository<MessageThread> {
     private final WarmshowersService mWarmshowersService;
 
     // Contains the threadId-messageId pairs that are currently syncing.
-    private final ConcurrentSkipListSet<SyncingKey> mSyncingMessages =
+    private final ConcurrentSkipListSet<ComparablePair<Integer, Integer>> mSyncingMessages =
             new ConcurrentSkipListSet<>();
 
     @Inject
@@ -57,7 +64,7 @@ public class MessageRepository extends Repository<MessageThread> {
         mWarmshowersService = warmshowersService;
 
         // Initializes the repository by loading the threads from the db.
-        Completable.complete().subscribeOn(Schedulers.io()).subscribe(() -> {
+        Completable.complete().observeOn(Schedulers.io()).subscribe(() -> {
             List<MessageThread> threads = mMessageDao.loadAll();
             for (MessageThread thread : threads) {
                 put(thread.id, Resource.loading(thread), Freshness.FRESH);
@@ -172,12 +179,12 @@ public class MessageRepository extends Repository<MessageThread> {
             // thread to make it distinguishable when it is compared to stored instances (which end
             // up to be the same instance in case we do no clone). We also set the lastUpdated field
             // to now.
-            Message message =
-                    new Message(id, threadId, authorId, new Date(), body, Message.STATUS_OUTGOING);
+            Message message = new Message(id, threadId, authorId, new Date(), body, false, false);
             List<Message> messages = new ArrayList<>(thread.messages);
             messages.add(message);
+
             thread = new MessageThread(
-                    thread.id, thread.subject, thread.started, thread.readStatus,
+                    thread.id, thread.subject, thread.started, thread.isRead,
                     thread.participantIds, messages, new Date());
 
             // Saves the thread in the db.
@@ -196,10 +203,10 @@ public class MessageRepository extends Repository<MessageThread> {
     }
 
     public Completable markThreadAsUnread(int threadId) {
-        return setThreadReadStatus(threadId, true);
+        return setThreadReadStatus(threadId, false);
     }
     public Completable markThreadAsRead(int threadId) {
-        return setThreadReadStatus(threadId, false);
+        return setThreadReadStatus(threadId, true);
     }
 
     /**
@@ -213,30 +220,41 @@ public class MessageRepository extends Repository<MessageThread> {
      * TODO(saemy): Test this.
      * TODO(saemy): Listen to network changes.
      */
-    private Completable setThreadReadStatus(int threadId, boolean isUnread) {
+    private Completable setThreadReadStatus(int threadId, boolean isRead) {
         return Completable.create(emitter -> {
             MessageThread thread = getRaw(threadId);
             if (thread == null) {
                 throw new Exception("The thread must already be in the repository.");
             }
-            if (thread.isUnread() == isUnread) {
+            if (thread.isRead() == isRead) {
                 emitter.onComplete();
                 return;
             }
 
-            thread = cloneForReadStatus(thread, isUnread
-                    ? MessageThread.STATUS_UNREAD_NOT_YET_PUSHED
-                    : MessageThread.STATUS_READ_NOT_YET_PUSHED);
+            List<Message> newMessages;
+            if (isRead) {
+                // We mark all the new messages as read.
+                newMessages = new ArrayList<>(thread.messages.size());
+                for (Message message : thread.messages) {
+                    newMessages.add(message.cloneForIsNew(false));
+                }
+            } else {
+                newMessages = thread.messages;
+            }
+
+            thread = new MessageThread(thread.id, thread.subject, thread.started,
+                    new Pushable<>(isRead, false), thread.participantIds,
+                    newMessages, thread.lastUpdated);
 
             save(thread.id, thread)
-                    .concatWith(setRemoteThreadReadStatus(threadId, isUnread))
+                    .concatWith(setRemoteThreadReadStatus(threadId, isRead))
                     .subscribe(emitter::onComplete, emitter::onError);
         });
     }
-    private Completable setRemoteThreadReadStatus(int threadId, boolean isUnread) {
-        int status = isUnread
-                ? WarmshowersService.MESSAGE_THREAD_STAUS_UNREAD
-                : WarmshowersService.MESSAGE_THREAD_STAUS_READ;
+    private Completable setRemoteThreadReadStatus(int threadId, boolean isRead) {
+        int status = isRead
+                ? WarmshowersService.MESSAGE_THREAD_STAUS_READ
+                : WarmshowersService.MESSAGE_THREAD_STAUS_UNREAD;
         return mWarmshowersService.setMessageThreadReadStatus(threadId, status)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -246,9 +264,7 @@ public class MessageRepository extends Repository<MessageThread> {
                         emitter.onComplete();
                         return;
                     }
-                    thread = cloneForReadStatus(thread, isUnread
-                            ? MessageThread.STATUS_UNREAD
-                            : MessageThread.STATUS_READ);
+                    thread = thread.cloneForReadStatus(new Pushable<>(isRead, true));
                     save(thread.id, thread)
                             .subscribe(emitter::onComplete, emitter::onError);
                 }));
@@ -271,7 +287,7 @@ public class MessageRepository extends Repository<MessageThread> {
     Observable<LoadResult<MessageThread>> loadFromNetwork(int threadId) {
         return mWarmshowersService.fetchMessageThread(threadId)
                 .subscribeOn(Schedulers.io())
-                .map(apiResponse -> {
+                .flatMap(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
                         throw new Error(apiResponse.errorBody().toString());
                     }
@@ -279,30 +295,89 @@ public class MessageRepository extends Repository<MessageThread> {
                     MessageThreadResponse apiThread = apiResponse.body();
 
                     MessageThread currentThread = getRaw(threadId);
-                    int unreadStatus = currentThread != null
-                            ? currentThread.readStatus : MessageThread.STATUS_READ;
+                    Pushable<Boolean> isRead = currentThread != null
+                            ? currentThread.isRead
+                            // Just temporary. This is parsed from the messages further down.
+                            : new Pushable<>(true, true);
                     Date started = currentThread != null ? currentThread.started : new Date();
                     Date lastUpdated = currentThread != null
                             ? currentThread.lastUpdated
                             : new Date();
 
                     MessageThread newThread =
-                            apiThread.toMessageThread(unreadStatus, started, lastUpdated);
+                            apiThread.toMessageThread(isRead, started, lastUpdated);
 
-                    // We need to attach all the temporary messages from the db.
                     if (currentThread != null) {
-                        for (Message message : currentThread.messages) {
-                            if (message.status == Message.STATUS_OUTGOING) {
-                                newThread.messages.add(message);
+                        /* Merge the existing local and the new remote thread. */
+
+                        Set<Integer> remoteMessageIds = new HashSet<>();
+                        for (Message remoteMessage : newThread.messages) {
+                            remoteMessageIds.add(remoteMessage.id);
+                        }
+
+                        // When a thread is manually marked as unread, the webservice just marks all
+                        // messages as new. They are then indistinguishable from 'really' new
+                        // messages. However, other than that a message stays constant on the
+                        // webservice. Therefore, we just keep the local state for already known
+                        // messages.
+                        // This also ensures that we keep all the non-pushed temporary messages from
+                        // the db.
+                        @SuppressLint("UseSparseArrays") Map<Integer, Message> newMessages =
+                                new HashMap<>(currentThread.messages.size());
+                        for (Message localMessage : currentThread.messages) {
+                            if (localMessage.id < 0 && localMessage.isPushed) {
+                                // We just fetched the definitive versions of the temporary messages
+                                // which previously have been pushed. We do not need them anymore.
+                                continue;
+                            }
+                            if (localMessage.id >= 0 &&
+                                !remoteMessageIds.contains(localMessage.id)) {
+                                // This message got deleted remotely. We do not keep it.
+                                continue;
+                            }
+                            newMessages.put(localMessage.id, localMessage);
+                        }
+
+                        boolean hasNewMessages = false;
+                        boolean allMessagesRead = true;
+                        for (Message remoteMessage : newThread.messages) {
+                            if (!newMessages.containsKey(remoteMessage.id)) {
+                                hasNewMessages |= remoteMessage.isNew;
+                                newMessages.put(remoteMessage.id, remoteMessage);
+                            }
+                            allMessagesRead &= !remoteMessage.isNew;
+                        }
+                        if (hasNewMessages) {
+                            // We force the thread to be unread.
+                            isRead = new Pushable<>(false, true);
+                        } else if (isRead.isPushed) {
+                            // If our read status is pushed then we adjust it from upstream.
+                            isRead = new Pushable<>(allMessagesRead, true);
+                        }
+
+                        newThread = new MessageThread(
+                                newThread.id, newThread.subject, newThread.started, isRead,
+                                newThread.participantIds, new ArrayList<>(newMessages.values()),
+                                newThread.lastUpdated);
+                    } else {
+                        // Fetch the read status from the messages.
+                        boolean allMessagesRead = true;
+                        for (Message remoteMessage : newThread.messages) {
+                            if (remoteMessage.isNew) {
+                                allMessagesRead = false;
+                                break;
                             }
                         }
+
+                        newThread =
+                                newThread.cloneForReadStatus(new Pushable<>(allMessagesRead, true));
                     }
 
-                    // Deletes the pushed temporary messages as we just received the
-                    // non-temporary ones.
-                    mMessageDao.deletePushedTemporaryMessages(threadId);
-
-                    return new LoadResult<>(LoadResult.Source.NETWORK, newThread);
+                    final MessageThread theFinalNewThread = newThread;
+                    return save(newThread.id, newThread)
+                            .toObservable()
+                            .map(o -> new LoadResult<>(LoadResult.Source.NETWORK,
+                                    theFinalNewThread));
                 });
     }
 
@@ -317,10 +392,13 @@ public class MessageRepository extends Repository<MessageThread> {
             // Checks if the message thread has new information.
             // We use some heuristics here as the webservice does not change lastUpdated on e.g.
             // read status changes.
+            // TODO(saemy): Add a lastModified date to the webservice response. The lastUpdated is
+            //              AFAIK just the date of the latest message...
             MessageThread dbThread = getRaw(apiThread.id);
             boolean updateNeeded = dbThread == null // New thread
-                                   || dbThread.isUnread() != apiThread.isUnread()
+                                   || dbThread.isRead() != apiThread.isRead()
                                    || dbThread.lastUpdated.before(apiThread.lastUpdated)
+                                   || dbThread.messages.size() != apiThread.count
                                    || !dbThread.subject.equals(apiThread.subject);
             if (updateNeeded) {
                 // Pushes the current value to the cache. (This is needed since the API response for
@@ -331,14 +409,11 @@ public class MessageRepository extends Repository<MessageThread> {
 
                 // Refetches the thread.
                 reloadThread(temporary.id, temporary);
-            } else if (dbThread.readStatus == MessageThread.STATUS_READ_NOT_YET_PUSHED
-                       || dbThread.readStatus == MessageThread.STATUS_UNREAD_NOT_YET_PUSHED) {
+            } else if (!dbThread.isRead.isPushed) {
                 // This is the followup of #setThreadReadStatus(). We must push the thread's
                 // read status upstream now that we know that the network is around and no
                 // update was made. If it fails again, we just push it the next time.
-                setRemoteThreadReadStatus(
-                        dbThread.id,
-                        dbThread.readStatus == MessageThread.STATUS_UNREAD_NOT_YET_PUSHED);
+                setRemoteThreadReadStatus(dbThread.id, dbThread.isRead());
 
             }
 
@@ -351,15 +426,6 @@ public class MessageRepository extends Repository<MessageThread> {
         // Remove no longer existing threads from the cache and db.
         popExcept(apiThreadIds);
         mMessageDao.deleteExcept(apiThreadIds);
-    }
-
-    /**
-     * Creates a clone of the given thread except that the readStatus is changed.
-     */
-    private static MessageThread cloneForReadStatus(MessageThread thread, int newReadStatus) {
-        return new MessageThread(
-                thread.id, thread.subject, thread.started, newReadStatus, thread.participantIds,
-                thread.messages, thread.lastUpdated);
     }
 
     /**
@@ -380,20 +446,18 @@ public class MessageRepository extends Repository<MessageThread> {
      * pending message.
      */
     private static int getNextPendingMessageId(MessageThread thread) {
-        int id = -1;
+        int id = 0;
         for (Message message : thread.messages) {
-            if (message.id <= id) {
-                id = message.id - 1;
-            }
+            id = Math.min(id, message.id);
         }
-        return id;
+        return id - 1;
     }
 
     @WorkerThread
     private void sendMessagesToServer(@NonNull MessageThread thread) {
         List<Completable> completables = new LinkedList<>();
         for (Message message : thread.messages) {
-            if (message.status == Message.STATUS_OUTGOING) {
+            if (!message.isPushed) {
                 // Sends the message.
                 completables.add(sendMessageToServerRx(thread, message, false));
             }
@@ -406,7 +470,7 @@ public class MessageRepository extends Repository<MessageThread> {
         Completable.concat(completables)
                 // Ignores errors. However, aborts sending any more messages as soon as one failed.
                 .onErrorComplete()
-                .doFinally(() -> reloadThread(thread.id))
+                .doFinally(() -> reloadThread(thread.id, thread))
                 .subscribe();
     }
 
@@ -414,7 +478,8 @@ public class MessageRepository extends Repository<MessageThread> {
     private Completable sendMessageToServerRx(MessageThread thread, Message message,
                                               boolean reloadThread) {
         return Completable.create(emitter -> {
-            SyncingKey syncingKey = new SyncingKey(thread.id, message.id);
+            ComparablePair<Integer, Integer> syncingKey =
+                    new ComparablePair<>(thread.id, message.id);
             boolean isNewEntry = mSyncingMessages.add(syncingKey);
             if (!isNewEntry) {
                 emitter.onComplete();
@@ -429,7 +494,7 @@ public class MessageRepository extends Repository<MessageThread> {
             MessageThread thread2 = getRaw(thread.id);
             if (thread2 != null) {
                 for (Message m : thread2.messages) {
-                    if (m.id == message.id && message.status == Message.STATUS_OUTGOING) {
+                    if (m.id == message.id && !message.isPushed) {
                         shouldPush = true;
                         break;
                     }
@@ -451,16 +516,17 @@ public class MessageRepository extends Repository<MessageThread> {
 
                         // Sending the message was successful.
 
-                        // We mark the temporary db message as sent.
-                        message.status = Message.STATUS_SYNCED;
-                        mMessageDao.saveMessage(message);
+                        // We mark the temporary db message as pushed.
+                        Message newMessage = message.cloneForIsPushed(true);
+                        Collections.replaceAll(thread.messages, message, newMessage);
+                        mMessageDao.saveMessage(newMessage);
 
                         mSyncingMessages.remove(syncingKey);
 
                         if (reloadThread) {
                             // Reloads the thread. Eventually, when the call is successful, all the
                             // temporary messages that are pushed to the server are deleted.
-                            reloadThread(thread.id);
+                            reloadThread(thread.id, thread);
                         }
 
                         emitter.onComplete();
@@ -473,23 +539,5 @@ public class MessageRepository extends Repository<MessageThread> {
                         emitter.onError(throwable);
                     });
         });
-    }
-
-    // Contains the threadId-messageId pairs that are currently syncing.
-    private class SyncingKey implements Comparable<SyncingKey> {
-        final int threadId;
-        final int messageId;
-
-        SyncingKey(int threadId, int messageId) {
-            this.threadId = threadId;
-            this.messageId = messageId;
-        }
-
-        @Override
-        public int compareTo(@NonNull SyncingKey other) {
-            return threadId != other.threadId
-                    ? Integer.compare(threadId, other.threadId)
-                    : Integer.compare(messageId, other.messageId);
-        }
     }
 }

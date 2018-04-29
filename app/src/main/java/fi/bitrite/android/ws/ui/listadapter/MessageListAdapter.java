@@ -183,7 +183,7 @@ public class MessageListAdapter extends
 
             mLblBody.setText(Html.fromHtml(message.body));
 
-            mLblDate.setText(message.status == Message.STATUS_OUTGOING
+            mLblDate.setText(!message.isPushed
                     ? "..." // Its not sent yet. // TODO(saemy): Add an hourglass icon?
                     : DateUtils.getRelativeTimeSpanString(
                             message.date.getTime(), new Date().getTime(),

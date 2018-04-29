@@ -13,7 +13,7 @@
         <item name="alertDialogTheme">@style/wsAppTheme.Dialog.Alert</item>
         <item name="android:spinnerItemStyle">@style/WsText.light</item>
         <item name="android:textAppearanceButton">@style/buttonStyle</item>
-        <item name="preferenceTheme">@style/wsAppTheme.SettingsTheme</item>
+        <item name="preferenceTheme">@style/wsPreferenceThemeOverlay</item>
 
         <!-- Option Panel Menu -->
         <item name="android:itemTextAppearance">@style/TextAppearance</item>
@@ -23,8 +23,7 @@
         <item name="actionBarStyle">@style/WsActionBar</item>
     </style>
 
-    <style name="wsAppTheme.SettingsTheme" parent="wsAppTheme">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+    <style name="wsPreferenceThemeOverlay" parent="PreferenceThemeOverlay.v14.Material">
     </style>
 
     <!-- Option Panel Menu -->

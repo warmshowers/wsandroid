@@ -8,6 +8,7 @@ import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.WSAndroidService;
 import fi.bitrite.android.ws.auth.AuthenticationService;
 
 @Singleton
@@ -27,5 +28,6 @@ public interface AppComponent {
     }
 
     void inject(WSAndroidApplication wsApp);
+    void inject(WSAndroidService wsService);
     void inject(AuthenticationService service);
 }

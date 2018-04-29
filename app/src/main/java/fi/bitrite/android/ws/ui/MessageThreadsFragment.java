@@ -71,6 +71,7 @@ public class MessageThreadsFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         // TODO(saemy): Make reloads more intelligent than just every time we load the fragment.
+  //      Last reloaded?
         if (!mDidReload) {
             mDidReload = true;
             reloadThreads();

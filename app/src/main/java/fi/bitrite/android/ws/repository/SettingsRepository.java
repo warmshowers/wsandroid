@@ -29,10 +29,12 @@ public class SettingsRepository {
     private final static String KEYSUFFIX_LOCATION_ZOOM = "_zoom";
 
     private final String mKeyDistanceUnit;
+    private final String mKeyMessageRefreshInterval;
     private final String mKeyGaCollectStats;
     private final String mKeyDevSimulateNoNetwork;
 
     private final String mDefaultDistanceUnit;
+    private final int mDefaultMessageRefreshInterval;
     private final boolean mDefaultGaCollectStats;
     private final boolean mDefaultDevSimulateNoNetwork;
 
@@ -53,10 +55,13 @@ public class SettingsRepository {
 
         final Resources res = context.getResources();
         mKeyDistanceUnit = res.getString(R.string.prefs_distance_unit_key);
+        mKeyMessageRefreshInterval = res.getString(R.string.prefs_message_refresh_interval_min_key);
         mKeyGaCollectStats = res.getString(R.string.prefs_ga_collect_stats_key);
         mKeyDevSimulateNoNetwork = res.getString(R.string.prefs_dev_simulate_no_network_key);
 
         mDefaultDistanceUnit = res.getString(R.string.prefs_distance_unit_default);
+        mDefaultMessageRefreshInterval =
+                res.getInteger(R.integer.prefs_message_refresh_interval_min_default);
         mDefaultGaCollectStats = res.getBoolean(R.bool.prefs_ga_collect_stats_default);
         mDefaultDevSimulateNoNetwork = res.getBoolean(R.bool.prefs_dev_simulate_no_network_default);
 
@@ -136,6 +141,11 @@ public class SettingsRepository {
         setLocation(KEY_MAP_LAST_LOCATION, position);
     }
 
+    public int getMessageRefreshIntervalMin() {
+        return Integer.parseInt(mSharedPreferences.getString(
+                mKeyMessageRefreshInterval, Integer.toString(mDefaultMessageRefreshInterval)));
+    }
+
     public boolean canCollectStats() {
         return mSharedPreferences.getBoolean(mKeyGaCollectStats, mDefaultGaCollectStats);
     }
@@ -160,6 +170,9 @@ public class SettingsRepository {
 
     public String getDistanceUnitKey() {
         return mKeyDistanceUnit;
+    }
+    public String getMessageRefreshIntervalKey() {
+        return mKeyMessageRefreshInterval;
     }
     public String getCanCollectStatsKey() {
         return mKeyGaCollectStats;

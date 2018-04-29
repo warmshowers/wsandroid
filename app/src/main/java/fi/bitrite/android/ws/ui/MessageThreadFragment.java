@@ -68,7 +68,9 @@ public class MessageThreadFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         // Marks the thread as read.
-        mMessageRepository.markThreadAsRead(mThreadId).subscribe();
+        mMessageRepository.markThreadAsRead(mThreadId)
+                .onErrorComplete() // TODO(saemy): Error handling.
+                .subscribe();
 
         return view;
     }

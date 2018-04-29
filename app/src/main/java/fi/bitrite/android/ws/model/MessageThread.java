@@ -3,47 +3,52 @@ package fi.bitrite.android.ws.model;
 import java.util.Date;
 import java.util.List;
 
+import fi.bitrite.android.ws.util.Pushable;
+
 public class MessageThread {
-    public final static int STATUS_READ = 0;
-    public final static int STATUS_UNREAD = 1;
-
-    // The following status are only needed by the MessageRepository to mark a message as (un)read
-    // while there was an error pushing the update to the webservice.
-    public final static int STATUS_READ_NOT_YET_PUSHED = 2;
-    public final static int STATUS_UNREAD_NOT_YET_PUSHED = 3;
-
-
     public final int id;
 
     public final String subject;
     public final Date started;
-    public final int readStatus;
+    public final Pushable<Boolean> isRead;
 
     public final List<Integer> participantIds;
     public final List<Message> messages;
 
     public final Date lastUpdated;
 
-    public MessageThread(int id, String subject, Date started, boolean isUnread,
-                         List<Integer> participantIds, List<Message> messages, Date lastUpdated) {
-        this(id, subject, started, isUnread ? STATUS_UNREAD : STATUS_READ, participantIds, messages,
-                lastUpdated);
-    }
-    public MessageThread(int id, String subject, Date started, int readStatus,
+    public MessageThread(int id, String subject, Date started, Pushable<Boolean> isRead,
                          List<Integer> participantIds, List<Message> messages, Date lastUpdated) {
         this.id = id;
         this.subject = subject;
         this.started = started;
-        this.readStatus = readStatus;
+        this.isRead = isRead;
         this.participantIds = participantIds;
         this.messages = messages;
         this.lastUpdated = lastUpdated;
     }
 
-    public boolean isUnread() {
-        return readStatus == STATUS_UNREAD || readStatus == STATUS_UNREAD_NOT_YET_PUSHED;
-    }
     public boolean isRead() {
-        return readStatus == STATUS_READ || readStatus == STATUS_READ_NOT_YET_PUSHED;
+        return this.isRead.value;
+    }
+
+    public boolean hasNewMessages() {
+        if (isRead()) {
+            return false;
+        }
+        for (Message message : messages) {
+            if (message.isNew) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Creates a clone of the given thread except that the readStatus is changed.
+     */
+    public MessageThread cloneForReadStatus(Pushable<Boolean> newReadStatus) {
+        return new MessageThread(id, subject, started, newReadStatus, participantIds, messages,
+                                 lastUpdated);
     }
 }

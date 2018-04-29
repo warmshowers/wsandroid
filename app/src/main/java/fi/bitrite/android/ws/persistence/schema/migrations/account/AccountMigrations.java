@@ -11,6 +11,7 @@ import fi.bitrite.android.ws.persistence.schema.migrations.Migrations;
 @Singleton
 public class AccountMigrations implements Migrations {
     @Inject MigrationTo1 mMigrationTo1;
+    @Inject MigrationTo2 mMigrationTo2;
 
     @Inject
     AccountMigrations() {
@@ -23,6 +24,7 @@ public class AccountMigrations implements Migrations {
     public void upgradeDatabase(@NonNull SQLiteDatabase db) {
         switch (db.getVersion()) {
             case 0: mMigrationTo1.recoverSavedFavoriteUserIds(db);
+            case 1: mMigrationTo2.fixMessageStatus(db);
         }
     }
 }

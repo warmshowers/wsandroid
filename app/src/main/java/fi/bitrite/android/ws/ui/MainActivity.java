@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.ui;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -19,7 +20,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -30,16 +33,26 @@ import dagger.android.support.HasSupportFragmentInjector;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.repository.MessageRepository;
+import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.ui.listadapter.NavigationListAdapter;
 import fi.bitrite.android.ws.ui.model.NavigationItem;
 import fi.bitrite.android.ws.ui.util.ActionBarTitleHelper;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
 
+    private static final String KEY_MESSAGE_THREAD_ID = "thread_id";
+
+    private final NavigationItem mMessageNavigationItem = new NavigationItem(
+            NavigationController.NAVIGATION_TAG_MESSAGE_THREADS, R.drawable.ic_message_grey600_24dp,
+            R.string.navigation_item_messages);
     private final List<NavigationItem> mPrimaryNavigationItems = Arrays.asList(
             // Map
             new NavigationItem(NavigationController.NAVIGATION_TAG_MAP,
@@ -50,8 +63,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                     R.drawable.ic_favorite_grey600_24dp, R.string.navigation_item_favorites),
 
             // Messages
-            new NavigationItem(NavigationController.NAVIGATION_TAG_MESSAGE_THREADS,
-                    R.drawable.ic_message_grey600_24dp, R.string.navigation_item_messages)
+           mMessageNavigationItem
     );
     private final List<NavigationItem> mSecondaryNavigationItems = Arrays.asList(
             // Settings
@@ -66,9 +78,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Inject ActionBarTitleHelper mActionBarTitleHelper;
     @Inject DispatchingAndroidInjector<Fragment> mDispatchingAndroidInjector;
 
-    @Inject NavigationController mNavigationController;
     @Inject AuthenticationController mAuthenticationController;
     @Inject LoggedInUserHelper mLoggedInUserHelper;
+    @Inject MessageRepository mMessageRepository;
+    @Inject NavigationController mNavigationController;
 
     @BindView(R.id.main_layout_drawer) DrawerLayout mMainLayout;
     @BindView(R.id.main_toolbar) Toolbar mToolbar;
@@ -82,6 +95,16 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private ActionBarDrawerToggle mDrawerToggle;
 
     private CompositeDisposable mDisposables;
+
+    /**
+     * Creates an intent that sends, when used, the user to that message thread. This is needed for
+     * notifications.
+     */
+    public static Intent createForMessageThread(Context context, int threadId) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra(KEY_MESSAGE_THREAD_ID, threadId);
+        return intent;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,11 +161,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         }
 
         if (savedInstanceState == null) {
-//            currentNavigationItemId.setValue(NAVIGATION_ITEM_MAP);
             mNavigationController.navigateToMainFragment();
         }
 
-        handleSearchIntent(getIntent());
+        handleActionIntents(getIntent());
     }
 
     @Override
@@ -178,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mDisposables.add(mActionBarTitleHelper.get()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mToolbar::setTitle));
+
+        mDisposables.add(handleNewMessageThreadCount());
     }
 
     @Override
@@ -189,13 +213,24 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
+        handleActionIntents(intent);
+    }
+    private void handleActionIntents(Intent intent) {
         handleSearchIntent(intent);
+        handleMessageThreadIntent(intent);
     }
 
     private void handleSearchIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             mNavigationController.navigateToSearch(query);
+        }
+    }
+    private void handleMessageThreadIntent(Intent intent) {
+        int threadId = intent.getIntExtra(KEY_MESSAGE_THREAD_ID, -1);
+        if (threadId != -1) {
+            // TODO(saemy): Ensure back action is to message threads.
+            mNavigationController.navigateToMessageThread(threadId);
         }
     }
 
@@ -241,6 +276,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             return true;
         }
 
+        // FIXME(saemy): This should move one level up in the tag-uri of the navigation controller.
         getSupportFragmentManager().popBackStack();
         return true;
     }
@@ -258,5 +294,36 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
         // Shows the fragment.
         mNavigationController.navigateToTag(itemTag);
+    }
+
+    /**
+     * Registers itself for message thread updates and keeps the notification count on the message
+     * navigation item up to date.
+     */
+    private Disposable handleNewMessageThreadCount() {
+        class Container {
+            // We need a final object.
+            Disposable disposable;
+        }
+        Container container = new Container();
+        Set<Integer> newThreads = new HashSet<>();
+        return mMessageRepository
+                .getAll()
+                .subscribe(messageThreadObservables -> {
+                    if (container.disposable != null) {
+                        container.disposable.dispose();
+                    }
+                    container.disposable = Observable.mergeDelayError(messageThreadObservables)
+                            .observeOn(Schedulers.computation())
+                            .filter(Resource::hasData)
+                            .map(resource -> resource.data)
+                            // The next filter returns true if the new-status changed.
+                            .filter(thread -> thread.hasNewMessages()
+                                    ? newThreads.add(thread.id)
+                                    : newThreads.remove(thread.id))
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(thread -> mMessageNavigationItem.notificationCount.onNext(
+                                    newThreads.size()));
+                });
     }
 }

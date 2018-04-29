@@ -17,6 +17,7 @@ import java.util.List;
 
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
+import fi.bitrite.android.ws.util.Pushable;
 
 @JsonAdapter(MessageThreadListResponse.Deserializer.class)
 public class MessageThreadListResponse {
@@ -45,11 +46,12 @@ public class MessageThreadListResponse {
             }
 
             return new MessageThread(
-                    id, subject, started, isUnread(), participantIds, messages, lastUpdated);
+                    id, subject, started, new Pushable<>(isRead(), true), participantIds, messages,
+                    lastUpdated);
         }
 
-        public boolean isUnread() {
-            return numUnread > 0;
+        public boolean isRead() {
+            return numUnread == 0;
         }
 
     }

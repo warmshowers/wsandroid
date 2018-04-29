@@ -5,7 +5,7 @@
     <PreferenceCategory
         android:title="@string/prefscat_dev_title">
 
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="@bool/prefs_dev_simulate_no_network_default"
             android:key="@string/prefs_dev_simulate_no_network_key"
             android:title="@string/prefs_dev_simulate_no_network_title" />
