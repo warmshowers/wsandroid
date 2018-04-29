@@ -196,11 +196,6 @@ public class MessageNotificationController {
     }
 
     private void updateNotification(NotificationEntry entry) {
-        // FIXME(saemy): Debug only.
-        if (entry.latestNewMessage == null) {
-            entry.latestNewMessage = entry.thread.messages.get(entry.thread.messages.size() - 1);
-        }
-
         // Removes the notification if nothing is to be notified about.
         if (entry.latestNewMessage == null) {
             dismissNotification(entry);
@@ -252,7 +247,7 @@ public class MessageNotificationController {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                         ? new Notification.Builder(mApplicationContext, CHANNEL_ID)
                         : new Notification.Builder(mApplicationContext))
-                .setSmallIcon(R.drawable.wslogo) // FIXME(saemy): This drawable does not work.
+                .setSmallIcon(R.drawable.ic_bicycle_white_24dp)
                 .setLargeIcon(entry.partnerProfileBitmap)
                 .setStyle(style)
                 .setContentIntent(intent)
@@ -274,7 +269,7 @@ public class MessageNotificationController {
         String newestMessageAuthorName =
                 entry.participants.get(entry.latestNewMessage.authorId).getFullname();
         return new NotificationCompat.Builder(mApplicationContext, CHANNEL_ID)
-                .setSmallIcon(R.drawable.wslogo)
+                .setSmallIcon(R.drawable.ic_bicycle_white_24dp)
                 .setLargeIcon(entry.partnerProfileBitmap)
                 .setStyle(style)
                 .setContentTitle(newestMessageAuthorName)
