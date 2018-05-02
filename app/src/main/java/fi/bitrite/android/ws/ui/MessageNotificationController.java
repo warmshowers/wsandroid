@@ -97,8 +97,8 @@ public class MessageNotificationController {
                         }
                     }
                     return hasNew;
-                    // Only unread threads from here.
                 })
+                // Only unread threads from here.
                 .map(thread -> {
                     Collections.sort(thread.messages, MessageListAdapter.COMPARATOR);
                     return thread;
@@ -201,6 +201,13 @@ public class MessageNotificationController {
             dismissNotification(entry);
             return;
         }
+        if (entry.lastShownNewMessageId != null
+            && entry.latestNewMessage.id == entry.lastShownNewMessageId) {
+            // See the doc of {@link NotificationEntry::lastShownNewMessageId} for why we are doing
+            // this.
+            return;
+        }
+        entry.lastShownNewMessageId = entry.latestNewMessage.id;
 
         Intent resultIntent = MainActivity.createForMessageThread(
                 mApplicationContext, entry.thread.id);
@@ -281,6 +288,7 @@ public class MessageNotificationController {
 
     private void dismissNotification(@NonNull NotificationEntry entry) {
         mNotificationManager.cancel(entry.notificationId());
+        mNotificationsByThread.remove(entry.thread.id);
     }
 
 
@@ -292,6 +300,13 @@ public class MessageNotificationController {
         @Nullable Message latestNewMessage;
         @NonNull final SparseArray<Host> participants = new SparseArray<>();
         @Nullable Bitmap partnerProfileBitmap;
+        /**
+         * The id of the newest new message that is currently shown in a notification. We are not
+         * re-issuing any new notifications as long as the latestNewMessage.id equals this value.
+         * That prevents the notification to be re-shown in case it got dismissed by the user
+         * followed by a reload of the messages which might change the MessageThread instance.
+         */
+        @Nullable Integer lastShownNewMessageId;
 
         NotificationEntry(@NonNull MessageThread thread) {
             setThread(thread);
