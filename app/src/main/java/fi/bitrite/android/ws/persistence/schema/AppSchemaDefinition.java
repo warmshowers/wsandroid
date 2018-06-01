@@ -4,11 +4,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.AppScope;
 import fi.bitrite.android.ws.persistence.schema.migrations.app.AppMigrations;
 
-@Singleton
+@AppScope
 public class AppSchemaDefinition extends SchemaDefinition {
     private final static int VERSION = 4;
 

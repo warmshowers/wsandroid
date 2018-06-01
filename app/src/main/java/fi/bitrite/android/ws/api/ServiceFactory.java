@@ -23,32 +23,54 @@ public class ServiceFactory {
 
     private ServiceFactory() {}
 
-    public static WarmshowersService createWarmshowersService(
+    public static WarmshowersWebservice createWarmshowersWebservice(
+            DefaultInterceptor defaultInterceptor) {
+        OkHttpClient client = createDefaultClientBuilder(defaultInterceptor).build();
+        Gson gson = createDefaultGsonBuilder().create();
+
+        return createDefaultRetrofitBuilder(client, gson)
+                .build()
+                .create(WarmshowersWebservice.class);
+    }
+
+    public static WarmshowersAccountWebservice createWarmshowersAccountWebservice(
             DefaultInterceptor defaultInterceptor, HeaderInterceptor headerInterceptor,
             ResponseInterceptor responseInterceptor) {
-        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+        OkHttpClient client = createDefaultClientBuilder(defaultInterceptor)
                 // They must be in correct order.
-                .addInterceptor(defaultInterceptor)
                 .addInterceptor(responseInterceptor)
-                .addInterceptor(headerInterceptor);
+                .addInterceptor(headerInterceptor)
+                .build();
 
-        final BooleanDeserializer booleanDeserializer = new BooleanDeserializer();
-        Gson gson = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .registerTypeAdapter(Date.class, new DateDeserializer())
-                .registerTypeAdapter(Boolean.class, booleanDeserializer)
-                .registerTypeAdapter(boolean.class, booleanDeserializer)
+        Gson gson = createDefaultGsonBuilder()
                 .registerTypeAdapter(Feedback.Relation.class, new RelationTypeAdapter())
                 .registerTypeAdapter(Feedback.Rating.class, new RatingTypeAdapter())
                 .create();
 
+        return createDefaultRetrofitBuilder(client, gson)
+                .build()
+                .create(WarmshowersAccountWebservice.class);
+    }
+
+    private static OkHttpClient.Builder createDefaultClientBuilder(
+            DefaultInterceptor defaultInterceptor) {
+        return  new OkHttpClient.Builder()
+                .addInterceptor(defaultInterceptor);
+    }
+    private static GsonBuilder createDefaultGsonBuilder() {
+        final BooleanDeserializer booleanDeserializer = new BooleanDeserializer();
+        return new GsonBuilder()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .registerTypeAdapter(Date.class, new DateDeserializer())
+                .registerTypeAdapter(Boolean.class, booleanDeserializer)
+                .registerTypeAdapter(boolean.class, booleanDeserializer);
+    }
+    private static Retrofit.Builder createDefaultRetrofitBuilder(OkHttpClient client, Gson gson) {
         return new Retrofit.Builder()
                 .baseUrl("https://www.warmshowers.org/")
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(new StringConverterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(clientBuilder.build())
-                .build()
-                .create(WarmshowersService.class);
+                .client(client);
     }
 }

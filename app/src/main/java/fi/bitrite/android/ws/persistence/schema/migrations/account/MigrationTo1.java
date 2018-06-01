@@ -7,12 +7,12 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.persistence.schema.migrations.app.MigrationTo4;
 import io.reactivex.subjects.BehaviorSubject;
 
-@Singleton
+@AccountScope
 public class MigrationTo1 {
     public static final BehaviorSubject<List<Integer>> savedFavoriteUserIds =
             BehaviorSubject.create();

@@ -4,11 +4,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.persistence.schema.migrations.Migrations;
 
-@Singleton
+@AccountScope
 public class AccountMigrations implements Migrations {
     @Inject MigrationTo1 mMigrationTo1;
     @Inject MigrationTo2 mMigrationTo2;

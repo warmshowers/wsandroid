@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.ui.util.ActionBarTitleHelper;
+import fi.bitrite.android.ws.ui.util.NavigationController;
 
 public abstract class BaseFragment extends Fragment implements Injectable {
 
@@ -21,5 +22,9 @@ public abstract class BaseFragment extends Fragment implements Injectable {
     protected abstract CharSequence getTitle();
     protected void setTitle(CharSequence title) {
         mActionBarTitleHelper.set(title);
+    }
+
+    NavigationController getNavigationController() {
+        return ((MainActivity)getActivity()).getNavigationController();
     }
 }

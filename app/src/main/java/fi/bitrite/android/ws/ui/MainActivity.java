@@ -1,10 +1,12 @@
 package fi.bitrite.android.ws.ui;
 
+import android.accounts.Account;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -32,6 +34,10 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.api.AuthenticationController;
+import fi.bitrite.android.ws.auth.AccountManager;
+import fi.bitrite.android.ws.di.Injectable;
+import fi.bitrite.android.ws.di.account.AccountComponent;
+import fi.bitrite.android.ws.di.account.AccountComponentManager;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.repository.Resource;
@@ -46,7 +52,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+// AppScope
+public class MainActivity extends AppCompatActivity
+        implements HasSupportFragmentInjector, Injectable {
 
     private static final String KEY_MESSAGE_THREAD_ID = "thread_id";
 
@@ -76,12 +84,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     );
 
     @Inject ActionBarTitleHelper mActionBarTitleHelper;
-    @Inject DispatchingAndroidInjector<Fragment> mDispatchingAndroidInjector;
 
-    @Inject AuthenticationController mAuthenticationController;
-    @Inject LoggedInUserHelper mLoggedInUserHelper;
-    @Inject MessageRepository mMessageRepository;
-    @Inject NavigationController mNavigationController;
+    @Inject AccountComponentManager mAccountComponentManager;
+    @Inject AccountManager mAccountManager;
 
     @BindView(R.id.main_layout_drawer) DrawerLayout mMainLayout;
     @BindView(R.id.main_toolbar) Toolbar mToolbar;
@@ -93,8 +98,9 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     @BindView(R.id.nav_lst_secondary_navigation) ListView mSecondaryNavigationList;
 
     private ActionBarDrawerToggle mDrawerToggle;
+    private NavigationController mNavigationController;
 
-    private CompositeDisposable mDisposables;
+    private CompositeDisposable mResumePauseDisposables;
 
     /**
      * Creates an intent that sends, when used, the user to that message thread. This is needed for
@@ -111,6 +117,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        mNavigationController = new NavigationController(getSupportFragmentManager());
 
         setSupportActionBar(mToolbar);
 
@@ -150,20 +158,14 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         secondaryNavigationListAdapter.getOnClickSubject().subscribe(this::onNavigationItemClicked);
         mSecondaryNavigationList.setAdapter(secondaryNavigationListAdapter);
 
-
         // Listen for changes in the back stack
         getSupportFragmentManager().addOnBackStackChangedListener(this::onFragmentBackStackChanged);
         onFragmentBackStackChanged();
 
-        // Initializes the authentication controller.
-        if (!mAuthenticationController.isInitialized()) {
-            mAuthenticationController.init(this);
-        }
-
-        if (savedInstanceState == null) {
-            mNavigationController.navigateToMainFragment();
-        }
-
+        // We need an account to be able to show any fragments.
+        mAccountHelper.switchAccount(mAccountManager.getCurrentAccount().getValue().data);
+        // First we show the main fragment to have something on the backstack.
+        moveToMainFragmentIfNeeded();
         handleActionIntents(getIntent());
     }
 
@@ -171,53 +173,53 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     public void onResume() {
         super.onResume();
 
-        mDisposables = new CompositeDisposable();
+        mResumePauseDisposables = new CompositeDisposable();
 
-        // Listens for logged-in user changes.
-        mDisposables.add(mLoggedInUserHelper.getRx()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(nullableUser -> {
-                    if (nullableUser.isNonNull()) {
-                        Host loggedInUser = nullableUser.data;
+        mAccountManager.setMainActivity(this);
 
-                        mLblFullname.setText(loggedInUser.getFullname());
-                        mLblUsername.setText(loggedInUser.getName());
-
-                        String profilePhotoUrl = loggedInUser.getPicture();
-                        if (TextUtils.isEmpty(profilePhotoUrl)) {
-                            mImgUserPhoto.setImageResource(R.drawable.default_hostinfo_profile);
-                        } else {
-                            Picasso.with(this)
-                                    .load(profilePhotoUrl)
-                                    .into(mImgUserPhoto); // largeUrl
-                        }
-                    } else {
-                        // TODO(saemy): What to show?
-                    }
-                }));
+        mAccountHelper.resume();
 
         // Listens for ActionBar title changes.
-        mDisposables.add(mActionBarTitleHelper.get()
+        mResumePauseDisposables.add(mActionBarTitleHelper.get()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mToolbar::setTitle));
 
-        mDisposables.add(handleNewMessageThreadCount());
+        // Listens for logged-in user changes. Modifying the backstack is only allowed when the
+        // activity is around.
+        mResumePauseDisposables.add(mAccountManager.getCurrentAccount()
+                .subscribe(nullableAccount -> {
+                    Account previousAccount = mAccountHelper.mAccount;
+                    mAccountHelper.switchAccount(nullableAccount.data);
+
+                    if (nullableAccount.isNull() ||
+                        previousAccount != null && !previousAccount.equals(nullableAccount.data)) {
+                        // We are doing an actual account switch. Clear the backstack.
+                        mNavigationController.clearBackStack();
+                    }
+                    moveToMainFragmentIfNeeded();
+                }));
     }
 
     @Override
     public void onPause() {
-        mDisposables.dispose();
+        mResumePauseDisposables.dispose();
+        mAccountManager.setMainActivity(null);
+        mAccountHelper.pause();
         super.onPause();
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         setIntent(intent);
         handleActionIntents(intent);
     }
     private void handleActionIntents(Intent intent) {
-        handleSearchIntent(intent);
-        handleMessageThreadIntent(intent);
+        if (mAccountHelper.mAccount != null) {
+            // We need an account to be able to show any fragments.
+            handleSearchIntent(intent);
+            handleMessageThreadIntent(intent);
+        }
     }
 
     private void handleSearchIntent(Intent intent) {
@@ -234,9 +236,16 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         }
     }
 
+    private void moveToMainFragmentIfNeeded() {
+        if (mAccountHelper.mAccount != null && mNavigationController.isBackstackEmpty()) {
+            // There is a new account we switch to -> show the main fragment.
+            mNavigationController.navigateToMainFragment();
+        }
+    }
+
     @Override
     public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
-        return mDispatchingAndroidInjector;
+        return mAccountHelper.getDispatchingAndroidInjector();
     }
 
     @Override
@@ -296,34 +305,125 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mNavigationController.navigateToTag(itemTag);
     }
 
+    @NonNull
+    public NavigationController getNavigationController() {
+        return mNavigationController;
+    }
+
     /**
-     * Registers itself for message thread updates and keeps the notification count on the message
-     * navigation item up to date.
+     * This class can inject itself into an accountComponent. This is the bridge to get access to
+     * the account scope from the appScoped {@link MainActivity}.
      */
-    private Disposable handleNewMessageThreadCount() {
-        class Container {
-            // We need a final object.
-            Disposable disposable;
+    private final AccountHelper mAccountHelper = new AccountHelper();
+    public class AccountHelper {
+        @Inject Account mAccount;
+        @Inject AuthenticationController mAuthenticationController;
+        @Inject DispatchingAndroidInjector<Fragment> mDispatchingAndroidInjector;
+        @Inject LoggedInUserHelper mLoggedInUserHelper;
+        @Inject MessageRepository mMessageRepository;
+
+        private boolean isPaused = false;
+        private CompositeDisposable mDisposables;
+
+        void switchAccount(Account account) {
+            if (mAccount == account) {
+                return;
+            }
+
+            // Pause the old.
+            pause();
+
+            mAccount = account;
+
+            // Initialize the new.
+            if (mAccount != null) {
+                AccountComponent accountComponent = mAccountComponentManager.get(mAccount);
+                accountComponent.inject(this);
+            }
+
+            // Resume the new.
+            if (!isPaused) {
+                resume();
+            }
         }
-        Container container = new Container();
-        Set<Integer> newThreads = new HashSet<>();
-        return mMessageRepository
-                .getAll()
-                .subscribe(messageThreadObservables -> {
-                    if (container.disposable != null) {
-                        container.disposable.dispose();
-                    }
-                    container.disposable = Observable.mergeDelayError(messageThreadObservables)
-                            .observeOn(Schedulers.computation())
-                            .filter(Resource::hasData)
-                            .map(resource -> resource.data)
-                            // The next filter returns true if the new-status changed.
-                            .filter(thread -> thread.hasNewMessages()
-                                    ? newThreads.add(thread.id)
-                                    : newThreads.remove(thread.id))
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(thread -> mMessageNavigationItem.notificationCount.onNext(
-                                    newThreads.size()));
-                });
+
+        void resume() {
+            isPaused = false;
+            if (mAccount != null) {
+                mDisposables = new CompositeDisposable();
+                mDisposables.add(handleLoggedInUser());
+                mDisposables.add(handleNewMessageThreadCount());
+            }
+        }
+
+        void pause() {
+            isPaused = true;
+            if (mDisposables != null) {
+                mDisposables.dispose();
+            }
+        }
+
+        DispatchingAndroidInjector<Fragment> getDispatchingAndroidInjector() {
+            return mDispatchingAndroidInjector;
+        }
+
+        /**
+         * Updates the profile picture and account details of the logged in user in the navigation.
+         */
+        private Disposable handleLoggedInUser() {
+            return mLoggedInUserHelper.getRx()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(maybeUser -> {
+                        if (maybeUser.isNonNull()) {
+                            Host loggedInUser = maybeUser.data;
+
+                            mLblFullname.setText(loggedInUser.getFullname());
+                            mLblUsername.setText(loggedInUser.getName());
+
+                            String profilePhotoUrl = loggedInUser.getPicture();
+                            if (TextUtils.isEmpty(profilePhotoUrl)) {
+                                mImgUserPhoto.setImageResource(
+                                        R.drawable.default_hostinfo_profile);
+                            } else {
+                                Picasso.with(MainActivity.this)
+                                        .load(profilePhotoUrl)
+                                        .into(mImgUserPhoto); // largeUrl
+                            }
+                        } else {
+                            // TODO(saemy): Error handling...
+                        }
+                    });
+        }
+
+        /**
+         * Registers itself for message thread updates and keeps the notification count on the
+         * message navigation item up to date.
+         */
+        private Disposable handleNewMessageThreadCount() {
+            class Container {
+                // We need a final object.
+                Disposable disposable;
+            }
+            Container container = new Container();
+            Set<Integer> newThreads = new HashSet<>();
+            return mMessageRepository
+                    .getAll()
+                    .subscribe(messageThreadObservables -> {
+                        if (container.disposable != null) {
+                            container.disposable.dispose();
+                        }
+                        container.disposable = Observable.mergeDelayError(messageThreadObservables)
+                                .observeOn(Schedulers.computation())
+                                .filter(Resource::hasData)
+                                .map(resource -> resource.data)
+                                // The next filter returns true if the new-status changed.
+                                .filter(thread -> thread.hasNewMessages()
+                                        ? newThreads.add(thread.id)
+                                        : newThreads.remove(thread.id))
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(thread -> mMessageNavigationItem.notificationCount.onNext(
+                                        newThreads.size()));
+                    });
+        }
     }
 }

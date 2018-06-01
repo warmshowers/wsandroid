@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.account.AccountScope;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-@Singleton
+@AccountScope
 public class ResponseInterceptor implements Interceptor {
 
     public interface Handler {

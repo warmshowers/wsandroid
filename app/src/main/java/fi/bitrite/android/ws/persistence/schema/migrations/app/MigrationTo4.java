@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.AppScope;
 import io.reactivex.subjects.BehaviorSubject;
 
-@Singleton
+@AppScope
 public class MigrationTo4 {
     public static final BehaviorSubject<List<Integer>> savedFavoriteUserIds =
             BehaviorSubject.create();

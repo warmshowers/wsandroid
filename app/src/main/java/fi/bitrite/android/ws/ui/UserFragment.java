@@ -44,7 +44,6 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.FeedbackRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
-import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.ui.view.FeedbackTable;
 import fi.bitrite.android.ws.util.GlobalInfo;
@@ -69,7 +68,6 @@ public class UserFragment extends BaseFragment {
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_USER = "user";
 
-    @Inject NavigationController mNavigationController;
     @Inject FavoriteRepository mFavoriteRepository;
     @Inject FeedbackRepository mFeedbackRepository;
     @Inject UserRepository mUserRepository;
@@ -305,15 +303,15 @@ public class UserFragment extends BaseFragment {
     }
 
     private void contactHost(@NonNull Host user) {
-        mNavigationController.navigateToContactUser(user);
+        getNavigationController().navigateToContactUser(user);
     }
 
     private void sendFeedback(@NonNull Host user) {
-        mNavigationController.navigateToFeedback(user.getId());
+        getNavigationController().navigateToFeedback(user.getId());
     }
 
     private void showHostOnMap(@NonNull Host user) {
-        mNavigationController.navigateToMap(user.getLatLng());
+        getNavigationController().navigateToMap(user.getLatLng());
     }
 
     /**

@@ -3,7 +3,6 @@ package fi.bitrite.android.ws;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 
@@ -16,7 +15,6 @@ import javax.inject.Inject;
 
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
-import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.di.AppComponent;
 import fi.bitrite.android.ws.di.AppInjector;
 
@@ -25,7 +23,6 @@ public class WSAndroidApplication extends Application implements HasActivityInje
     public static final String TAG = "WSAndroidApplication";
     private static AppInjector mAppInjector;
 
-    @Inject AuthenticationController mAuthenticationController;
     @Inject DispatchingAndroidInjector<Activity> mDispatchingAndroidInjector;
 
     private final HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
@@ -64,10 +61,6 @@ public class WSAndroidApplication extends Application implements HasActivityInje
         mAppInjector = AppInjector.create(this);
 
         // Injected variables are available from this point.
-
-        // Start the WS service if it for some reason was not started at startup.
-        Intent serviceIntent = new Intent(this, WSAndroidService.class);
-        startService(serviceIntent);
     }
 
     @Override

@@ -72,7 +72,6 @@ import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.SettingsRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.model.ClusterUser;
-import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.WSNonHierarchicalDistanceBasedAlgorithm;
@@ -95,7 +94,6 @@ public class MapFragment extends BaseFragment implements
 
     @Inject AuthenticationController mAuthenticationController;
     @Inject LoggedInUserHelper mLoggedInUserHelper;
-    @Inject NavigationController mNavigationController;
     @Inject UserRepository mUserRepository;
     @Inject FavoriteRepository mFavoriteRepository;
     @Inject SettingsRepository mSettingsRepository;
@@ -478,7 +476,7 @@ public class MapFragment extends BaseFragment implements
         for (ClusterUser user : cluster.getItems()) {
             userIds.add(user.id);
         }
-        mNavigationController.navigateToUserList(userIds);
+        getNavigationController().navigateToUserList(userIds);
     }
 
     @Override
@@ -488,7 +486,7 @@ public class MapFragment extends BaseFragment implements
 
     @Override
     public void onClusterItemInfoWindowClick(ClusterUser user) {
-        mNavigationController.navigateToUser(user.id);
+        getNavigationController().navigateToUser(user.id);
     }
 
     /* Creates a dialog for an error message */
@@ -534,7 +532,7 @@ public class MapFragment extends BaseFragment implements
                 })
                 .setItems(mPossibleItems, (dialog, index) -> {
                     ClusterUser user = users.get(index);
-                    mNavigationController.navigateToUser(user.id);
+                    getNavigationController().navigateToUser(user.id);
                 });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();

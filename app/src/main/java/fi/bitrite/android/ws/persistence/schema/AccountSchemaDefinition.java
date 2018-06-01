@@ -4,11 +4,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.persistence.schema.migrations.account.AccountMigrations;
 
-@Singleton
+@AccountScope
 public class AccountSchemaDefinition extends SchemaDefinition {
     private final static int VERSION = 2;
 

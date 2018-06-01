@@ -10,6 +10,6 @@ public abstract class ActivitiesModule {
     @ContributesAndroidInjector
     abstract AuthenticatorActivity contributeAuthenticatorActivity();
 
-    @ContributesAndroidInjector(modules = MainActivityModule.class)
+    @ContributesAndroidInjector
     abstract MainActivity contributeMainActivity();
 }

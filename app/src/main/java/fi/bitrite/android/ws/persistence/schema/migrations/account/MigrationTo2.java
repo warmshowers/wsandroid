@@ -4,9 +4,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-@Singleton
+import fi.bitrite.android.ws.di.account.AccountScope;
+
+@AccountScope
 public class MigrationTo2 {
     @Inject
     MigrationTo2() {

@@ -9,8 +9,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-import javax.inject.Inject;
-
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.ui.AboutFragment;
@@ -46,9 +44,8 @@ public class NavigationController {
     // The tag of the current top-level navigation item (messageThreads/10432 -> messageThreads).
     private BehaviorSubject<String> mTopLevelNavigationItemTag = BehaviorSubject.create();
 
-    @Inject
-    public NavigationController(MainActivity mainActivity) {
-        mFragmentManager = mainActivity.getSupportFragmentManager();
+    public NavigationController(FragmentManager fragmentManager) {
+        mFragmentManager = fragmentManager;
 
         // Listens for changes in the backstack and updates the top level tag.
         mFragmentManager.addOnBackStackChangedListener(() -> {
@@ -171,10 +168,8 @@ public class NavigationController {
     private void navigateTo(String tag, Fragment fragment, boolean addToBackStack,
                             boolean deleteBackStack) {
         // Empties the backstack if requested.
-        if (deleteBackStack && mFragmentManager.getBackStackEntryCount() > 0) {
-            int firstFragmentId = mFragmentManager.getBackStackEntryAt(0).getId();
-            mFragmentManager.popBackStack(firstFragmentId,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        if (deleteBackStack) {
+            clearBackStack();
         }
 
         // We need to manually update the top level tag if we do not add to the backstack as our
@@ -195,11 +190,24 @@ public class NavigationController {
     }
 
     /**
+     * Removes all entries on the backstack.
+     */
+    public void clearBackStack() {
+        if (!isBackstackEmpty()) {
+            int firstFragmentId = mFragmentManager.getBackStackEntryAt(0).getId();
+            mFragmentManager.popBackStack(firstFragmentId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+    }
+
+    /**
      * Removes the top element of the backstack.
      */
-    public NavigationController popBackStack() {
+    public void popBackStack() {
         mFragmentManager.popBackStack();
-        return this;
+    }
+
+    public boolean isBackstackEmpty() {
+        return mFragmentManager.getBackStackEntryCount() == 0;
     }
 
     /**

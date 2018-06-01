@@ -5,15 +5,15 @@ import android.content.Context;
 import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.auth.AccountManager;
+import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.persistence.schema.AccountSchemaDefinition;
 
 /**
  * Database that contains information specific to a logged in user.
  */
-@Singleton
+@AccountScope
 public class AccountDatabase extends Database {
     private final static String DB_NAME = "wsandroid_account-%d.db";
 

@@ -1,7 +1,6 @@
 package fi.bitrite.android.ws.ui;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -21,8 +20,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.auth.AuthToken;
-import fi.bitrite.android.ws.auth.AuthenticationManager;
 import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.ui.view.AccountAuthenticatorFragmentActivity;
@@ -36,7 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
         implements Injectable {
 
-    @Inject AuthenticationManager mAuthenticationManager;
+    @Inject AccountManager mAuthenticationManager;
 
     @BindView(R.id.auth_txt_username) EditText mTxtUsername;
     @BindView(R.id.auth_txt_password) EditText mTxtPassword;
@@ -71,7 +70,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
         mTxtPassword.addTextChangedListener(mTextWatcher);
 
         // If we do a re-login (to obtain a new auth token), the username is provided by the caller.
-        String providedUsername = getIntent().getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+        String providedUsername =
+                getIntent().getStringExtra(android.accounts.AccountManager.KEY_ACCOUNT_NAME);
         if (!TextUtils.isEmpty(providedUsername)) {
             mTxtUsername.setText(providedUsername);
             disableEditText(mTxtUsername);
@@ -128,15 +128,18 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
         mProgressDisposable = ProgressDialog.create(R.string.authenticating).show(this);
 
         // FIXME(saemy): This call fails if the screen rotation is changed while it is on the fly.
+        // This also fails if we put the app in the background due to the calls to finish() or
+        // Toast.makeText() that are only supported if the app is not stopped.
         mAuthenticationManager.login(username, password)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
                     Bundle response = new Bundle();
-                    response.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+                    response.putString(android.accounts.AccountManager.KEY_ACCOUNT_NAME, username);
 
-                    String accountType =
-                            getIntent().getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
-                    response.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
+                    String accountType = getIntent().getStringExtra(
+                            android.accounts.AccountManager.KEY_ACCOUNT_TYPE);
+                    response.putString(
+                            android.accounts.AccountManager.KEY_ACCOUNT_TYPE, accountType);
 
                     boolean isAlreadyLoggedIn = 406 == result.response().code();
                     if (result.isSuccessful() || isAlreadyLoggedIn) {
@@ -156,7 +159,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                         // Required if this activity was shown in getAuthToken but the authToken was
                         // previously invalidated.
                         String authTokenStr = authToken == null ? null : authToken.toString();
-                        response.putString(AccountManager.KEY_AUTHTOKEN, authTokenStr);
+                        response.putString(
+                                android.accounts.AccountManager.KEY_AUTHTOKEN, authTokenStr);
 
                         setAccountAuthenticatorResult(response);
 

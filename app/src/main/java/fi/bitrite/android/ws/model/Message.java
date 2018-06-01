@@ -1,5 +1,8 @@
 package fi.bitrite.android.ws.model;
 
+import android.text.Html;
+import android.text.Spanned;
+
 import java.util.Date;
 
 public class Message {
@@ -10,7 +13,8 @@ public class Message {
     public final int authorId;
 
     public final Date date;
-    public final String body;
+    public final String rawBody;
+    public final Spanned body;
 
     /**
      * Whether this message is new and a notification should be shown for it.
@@ -28,21 +32,34 @@ public class Message {
      */
     public final boolean isPushed;
 
-    public Message(int id, int threadId, int authorId, Date date, String body, boolean isNew,
+    public Message(int id, int threadId, int authorId, Date date, String rawBody, boolean isNew,
                    boolean isPushed) {
         this.id = id;
         this.threadId = threadId;
         this.authorId = authorId;
         this.date = date;
-        this.body = body;
+        this.rawBody = rawBody;
+        this.body = parseBody(rawBody);
         this.isNew = isNew;
         this.isPushed = isPushed;
     }
 
     public Message cloneForIsNew(boolean isNew) {
-        return new Message(id, threadId, authorId, date, body, isNew, isPushed);
+        return new Message(id, threadId, authorId, date, rawBody, isNew, isPushed);
     }
     public Message cloneForIsPushed(boolean isPushed) {
-        return new Message(id, threadId, authorId, date, body, isNew, isPushed);
+        return new Message(id, threadId, authorId, date, rawBody, isNew, isPushed);
+    }
+
+    /**
+     * Removes the <p>...</p>\r\n surrounding all messages sent from the web interface and then
+     * returns the html-parsed body.
+     */
+    private static Spanned parseBody(String rawBody) {
+        String body = rawBody;
+        if (body.startsWith("<p>") && body.endsWith("</p>\r\n")) {
+            body = body.substring(3, body.length()-6);
+        }
+        return Html.fromHtml(body);
     }
 }

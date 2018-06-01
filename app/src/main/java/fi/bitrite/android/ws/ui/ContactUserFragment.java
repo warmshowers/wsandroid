@@ -41,7 +41,6 @@ public class ContactUserFragment extends BaseFragment {
     private final static String KEY_RECIPIENT = "recipient";
 
     @Inject MessageRepository mMessageRepository;
-    @Inject NavigationController mNavigationController;
 
     @BindView(R.id.contact_user_txt_subject) EditText mTxtSubject;
     @BindView(R.id.contact_user_txt_message) EditText mTxtMessage;
@@ -107,14 +106,15 @@ public class ContactUserFragment extends BaseFragment {
 
                     // The back action should take us from the message thread to the caller of this
                     // fragment and not this form fragment itself.
-                    mNavigationController.popBackStack();
+                    final NavigationController navigationController = getNavigationController();
+                    navigationController.popBackStack();
 
                     if (threadId != MessageRepository.STATUS_NEW_THREAD_ID_NOT_IDENTIFIABLE) {
                         // This is a valid threadId.
-                        mNavigationController.navigateToMessageThread(threadId);
+                        navigationController.navigateToMessageThread(threadId);
                     } else {
                         // We just navigate to the thread list...
-                        mNavigationController.navigateToMessageThreads();
+                        navigationController.navigateToMessageThreads();
                     }
                 }, throwable -> {
                     mProgressDisposable.dispose();

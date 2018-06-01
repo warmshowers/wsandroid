@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.api.WarmshowersService;
+import fi.bitrite.android.ws.api.WarmshowersAccountWebservice;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.repository.FeedbackRepository;
 import fi.bitrite.android.ws.repository.Resource;
@@ -128,7 +128,7 @@ public class FeedbackFragment extends BaseFragment {
     public void sendFeedback() {
         // Site requires 10 words in the feedback, so pre-enforce that.
         final String body = mTxtFeedback.getText().toString();
-        if (body.split("\\w+").length < WarmshowersService.FEEDBACK_MIN_WORD_LENGTH) {
+        if (body.split("\\w+").length < WarmshowersAccountWebservice.FEEDBACK_MIN_WORD_LENGTH) {
             DialogHelper.alert(getContext(), R.string.feedback_validation_error);
             return;
         }

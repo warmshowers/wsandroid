@@ -1,11 +1,11 @@
 package fi.bitrite.android.ws.ui.util;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.AppScope;
 import io.reactivex.subjects.BehaviorSubject;
 
-@Singleton
+@AppScope
 public class ActionBarTitleHelper {
     private final BehaviorSubject<CharSequence> mTitle = BehaviorSubject.create();
 

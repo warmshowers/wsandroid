@@ -6,12 +6,9 @@ import android.util.Log;
 
 import java.util.Locale;
 
-import javax.inject.Singleton;
-
 import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.persistence.schema.migrations.Migrations;
 
-@Singleton
 public abstract class SchemaDefinition {
     private final static String TAG = SchemaDefinition.class.getName();
 

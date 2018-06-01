@@ -10,13 +10,13 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.AppScope;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.converters.DateConverter;
 import fi.bitrite.android.ws.persistence.db.AppDatabase;
 
-@Singleton
+@AppScope
 public class UserDao extends Dao {
     private final static String TABLE_NAME = "user";
 

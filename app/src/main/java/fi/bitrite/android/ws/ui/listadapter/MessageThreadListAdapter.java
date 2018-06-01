@@ -3,7 +3,6 @@ package fi.bitrite.android.ws.ui.listadapter;
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.ContextMenu;
@@ -30,6 +29,7 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
 import fi.bitrite.android.ws.repository.MessageRepository;
+import fi.bitrite.android.ws.repository.Repository;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.widget.UserCircleImageView;
@@ -132,7 +132,7 @@ public class MessageThreadListAdapter extends
             @SuppressLint("UseSparseArrays") Map<Integer, Host> participants = new HashMap<>();
             mDisposables.add(Observable.merge(
                     mUserRepository.get(getParticipantIdsWithoutCurrentUser(thread),
-                            UserRepository.ShouldSaveInDb.YES))
+                            Repository.ShouldSaveInDb.YES))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(userResource -> {
                         Host user = userResource.data;
@@ -160,7 +160,7 @@ public class MessageThreadListAdapter extends
                 // TODO(saemy): Show oldest unread message?
                 Message newestMessage =
                         Collections.max(thread.messages, MessageListAdapter.COMPARATOR);
-                mLblPreview.setText(Html.fromHtml(newestMessage.body));
+                mLblPreview.setText(newestMessage.body);
 
                 if (!newestMessage.isPushed) {
                     mLblLastUpdated.setText("..."); // TODO(saemy): Add a hourglass icon?

@@ -27,7 +27,6 @@ import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
-import fi.bitrite.android.ws.ui.util.NavigationController;
 import io.reactivex.Observable;
 
 public class FavoriteUsersFragment extends BaseFragment {
@@ -35,7 +34,6 @@ public class FavoriteUsersFragment extends BaseFragment {
     private static final int CONTEXT_MENU_DELETE = 0;
 
     @Inject FavoriteRepository mFavoriteRepository;
-    @Inject NavigationController mNavigationController;
     @Inject UserRepository mUserRepository;
 
     @BindView(R.id.favorites_lst_users) ListView mLstUsers;
@@ -75,7 +73,7 @@ public class FavoriteUsersFragment extends BaseFragment {
     @OnItemClick(R.id.favorites_lst_users)
     public void onUserClicked(int position) {
         Host selectedUser = mUserListAdapter.getUser(position);
-        mNavigationController.navigateToUser(selectedUser.getId());
+        getNavigationController().navigateToUser(selectedUser.getId());
     }
 
     @Override

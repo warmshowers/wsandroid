@@ -23,7 +23,6 @@ import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
-import fi.bitrite.android.ws.ui.util.NavigationController;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -31,7 +30,6 @@ public class UserListFragment extends BaseFragment {
 
     private static final String KEY_USER_IDS = "user_ids";
 
-    @Inject NavigationController mNavigationController;
     @Inject UserRepository mUserRepository;
 
     @BindView(R.id.users_lbl_multiple_user_address) TextView mLblMultipleUserAddress;
@@ -81,7 +79,7 @@ public class UserListFragment extends BaseFragment {
     @OnItemClick(R.id.search_lst_result)
     public void onUserClicked(int position) {
         Host user = (Host) mLstUsers.getItemAtPosition(position);
-        mNavigationController.navigateToUser(user.getId());
+        getNavigationController().navigateToUser(user.getId());
     }
 
     @Override

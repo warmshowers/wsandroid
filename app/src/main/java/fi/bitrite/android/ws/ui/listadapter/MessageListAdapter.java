@@ -90,7 +90,7 @@ public class MessageListAdapter extends
                && left.threadId == right.threadId
                && left.authorId == right.authorId
                && left.date.equals(right.date)
-               && left.body.equals(right.body);
+               && left.rawBody.equals(right.rawBody);
     }
 
     class ItemBinding implements
@@ -181,8 +181,7 @@ public class MessageListAdapter extends
                         }));
             }
 
-            mLblBody.setText(Html.fromHtml(message.body));
-
+            mLblBody.setText(message.body);
             mLblDate.setText(!message.isPushed
                     ? "..." // Its not sent yet. // TODO(saemy): Add an hourglass icon?
                     : DateUtils.getRelativeTimeSpanString(

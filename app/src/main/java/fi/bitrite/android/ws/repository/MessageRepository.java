@@ -20,12 +20,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.api.WarmshowersService;
+import fi.bitrite.android.ws.api.WarmshowersAccountWebservice;
 import fi.bitrite.android.ws.api.response.MessageThreadListResponse;
 import fi.bitrite.android.ws.api.response.MessageThreadResponse;
+import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
 import fi.bitrite.android.ws.persistence.MessageDao;
@@ -42,7 +42,7 @@ import io.reactivex.schedulers.Schedulers;
  * Acts as a intermediate to return messages from the database and in the background re-fetching
  * them from the web.
  */
-@Singleton
+@AccountScope
 public class MessageRepository extends Repository<MessageThread> {
 
     public final static int STATUS_NEW_THREAD_ID_NOT_YET_KNOWN = 0;
@@ -50,7 +50,7 @@ public class MessageRepository extends Repository<MessageThread> {
 
     private final LoggedInUserHelper mLoggedInUserHelper;
     private final MessageDao mMessageDao;
-    private final WarmshowersService mWarmshowersService;
+    private final WarmshowersAccountWebservice mWebservice;
 
     // Contains the threadId-messageId pairs that are currently syncing.
     private final ConcurrentSkipListSet<ComparablePair<Integer, Integer>> mSyncingMessages =
@@ -58,10 +58,10 @@ public class MessageRepository extends Repository<MessageThread> {
 
     @Inject
     MessageRepository(MessageDao messageDao, LoggedInUserHelper loggedInUserHelper,
-                      WarmshowersService warmshowersService) {
+                      WarmshowersAccountWebservice webservice) {
         mMessageDao = messageDao;
         mLoggedInUserHelper = loggedInUserHelper;
-        mWarmshowersService = warmshowersService;
+        mWebservice = webservice;
 
         // Initializes the repository by loading the threads from the db.
         Completable.complete().observeOn(Schedulers.io()).subscribe(() -> {
@@ -85,7 +85,7 @@ public class MessageRepository extends Repository<MessageThread> {
      * Reloads the threads from the webservice.
      */
     public Completable reloadThreads() {
-        return mWarmshowersService.fetchMessageThreads()
+        return mWebservice.fetchMessageThreads()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .map(apiResponse -> {
@@ -118,7 +118,7 @@ public class MessageRepository extends Repository<MessageThread> {
                                             List<String> recipients) {
         return Observable.<Integer>create(emitter -> {
             String recipientNames = TextUtils.join(",", recipients);
-            mWarmshowersService.createMessageThread(recipientNames, subject, message)
+            mWebservice.createMessageThread(recipientNames, subject, message)
                     .subscribe(response -> {
                         if (!response.isSuccessful()) {
                             throw new Exception(response.errorBody().toString());
@@ -253,9 +253,9 @@ public class MessageRepository extends Repository<MessageThread> {
     }
     private Completable setRemoteThreadReadStatus(int threadId, boolean isRead) {
         int status = isRead
-                ? WarmshowersService.MESSAGE_THREAD_STAUS_READ
-                : WarmshowersService.MESSAGE_THREAD_STAUS_UNREAD;
-        return mWarmshowersService.setMessageThreadReadStatus(threadId, status)
+                ? WarmshowersAccountWebservice.MESSAGE_THREAD_STAUS_READ
+                : WarmshowersAccountWebservice.MESSAGE_THREAD_STAUS_UNREAD;
+        return mWebservice.setMessageThreadReadStatus(threadId, status)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .andThen((CompletableSource) (emitter -> {
@@ -285,7 +285,7 @@ public class MessageRepository extends Repository<MessageThread> {
 
     @Override
     Observable<LoadResult<MessageThread>> loadFromNetwork(int threadId) {
-        return mWarmshowersService.fetchMessageThread(threadId)
+        return mWebservice.fetchMessageThread(threadId)
                 .subscribeOn(Schedulers.io())
                 .flatMap(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
@@ -506,7 +506,7 @@ public class MessageRepository extends Repository<MessageThread> {
                 return;
             }
 
-            mWarmshowersService.sendMessage(thread.id, message.body)
+            mWebservice.sendMessage(thread.id, message.rawBody)
                     .subscribe(response -> {
                         if (!response.isSuccessful()) {
                             throw new Exception(response.errorBody().toString());

@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.db.AccountDatabase;
 
-@Singleton
+@AccountScope
 public class FavoriteDao extends Dao {
     private final static String TABLE_NAME = "favorite_user";
 

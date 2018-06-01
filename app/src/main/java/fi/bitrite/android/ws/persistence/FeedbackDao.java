@@ -10,15 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.AppScope;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.persistence.converters.DateConverter;
 import fi.bitrite.android.ws.persistence.converters.RatingConverter;
 import fi.bitrite.android.ws.persistence.converters.RelationConverter;
 import fi.bitrite.android.ws.persistence.db.AppDatabase;
 
-@Singleton
+@AppScope
 public class FeedbackDao extends Dao {
     private final static String TABLE_NAME = "feedback";
 

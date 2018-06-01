@@ -5,14 +5,14 @@ import android.text.TextUtils;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.account.AccountScope;
 import okhttp3.Cookie;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-@Singleton
+@AccountScope
 public class HeaderInterceptor implements Interceptor {
     private String sessionCookie;
     private String csrfToken;

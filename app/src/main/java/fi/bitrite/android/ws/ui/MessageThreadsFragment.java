@@ -30,7 +30,6 @@ import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.MessageThreadListAdapter;
 import fi.bitrite.android.ws.ui.util.DividerItemDecoration;
-import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -44,7 +43,6 @@ public class MessageThreadsFragment extends BaseFragment {
     @Inject MessageRepository mMessageRepository;
     @Inject UserRepository mUserRepository;
     @Inject LoggedInUserHelper mLoggedInUserHelper;
-    @Inject NavigationController mNavigationController;
 
     @BindView(R.id.threads_swipe_refresh) SwipeRefreshLayout mSwipeRefresh;
     @BindView(R.id.threads_lists) RecyclerView mThreadList;
@@ -87,7 +85,7 @@ public class MessageThreadsFragment extends BaseFragment {
         super.onActivityCreated(icicle);
 
         mThreadListAdapter = new MessageThreadListAdapter(
-                mLoggedInUserHelper, mMessageRepository, mNavigationController, mUserRepository);
+                mLoggedInUserHelper, mMessageRepository, getNavigationController(), mUserRepository);
         mThreadList.setAdapter(mThreadListAdapter);
 
         // Add dividers between message threads in the recycler view.

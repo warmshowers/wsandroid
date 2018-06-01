@@ -12,36 +12,7 @@ public class BootCompletedIntentReceiver extends BroadcastReceiver {
             return;
         }
 
-        // Start the WSAndroidService.
-        // FIXME(saemy): Start in a JobScheduler as it needs to be started in the foreground?
-        Intent serviceIntent = new Intent(context, WSAndroidService.class);
-        context.startService(serviceIntent);
-
-//        JobScheduler js = new JobScheduler() {
-//            @Override public int schedule(@NonNull JobInfo jobInfo) {
-//                return 0;
-//            }
-//
-//            @Override
-//            public int enqueue(@NonNull JobInfo jobInfo, @NonNull JobWorkItem jobWorkItem) {
-//                return 0;
-//            }
-//
-//            @Override public void cancel(int i) {
-//
-//            }
-//
-//            @Override public void cancelAll() {
-//
-//            }
-//
-//            @NonNull @Override public List<JobInfo> getAllPendingJobs() {
-//                return null;
-//            }
-//
-//            @Nullable @Override public JobInfo getPendingJob(int i) {
-//                return null;
-//            }
-//        }
+        // This leads to AutoMessageReloadScheduler being created.
+        WSAndroidApplication.getAppComponent().inject(this);
     }
 }

@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 
 import dagger.android.AndroidInjection;
 import dagger.android.support.AndroidSupportInjection;
-import dagger.android.support.HasSupportFragmentInjector;
 import fi.bitrite.android.ws.WSAndroidApplication;
 
 /**
@@ -31,8 +30,7 @@ public class AppInjector {
         wsApp.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-                if (activity instanceof HasSupportFragmentInjector
-                    || activity instanceof Injectable) {
+                if (activity instanceof Injectable) {
                     AndroidInjection.inject(activity);
                 }
                 if (activity instanceof FragmentActivity) {

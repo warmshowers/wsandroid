@@ -2,7 +2,6 @@ package fi.bitrite.android.ws.api;
 
 import fi.bitrite.android.ws.api.model.ApiUser;
 import fi.bitrite.android.ws.api.response.FeedbackResponse;
-import fi.bitrite.android.ws.api.response.LoginResponse;
 import fi.bitrite.android.ws.api.response.MessageThreadListResponse;
 import fi.bitrite.android.ws.api.response.MessageThreadResponse;
 import fi.bitrite.android.ws.api.response.PostFeedbackResponse;
@@ -20,14 +19,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
-public interface WarmshowersService {
-
-    /// Auth
-
-    @POST("services/rest/user/login")
-    @FormUrlEncoded
-    Observable<Response<LoginResponse>> login(@Field("username") String username,
-                                              @Field("password") String password);
+public interface WarmshowersAccountWebservice {
 
     @GET("services/session/token")
     Observable<Response<String>> renewCsrfToken();

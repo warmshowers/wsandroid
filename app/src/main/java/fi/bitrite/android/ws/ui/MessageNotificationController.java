@@ -13,18 +13,22 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.Html;
 import android.util.SparseArray;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.inject.Named;
 
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
@@ -35,10 +39,12 @@ import fi.bitrite.android.ws.ui.listadapter.MessageListAdapter;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.SerialDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-@Singleton
+@AccountScope
 public class MessageNotificationController {
     private final static String CHANNEL_ID = "ws_messages";
     private final static String NOTIFICATION_GROUP = CHANNEL_ID;
@@ -51,12 +57,21 @@ public class MessageNotificationController {
     private final NotificationManager mNotificationManager;
 
     private final SparseArray<NotificationEntry> mNotificationsByThread = new SparseArray<>();
-    // TODO(saemy): Set with get(threadId)?
+
+    /**
+     * This is true until we see a thread id for the second time. That is used to realize the moment
+     * where the initial load from the db is done and new messages are coming from the network. Only
+     * after that vibration is added to notifications.
+     * Note: This misbehaves if no messages are stored in the db, so the first new message gets no
+     *       vibrations. We currently accept this.
+     */
+    private boolean mMessagesAreComingFromDb = true;
 
     @Inject
     MessageNotificationController(
             Context applicationContext, LoggedInUserHelper loggedInUserHelper,
-            MessageRepository messageRepository, UserRepository userRepository) {
+            MessageRepository messageRepository, UserRepository userRepository,
+            @Named("accountDestructor") CompositeDisposable accountDestructor) {
         mApplicationContext = applicationContext;
         mLoggedInUserHelper = loggedInUserHelper;
         mMessageRepository = messageRepository;
@@ -65,29 +80,42 @@ public class MessageNotificationController {
         mNotificationManager = (NotificationManager) mApplicationContext.getSystemService(
                 Context.NOTIFICATION_SERVICE);
 
-        // Registers for updates from the message repository. We retreive an observable list of
+        // Registers for updates from the message repository. We retrieve an observable list of
         // observables. As soon as the list changes, we no longer listen to changes of the old one
         // and re-register ourselves to all the observables of the new list.
-        class Container {
-            private Disposable mDisposable;
+        final SerialDisposable threadListDisposable = new SerialDisposable();
+        mMessageRepository.getAll().subscribe(observables -> {
+            Disposable disposable = handleNewThreadList(observables);
+            threadListDisposable.set(disposable);
+        });
 
-            private void handleUpdate(List<Observable<Resource<MessageThread>>> observables) {
-                if (mDisposable != null) {
-                    mDisposable.dispose();
-                }
-                mDisposable = handleNewThreadList(observables);
+        accountDestructor.add(new Disposable() {
+            private boolean mDisposed = false;
+
+            @Override
+            public void dispose() {
+                mDisposed = true;
+                threadListDisposable.dispose();
+                dismissAllNotifications();
             }
-        }
-        final Container container = new Container();
-        mMessageRepository.getAll().subscribe(container::handleUpdate);
+            @Override
+            public boolean isDisposed() {
+                return mDisposed;
+            }
+        });
     }
 
     private Disposable handleNewThreadList(List<Observable<Resource<MessageThread>>> observables) {
+        Set<Integer> seenThreadIds = new HashSet<>();
         return Observable.mergeDelayError(observables)
                 .observeOn(Schedulers.computation())
                 .filter(Resource::hasData)
                 .map(resource -> resource.data)
                 .filter(thread -> {
+                    if (mMessagesAreComingFromDb) {
+                        mMessagesAreComingFromDb &= seenThreadIds.add(thread.id);
+                    }
+
                     boolean hasNew = thread.hasNewMessages();
                     if (!hasNew) {
                         // Remove any existing notification.
@@ -228,6 +256,13 @@ public class MessageNotificationController {
                 ? createNotification(entry, resultPendingIntent)
                 : createNotificationBeforeApi24(entry, resultPendingIntent);
 
+        if (!mMessagesAreComingFromDb) {
+            notification.defaults |= Notification.DEFAULT_ALL;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                notification.priority |= Notification.PRIORITY_HIGH;
+            }
+        }
+
         mNotificationManager.notify(entry.notificationId(), notification);
     }
 
@@ -291,6 +326,12 @@ public class MessageNotificationController {
         mNotificationsByThread.remove(entry.thread.id);
     }
 
+    private void dismissAllNotifications() {
+        for (int i = 0; i < mNotificationsByThread.size(); ++i) {
+            dismissNotification(mNotificationsByThread.valueAt(i));
+        }
+        mNotificationsByThread.clear();
+    }
 
     /**
      * Per-thread structure that keeps required data for a notification around.

@@ -10,11 +10,11 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.di.AppScope;
 
-@Singleton
+@AppScope
 public class SettingsRepository {
     public enum DistanceUnit {
         KILOMETER,

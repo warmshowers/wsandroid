@@ -1,4 +1,4 @@
-package fi.bitrite.android.ws.di;
+package fi.bitrite.android.ws.di.account;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -14,7 +14,7 @@ import fi.bitrite.android.ws.ui.SettingsFragment;
 import fi.bitrite.android.ws.ui.UserFragment;
 
 @Module
-public abstract class MainActivityModule {
+abstract class ActivitesModule {
     @ContributesAndroidInjector
     abstract AboutFragment contributeAboutFragment();
 

@@ -15,7 +15,7 @@ import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 
-abstract class Repository<T> {
+public abstract class Repository<T> {
     private final BehaviorSubject<List<Observable<Resource<T>>>> mAllObservable =
             BehaviorSubject.create();
     private final ConcurrentMap<Integer, CacheEntry> mCache = new ConcurrentHashMap<>();
@@ -45,7 +45,7 @@ abstract class Repository<T> {
         return mAllObservable;
     }
 
-    protected Set<Integer> getAllIdsRaw() {
+    Set<Integer> getAllIdsRaw() {
         return mCache.keySet();
     }
 

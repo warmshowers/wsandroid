@@ -7,16 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.persistence.FavoriteDao;
 import io.reactivex.Observable;
 
-@Singleton
+@AccountScope
 public class FavoriteRepository {
-
     @Inject FavoriteDao mFavoriteDao;
     @Inject UserRepository mUserRepository;
 

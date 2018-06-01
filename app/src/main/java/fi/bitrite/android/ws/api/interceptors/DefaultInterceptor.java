@@ -5,14 +5,14 @@ import android.os.Build;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.BuildConfig;
+import fi.bitrite.android.ws.di.AppScope;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-@Singleton
+@AppScope
 public class DefaultInterceptor implements Interceptor {
 
     private static final String USER_AGENT = String.format("WSAndroid %s %s %s Android v%s",

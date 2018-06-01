@@ -12,15 +12,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
 import fi.bitrite.android.ws.persistence.converters.DateConverter;
 import fi.bitrite.android.ws.persistence.converters.PushableConverter;
 import fi.bitrite.android.ws.persistence.db.AccountDatabase;
 
-@Singleton
+@AccountScope
 public class MessageDao extends Dao {
     private static class ThreadTable {
         final static String NAME = "message_thread";
@@ -147,7 +147,7 @@ public class MessageDao extends Dao {
         cv.put("thread_id", message.threadId);
         cv.put("author_id", message.authorId);
         cv.put("date", DateConverter.dateToLong(message.date));
-        cv.put("body", message.body);
+        cv.put("body", message.rawBody);
         int status = (message.isNew ? 1 : 0) << MessageTable.STATUS_BIT_IS_NEW |
                 (message.isPushed ? 1 : 0) << MessageTable.STATUS_BIT_IS_PUSHED;
         cv.put("status", status);

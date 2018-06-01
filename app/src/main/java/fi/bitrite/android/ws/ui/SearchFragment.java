@@ -33,7 +33,6 @@ import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
 import fi.bitrite.android.ws.ui.util.DialogHelper;
-import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -46,7 +45,6 @@ public class SearchFragment extends BaseFragment {
     private static final String KEY_QUERY = "query";
     private static final String KEY_USER_IDS = "user_ids";
 
-    @Inject NavigationController mNavigationController;
     @Inject UserRepository mUserRepository;
 
     @BindView(R.id.search_lst_result) ListView mLstSearchResult;
@@ -157,7 +155,7 @@ public class SearchFragment extends BaseFragment {
     @OnItemClick(R.id.search_lst_result)
     public void onUserClicked(int position) {
         Host user = (Host) mLstSearchResult.getItemAtPosition(position);
-        mNavigationController.navigateToUser(user.getId());
+        getNavigationController().navigateToUser(user.getId());
     }
 
     @Override

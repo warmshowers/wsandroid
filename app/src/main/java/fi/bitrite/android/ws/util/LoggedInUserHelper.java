@@ -1,51 +1,52 @@
 package fi.bitrite.android.ws.util;
 
+import android.accounts.Account;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import fi.bitrite.android.ws.auth.AccountManager;
+import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.repository.Repository;
 import fi.bitrite.android.ws.repository.UserRepository;
 import io.reactivex.subjects.BehaviorSubject;
 
-@Singleton
+@AccountScope
 public class LoggedInUserHelper {
+    private final int mUserId;
     private final BehaviorSubject<MaybeNull<Host>> mLoggedInUser =
             BehaviorSubject.createDefault(new MaybeNull<>());
 
     @Inject
-    public LoggedInUserHelper(AccountManager accountManager, UserRepository userRepository) {
-        accountManager.getCurrentUserId().subscribe(userId -> {
-            if (userId != AccountManager.UNKNOWN_USER_ID) {
-                userRepository.get(userId, UserRepository.ShouldSaveInDb.YES)
-                        .subscribe(resource -> {
-                            Host user = resource.data;
-                            if (user == null) {
-                                Log.e(LoggedInUserHelper.class.getName(),
-                                        resource.error.getMessage());
-                                return;
-                            }
+    public LoggedInUserHelper(Account account,
+                              AccountManager accountManager,
+                              UserRepository userRepository) {
+        mUserId = accountManager.getUserId(account);
+        assert mUserId != AccountManager.UNKNOWN_USER_ID;
 
-                            mLoggedInUser.onNext(new MaybeNull<>(user));
-                        }); // FIXME(saemy): Error handling.
-            } else {
-                mLoggedInUser.onNext(new MaybeNull<>());
-            }
-        });
+        userRepository.get(mUserId, Repository.ShouldSaveInDb.YES)
+                .subscribe(resource -> {
+                    Host user = resource.data;
+                    if (user == null) {
+                        Log.e(LoggedInUserHelper.class.getName(),
+                                resource.error.getMessage());
+                        return;
+                    }
+
+                    mLoggedInUser.onNext(new MaybeNull<>(user));
+                }); // FIXME(saemy): Error handling.
+    }
+
+    public int getId() {
+        return mUserId;
     }
 
     @Nullable
     public Host get() {
         return mLoggedInUser.getValue().data;
-    }
-
-    public int getId() {
-        Host user = get();
-        return user != null ? user.getId() : -1;
     }
 
     @NonNull

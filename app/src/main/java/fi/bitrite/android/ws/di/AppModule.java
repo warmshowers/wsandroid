@@ -6,8 +6,9 @@ import android.content.Context;
 
 import dagger.Module;
 import dagger.Provides;
+import fi.bitrite.android.ws.di.account.AccountComponent;
 
-@Module
+@Module(subcomponents = {AccountComponent.class})
 class AppModule {
 
     @Provides
