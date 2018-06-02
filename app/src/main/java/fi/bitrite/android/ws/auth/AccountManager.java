@@ -19,6 +19,8 @@ import fi.bitrite.android.ws.api.response.LoginResponse;
 import fi.bitrite.android.ws.di.AppScope;
 import fi.bitrite.android.ws.ui.MainActivity;
 import fi.bitrite.android.ws.util.MaybeNull;
+import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
@@ -45,7 +47,7 @@ public class AccountManager {
     private final Observable<Integer> mCurrentUserId;
 
     private Activity mMainActivity = null;
-    private Intent mCreateOrAuthAccountIntent = null;
+    private EventuallyCreateOrAuth mEventuallyCreateOrAuth = null;
 
     @Inject
     AccountManager(WarmshowersWebservice generalWebservice,
@@ -86,7 +88,7 @@ public class AccountManager {
                 });
             } else {
                 // We have an account and therefore no longer need to create a new one.
-                mCreateOrAuthAccountIntent = null;
+                dismissEventuallyCreateOrAuth();
             }
         });
 
@@ -122,11 +124,13 @@ public class AccountManager {
      */
     public void setMainActivity(MainActivity mainActivity) {
         mMainActivity = mainActivity;
-        if (mCreateOrAuthAccountIntent != null) {
+        if (mEventuallyCreateOrAuth != null) {
             // The main activity was not around when we wanted to show the account creation screen.
             // Do it now.
-            mMainActivity.startActivity(mCreateOrAuthAccountIntent);
-            mCreateOrAuthAccountIntent = null;
+            final Intent intent = mEventuallyCreateOrAuth.intent;
+            final MaybeObserver<? super Bundle> observer = mEventuallyCreateOrAuth.observer;
+            mEventuallyCreateOrAuth = null;
+            startActivityForResult(intent, observer);
         }
     }
 
@@ -144,22 +148,17 @@ public class AccountManager {
                 try {
                     Bundle result = accountManagerFuture.getResult();
 
-                    boolean containsIntent = handleIntentInBundle(result);
-                    if (containsIntent) {
-                        // FIXME(saemy): This callback does not get called a second time when the
-                        // login completed. So we need to find a way to call the below onSuccess()
-                        // method...
-                        return;
-                    }
+                    handleIntentInBundle(result)
+                            .subscribe(result2 -> {
+                                final String name = result2.getString(
+                                        android.accounts.AccountManager.KEY_ACCOUNT_NAME);
+                                final String type = result2.getString(
+                                        android.accounts.AccountManager.KEY_ACCOUNT_TYPE);
 
-                    String name =
-                            result.getString(android.accounts.AccountManager.KEY_ACCOUNT_NAME);
-                    String type =
-                            result.getString(android.accounts.AccountManager.KEY_ACCOUNT_TYPE);
+                                // TODO(saemy): Mark this account as the active one.
 
-                    // TODO(saemy): Mark this account as the active one.
-
-                    emitter.onSuccess(new Account(name, type));
+                                emitter.onSuccess(new Account(name, type));
+                            }, emitter::onError);
                 } catch (Exception e) {
                     emitter.onError(e);
                 }
@@ -203,19 +202,14 @@ public class AccountManager {
                 try {
                     Bundle result = tokenFuture.getResult();
 
-                    boolean containsIntent = handleIntentInBundle(result);
-                    if (containsIntent) {
-                        // FIXME(saemy): This callback does not get called a second time when the
-                        // login completed. So we need to find a way to call the below onSuccess()
-                        // method...
-                        return;
-                    }
+                    handleIntentInBundle(result)
+                            .subscribe(result2 -> {
+                                String authTokenStr = result2.getString(
+                                        android.accounts.AccountManager.KEY_AUTHTOKEN);
+                                AuthToken authToken = AuthToken.fromString(authTokenStr);
 
-                    String authTokenStr =
-                            result.getString(android.accounts.AccountManager.KEY_AUTHTOKEN);
-                    AuthToken authToken = AuthToken.fromString(authTokenStr);
-
-                    emitter.onSuccess(authToken);
+                                emitter.onSuccess(authToken);
+                            }, emitter::onError);
                 } catch (Exception e) {
                     emitter.onError(e);
                 }
@@ -235,18 +229,46 @@ public class AccountManager {
         });
     }
 
-    private boolean handleIntentInBundle(Bundle result) {
+    /**
+     * Calls the intent that is stored in the given bundle. If no main activity is started yet, the
+     * intent is saved for later usage. If no intent is saved in the bundle nothing is done.
+     *
+     * @return
+     *     The single that is triggered as soon as the final bundle is available. That is the
+     *     one given in case no intent is in it or the one that is eventually returned from the
+     *     started activity.
+     */
+    private Maybe<Bundle> handleIntentInBundle(Bundle result) {
         if (!result.containsKey(android.accounts.AccountManager.KEY_INTENT)) {
-            return false;
+            return Maybe.just(result);
         }
 
-        final Intent intent = result.getParcelable(android.accounts.AccountManager.KEY_INTENT);
-        if (mMainActivity != null) {
-            mMainActivity.startActivity(intent);
+        return new Maybe<Bundle>() {
+            @Override
+            protected void subscribeActual(MaybeObserver<? super Bundle> observer) {
+                Intent intent = result.getParcelable(android.accounts.AccountManager.KEY_INTENT);
+                startActivityForResult(intent, observer);
+            }
+        };
+    }
+
+    private void startActivityForResult(Intent intent, MaybeObserver<? super Bundle> observer){
+        MainActivity mainActivity = (MainActivity) mMainActivity;
+        if (mainActivity != null) {
+            mainActivity.startActivityForResultRx(intent)
+                    .subscribe(intent2 -> observer.onSuccess(intent2.getExtras()),
+                            observer::onError);
         } else {
-            mCreateOrAuthAccountIntent = intent;
+            dismissEventuallyCreateOrAuth();
+            mEventuallyCreateOrAuth = new EventuallyCreateOrAuth(intent, observer);
         }
-        return true;
+    }
+
+    private void dismissEventuallyCreateOrAuth() {
+        if (mEventuallyCreateOrAuth != null) {
+            mEventuallyCreateOrAuth.observer.onComplete();
+            mEventuallyCreateOrAuth = null;
+        }
     }
 
     /**
@@ -306,6 +328,13 @@ public class AccountManager {
 
     public int getUserId(@NonNull Account account) {
         return executeWithReadLock(v -> {
+            // Migration from version <2.0.0.
+            String oldUserIdStr = mAndroidAccountManager.getUserData(account,"userid");
+            if (oldUserIdStr != null) {
+                mAndroidAccountManager.setUserData(account, KEY_USER_ID, oldUserIdStr);
+                mAndroidAccountManager.setUserData(account, "userid", null);
+            }
+
             String userIdStr = mAndroidAccountManager.getUserData(account, KEY_USER_ID);
             return userIdStr != null
                     ? Integer.parseInt(userIdStr)
@@ -392,6 +421,16 @@ public class AccountManager {
         @Nullable
         public AuthData authData() {
             return mAuthData;
+        }
+    }
+
+    class EventuallyCreateOrAuth {
+        final Intent intent;
+        final MaybeObserver<? super Bundle> observer;
+
+        EventuallyCreateOrAuth(Intent intent, MaybeObserver<? super Bundle> observer) {
+            this.intent = intent;
+            this.observer = observer;
         }
     }
 }

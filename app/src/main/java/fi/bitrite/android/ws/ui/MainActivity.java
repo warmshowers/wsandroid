@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -47,6 +48,8 @@ import fi.bitrite.android.ws.ui.util.ActionBarTitleHelper;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -308,6 +311,30 @@ public class MainActivity extends AppCompatActivity
     @NonNull
     public NavigationController getNavigationController() {
         return mNavigationController;
+    }
+
+    private int mNextRequestCode = 0;
+    private final SparseArray<SingleObserver<? super Intent>> mActivityResultReactors =
+            new SparseArray<>();
+    public Single<Intent> startActivityForResultRx(Intent intent) {
+        return new Single<Intent>() {
+            @Override
+            protected void subscribeActual(SingleObserver<? super Intent> observer) {
+                int requestCode = mNextRequestCode++;
+                mActivityResultReactors.append(requestCode, observer);
+                MainActivity.super.startActivityForResult(intent, requestCode);
+            }
+        };
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        SingleObserver<? super Intent> observer = mActivityResultReactors.get(requestCode);
+        if (observer != null) {
+            mActivityResultReactors.remove(requestCode);
+            observer.onSuccess(data);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     /**

@@ -164,6 +164,11 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
 
                         setAccountAuthenticatorResult(response);
 
+                        // The following we add for usage in MainActivity::onActivityResult().
+                        Intent intent = new Intent();
+                        intent.putExtras(response);
+                        setResult(0, intent);
+
                         finish();
                     } else {
                         mProgressDisposable.dispose();
