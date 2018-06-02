@@ -50,7 +50,7 @@ cache:
     - "$HOME/.gradle/wrapper/"
 
 before_deploy:
-  - mv app/build/outputs/apk/app-release.apk wsandroid-$TRAVIS_TAG.apk
+  - mv app/build/outputs/apk/release/app-release.apk wsandroid-$TRAVIS_TAG.apk
 
 deploy:
   # Deploys the release APK for tagged revisions to GitHub.
