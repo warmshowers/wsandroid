@@ -48,6 +48,7 @@ public class LockableDatabase {
      * unlock it 2x to release it)
      */
     private final Lock mWriteLock;
+    private boolean hasInitialWriteLock = true;
 
     {
         final ReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -71,6 +72,9 @@ public class LockableDatabase {
                             @NonNull final SchemaDefinition schemaDefinition) {
         mContext = context;
         mSchemaDefinition = schemaDefinition;
+
+        // Initial write lock s.t. no access happens prior to opening the database.
+        lockWrite();
     }
 
     /**
@@ -159,7 +163,11 @@ public class LockableDatabase {
     }
 
     public void open(String dbName) {
-        lockWrite();
+        if (!hasInitialWriteLock) {
+            lockWrite();
+        }
+        hasInitialWriteLock = false;
+
         try {
             mDb = mContext.openOrCreateDatabase(dbName, Context.MODE_PRIVATE, null);
 
@@ -174,7 +182,7 @@ public class LockableDatabase {
     }
 
     public boolean isOpen() {
-        return mDb != null;
+        return mDb != null && mDb.isOpen();
     }
 
     public void close() {

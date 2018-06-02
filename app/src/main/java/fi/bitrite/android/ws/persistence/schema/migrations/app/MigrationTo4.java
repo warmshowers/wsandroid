@@ -68,7 +68,7 @@ public class MigrationTo4 {
         // To avoid circular dependencies, we store the favorite userIds in a static field which is
         // later processed by the account migration helper.
         List<Integer> favoriteUserIds = new ArrayList<>();
-        try (Cursor cursor = db.query("hosts", new String[]{ "id" }, null, null, null, null, null)) {
+        try (Cursor cursor = db.query("hosts", new String[]{ "_id" }, null, null, null, null, null)) {
             if (cursor.moveToFirst()) {
                 do {
                     final int userId = cursor.getInt(0);
@@ -86,8 +86,9 @@ public class MigrationTo4 {
         db.execSQL("DROP TABLE IF EXISTS feedback");
         db.execSQL("CREATE TABLE feedback (" +
                    "id INTEGER NOT NULL, " +
-                   "sender_id INTEGER NOT NULL, " +
                    "recipient_id INTEGER NOT NULL, " +
+                   "sender_id INTEGER NOT NULL, " +
+                   "sender_fullname TEXT, " +
                    "relation INTEGER, " +
                    "rating INTEGER, " +
                    "meeting_date INTEGER, " +
