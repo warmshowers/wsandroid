@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
 
-import com.google.android.gms.maps.model.LatLng;
+import org.osmdroid.api.IGeoPoint;
 
 import java.util.Date;
 
@@ -37,7 +37,7 @@ public class User extends SimpleUser {
 
     public User(int id, String name, String fullname, String street, String additionalAddress,
                 String city, String province, String postalCode, String countryCode,
-                LatLng location, String mobilePhone, String homePhone, String workPhone,
+                IGeoPoint location, String mobilePhone, String homePhone, String workPhone,
                 String comments, String preferredNotice, int maximalCyclistCount,
                 String distanceToMotel, String distanceToCampground, String distanceToBikeshop,
                 boolean hasStorage, boolean hasShower, boolean hasKitchen, boolean hasLawnspace,

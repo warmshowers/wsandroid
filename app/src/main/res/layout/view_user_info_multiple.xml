@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,27 +14,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Demo text"
         android:textColor="@android:color/black"
         android:textSize="15sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:text="Demo text" />
 
     <TextView
         android:id="@+id/distance_from_current"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="1500 miles from here"
         android:textColor="@android:color/black"
-        android:textSize="11sp" />
-
-    <TextView
-        android:id="@+id/snippet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="Demo snippet"
-        android:textColor="@android:color/black"
-        android:textSize="11sp" />
+        android:textSize="12sp"
+        tools:text="1500 miles from here" />
 
 </LinearLayout>

@@ -21,7 +21,9 @@ import android.widget.RelativeLayout;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.maps.model.LatLng;
+
+import org.osmdroid.api.IGeoPoint;
+import org.osmdroid.util.GeoPoint;
 
 import java.util.Locale;
 
@@ -53,21 +55,21 @@ public class Tools {
         float meters = l1.distanceTo(l2);
         return (int) (meters / factor);
     }
-    static public int calculateDistanceBetween(LatLng l1, LatLng l2,
+    static public int calculateDistanceBetween(IGeoPoint l1, IGeoPoint l2,
                                                SettingsRepository.DistanceUnit distanceUnit) {
         return calculateDistanceBetween(latLngToLocation(l1), latLngToLocation(l2), distanceUnit);
     }
 
-    static public LatLng locationToLatLng(Location location) {
-        return new LatLng(location.getLatitude(), location.getLongitude());
+    static public GeoPoint locationToLatLng(Location location) {
+        return new GeoPoint(location.getLatitude(), location.getLongitude());
     }
-    static public Location latLngToLocation(LatLng latLng) {
+    static public Location latLngToLocation(IGeoPoint latLng) {
         if (latLng == null) {
             return null;
         }
         Location location = new Location("fromlatlng");
-        location.setLatitude(latLng.latitude);
-        location.setLongitude(latLng.longitude);
+        location.setLatitude(latLng.getLatitude());
+        location.setLongitude(latLng.getLongitude());
         return location;
     }
 

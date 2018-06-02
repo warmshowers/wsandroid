@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
@@ -175,7 +176,7 @@ public class SearchFragment extends BaseFragment {
         return title;
     }
 
-    private final static Comparator<User> mComparator = (left, right) -> {
+    private final static Comparator<? super SimpleUser> mComparator = (left, right) -> {
         int caLeft = left.isCurrentlyAvailable ? 1 : 0;
         int caRight = right.isCurrentlyAvailable ? 1 : 0;
 

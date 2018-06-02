@@ -1,7 +1,8 @@
 package fi.bitrite.android.ws.api.response;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
+
+import org.osmdroid.util.GeoPoint;
 
 import java.util.Date;
 import java.util.List;
@@ -59,7 +60,7 @@ public class UserSearchByLocationResponse {
 
         public SimpleUser toSimpleUser() {
             return new SimpleUser(id, name, fullname, street, city, province, postalCode,
-                    countryCode, new LatLng(latitude, longitude), !notCurrentlyAvailable,
+                    countryCode, new GeoPoint(latitude, longitude), !notCurrentlyAvailable,
                     new SimpleUser.Picture(profilePictureUrl_179x200, profilePictureUrl_400x400),
                     created, lastAccess);
         }

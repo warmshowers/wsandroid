@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.maps.model.LatLng;
+import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,8 +144,8 @@ public class UserDao extends Dao {
         cv.put("created", DateConverter.dateToLong(user.created));
         cv.put("currently_available", user.isCurrentlyAvailable);
         cv.put("spoken_languages", user.spokenLanguages);
-        cv.put("latitude", user.location.latitude);
-        cv.put("longitude", user.location.longitude);
+        cv.put("latitude", user.location.getLatitude());
+        cv.put("longitude", user.location.getLongitude());
         cv.put("profile_picture_small", user.profilePicture.getSmallUrl());
         cv.put("profile_picture_large", user.profilePicture.getLargeUrl());
 
@@ -170,7 +170,7 @@ public class UserDao extends Dao {
                 c.getString(COL_IDX_PROVINCE),
                 c.getString(COL_IDX_POSTAL_CODE),
                 c.getString(COL_IDX_COUNTRY_CODE),
-                new LatLng(c.getDouble(COL_IDX_LATITUDE), c.getDouble(COL_IDX_LONGITUDE)),
+                new GeoPoint(c.getDouble(COL_IDX_LATITUDE), c.getDouble(COL_IDX_LONGITUDE)),
                 c.getString(COL_IDX_MOBILE_PHONE),
                 c.getString(COL_IDX_HOME_PHONE),
                 c.getString(COL_IDX_WORK_PHONE),

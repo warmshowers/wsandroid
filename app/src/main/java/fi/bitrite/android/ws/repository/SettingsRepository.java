@@ -6,13 +6,11 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-
 import javax.inject.Inject;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.di.AppScope;
+import fi.bitrite.android.ws.model.ZoomedLocation;
 
 @AppScope
 public class SettingsRepository {
@@ -113,17 +111,17 @@ public class SettingsRepository {
         }
     }
 
-    private void setLocation(String key, CameraPosition position) {
+    private void setLocation(String key, ZoomedLocation position) {
         mSharedPreferences
                 .edit()
-                .putFloat(key + KEYSUFFIX_LOCATION_LATITUDE, (float) position.target.latitude)
-                .putFloat(key + KEYSUFFIX_LOCATION_LONGITUDE, (float) position.target.longitude)
-                .putFloat(key + KEYSUFFIX_LOCATION_ZOOM, position.zoom)
+                .putFloat(key + KEYSUFFIX_LOCATION_LATITUDE, (float) position.location.getLatitude())
+                .putFloat(key + KEYSUFFIX_LOCATION_LONGITUDE, (float) position.location.getLongitude())
+                .putFloat(key + KEYSUFFIX_LOCATION_ZOOM, (float) position.zoom)
                 .apply();
 
     }
 
-    public CameraPosition getLastMapLocation(boolean defaultIfNone) {
+    public ZoomedLocation getLastMapLocation(boolean defaultIfNone) {
         if (!mSharedPreferences.contains(KEY_MAP_LAST_LOCATION + KEYSUFFIX_LOCATION_LATITUDE)
             && !defaultIfNone) {
             return null;
@@ -135,9 +133,9 @@ public class SettingsRepository {
         float zoom = mSharedPreferences.getFloat(
                 KEY_MAP_LAST_LOCATION + KEYSUFFIX_LOCATION_ZOOM, mDefaultMapLocationZoom);
 
-        return new CameraPosition(new LatLng(latitude, longitude), zoom, 0, 0);
+        return new ZoomedLocation(latitude, longitude, zoom);
     }
-    public void setLastMapLocation(CameraPosition position) {
+    public void setLastMapLocation(ZoomedLocation position) {
         setLocation(KEY_MAP_LAST_LOCATION, position);
     }
 
