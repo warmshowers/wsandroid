@@ -10,6 +10,11 @@
         android:summary="@string/prefs_distance_unit_summary"
         android:title="@string/prefs_distance_unit_title" />
 
+    <ListPreference
+        android:key="@string/prefs_tile_source_key"
+        android:summary="@string/prefs_tile_source_summary"
+        android:title="@string/prefs_tile_source_title" />
+
     <fi.bitrite.android.ws.ui.preference.RefreshIntervalPreference
         android:defaultValue="@integer/prefs_message_refresh_interval_min_default"
         android:dialogMessage="@string/prefs_message_refresh_interval_min_dialog_message"

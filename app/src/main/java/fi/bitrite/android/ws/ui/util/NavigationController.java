@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentTransaction;
 
-import com.google.android.gms.maps.model.LatLng;
+import org.osmdroid.api.IGeoPoint;
 
 import java.util.ArrayList;
 
@@ -114,7 +114,7 @@ public class NavigationController {
         // This is the main fragment.
         navigateTo(NAVIGATION_TAG_MAP, MapFragment.create(), false, true);
     }
-    public void navigateToMap(LatLng latLng) {
+    public void navigateToMap(IGeoPoint latLng) {
         navigateTo(NAVIGATION_TAG_MAP, MapFragment.create(latLng), false);
     }
 

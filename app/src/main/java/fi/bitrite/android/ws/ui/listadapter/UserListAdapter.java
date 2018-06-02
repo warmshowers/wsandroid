@@ -34,15 +34,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
-public class UserListAdapter extends ArrayAdapter<User> {
+public class UserListAdapter extends ArrayAdapter<SimpleUser> {
 
     public final static Comparator<? super SimpleUser> COMPERATOR_FULLNAME_ASC =
             (left, right) -> left.fullname.compareTo(right.fullname);
 
-    private final Comparator<? super User> mComparator;
+    private final Comparator<? super SimpleUser> mComparator;
     private final Decorator mDecorator;
 
-    private BehaviorSubject<List<User>> mUsers = BehaviorSubject.create();
+    private BehaviorSubject<List<? extends SimpleUser>> mUsers = BehaviorSubject.create();
 
     @BindView(R.id.user_list_layout) LinearLayout mLayout;
     @BindView(R.id.user_list_icon) UserCircleImageView mIcon;
@@ -50,7 +50,8 @@ public class UserListAdapter extends ArrayAdapter<User> {
     @BindView(R.id.user_list_lbl_location) TextView mLblLocation;
     @BindView(R.id.user_list_lbl_member_info) TextView mMemberInfo;
 
-    public UserListAdapter(@NonNull Context context, @Nullable Comparator<? super User> comparator,
+    public UserListAdapter(@NonNull Context context,
+                           @Nullable Comparator<? super SimpleUser> comparator,
                            @Nullable Decorator decorator) {
         super(context, R.layout.item_user_list);
 
@@ -77,7 +78,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
                 });
     }
 
-    public void resetDataset(List<User> users) {
+    public void resetDataset(List<? extends SimpleUser> users) {
         if (mComparator != null) {
             Collections.sort(users, mComparator);
         }
@@ -90,7 +91,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        final User user = getItem(position);
+        final SimpleUser user = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
@@ -125,13 +126,13 @@ public class UserListAdapter extends ArrayAdapter<User> {
         return convertView;
     }
 
-    public BehaviorSubject<List<User>> getUsers() {
+    public BehaviorSubject<List<? extends SimpleUser>> getUsers() {
         return mUsers;
     }
 
     @Nullable
-    public User getUser(int pos) {
-        List<User> users = mUsers.getValue();
+    public SimpleUser getUser(int pos) {
+        List<? extends SimpleUser> users = mUsers.getValue();
         return users != null && users.size() > pos
                 ? users.get(pos)
                 : null;

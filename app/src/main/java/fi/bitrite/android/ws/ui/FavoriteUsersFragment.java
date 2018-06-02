@@ -22,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.Resource;
@@ -74,7 +75,7 @@ public class FavoriteUsersFragment extends BaseFragment {
 
     @OnItemClick(R.id.favorites_lst_users)
     public void onUserClicked(int position) {
-        User selectedUser = mUserListAdapter.getUser(position);
+        SimpleUser selectedUser = mUserListAdapter.getUser(position);
         getNavigationController().navigateToUser(selectedUser.id);
     }
 
@@ -82,7 +83,7 @@ public class FavoriteUsersFragment extends BaseFragment {
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
         if (view.getId() == mLstUsers.getId()) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            User user = mUserListAdapter.getUser(info.position);
+            SimpleUser user = mUserListAdapter.getUser(info.position);
 
             menu.setHeaderTitle(user.fullname);
             menu.add(Menu.NONE, CONTEXT_MENU_DELETE, 0, R.string.delete);
@@ -96,7 +97,7 @@ public class FavoriteUsersFragment extends BaseFragment {
 
         switch (item.getItemId()) {
             case CONTEXT_MENU_DELETE:
-                User user = mUserListAdapter.getUser(info.position);
+                SimpleUser user = mUserListAdapter.getUser(info.position);
                 mFavoriteRepository.remove(user.id);
                 updateFavoriteUsersList();
                 return true;

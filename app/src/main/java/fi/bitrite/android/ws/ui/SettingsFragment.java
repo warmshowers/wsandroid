@@ -5,9 +5,16 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.text.TextUtils;
+
+import org.osmdroid.tileprovider.tilesource.ITileSource;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -27,6 +34,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
     @Inject SettingsRepository mSettingsRepository;
 
     @BindString(R.string.prefs_distance_unit_key) String mKeyDistanceUnit;
+    @BindString(R.string.prefs_tile_source_key) String mTileMapSource;
     @BindString(R.string.prefs_message_refresh_interval_min_key) String mKeyMessageRefreshInterval;
 
     public static Fragment create() {
@@ -78,6 +86,28 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
         findPreference(mKeyDistanceUnit).setSummary(getString(
                 R.string.prefs_distance_unit_summary,
                 mSettingsRepository.getDistanceUnitLong()));
+
+        // Sets the available map sources.
+        final ListPreference tileSourcePreference = (ListPreference) findPreference(mTileMapSource);
+        tileSourcePreference.setSummary(getString(
+                R.string.prefs_tile_source_summary,
+                mSettingsRepository.getTileSourceStr()));
+        final List<String> tileSourceNames = new LinkedList<>();
+        for (ITileSource tileSource : TileSourceFactory.getTileSources()) {
+            if(tileSource == TileSourceFactory.PUBLIC_TRANSPORT
+               || tileSource == TileSourceFactory.ChartbundleENRL
+               || tileSource == TileSourceFactory.ChartbundleENRH
+               || tileSource == TileSourceFactory.ChartbundleWAC) {
+                // Blacklisted tile sources.
+                continue;
+            }
+            tileSourceNames.add(tileSource.name());
+        }
+        CharSequence[] tileSourceNamesCS =
+                tileSourceNames.toArray(new CharSequence[tileSourceNames.size()]);
+        tileSourcePreference.setEntries(tileSourceNamesCS);
+        tileSourcePreference.setEntryValues(tileSourceNamesCS);
+        tileSourcePreference.setDefaultValue(TileSourceFactory.DEFAULT_TILE_SOURCE.name());
 
         Resources res = getResources();
         int intervalMin = mSettingsRepository.getMessageRefreshIntervalMin();

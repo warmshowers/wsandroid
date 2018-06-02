@@ -223,4 +223,6 @@
     <string name="messages_reload_failed">Error al obtener mensajes.</string>
     <string name="message_thread_create_failed">Error al crear una nueva conversación.</string>
     <string name="feedback_error_sending">El comentario no fue enviado.</string>
+
+    <string name="unknown_location">Ubicación desconocida</string>
 </resources>

@@ -1,7 +1,8 @@
 package fi.bitrite.android.ws.api.model;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
+
+import org.osmdroid.util.GeoPoint;
 
 import java.util.Date;
 
@@ -85,7 +86,7 @@ public class ApiUser {
 
     public User toUser() {
         return new User(id, name, fullname, street, additionalAddress, city, province, postalCode,
-                countryCode, new LatLng(latitude, longitude), mobilePhone, homePhone, workPhone,
+                countryCode, new GeoPoint(latitude, longitude), mobilePhone, homePhone, workPhone,
                 comments, preferredNotice, maximalCyclistCount, distanceToMotel,
                 distanceToCampground, distanceToBikeshop, hasStorage, hasShower, hasKitchen,
                 hasLawnspace, hasSag, hasBed, hasLaundry, hasFood, spokenLanguages,
