@@ -385,26 +385,26 @@ public class MapFragment extends BaseFragment implements
             sendMessage(R.string.loading_hosts);
 
             LatLngBounds curScreen = mMap.getProjection().getVisibleRegion().latLngBounds;
-            mUserRepository.searchByLocation(curScreen.northeast, curScreen.southwest)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(searchResult -> {
-                        if (searchResult.isEmpty()) {
-                            sendMessage(R.string.no_results);
-                        }
+            getResumePauseDisposable().add(
+                    mUserRepository.searchByLocation(curScreen.northeast, curScreen.southwest)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(searchResult -> {
+                                if (searchResult.isEmpty()) {
+                                    sendMessage(R.string.no_results);
+                                }
 
-                        for (UserSearchByLocationResponse.User user : searchResult) {
-                            boolean isNew = mClusteredUsers.add(user.id);
-                            // Only add to the cluster if it wasn't before.
-                            if (isNew) {
-                                mClusterManager.addItem(ClusterUser.from(user));
-                            }
-                        }
-                        mClusterManager.cluster();
-                    }, throwable -> {
-                        // TODO(saemy): Error handling.
-                        Log.e(TAG, throwable.getMessage());
-                    })
-            ;
+                                for (UserSearchByLocationResponse.User user : searchResult) {
+                                    boolean isNew = mClusteredUsers.add(user.id);
+                                    // Only add to the cluster if it wasn't before.
+                                    if (isNew) {
+                                        mClusterManager.addItem(ClusterUser.from(user));
+                                    }
+                                }
+                                mClusterManager.cluster();
+                            }, throwable -> {
+                                // TODO(saemy): Error handling.
+                                Log.e(TAG, throwable.getMessage());
+                            }));
         }
     }
 
@@ -431,7 +431,7 @@ public class MapFragment extends BaseFragment implements
                         mClusterManager.cluster();
                     }
                 });
-
+        getResumePauseDisposable().add(mLoadOfflineUserDisposable);
     }
 
     /**

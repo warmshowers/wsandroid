@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
-        return mAccountHelper.getDispatchingAndroidInjector();
+        return mAccountHelper.mDispatchingAndroidInjector;
     }
 
     @Override
@@ -388,10 +388,6 @@ public class MainActivity extends AppCompatActivity
             if (mDisposables != null) {
                 mDisposables.dispose();
             }
-        }
-
-        DispatchingAndroidInjector<Fragment> getDispatchingAndroidInjector() {
-            return mDispatchingAndroidInjector;
         }
 
         /**

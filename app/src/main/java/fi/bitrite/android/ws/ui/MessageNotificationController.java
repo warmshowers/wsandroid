@@ -13,7 +13,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.text.Html;
 import android.util.SparseArray;
 
 import com.squareup.picasso.Picasso;
@@ -164,7 +163,7 @@ public class MessageNotificationController {
         // Loads the author of the message.
         SparseArray<Host> participants = entry.participants;
 
-        if (participants.size() == 0) { // TODO(saemy): Does not support changing participant list.
+        if (participants.size() != entry.thread.participantIds.size()) { // TODO(saemy): Does not support changing participant list.
             // Fetches the participating users from the repository.
             return Observable.mergeDelayError(mUserRepository.get(entry.thread.participantIds))
                     .filter(Resource::hasData)
