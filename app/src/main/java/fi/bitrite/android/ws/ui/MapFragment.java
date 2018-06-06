@@ -198,7 +198,7 @@ public class MapFragment extends BaseFragment implements
     @Override
     public void onPause() {
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-        mSettingsRepository.registerOnChangeListener(mOnSettingsChangeListener);
+        mSettingsRepository.unregisterOnChangeListener(mOnSettingsChangeListener);
 
         super.onPause();
     }
