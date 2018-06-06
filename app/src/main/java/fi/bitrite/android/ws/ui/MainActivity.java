@@ -31,12 +31,12 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dagger.android.AndroidInjection;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.auth.AccountManager;
-import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.di.account.AccountComponent;
 import fi.bitrite.android.ws.di.account.AccountComponentManager;
 import fi.bitrite.android.ws.model.Host;
@@ -56,8 +56,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 // AppScope
-public class MainActivity extends AppCompatActivity
-        implements HasSupportFragmentInjector, Injectable {
+public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
 
     private static final String KEY_MESSAGE_THREAD_ID = "thread_id";
 
@@ -117,6 +116,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        // super.onCreate() re-constructs the previous state - i.e. might start a fragment. We need
+        // an account to be able to show any fragments.
+        AndroidInjection.inject(this);
+        mAccountHelper.switchAccount(mAccountManager.getCurrentAccount().getValue().data);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
@@ -165,8 +169,6 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().addOnBackStackChangedListener(this::onFragmentBackStackChanged);
         onFragmentBackStackChanged();
 
-        // We need an account to be able to show any fragments.
-        mAccountHelper.switchAccount(mAccountManager.getCurrentAccount().getValue().data);
         // First we show the main fragment to have something on the backstack.
         moveToMainFragmentIfNeeded();
         handleActionIntents(getIntent());
