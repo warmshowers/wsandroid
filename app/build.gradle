@@ -142,8 +142,8 @@ android {
     }
 
     defaultConfig {
-        versionName "2.0.0-beta1"
-        versionCode 40 // Always increase when changing versionName.
+        versionName "2.0.0-beta2"
+        versionCode 41 // Always increase when changing versionName.
 
         minSdkVersion 14
         compileSdkVersion 26 // also update in .travis.yml
