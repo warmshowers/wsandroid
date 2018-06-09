@@ -193,4 +193,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
         final String passwordResetPageUrl = getString(R.string.url_target_forgot_password);
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(passwordResetPageUrl)));
     }
+
+    @Override
+    public void onBackPressed() {
+        // Disallow it.
+    }
 }
