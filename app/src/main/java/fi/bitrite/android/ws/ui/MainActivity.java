@@ -47,9 +47,9 @@ import fi.bitrite.android.ws.ui.model.NavigationItem;
 import fi.bitrite.android.ws.ui.util.ActionBarTitleHelper;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
+import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -316,12 +316,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     private int mNextRequestCode = 0;
-    private final SparseArray<SingleObserver<? super Intent>> mActivityResultReactors =
+    private final SparseArray<MaybeObserver<? super Intent>> mActivityResultReactors =
             new SparseArray<>();
-    public Single<Intent> startActivityForResultRx(Intent intent) {
-        return new Single<Intent>() {
+    public Maybe<Intent> startActivityForResultRx(Intent intent) {
+        return new Maybe<Intent>() {
             @Override
-            protected void subscribeActual(SingleObserver<? super Intent> observer) {
+            protected void subscribeActual(MaybeObserver<? super Intent> observer) {
                 int requestCode = mNextRequestCode++;
                 mActivityResultReactors.append(requestCode, observer);
                 MainActivity.super.startActivityForResult(intent, requestCode);
@@ -330,10 +330,14 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        SingleObserver<? super Intent> observer = mActivityResultReactors.get(requestCode);
+        MaybeObserver<? super Intent> observer = mActivityResultReactors.get(requestCode);
         if (observer != null) {
             mActivityResultReactors.remove(requestCode);
-            observer.onSuccess(data);
+            if (data != null) {
+                observer.onSuccess(data);
+            } else {
+                observer.onComplete();
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

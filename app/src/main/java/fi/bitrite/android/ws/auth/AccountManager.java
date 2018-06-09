@@ -256,8 +256,13 @@ public class AccountManager {
         MainActivity mainActivity = (MainActivity) mMainActivity;
         if (mainActivity != null) {
             mainActivity.startActivityForResultRx(intent)
-                    .subscribe(intent2 -> observer.onSuccess(intent2.getExtras()),
-                            observer::onError);
+                    .subscribe(intent2 -> {
+                                if (intent2 != null && intent2.getExtras() != null) {
+                                    observer.onSuccess(intent2.getExtras());
+                                } else {
+                                    observer.onComplete();
+                                }
+                            }, observer::onError, observer::onComplete);
         } else {
             dismissEventuallyCreateOrAuth();
             mEventuallyCreateOrAuth = new EventuallyCreateOrAuth(intent, observer);
