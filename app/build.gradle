@@ -1,12 +1,9 @@
 apply plugin: 'com.android.application'
-repositories {
-    mavenCentral()
 
-    repositories {
-        maven { url 'https://dl.bintray.com/drummer-aidan/maven' }
-        maven { url "https://jitpack.io" }
-        maven { url "https://maven.google.com" }
-    }
+repositories {
+    google()
+    jcenter()
+    maven { url "https://jitpack.io" }
 }
 
 // This stanza will turn on checking for unchecked conversion and deprecation.
