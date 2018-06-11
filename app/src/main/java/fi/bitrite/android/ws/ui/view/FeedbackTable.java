@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
@@ -87,7 +88,7 @@ public class FeedbackTable extends TableLayout {
                 TableRow.LayoutParams.MATCH_PARENT,
                 TableRow.LayoutParams.WRAP_CONTENT
         ));
-        row.setText(text);
+        row.setText(Html.fromHtml(text));
         return row;
     }
 
