@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.model.Feedback;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.persistence.FavoriteDao;
 import io.reactivex.Observable;
 
@@ -23,10 +23,10 @@ public class FavoriteRepository {
     FavoriteRepository() {
     }
 
-    public List<Observable<Resource<Host>>> getFavorites() {
+    public List<Observable<Resource<User>>> getFavorites() {
         List<Integer> userIds = mFavoriteDao.loadAll();
 
-        List<Observable<Resource<Host>>> favorites = new ArrayList<>(userIds.size());
+        List<Observable<Resource<User>>> favorites = new ArrayList<>(userIds.size());
         for (Integer userId : userIds) {
             favorites.add(mUserRepository.get(userId));
         }
@@ -38,7 +38,7 @@ public class FavoriteRepository {
         return mFavoriteDao.exists(userId);
     }
 
-    public void add(@NonNull Host user, @Nullable List<Feedback> feedbacks) {
+    public void add(@NonNull User user, @Nullable List<Feedback> feedbacks) {
         mFavoriteDao.add(user, feedbacks);
     }
 

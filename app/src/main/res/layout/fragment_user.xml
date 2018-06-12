@@ -28,7 +28,7 @@
                 android:baselineAlignBottom="true"
                 android:contentDescription="@string/content_description_avatar_of_var"
                 android:scaleType="centerCrop"
-                android:src="@drawable/default_hostinfo_profile" />
+                android:src="@drawable/default_userinfo_profile" />
 
             <LinearLayout
                 android:layout_width="match_parent"

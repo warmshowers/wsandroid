@@ -22,7 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
@@ -72,17 +72,17 @@ public class FavoriteUsersFragment extends BaseFragment {
 
     @OnItemClick(R.id.favorites_lst_users)
     public void onUserClicked(int position) {
-        Host selectedUser = mUserListAdapter.getUser(position);
-        getNavigationController().navigateToUser(selectedUser.getId());
+        User selectedUser = mUserListAdapter.getUser(position);
+        getNavigationController().navigateToUser(selectedUser.id);
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
         if (view.getId() == mLstUsers.getId()) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            Host user = mUserListAdapter.getUser(info.position);
+            User user = mUserListAdapter.getUser(info.position);
 
-            menu.setHeaderTitle(user.getFullname());
+            menu.setHeaderTitle(user.fullname);
             menu.add(Menu.NONE, CONTEXT_MENU_DELETE, 0, R.string.delete);
         }
     }
@@ -94,8 +94,8 @@ public class FavoriteUsersFragment extends BaseFragment {
 
         switch (item.getItemId()) {
             case CONTEXT_MENU_DELETE:
-                Host user = mUserListAdapter.getUser(info.position);
-                mFavoriteRepository.remove(user.getId());
+                User user = mUserListAdapter.getUser(info.position);
+                mFavoriteRepository.remove(user.id);
                 updateFavoriteUsersList();
                 return true;
         }
@@ -104,7 +104,7 @@ public class FavoriteUsersFragment extends BaseFragment {
     }
 
     private void updateFavoriteUsersList() {
-        List<Observable<Resource<Host>>> favorites = mFavoriteRepository.getFavorites();
+        List<Observable<Resource<User>>> favorites = mFavoriteRepository.getFavorites();
         mUserListAdapter.resetDataset(favorites, 0);
 
         boolean hasFavorites = !favorites.isEmpty();

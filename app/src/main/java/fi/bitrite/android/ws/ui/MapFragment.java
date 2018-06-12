@@ -67,7 +67,7 @@ import butterknife.Unbinder;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.SettingsRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
@@ -311,12 +311,12 @@ public class MapFragment extends BaseFragment implements
         }
     }
     private void doInitialMapMove() {
-        float showHostZoom = getResources().getInteger(R.integer.map_showhost_zoom);
+        float showUserZoom = getResources().getInteger(R.integer.map_showuser_zoom);
 
         // If we were launched with an intent asking us to zoom to a member
         LatLng targetLatLng = getArguments().getParcelable(KEY_MAP_TARGET_LAT_LNG);
         if (targetLatLng != null) {
-            moveMapToLocation(targetLatLng, showHostZoom, POSITION_PRIORITY_FORCED);
+            moveMapToLocation(targetLatLng, showUserZoom, POSITION_PRIORITY_FORCED);
             return;
         }
 
@@ -329,15 +329,15 @@ public class MapFragment extends BaseFragment implements
         }
 
         if (mLastDeviceLocation != null) {
-            moveMapToLocation(Tools.locationToLatLng(mLastDeviceLocation), showHostZoom,
+            moveMapToLocation(Tools.locationToLatLng(mLastDeviceLocation), showUserZoom,
                     POSITION_PRIORITY_LAST_DEVICE_POSITION);
             return;
         }
 
         // If we are now connected, but still don't have a location, use a bogus default.
-        Host loggedInUser = mLoggedInUserHelper.get();
-        if (loggedInUser != null && loggedInUser.getLatLng() != null) {
-            moveMapToLocation(loggedInUser.getLatLng(), showHostZoom, POSITION_PRIORITY_ESTIMATE);
+        User loggedInUser = mLoggedInUserHelper.get();
+        if (loggedInUser != null && loggedInUser.location != null) {
+            moveMapToLocation(loggedInUser.location, showUserZoom, POSITION_PRIORITY_ESTIMATE);
             return;
         }
 
@@ -350,14 +350,14 @@ public class MapFragment extends BaseFragment implements
     public void onCameraChange(CameraPosition position) {
         mLastCameraPosition = position;
 
-        // If not connected, we'll switch to offline/starred hosts mode
+        // If not connected, we'll switch to offline/starred user mode
         if (!Tools.isNetworkConnected(getContext())) {
             sendMessage(R.string.map_network_not_connected);
             // If we already knew we were offline, return
             if (mIsOffline) {
                 return;
             }
-            // Otherwise, set state to offline and load only offline hosts
+            // Otherwise, set state to offline and load only offline user
             mIsOffline = true;
             loadOfflineUsers();
             return;
@@ -378,11 +378,11 @@ public class MapFragment extends BaseFragment implements
             mClusteredUsers.clear();
         }
 
-        // And get standard host list for region from server
+        // And get standard user list for region from server
         if (position.zoom < getResources().getInteger(R.integer.map_zoom_min_load)) {
-            sendMessage(R.string.hosts_dont_load);
+            sendMessage(R.string.users_dont_load);
         } else {
-            sendMessage(R.string.loading_hosts);
+            sendMessage(R.string.loading_users);
 
             LatLngBounds curScreen = mMap.getProjection().getVisibleRegion().latLngBounds;
             getResumePauseDisposable().add(
@@ -413,19 +413,19 @@ public class MapFragment extends BaseFragment implements
         mClusterManager.getMarkerCollection().clear();
         mClusteredUsers.clear();
 
-        // We'll use the starred hosts when network is offline.
+        // We'll use the starred users when network is offline.
         List<Integer> loadedUserIds = new ArrayList<>();
         mLoadOfflineUserDisposable = Observable.merge(mFavoriteRepository.getFavorites())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(hostResource -> {
-                    if (hostResource.hasData() && mIsOffline) {
+                .subscribe(userResource -> {
+                    if (userResource.hasData() && mIsOffline) {
                         // Users pop up twice as one is the error since we cannot load it from the
                         // network.
-                        Host user = hostResource.data;
-                        if (loadedUserIds.contains(user.getId())) {
+                        User user = userResource.data;
+                        if (loadedUserIds.contains(user.id)) {
                             return;
                         }
-                        loadedUserIds.add(user.getId());
+                        loadedUserIds.add(user.id);
 
                         mClusterManager.addItem(ClusterUser.from(user));
                         mClusterManager.cluster();
@@ -437,21 +437,21 @@ public class MapFragment extends BaseFragment implements
     /**
      * - Capture the clicked cluster so we can use it in custom infoWindow
      * - Check overall bounds of items in cluster
-     * - If the bounds are empty (all hosts at same place) then let it pop the info window
+     * - If the bounds are empty (all users at same place) then let it pop the info window
      * - Otherwise, move the camera to show the bounds of the map
      */
     @Override
     public boolean onClusterClick(Cluster<ClusterUser> cluster) {
         mLastClickedCluster = cluster; // remember for use later in the Adapter
 
-        // Find out the bounds of the hosts currently in cluster
+        // Find out the bounds of the users currently in cluster
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for (ClusterUser user : cluster.getItems()) {
             builder.include(user.latLng);
         }
         LatLngBounds bounds = builder.build();
 
-        // If the hosts are not all at the same location, then change bounds of map.
+        // If the users are not all at the same location, then change bounds of map.
         if (!bounds.southwest.equals(bounds.northeast)) {
             // Offset from edge of map in pixels when exploding cluster
             View mapView = getChildFragmentManager().findFragmentById(R.id.map).getView();
@@ -463,7 +463,7 @@ public class MapFragment extends BaseFragment implements
             mMap.animateCamera(cu);
             return true;
         }
-        showMultihostSelectDialog((ArrayList<ClusterUser>) cluster.getItems());
+        showMultiUserSelectDialog((ArrayList<ClusterUser>) cluster.getItems());
         return true;
     }
 
@@ -505,7 +505,7 @@ public class MapFragment extends BaseFragment implements
                 : -1;
     }
 
-    public void showMultihostSelectDialog(final ArrayList<ClusterUser> users) {
+    public void showMultiUserSelectDialog(final ArrayList<ClusterUser> users) {
         String[] mPossibleItems = new String[users.size()];
 
         double distance = calculateDistanceTo(users.get(0).latLng);
@@ -515,7 +515,7 @@ public class MapFragment extends BaseFragment implements
         LinearLayout customTitleView = (LinearLayout) getLayoutInflater().inflate(
                 R.layout.view_multiuser_dialog_header, null);
         TextView titleView = customTitleView.findViewById(R.id.title);
-        titleView.setText(getResources().getQuantityString(R.plurals.hosts_at_location,
+        titleView.setText(getResources().getQuantityString(R.plurals.users_at_location,
                 users.size(), users.size(), users.get(0).getStreetCityAddressStr()));
 
         TextView distanceView = customTitleView.findViewById(R.id.distance_from_current);
@@ -713,7 +713,7 @@ public class MapFragment extends BaseFragment implements
 
         @Override
         public View getInfoContents(Marker marker) {
-            StringBuilder hostList = new StringBuilder();
+            StringBuilder userList = new StringBuilder();
             if (mPopup == null) {
                 mPopup = mInflater.inflate(R.layout.view_user_info_multiple, null);
             }
@@ -740,16 +740,16 @@ public class MapFragment extends BaseFragment implements
                 });
 
                 for (ClusterUser user : users) {
-                    hostList.append(user.fullname).append("<br/>");
+                    userList.append(user.fullname).append("<br/>");
                 }
-                hostList.append(getString(R.string.click_to_view_all));
+                userList.append(getString(R.string.click_to_view_all));
 
-                String title = getResources().getQuantityString(R.plurals.hosts_at_location,
+                String title = getResources().getQuantityString(R.plurals.users_at_location,
                         users.size(), users.size(), users.get(0).getLocationStr());
 
                 tv.setText(Html.fromHtml(title));
                 tv = mPopup.findViewById(R.id.snippet);
-                tv.setText(Html.fromHtml(hostList.toString()));
+                tv.setText(Html.fromHtml(userList.toString()));
             }
 
             return (mPopup);
@@ -757,7 +757,7 @@ public class MapFragment extends BaseFragment implements
     }
 
     /**
-     * InfoWindowAdapter to present info about a single host marker.
+     * InfoWindowAdapter to present info about a single user marker.
      * Implemented here so we can have multiple lines, which the maps-provided one prevents.
      */
     class SingleUserInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {

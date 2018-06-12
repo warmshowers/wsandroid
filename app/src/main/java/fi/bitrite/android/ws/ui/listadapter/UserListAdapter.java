@@ -25,22 +25,23 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.SimpleUser;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.ui.widget.UserCircleImageView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.subjects.BehaviorSubject;
 
-public class UserListAdapter extends ArrayAdapter<Host> {
+public class UserListAdapter extends ArrayAdapter<User> {
 
-    public final static Comparator<? super Host> COMPERATOR_FULLNAME_ASC =
-            (left, right) -> left.getFullname().compareTo(right.getFullname());
+    public final static Comparator<? super SimpleUser> COMPERATOR_FULLNAME_ASC =
+            (left, right) -> left.fullname.compareTo(right.fullname);
 
-    private final Comparator<? super Host> mComparator;
+    private final Comparator<? super User> mComparator;
     private final Decorator mDecorator;
 
-    private BehaviorSubject<List<Host>> mUsers = BehaviorSubject.create();
+    private BehaviorSubject<List<User>> mUsers = BehaviorSubject.create();
 
     @BindView(R.id.user_list_layout) LinearLayout mLayout;
     @BindView(R.id.user_list_icon) UserCircleImageView mIcon;
@@ -48,7 +49,7 @@ public class UserListAdapter extends ArrayAdapter<Host> {
     @BindView(R.id.user_list_lbl_location) TextView mLblLocation;
     @BindView(R.id.user_list_lbl_member_info) TextView mMemberInfo;
 
-    public UserListAdapter(@NonNull Context context, @Nullable Comparator<? super Host> comparator,
+    public UserListAdapter(@NonNull Context context, @Nullable Comparator<? super User> comparator,
                            @Nullable Decorator decorator) {
         super(context, R.layout.item_user_list);
 
@@ -59,22 +60,22 @@ public class UserListAdapter extends ArrayAdapter<Host> {
                 .subscribe(this::resetDataset);
     }
 
-    public void resetDataset(List<Observable<Resource<Host>>> users, Object ignored) {
+    public void resetDataset(List<Observable<Resource<User>>> users, Object ignored) {
         @SuppressLint("UseSparseArrays") // We need loadedUsers.values()
-        final Map<Integer, Host> loadedUsers = new HashMap<>();
+        final Map<Integer, User> loadedUsers = new HashMap<>();
 
         Observable.merge(users)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userResource -> {
-                    final Host user = userResource.data;
+                    final User user = userResource.data;
                     if (user != null) {
-                        loadedUsers.put(user.getId(), user);
+                        loadedUsers.put(user.id, user);
                         mUsers.onNext(new ArrayList<>(loadedUsers.values()));
                     }
                 });
     }
 
-    public void resetDataset(List<Host> users) {
+    public void resetDataset(List<User> users) {
         if (mComparator != null) {
             Collections.sort(users, mComparator);
         }
@@ -87,7 +88,7 @@ public class UserListAdapter extends ArrayAdapter<Host> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        final Host user = getItem(position);
+        final User user = getItem(position);
 
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
@@ -98,37 +99,37 @@ public class UserListAdapter extends ArrayAdapter<Host> {
 
         // Decorates the shown fields.
         if (mDecorator != null) {
-            mLblFullname.setText(mDecorator.decorateFullname(user.getFullname()));
-            mLblLocation.setText(mDecorator.decorateLocation(user.getLocation()));
+            mLblFullname.setText(mDecorator.decorateFullname(user.fullname));
+            mLblLocation.setText(mDecorator.decorateLocation(user.getFullAddress()));
         } else {
-            mLblFullname.setText(user.getFullname());
-            mLblLocation.setText(user.getLocation());
+            mLblFullname.setText(user.fullname);
+            mLblLocation.setText(user.getFullAddress());
         }
 
         // Greys out unavailable users.
-        mLayout.setAlpha(user.isNotCurrentlyAvailable() ? 0.5f : 1.0f);
+        mLayout.setAlpha(user.isCurrentlyAvailable ? 1.0f : 0.5f);
 
         mIcon.setUser(user);
 
         DateFormat simpleDate = DateFormat.getDateInstance();
-        String activeDate = simpleDate.format(user.getLastLoginAsDate());
+        String activeDate = simpleDate.format(user.lastAccess);
         String createdDate =
-                new SimpleDateFormat("yyyy", Locale.US).format(user.getCreatedAsDate());
+                new SimpleDateFormat("yyyy", Locale.US).format(user.created);
 
         String memberString =
-                getContext().getString(R.string.search_host_summary, createdDate, activeDate);
+                getContext().getString(R.string.search_user_summary, createdDate, activeDate);
         mMemberInfo.setText(memberString);
 
         return convertView;
     }
 
-    public BehaviorSubject<List<Host>> getUsers() {
+    public BehaviorSubject<List<User>> getUsers() {
         return mUsers;
     }
 
     @Nullable
-    public Host getUser(int pos) {
-        List<Host> users = mUsers.getValue();
+    public User getUser(int pos) {
+        List<User> users = mUsers.getValue();
         return users != null && users.size() > pos
                 ? users.get(pos)
                 : null;

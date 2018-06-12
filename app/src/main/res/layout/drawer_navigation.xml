@@ -27,7 +27,7 @@
             android:layout_height="fill_parent"
             android:contentDescription="@string/content_description_your_avatar"
             android:scaleType="centerCrop"
-            android:src="@drawable/default_hostinfo_profile"
+            android:src="@drawable/default_userinfo_profile"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

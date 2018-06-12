@@ -7,7 +7,7 @@
     <integer name="prefs_map_location_zoom_default">0</integer>
 
     <!-- Zoom when showing a member's location -->
-    <integer name="map_showhost_zoom">15</integer>
+    <integer name="map_showuser_zoom">15</integer>
 
     <!-- If the zoom is below this number, we won't try to load hosts and will emit a message saying that -->
     <integer name="map_zoom_min_load">7</integer>

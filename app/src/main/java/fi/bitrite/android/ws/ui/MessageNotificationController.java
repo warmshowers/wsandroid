@@ -28,9 +28,9 @@ import javax.inject.Named;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.di.account.AccountScope;
-import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
@@ -161,15 +161,15 @@ public class MessageNotificationController {
     private Observable<NotificationEntry> loadParticipantsIntoNotificationEntry(
             NotificationEntry entry) {
         // Loads the author of the message.
-        SparseArray<Host> participants = entry.participants;
+        SparseArray<User> participants = entry.participants;
 
         if (participants.size() != entry.thread.participantIds.size()) { // TODO(saemy): Does not support changing participant list.
             // Fetches the participating users from the repository.
             return Observable.mergeDelayError(mUserRepository.get(entry.thread.participantIds))
                     .filter(Resource::hasData)
-                    .map(hostResource -> {
-                        Host user = hostResource.data;
-                        entry.participants.append(user.getId(), user);
+                    .map(userResource -> {
+                        User user = userResource.data;
+                        entry.participants.append(user.id, user);
                         return entry;
                     })
                     // Only fire once we loaded all participants.
@@ -188,12 +188,12 @@ public class MessageNotificationController {
             }
 
             // Gets the partner (not our) user element.
-            Host partner = entry.participants.valueAt(0);
-            if (partner.getId() == mLoggedInUserHelper.getId()) {
+            User partner = entry.participants.valueAt(0);
+            if (partner.id == mLoggedInUserHelper.getId()) {
                 partner = entry.participants.valueAt(1);
             }
 
-            String pictureUrl = partner.getProfilePictureSmall();
+            String pictureUrl = partner.profilePicture.getSmallUrl();
             if (pictureUrl != null) {
                 Target target = new Target() {
                     @Override
@@ -267,15 +267,15 @@ public class MessageNotificationController {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private Notification createNotification(NotificationEntry entry, PendingIntent intent) {
-        Host us = mLoggedInUserHelper.get();
+        User us = mLoggedInUserHelper.get();
         if (us == null) {
             return createNotificationBeforeApi24(entry, intent);
         }
 
-        Notification.MessagingStyle style = new Notification.MessagingStyle(us.getFullname())
+        Notification.MessagingStyle style = new Notification.MessagingStyle(us.fullname)
                 .setConversationTitle(entry.thread.subject);
         for (Message message : entry.thread.messages) {
-            String authorName = entry.participants.get(message.authorId).getFullname();
+            String authorName = entry.participants.get(message.authorId).fullname;
             Notification.MessagingStyle.Message msg = new Notification.MessagingStyle.Message(
                     message.body, message.date.getTime(), authorName);
             if (message.isNew) {
@@ -308,7 +308,7 @@ public class MessageNotificationController {
 
         assert entry.latestNewMessage != null;
         String newestMessageAuthorName =
-                entry.participants.get(entry.latestNewMessage.authorId).getFullname();
+                entry.participants.get(entry.latestNewMessage.authorId).fullname;
         return new NotificationCompat.Builder(mApplicationContext, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_bicycle_white_24dp)
                 .setLargeIcon(entry.partnerProfileBitmap)
@@ -338,7 +338,7 @@ public class MessageNotificationController {
     private static class NotificationEntry {
         @NonNull MessageThread thread;
         @Nullable Message latestNewMessage;
-        @NonNull final SparseArray<Host> participants = new SparseArray<>();
+        @NonNull final SparseArray<User> participants = new SparseArray<>();
         @Nullable Bitmap partnerProfileBitmap;
         /**
          * The id of the newest new message that is currently shown in a notification. We are not

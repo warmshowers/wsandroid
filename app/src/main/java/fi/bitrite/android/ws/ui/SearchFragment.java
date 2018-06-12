@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
@@ -107,7 +107,7 @@ public class SearchFragment extends BaseFragment {
 
         addDisposable(mUserIds.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userIds -> {
-                    List<Observable<Resource<Host>>> users = mUserRepository.get(userIds);
+                    List<Observable<Resource<User>>> users = mUserRepository.get(userIds);
                     mSearchResultListAdapter.resetDataset(users, 0);
                 }));
     }
@@ -154,8 +154,8 @@ public class SearchFragment extends BaseFragment {
 
     @OnItemClick(R.id.search_lst_result)
     public void onUserClicked(int position) {
-        Host user = (Host) mLstSearchResult.getItemAtPosition(position);
-        getNavigationController().navigateToUser(user.getId());
+        User user = (User) mLstSearchResult.getItemAtPosition(position);
+        getNavigationController().navigateToUser(user.id);
     }
 
     @Override
@@ -174,13 +174,13 @@ public class SearchFragment extends BaseFragment {
         mDisposables.add(disposable);
     }
 
-    private final static Comparator<Host> mComparator = (left, right) -> {
-        int ncaLeft = left.isNotCurrentlyAvailable() ? 1 : 0;
-        int ncaRight = right.isNotCurrentlyAvailable() ? 1 : 0;
+    private final static Comparator<User> mComparator = (left, right) -> {
+        int caLeft = left.isCurrentlyAvailable ? 1 : 0;
+        int caRight = right.isCurrentlyAvailable ? 1 : 0;
 
-        return ncaLeft != ncaRight
-                ? ncaLeft - ncaRight
-                : left.getFullname().compareTo(right.getFullname()); // TODO(saemy): Something smarter?
+        return caLeft != caRight
+                ? caRight - caLeft
+                : left.fullname.compareTo(right.fullname); // TODO(saemy): Something smarter?
     };
 
     private static class Decorator implements UserListAdapter.Decorator {
@@ -202,8 +202,6 @@ public class SearchFragment extends BaseFragment {
             return mQueryPattern.matcher(fullname).find()
                     ? getTextMatch(mQuery, fullname)
                     : new SpannableStringBuilder(fullname);
-
-//           Toast.makeText(getContext(), "HostListAdp hostFullname = " + fullname + " - " + mQuery + " - " + mQueryPattern.matcher(fullname).find(), Toast.LENGTH_SHORT).show();
         }
 
         @Override

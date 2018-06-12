@@ -10,7 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
 
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.ui.AboutFragment;
 import fi.bitrite.android.ws.ui.ContactUserFragment;
 import fi.bitrite.android.ws.ui.FavoriteUsersFragment;
@@ -144,8 +144,8 @@ public class NavigationController {
                 FeedbackFragment.create(recipientId), false);
     }
 
-    public void navigateToContactUser(Host recipient) {
-        navigateTo(NAVIGATION_TAG_MAIN + "/user-" + recipient.getId() + "/contact",
+    public void navigateToContactUser(SimpleUser recipient) {
+        navigateTo(NAVIGATION_TAG_MAIN + "/user-" + recipient.id + "/contact",
                 ContactUserFragment.create(recipient), false);
     }
 

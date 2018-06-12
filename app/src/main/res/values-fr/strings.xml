@@ -26,27 +26,27 @@
     <string name="feedback">Recommandation(s) (%1$d)</string>
     <string name="home_phone"><u>Téléphone fixe:</u></string>
     <string name="mobile_phone"><u>Téléphone mobile:</u></string>
-    <plurals name="host_count">
+    <plurals name="user_count">
         <item quantity="one">%1$d hôte à cet endroit</item>
         <item quantity="other">%1$d hôtes à cet endroit</item>
     </plurals>
     <string name="host_currently_available">(Disponible pour l\'hébergement)</string>
-    <string name="host_info_in_progress">Récupération des informations de l\'hôte …</string>
+    <string name="user_info_in_progress">Récupération des informations de l\'hôte …</string>
     <string name="host_not_available">Ce membre est présentement marqué comme non-disponible. Vous pouvez tout de même contacter celui-ci, mais non pas pour de l\'hébergement.</string>
     <string name="host_not_currently_available">(Actuellement non-disponible)</string>
-    <string name="host_starred">Hôte ajouté aux favoris. Vous pouvez maintenant accéder à ces informations hors ligne.</string>
-    <string name="host_unstarred">Informations de l\'hôte supprimées de l\'appareil.</string>
+    <string name="user_starred">Hôte ajouté aux favoris. Vous pouvez maintenant accéder à ces informations hors ligne.</string>
+    <string name="user_unstarred">Informations de l\'hôte supprimées de l\'appareil.</string>
     <string name="host_updated">Informations de l\'hôte mises à jour.</string>
-    <plurals name="hosts_at_location">
+    <plurals name="users_at_location">
         <item quantity="one">%1$d hôte à l\'endroit suivant: %2$s</item>
         <item quantity="other">%1$d hôtes à l\'endroit suivant: %2$s</item>
     </plurals>
-    <string name="hosts_dont_load">Les hôtes n\'apparaissent pas ce niveau de zoom\nZoomer vers l\'avant…</string>
+    <string name="users_dont_load">Les hôtes n\'apparaissent pas ce niveau de zoom\nZoomer vers l\'avant…</string>
     <string name="label">Warmshowers</string>
     <string name="last_login"><u>Dernière connexion:</u></string>
     <string name="last_updated">Dernière mise à jour:</string>
     <string name="list_search_hint">Nom du membre ou de la ville</string>
-    <string name="loading_hosts">Chargement des hôtes…</string>
+    <string name="loading_users">Chargement des hôtes…</string>
     <string name="location"><u>Localisation:</u></string>
     <string name="max_guests"><u>Invités max.:</u></string>
     <string name="member_since"><u>Membre depuis:</u></string>
@@ -133,15 +133,15 @@
     <string name="title_fragment_user">Profil du membre</string>
     <string name="hostinfo_profile">Profil</string>
     <string name="hostinfo_details">Détails</string>
-    <string name="host_service_shower">Douche</string>
-    <string name="host_services_food">Nourriture</string>
-    <string name="host_services_bed">Lit</string>
-    <string name="host_service_storage">Garage</string>
-    <string name="host_service_kitchen">Accès à la cuisine</string>
-    <string name="host_service_tentspace">Endroit pour camper</string>
-    <string name="host_service_sag">Transport</string>
+    <string name="user_service_shower">Douche</string>
+    <string name="user_services_food">Nourriture</string>
+    <string name="user_services_bed">Lit</string>
+    <string name="user_service_storage">Garage</string>
+    <string name="user_service_kitchen">Accès à la cuisine</string>
+    <string name="user_service_tentspace">Endroit pour camper</string>
+    <string name="user_service_sag">Transport</string>
     <string name="json_error">Échec d\'analyse de la séquence json retournée par le serveur</string>
-    <string name="host_service_laundry">Machine à laver</string>
+    <string name="user_service_laundry">Machine à laver</string>
 
     <!-- Beginning of new strings for 1.5.0+ -->
     <!-- Notes:
@@ -156,14 +156,14 @@
     <string name="search_hint">Nom de membre ou de ville</string>
     <string name="action_search">Recherche d\'hôtes</string>
     <string name="contact_host">Contacter le membre</string>
-    <string name="search_host_summary">Membre depuis %1$s, actif le %2$s</string>
-    <string name="host_limitations">Nmb. d\'invités max. %1$s, Langues parlées %2$s</string>
+    <string name="search_user_summary">Membre depuis %1$s, actif le %2$s</string>
+    <string name="user_limitations">Nmb. d\'invités max. %1$d, Langues parlées %2$s</string>
     <string name="favorite_host">Hôte favori</string>
     <string name="no_feedback_yet">Pas de recommandation pour l\'instant</string>
     <string name="mobile_phone_abbrev">Mobile: %1$s</string>
     <string name="home_phone_abbrev">Fixe: %1$s</string>
     <string name="work_phone_abbrev">Travail: %1$s</string>
-    <string name="host_services_description">Services que l\'hôte peut offrir: %1$s</string>
+    <string name="user_services_description">Services que l\'hôte peut offrir: %1$s</string>
     <string name="nearby_service_accommodation">Hôtel/Auberge</string>
     <string name="nearby_service_bikeshop">Magasin de vélos</string>
     <string name="nearby_services_description">Services à proximité: %1$s</string>

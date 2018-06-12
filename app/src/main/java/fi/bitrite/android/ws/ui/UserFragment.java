@@ -40,7 +40,7 @@ import butterknife.OnCheckedChanged;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.model.Feedback;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.FeedbackRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
@@ -58,8 +58,8 @@ import io.reactivex.subjects.BehaviorSubject;
 import static android.graphics.PorterDuff.Mode.MULTIPLY;
 
 /**
- * Activity that fetches host information and shows it to the user.
- * The information is retrieved either from the device storage (for starred hosts)
+ * Activity that fetches user information and shows it to the user.
+ * The information is retrieved either from the device storage (for starred users)
  * or downloaded from the WarmShowers web service.
  */
 public class UserFragment extends BaseFragment {
@@ -99,7 +99,7 @@ public class UserFragment extends BaseFragment {
 
     private int mUserId;
 
-    private final BehaviorSubject<MaybeNull<Host>> mUser =
+    private final BehaviorSubject<MaybeNull<User>> mUser =
             BehaviorSubject.createDefault(new MaybeNull<>());
     private final BehaviorSubject<List<Feedback>> mFeedbacks = BehaviorSubject.create();
     private final BehaviorSubject<Boolean> mFavorite = BehaviorSubject.create();
@@ -173,13 +173,13 @@ public class UserFragment extends BaseFragment {
             return;
         }
 
-        Host user = mUser.getValue().data;
+        User user = mUser.getValue().data;
         List<Feedback> feedback = mFeedbacks.getValue();
 
         if (isFavorite) {
             mFavoriteRepository.add(user, feedback);
         } else {
-            mFavoriteRepository.remove(user.getId());
+            mFavoriteRepository.remove(user.id);
         }
 
         mDbFavoriteStatus = isFavorite;
@@ -200,27 +200,27 @@ public class UserFragment extends BaseFragment {
         mFavorite.onNext(isChecked);
 
         int msgId = isChecked
-                ? R.string.host_starred
-                : R.string.host_unstarred;
+                ? R.string.user_starred
+                : R.string.user_unstarred;
         Toast.makeText(getContext(), msgId, Toast.LENGTH_SHORT).show();
     }
 
     private void updateUserViewContent() {
-        MaybeNull<Host> maybeUser = mUser.getValue();
+        MaybeNull<User> maybeUser = mUser.getValue();
         mLayoutDetails.setVisibility(maybeUser.isNonNull() ? View.VISIBLE : View.GONE);
 
         if (maybeUser.isNull()) {
             return;
         }
 
-        final Host user = maybeUser.data;
+        final User user = maybeUser.data;
 
-        mLblName.setText(user.getFullname());
-        setTitle(user.getFullname());
+        mLblName.setText(user.fullname);
+        setTitle(user.fullname);
 
-        // Host Availability:
+        // User Availability:
         // Set the user icon to black if they're available, otherwise gray
-        boolean isAvailable = !user.isNotCurrentlyAvailable();
+        boolean isAvailable = user.isCurrentlyAvailable;
         mImgAvailability.setAlpha(isAvailable ? 1.0f : 0.5f);
         mImgAvailability.setImageResource(R.drawable.ic_home_grey600_24dp);
         mImgAvailability.setColorFilter(isAvailable
@@ -233,25 +233,25 @@ public class UserFragment extends BaseFragment {
                 : R.string.not_currently_available);
 
         DateFormat simpleDate = DateFormat.getDateInstance();
-        String activeDate = simpleDate.format(user.getLastLoginAsDate());
-        String createdDate = new SimpleDateFormat("yyyy").format(user.getCreatedAsDate());
+        String activeDate = simpleDate.format(user.lastAccess);
+        String createdDate = new SimpleDateFormat("yyyy").format(user.created);
 
-        mLblLoginInfo.setText(getString(R.string.search_host_summary, createdDate, activeDate));
+        mLblLoginInfo.setText(getString(R.string.search_user_summary, createdDate, activeDate));
         mLblLimitations.setText(getString(
-                R.string.host_limitations, user.getMaxCyclists(), user.getLanguagesSpoken()));
+                R.string.user_limitations, user.maximalCyclistCount, user.spokenLanguages));
 
 
-        // Host location section
-        mLblLocation.setText(user.getLocation());
+        // User location section
+        mLblLocation.setText(user.getFullAddress());
         List<String> phones = new ArrayList<>();
-        if (!user.getMobilePhone().isEmpty()) {
-            phones.add(getString(R.string.mobile_phone_abbrev, user.getMobilePhone()));
+        if (!TextUtils.isEmpty(user.mobilePhone)) {
+            phones.add(getString(R.string.mobile_phone_abbrev, user.mobilePhone));
         }
-        if (!user.getHomePhone().isEmpty()) {
-            phones.add(getString(R.string.home_phone_abbrev, user.getHomePhone()));
+        if (!TextUtils.isEmpty(user.homePhone)) {
+            phones.add(getString(R.string.home_phone_abbrev, user.homePhone));
         }
-        if (!user.getWorkPhone().isEmpty()) {
-            phones.add(getString(R.string.work_phone_abbrev, user.getWorkPhone()));
+        if (!TextUtils.isEmpty(user.workPhone)) {
+            phones.add(getString(R.string.work_phone_abbrev, user.workPhone));
         }
 
         mLblPhone.setVisibility(phones.isEmpty() ? View.GONE : View.VISIBLE);
@@ -262,13 +262,13 @@ public class UserFragment extends BaseFragment {
 
         // Profile/Comments section
         // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
-        mLblComments.setText(Tools.siteHtmlToHtml(user.getComments()));
+        mLblComments.setText(Tools.siteHtmlToHtml(user.comments));
 
-        // Host Services
-        String hostServices = user.getHostServices(getContext());
-        mLblServices.setVisibility(hostServices.isEmpty() ? View.GONE : View.VISIBLE);
-        if (!hostServices.isEmpty()) {
-            mLblServices.setText(getString(R.string.host_services_description, hostServices));
+        // User Services
+        String userServices = user.getUserServices(getContext());
+        mLblServices.setVisibility(userServices.isEmpty() ? View.GONE : View.VISIBLE);
+        if (!userServices.isEmpty()) {
+            mLblServices.setText(getString(R.string.user_services_description, userServices));
         }
 
         // Nearby Services
@@ -279,15 +279,15 @@ public class UserFragment extends BaseFragment {
                     getString(R.string.nearby_services_description, nearbyServices));
         }
 
-        // If we're connected and there is a picture, get host picture.
-        String url = user.getProfilePictureLarge();
+        // If we're connected and there is a picture, get user picture.
+        String url = user.profilePicture.getLargeUrl();
         if (!TextUtils.isEmpty(url)) {
             Picasso.with(getContext())
                     .load(url)
-                    .placeholder(R.drawable.default_hostinfo_profile)
+                    .placeholder(R.drawable.default_userinfo_profile)
                     .into(mImgPhoto);
             mImgPhoto.setContentDescription(
-                    getString(R.string.content_description_avatar_of_var, user.getName()));
+                    getString(R.string.content_description_avatar_of_var, user.name));
         }
     }
 
@@ -302,25 +302,25 @@ public class UserFragment extends BaseFragment {
                 : getString(R.string.feedback, feedbacks.size()));
     }
 
-    private void contactHost(@NonNull Host user) {
+    private void contactUser(@NonNull User user) {
         getNavigationController().navigateToContactUser(user);
     }
 
-    private void sendFeedback(@NonNull Host user) {
-        getNavigationController().navigateToFeedback(user.getId());
+    private void sendFeedback(@NonNull User user) {
+        getNavigationController().navigateToFeedback(user.id);
     }
 
-    private void showHostOnMap(@NonNull Host user) {
-        getNavigationController().navigateToMap(user.getLatLng());
+    private void showUserOnMap(@NonNull User user) {
+        getNavigationController().navigateToMap(user.location);
     }
 
     /**
-     * Send a geo intent so that we can view the host on external maps application
+     * Send a geo intent so that we can view the user on external maps application
      */
-    public void sendGeoIntent(@NonNull Host user) {
-        String lat = user.getLatitude();
-        String lng = user.getLongitude();
-        String query = Uri.encode(lat + "," + lng + "(" + user.getFullname() + ")");
+    public void sendGeoIntent(@NonNull User user) {
+        String lat = Double.toString(user.location.latitude);
+        String lng = Double.toString(user.location.longitude);
+        String query = Uri.encode(lat + "," + lng + "(" + user.fullname + ")");
         Uri uri = Uri.parse("geo:" + lat + "," + lng + "?q=" + query);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -330,32 +330,32 @@ public class UserFragment extends BaseFragment {
         }
     }
 
-    public void viewOnSite(@NonNull Host user) {
-        String url = GlobalInfo.warmshowersBaseUrl + "/user/" + user.getId();
+    public void viewOnSite(@NonNull User user) {
+        String url = GlobalInfo.warmshowersBaseUrl + "/user/" + user.id;
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);
     }
 
     private void getUserInformation() {
-        mDownloadUserInfoProgressDisposable = ProgressDialog.create(R.string.host_info_in_progress)
+        mDownloadUserInfoProgressDisposable = ProgressDialog.create(R.string.user_info_in_progress)
                 .show(getActivity());
 
         AtomicInteger numFinished = new AtomicInteger(0);
         Observable.merge(
                 mUserRepository.get(mUserId)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .map(hostResource -> {
-                            if (hostResource.hasData()) {
-                                mUser.onNext(new MaybeNull<>(hostResource.data));
+                        .map(userResource -> {
+                            if (userResource.hasData()) {
+                                mUser.onNext(new MaybeNull<>(userResource.data));
                             }
 
                             // TODO(saemy): Error handling.
-//                        if (hostResource.isError()) {
-//                            RestClient.reportError(getContext(), hostResource.error);
+//                        if (userResource.isError()) {
+//                            RestClient.reportError(getContext(), userResource.error);
 //                        }
 
-                            return !hostResource.isLoading();
+                            return !userResource.isLoading();
                         }),
                 mFeedbackRepository.getForRecipient(mUserId)
                         .observeOn(AndroidSchedulers.mainThread())
@@ -379,22 +379,22 @@ public class UserFragment extends BaseFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.host_information_actions, menu);
+        inflater.inflate(R.menu.user_information_actions, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Host user = mUser.getValue().data;
+        User user = mUser.getValue().data;
         if (user == null) {
             return super.onOptionsItemSelected(item);
         }
 
         switch (item.getItemId()) {
             case R.id.menuSendMessage:
-                contactHost(user);
+                contactUser(user);
                 return true;
             case R.id.menuViewOnMap:
-                showHostOnMap(user);
+                showUserOnMap(user);
                 return true;
             case R.id.menuMapApplication:
                 sendGeoIntent(user);

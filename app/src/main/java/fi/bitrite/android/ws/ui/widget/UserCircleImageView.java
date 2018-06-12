@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.SimpleUser;
 
 public class UserCircleImageView extends CircleImageView {
 
@@ -29,7 +29,7 @@ public class UserCircleImageView extends CircleImageView {
         super(context, attrs, defStyle);
     }
 
-    public void setUser(@Nullable Host user) {
+    public void setUser(@Nullable SimpleUser user) {
         if (user == null) {
             setUsers(null);
         } else {
@@ -57,7 +57,7 @@ public class UserCircleImageView extends CircleImageView {
             0xff90a4ae
     );
 
-    public void setUsers(@Nullable Collection<Host> users) {
+    public void setUsers(@Nullable Collection<? extends SimpleUser> users) {
         String url;
         String text;
         int color;
@@ -69,17 +69,17 @@ public class UserCircleImageView extends CircleImageView {
             int colorHash = 0;
             url = null;
             StringBuilder labelSB = new StringBuilder();
-            for (Host user : users) {
-                final String name = TextUtils.isEmpty(user.getFullname())
-                        ? user.getName()
-                        : user.getFullname();
+            for (SimpleUser user : users) {
+                final String name = TextUtils.isEmpty(user.fullname)
+                        ? user.name
+                        : user.fullname;
                 colorHash ^= name.hashCode();
 
                 if (labelSB.length() < 2) {
                     labelSB.append(Character.toUpperCase(name.charAt(0)));
                 }
 
-                url = user.getProfilePictureSmall();
+                url = user.profilePicture.getSmallUrl();
             }
 
             // No image for groups.

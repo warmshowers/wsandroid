@@ -1,9 +1,12 @@
 package fi.bitrite.android.ws.api.response;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 import java.util.List;
+
+import fi.bitrite.android.ws.model.SimpleUser;
 
 public class UserSearchByLocationResponse {
     // {
@@ -54,15 +57,11 @@ public class UserSearchByLocationResponse {
         @SerializedName("profile_image_mobile_photo_456") public String profilePictureUrl_456x342;
         @SerializedName("profile_image_map_infoWindow") public String profilePictureUrl_50x50;
 
-        public fi.bitrite.android.ws.model.User toUser(boolean isStarred) {
-            return new fi.bitrite.android.ws.model.User(id, name, fullname, street, null, city,
-                    province, postalCode, countryCode, null, null, null, null, null, 0, null, null,
-                    null, false, false, false, false, false, false, false, false, lastAccess,
-                    created, !notCurrentlyAvailable,
-                    new fi.bitrite.android.ws.model.User.Location(latitude, longitude), null,
-                    new fi.bitrite.android.ws.model.User.Picture(profilePictureUrl_179x200,
-                            profilePictureUrl_400x400),
-                    isStarred);
+        public SimpleUser toSimpleUser() {
+            return new SimpleUser(id, name, fullname, street, city, province, postalCode,
+                    countryCode, new LatLng(latitude, longitude), !notCurrentlyAvailable,
+                    new SimpleUser.Picture(profilePictureUrl_179x200, profilePictureUrl_400x400),
+                    created, lastAccess);
         }
     }
 

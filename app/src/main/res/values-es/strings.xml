@@ -41,10 +41,10 @@
     <string name="last_updated">Última actualización: </string>
     <string name="host_updated">Información de anfitrión actualizada.</string>
     <string name="host_not_available">Este usuario no está disponible actualmente. Puedes contactar al usuario pero no como anfitrión.</string>
-    <string name="host_info_in_progress">Recibiendo información del anfitrión …</string>
+    <string name="user_info_in_progress">Recibiendo información del anfitrión …</string>
     <string name="unstar_host">Remover de Favoritos</string>
-    <string name="host_starred">Anfitrión en Favoritos. Ahora puedes acceder a la información sin conexión a internet.</string>
-    <string name="host_unstarred">La información del anfitrión fue eliminada del dispositivo.</string>
+    <string name="user_starred">Anfitrión en Favoritos. Ahora puedes acceder a la información sin conexión a internet.</string>
+    <string name="user_unstarred">La información del anfitrión fue eliminada del dispositivo.</string>
     <string name="performing_search">Buscando …</string>
     <string name="io_error">Error de acceso a internet, por favor revisa tu conexión.</string>
     <string name="http_unexpected_failure">Error inesperado al acceder al servidor. Revisa tus credenciales y la conexión a internet.</string>
@@ -65,20 +65,20 @@
         <item quantity="other">Tienes %d mensajes sin leer.</item>
     </plurals>
     <string name="updateMessages">Actualizar</string>
-    <string name="loading_hosts">Cargando anfitriones …</string>
-    <plurals name="hosts_at_location">
+    <string name="loading_users">Cargando anfitriones …</string>
+    <plurals name="users_at_location">
         <item quantity="one">%1$d anfitrion en %2$s</item>
         <item quantity="other">%1$d anfitriones en %2$s</item>
     </plurals>
     <string name="view_on_site">Ver en el sitio web</string>
-    <plurals name="host_count">
+    <plurals name="user_count">
         <item quantity="one">%1$d anfitrion en este lugar</item>
         <item quantity="other">%1$d anfitriones en este lugar</item>
     </plurals>
     <string name="click_to_view_all"><strong>Clic para verlos todos</strong></string>
     <string name="alert_neutral_button">OK</string>
     <string name="title_fragment_contact_user">"Mensaje para %1$s"</string>
-    <string name="hosts_dont_load">Las ubicaciones de los anfitriones no cargan en este nivel de zoom\nZoom in…</string>
+    <string name="users_dont_load">Las ubicaciones de los anfitriones no cargan en este nivel de zoom\nZoom in…</string>
     <!-- Distance from current has 2 args, number and units -->
     <string name="distance_from_current">"%1$d %2$s de la ubicación actual"</string>
     <string name="host_not_currently_available">(No disponible actualmente)</string>
@@ -133,14 +133,14 @@
     <string name="embedded_browser_warning">Has salido de la aplicación usando un navegador para ver Warmshowers.org. Usa el botón “Regresar” para volver a la aplicación.</string>
     <string name="not_connected_to_network">No estás conectado a la red actualmente.</string>
     <string name="title_fragment_user">Perfil de usuario </string>
-    <string name="host_service_shower">Ducha</string>
-    <string name="host_services_food">Comida</string>
-    <string name="host_services_bed">Sitio para dormir</string>
-    <string name="host_service_laundry">Lavado de ropa</string>
-    <string name="host_service_storage">Almacenamiento</string>
-    <string name="host_service_kitchen">Uso de cocina</string>
-    <string name="host_service_tentspace">Terreno (Para acampar)</string>
-    <string name="host_service_sag">Coche escoba (vehículo de soporte)</string>
+    <string name="user_service_shower">Ducha</string>
+    <string name="user_services_food">Comida</string>
+    <string name="user_services_bed">Sitio para dormir</string>
+    <string name="user_service_laundry">Lavado de ropa</string>
+    <string name="user_service_storage">Almacenamiento</string>
+    <string name="user_service_kitchen">Uso de cocina</string>
+    <string name="user_service_tentspace">Terreno (Para acampar)</string>
+    <string name="user_service_sag">Coche escoba (vehículo de soporte)</string>
     <string name="label_feedback_for_this_member">Tu comentario para este miembro:</string>
     <string name="drawer_open">abrir</string>
     <string name="drawer_close">cerrar</string>
@@ -148,14 +148,14 @@
     <string name="search_hint">Nombre del anfitrión o ciudad/municipio</string>
     <string name="action_search">Búsqueda de anfitrión</string>
     <string name="contact_host">Contactar a este miembro</string>
-    <string name="search_host_summary">Miembro desde hace %1$s, última actividad %2$s</string>
-    <string name="host_limitations">Nº máximo de huéspedes %1$s, Idiomas %2$s</string>
+    <string name="search_user_summary">Miembro desde hace %1$s, última actividad %2$s</string>
+    <string name="user_limitations">Nº máximo de huéspedes %1$d, Idiomas %2$s</string>
     <string name="favorite_host">Agregar Anfitrión a Favoritos</string>
     <string name="no_feedback_yet">Sin comentarios aún</string>
     <string name="mobile_phone_abbrev">Teléfono Móvil: %1$s</string>
     <string name="home_phone_abbrev">Casa: %1$s</string>
     <string name="work_phone_abbrev">Trabajo: %1$s</string>
-    <string name="host_services_description">Servicios que este anfitrión ofrece: %1$s</string>
+    <string name="user_services_description">Servicios que este anfitrión ofrece: %1$s</string>
     <string name="nearby_service_accommodation">Hospedaje</string>
     <string name="nearby_service_bikeshop">Tienda de bicicletas</string>
     <string name="nearby_services_description">Servicios cercanos: %1$s</string>

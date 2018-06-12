@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.ui.util.DialogHelper;
 import fi.bitrite.android.ws.ui.util.NavigationController;
@@ -38,7 +38,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  */
 public class ContactUserFragment extends BaseFragment {
 
-    private final static String KEY_RECIPIENT = "recipient";
+    private final static String KEY_RECIPIENT_NAME = "recipient_name";
+    private final static String KEY_RECIPIENT_FULLNAME = "recipient_fullname";
 
     @Inject MessageRepository mMessageRepository;
 
@@ -47,13 +48,15 @@ public class ContactUserFragment extends BaseFragment {
     @BindView(R.id.all_btn_submit) Button mBtnSubmit;
     @BindView(R.id.all_lbl_no_network_warning) TextView mLblNoNetworkWarning;
 
-    private Host mRecipient;
+    private String mRecipientName;
+    private String mRecipientFullname;
 
     private ProgressDialog.Disposable mProgressDisposable;
 
-    public static Fragment create(Host recipient) {
+    public static Fragment create(SimpleUser recipient) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(KEY_RECIPIENT, recipient);
+        bundle.putString(KEY_RECIPIENT_NAME, recipient.name);
+        bundle.putString(KEY_RECIPIENT_FULLNAME, recipient.fullname);
 
         Fragment fragment = new ContactUserFragment();
         fragment.setArguments(bundle);
@@ -66,7 +69,8 @@ public class ContactUserFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_contact_user, container, false);
         ButterKnife.bind(this, view);
 
-        mRecipient = getArguments().getParcelable(KEY_RECIPIENT);
+        mRecipientName = getArguments().getString(KEY_RECIPIENT_NAME);
+        mRecipientFullname = getArguments().getString(KEY_RECIPIENT_FULLNAME);
 
         return view;
     }
@@ -81,7 +85,7 @@ public class ContactUserFragment extends BaseFragment {
     }
 
     @OnClick(R.id.all_btn_submit)
-    public void sendMessageToHost() {
+    public void sendMessageToUser() {
         String subject = mTxtSubject.getText().toString();
         String message = mTxtMessage.getText().toString();
 
@@ -93,7 +97,7 @@ public class ContactUserFragment extends BaseFragment {
         mProgressDisposable = ProgressDialog.create(R.string.sending_message)
                 .show(getActivity());
 
-        List<String> recipients = Collections.singletonList(mRecipient.getName());
+        List<String> recipients = Collections.singletonList(mRecipientName);
         mMessageRepository.createThread(subject, message, recipients)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(threadId -> {
@@ -128,6 +132,6 @@ public class ContactUserFragment extends BaseFragment {
 
     @Override
     protected CharSequence getTitle() {
-        return getString(R.string.title_fragment_contact_user, mRecipient.getFullname());
+        return getString(R.string.title_fragment_contact_user, mRecipientFullname);
     }
 }

@@ -19,7 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
@@ -60,17 +60,17 @@ public class UserListFragment extends BaseFragment {
         userIds = userIds != null ? userIds : new ArrayList<>();
 
         // Populates the users to the user list.
-        List<Observable<Resource<Host>>> users = mUserRepository.get(userIds);
+        List<Observable<Resource<User>>> users = mUserRepository.get(userIds);
         UserListAdapter userListAdapter =
                 new UserListAdapter(getContext(), UserListAdapter.COMPERATOR_FULLNAME_ASC, null);
         userListAdapter.resetDataset(users, 0);
         mLstUsers.setAdapter(userListAdapter);
 
         mLblUsersAtAddress.setText(getResources().getQuantityString(
-                R.plurals.host_count, userIds.size(), userIds.size()));
+                R.plurals.user_count, userIds.size(), userIds.size()));
         userListAdapter.getUsers().observeOn(AndroidSchedulers.mainThread())
                 .subscribe(sortedUsers -> mLblMultipleUserAddress.setText(!sortedUsers.isEmpty()
-                        ? sortedUsers.get(0).getLocation()
+                        ? sortedUsers.get(0).getFullAddress()
                         : ""));
 
         return view;
@@ -78,8 +78,8 @@ public class UserListFragment extends BaseFragment {
 
     @OnItemClick(R.id.search_lst_result)
     public void onUserClicked(int position) {
-        Host user = (Host) mLstUsers.getItemAtPosition(position);
-        getNavigationController().navigateToUser(user.getId());
+        User user = (User) mLstUsers.getItemAtPosition(position);
+        getNavigationController().navigateToUser(user.id);
     }
 
     @Override

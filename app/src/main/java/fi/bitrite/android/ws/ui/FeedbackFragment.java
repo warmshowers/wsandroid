@@ -36,7 +36,7 @@ import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
- * Responsible for letting the user type in a message and then sending it to a host
+ * Responsible for letting the user type in a message and then sending it to a user
  * over the WarmShowers web service.
  */
 public class FeedbackFragment extends BaseFragment {
@@ -102,7 +102,7 @@ public class FeedbackFragment extends BaseFragment {
                 .map(userResource -> userResource.data)
                 .firstOrError()
                 .subscribe(recipient -> {
-                    mRecipientFullname = recipient.getFullname();
+                    mRecipientFullname = recipient.fullname;
                     mLblRating.setText(getString(
                             R.string.lbl_feedback_overall_experience, mRecipientFullname));
                 });

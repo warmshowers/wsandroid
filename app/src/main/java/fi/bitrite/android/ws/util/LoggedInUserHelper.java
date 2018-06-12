@@ -9,7 +9,7 @@ import javax.inject.Inject;
 
 import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.di.account.AccountScope;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.Repository;
 import fi.bitrite.android.ws.repository.UserRepository;
 import io.reactivex.subjects.BehaviorSubject;
@@ -17,7 +17,7 @@ import io.reactivex.subjects.BehaviorSubject;
 @AccountScope
 public class LoggedInUserHelper {
     private final int mUserId;
-    private final BehaviorSubject<MaybeNull<Host>> mLoggedInUser =
+    private final BehaviorSubject<MaybeNull<User>> mLoggedInUser =
             BehaviorSubject.createDefault(new MaybeNull<>());
 
     @Inject
@@ -29,7 +29,7 @@ public class LoggedInUserHelper {
 
         userRepository.get(mUserId, Repository.ShouldSaveInDb.YES)
                 .subscribe(resource -> {
-                    Host user = resource.data;
+                    User user = resource.data;
                     if (user == null) {
                         Log.e(LoggedInUserHelper.class.getName(),
                                 resource.error.getMessage());
@@ -45,12 +45,12 @@ public class LoggedInUserHelper {
     }
 
     @Nullable
-    public Host get() {
+    public User get() {
         return mLoggedInUser.getValue().data;
     }
 
     @NonNull
-    public BehaviorSubject<MaybeNull<Host>> getRx() {
+    public BehaviorSubject<MaybeNull<User>> getRx() {
         return mLoggedInUser;
     }
 }

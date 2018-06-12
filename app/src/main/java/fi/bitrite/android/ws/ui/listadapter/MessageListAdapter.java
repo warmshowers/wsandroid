@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.SparseIntArray;
@@ -28,8 +27,8 @@ import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.Message;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import io.reactivex.Completable;
@@ -139,8 +138,8 @@ public class MessageListAdapter extends
             mDisposables.dispose();
             mDisposables = new CompositeDisposable();
 
-            final Host loggedInUser = mLoggedInUserHelper.get();
-            final int loggedInUserId = loggedInUser == null ? -1 : loggedInUser.getId();
+            final User loggedInUser = mLoggedInUserHelper.get();
+            final int loggedInUserId = loggedInUser == null ? -1 : loggedInUser.id;
             final boolean isIncoming = message.authorId != loggedInUserId;
 
             // Sets the padding of the bubble.
@@ -171,13 +170,13 @@ public class MessageListAdapter extends
                 mDisposables.add(mUserRepository.get(message.authorId)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(userResource -> {
-                            Host user = userResource.data;
+                            User user = userResource.data;
                             mLblSender.setText(user == null
                                     ? ""
                                     // TODO(saemy): Eventually, put accessor performing this null-check into User.
-                                    : TextUtils.isEmpty(user.getName())
-                                            ? user.getFullname()
-                                            : user.getName());
+                                    : TextUtils.isEmpty(user.name)
+                                            ? user.fullname
+                                            : user.name);
                         }));
             }
 

@@ -40,7 +40,6 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-    implementation files('libs/parcelgen.jar')  // Can't find for maven/gradle
     implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion" // https://github.com/afollestad/material-dialogs
     implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"

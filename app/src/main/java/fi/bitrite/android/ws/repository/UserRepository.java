@@ -15,7 +15,7 @@ import fi.bitrite.android.ws.api.model.ApiUser;
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.di.AppScope;
 import fi.bitrite.android.ws.di.account.AccountScope;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.persistence.UserDao;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
@@ -35,25 +35,25 @@ public class UserRepository {
     UserRepository() {
     }
 
-    public Observable<Resource<Host>> get(int userId) {
+    public Observable<Resource<User>> get(int userId) {
         return getAppUserRepository().get(userId, Repository.ShouldSaveInDb.IF_ALREADY_IN_DB);
     }
     @NonNull
-    public List<Observable<Resource<Host>>> get(@NonNull Collection<Integer> userIds) {
+    public List<Observable<Resource<User>>> get(@NonNull Collection<Integer> userIds) {
         return get(userIds, Repository.ShouldSaveInDb.IF_ALREADY_IN_DB);
     }
-    public List<Observable<Resource<Host>>> get(@NonNull Collection<Integer> userIds,
+    public List<Observable<Resource<User>>> get(@NonNull Collection<Integer> userIds,
                                                 Repository.ShouldSaveInDb shouldSaveInDb) {
         return getAppUserRepository().get(userIds, shouldSaveInDb);
     }
 
     // Exposes it public.
-    public Observable<Resource<Host>> get(int userId, Repository.ShouldSaveInDb shouldSaveInDb) {
+    public Observable<Resource<User>> get(int userId, Repository.ShouldSaveInDb shouldSaveInDb) {
         return getAppUserRepository().get(userId, shouldSaveInDb);
     }
 
-    public Completable save(@NonNull Host user) {
-        return getAppUserRepository().save(user.getId(), user);
+    public Completable save(@NonNull User user) {
+        return getAppUserRepository().save(user.id, user);
     }
 
     public Observable<List<Integer>> searchByKeyword(String keyword) {
@@ -81,7 +81,7 @@ public class UserRepository {
      * users.
      */
     @AppScope
-    static class AppUserRepository extends Repository<Host> {
+    static class AppUserRepository extends Repository<User> {
         @Inject UserDao mUserDao;
         WarmshowersAccountWebservice mLastWebservice;
 
@@ -89,9 +89,9 @@ public class UserRepository {
         AppUserRepository() {
         }
 
-        List<Observable<Resource<Host>>> get(@NonNull Collection<Integer> userIds,
+        List<Observable<Resource<User>>> get(@NonNull Collection<Integer> userIds,
                                              ShouldSaveInDb shouldSaveInDb) {
-            List<Observable<Resource<Host>>> users = new ArrayList<>(userIds.size());
+            List<Observable<Resource<User>>> users = new ArrayList<>(userIds.size());
             for (Integer userId : userIds) {
                 users.add(get(userId, shouldSaveInDb));
             }
@@ -99,14 +99,14 @@ public class UserRepository {
         }
 
         @Override
-        void saveInDb(int id, @NonNull Host user) {
+        void saveInDb(int id, @NonNull User user) {
             mUserDao.save(user);
         }
 
         @Override
-        Observable<LoadResult<Host>> loadFromDb(int userId) {
-            return Maybe.<LoadResult<Host>>create(emitter -> {
-                Host user = mUserDao.load(userId);
+        Observable<LoadResult<User>> loadFromDb(int userId) {
+            return Maybe.<LoadResult<User>>create(emitter -> {
+                User user = mUserDao.load(userId);
                 if (user != null) {
                     emitter.onSuccess(new LoadResult<>(LoadResult.Source.DB, user));
                 } else {
@@ -116,7 +116,7 @@ public class UserRepository {
         }
 
         @Override
-        Observable<LoadResult<Host>> loadFromNetwork(int userId) {
+        Observable<LoadResult<User>> loadFromNetwork(int userId) {
             return mLastWebservice.fetchUser(userId)
                     .subscribeOn(Schedulers.io())
                     .map(apiUserResponse -> {
@@ -125,7 +125,7 @@ public class UserRepository {
                         }
 
                         return new LoadResult<>(
-                                LoadResult.Source.NETWORK, apiUserResponse.body().toHost());
+                                LoadResult.Source.NETWORK, apiUserResponse.body().toUser());
                     });
         }
 
@@ -143,7 +143,7 @@ public class UserRepository {
                         Collection<ApiUser> apiUsers = apiResponse.body().users.values();
                         List<Integer> userIds = new ArrayList<>(apiUsers.size());
                         for (ApiUser apiUser : apiUsers) {
-                            put(apiUser.id, Resource.success(apiUser.toHost()), Freshness.FRESH);
+                            put(apiUser.id, Resource.success(apiUser.toUser()), Freshness.FRESH);
                             userIds.add(apiUser.id);
                         }
 

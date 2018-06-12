@@ -7,7 +7,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
-import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.User;
 
 /**
@@ -48,21 +47,15 @@ public class ClusterUser implements ClusterItem {
 
     public static ClusterUser from(User user) {
         return new ClusterUser(
-                user.getId(), user.getFullname(), user.getStreet(), user.getAdditionalAddress(),
-                user.getPostalCode(), user.getCity(), user.getProvince(), user.getCountryCode(),
-                user.getLocation().toLatLng(), user.isCurrentlyAvailable());
+                user.id, user.fullname, user.street, user.additionalAddress, user.postalCode,
+                user.city, user.province, user.countryCode, user.location,
+                user.isCurrentlyAvailable);
     }
     public static ClusterUser from(UserSearchByLocationResponse.User user) {
         return new ClusterUser(
                 user.id, user.fullname, user.street, "", user.postalCode, user.city, user.province,
                 user.countryCode, new LatLng(user.latitude, user.longitude),
                 !user.notCurrentlyAvailable);
-    }
-    public static ClusterUser from(Host user) {
-        return new ClusterUser(
-                user.getId(), user.getFullname(), user.getStreet(), user.getAdditional(),
-                user.getPostalCode(), user.getCity(), user.getProvince(), user.getCountry(),
-                user.getLatLng(), !user.isNotCurrentlyAvailable());
     }
 
     public String getLocationStr() {

@@ -1,10 +1,12 @@
 package fi.bitrite.android.ws.api.model;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.SimpleUser;
+import fi.bitrite.android.ws.model.User;
 
 public class ApiUser {
 
@@ -81,28 +83,14 @@ public class ApiUser {
     @SerializedName("profile_image_map_infoWindow") public String profilePictureUrl_50x50;
 
 
-    public Host toHost() {
-        return new Host(id, name, fullname, street, additionalAddress, city, province, postalCode,
-                countryCode, mobilePhone, homePhone, workPhone, comments, preferredNotice,
-                i2s(maximalCyclistCount), b2s(notCurrentlyAvailable), b2s(hasBed),
-                distanceToBikeshop, distanceToCampground, b2s(hasFood), b2s(hasKitchen),
-                b2s(hasLaundry), b2s(hasLawnspace), distanceToMotel, b2s(hasSag), b2s(hasShower),
-                b2s(hasStorage), d2s(latitude), d2s(longitude), dte2s(lastLogin),
-                dte2s(created), spokenLanguages, picture != null ? picture.url : null,
-                profilePictureUrl_179x200, profilePictureUrl_400x400);
-    }
-
-    private static String b2s(boolean value) {
-        return value ? "1" : "0";
-    }
-    private static String d2s(double value) {
-        return Double.toString(value);
-    }
-    private static String i2s(int value) {
-        return Integer.toString(value);
-    }
-
-    private static String dte2s(Date value) {
-        return Long.toString(value.getTime() / 1000); // In seconds
+    public User toUser() {
+        return new User(id, name, fullname, street, additionalAddress, city, province, postalCode,
+                countryCode, new LatLng(latitude, longitude), mobilePhone, homePhone, workPhone,
+                comments, preferredNotice, maximalCyclistCount, distanceToMotel,
+                distanceToCampground, distanceToBikeshop, hasStorage, hasShower, hasKitchen,
+                hasLawnspace, hasSag, hasBed, hasLaundry, hasFood, spokenLanguages,
+                !notCurrentlyAvailable,
+                new SimpleUser.Picture(profilePictureUrl_179x200, profilePictureUrl_400x400),
+                created, lastAccess);
     }
 }

@@ -5,14 +5,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import fi.bitrite.android.ws.di.AppScope;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.SimpleUser;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.persistence.converters.DateConverter;
 import fi.bitrite.android.ws.persistence.db.AppDatabase;
 
@@ -70,7 +72,7 @@ public class UserDao extends Dao {
         super(db.getDatabase());
     }
 
-    public Host load(int userId) {
+    public User load(int userId) {
         return executeNonTransactional(db -> {
             try (Cursor cursor = db.query(TABLE_NAME, DEFAULT_COLUMNS, "id = ?", int2str(userId),
                     null, null, null, null)) {
@@ -85,16 +87,16 @@ public class UserDao extends Dao {
 
     }
 
-    public List<Host> loadAll() {
+    public List<User> loadAll() {
         return executeNonTransactional(db -> {
-            List<Host> users = new ArrayList<>();
+            List<User> users = new ArrayList<>();
 
             try (Cursor cursor = db.query(TABLE_NAME, DEFAULT_COLUMNS,
                     null, null, null, null, null, null)) {
 
                 if (cursor.moveToFirst()) {
                     do {
-                        Host user = getUserFromCursor(cursor);
+                        User user = getUserFromCursor(cursor);
                         users.add(user);
                     } while (cursor.moveToNext());
                 }
@@ -104,51 +106,50 @@ public class UserDao extends Dao {
         });
     }
 
-    public void save(Host user) {
+    public void save(User user) {
         executeNonTransactional(db -> {
             save(db, user);
             return null;
         });
     }
-    public void save(SQLiteDatabase db, Host user) {
+    public void save(SQLiteDatabase db, User user) {
         ContentValues cv = new ContentValues();
-        cv.put("id", user.getId());
-        cv.put("name", user.getName());
-        cv.put("fullname", user.getFullname());
-        cv.put("street", user.getStreet());
-        cv.put("additional_address", user.getAdditional());
-        cv.put("city", user.getCity());
-        cv.put("province", user.getProvince());
-        cv.put("postal_code", user.getPostalCode());
-        cv.put("country_code", user.getCountry());
-        cv.put("mobile_phone", user.getMobilePhone());
-        cv.put("home_phone", user.getHomePhone());
-        cv.put("work_phone", user.getWorkPhone());
-        cv.put("comments", user.getComments());
-        cv.put("preferred_notice", user.getPreferredNotice());
-        cv.put("max_cyclists_count", Integer.parseInt(user.getMaxCyclists()));
-        cv.put("distance_to_motel", user.getMotel());
-        cv.put("distance_to_campground", user.getCampground());
-        cv.put("distance_to_bikeshop", user.getBikeshop());
-        cv.put("has_storage", s2b(user.getStorage()));
-        cv.put("has_shower", s2b(user.getShower()));
-        cv.put("has_kitchen", s2b(user.getKitchenUse()));
-        cv.put("has_lawnspace", s2b(user.getLawnspace()));
-        cv.put("has_sag", s2b(user.getSag()));
-        cv.put("has_bed", s2b(user.getBed()));
-        cv.put("has_laundry", s2b(user.getLaundry()));
-        cv.put("has_food", s2b(user.getFood()));
-        cv.put("last_access", DateConverter.dateToLong(user.getLastLoginAsDate()));
-        cv.put("created", DateConverter.dateToLong(user.getCreatedAsDate()));
-        cv.put("currently_available",
-                !s2b(user.getNotCurrentlyAvailable())); // NOT_currently_available
-        cv.put("spoken_languages", user.getLanguagesSpoken());
-        cv.put("latitude", Double.parseDouble(user.getLatitude()));
-        cv.put("longitude", Double.parseDouble(user.getLongitude()));
-        cv.put("profile_picture_small", user.getProfilePictureSmall());
-        cv.put("profile_picture_large", user.getProfilePictureLarge());
+        cv.put("id", user.id);
+        cv.put("name", user.name);
+        cv.put("fullname", user.fullname);
+        cv.put("street", user.street);
+        cv.put("additional_address", user.additionalAddress);
+        cv.put("city", user.city);
+        cv.put("province", user.province);
+        cv.put("postal_code", user.postalCode);
+        cv.put("country_code", user.countryCode);
+        cv.put("mobile_phone", user.mobilePhone);
+        cv.put("home_phone", user.homePhone);
+        cv.put("work_phone", user.workPhone);
+        cv.put("comments", user.comments);
+        cv.put("preferred_notice", user.preferredNotice);
+        cv.put("max_cyclists_count", user.maximalCyclistCount);
+        cv.put("distance_to_motel", user.distanceToMotel);
+        cv.put("distance_to_campground", user.distanceToCampground);
+        cv.put("distance_to_bikeshop", user.distanceToBikeshop);
+        cv.put("has_storage", user.hasStorage);
+        cv.put("has_shower", user.hasShower);
+        cv.put("has_kitchen", user.hasKitchen);
+        cv.put("has_lawnspace", user.hasLawnspace);
+        cv.put("has_sag", user.hasSag);
+        cv.put("has_bed", user.hasBed);
+        cv.put("has_laundry", user.hasLaundry);
+        cv.put("has_food", user.hasFood);
+        cv.put("last_access", DateConverter.dateToLong(user.lastAccess));
+        cv.put("created", DateConverter.dateToLong(user.created));
+        cv.put("currently_available", user.isCurrentlyAvailable);
+        cv.put("spoken_languages", user.spokenLanguages);
+        cv.put("latitude", user.location.latitude);
+        cv.put("longitude", user.location.longitude);
+        cv.put("profile_picture_small", user.profilePicture.getSmallUrl());
+        cv.put("profile_picture_large", user.profilePicture.getLargeUrl());
 
-        insertOrUpdate(db, TABLE_NAME, cv, user.getId());
+        insertOrUpdate(db, TABLE_NAME, cv, user.id);
     }
 
     public void delete(int userId) {
@@ -158,46 +159,45 @@ public class UserDao extends Dao {
         });
     }
 
-    private static String i2s(int i) {
-        return Integer.toString(i);
-    }
-    private static String b2s(int b) {
-        return b == 0 ? "0" : "1";
-    }
-    private static String d2s(double d) {
-        return Double.toString(d);
-    }
-    private static String dte2s(Date d) {
-        return i2s((int) (d.getTime() / 1000));
-    }
-
-    private static boolean s2b(String s) {
-        return "1".equals(s);
-    }
-
-    private static Host getUserFromCursor(@NonNull Cursor c) {
-        return new Host(
-                c.getInt(COL_IDX_ID), c.getString(COL_IDX_NAME), c.getString(COL_IDX_FULLNAME),
-                c.getString(COL_IDX_STREET), c.getString(COL_IDX_ADDITIONAL_ADDRESS),
-                c.getString(COL_IDX_CITY), c.getString(COL_IDX_PROVINCE),
-                c.getString(COL_IDX_POSTAL_CODE), c.getString(COL_IDX_COUNTRY_CODE),
-                c.getString(COL_IDX_MOBILE_PHONE), c.getString(COL_IDX_HOME_PHONE),
-                c.getString(COL_IDX_WORK_PHONE), c.getString(COL_IDX_COMMENTS),
+    private static User getUserFromCursor(@NonNull Cursor c) {
+        return new User(
+                c.getInt(COL_IDX_ID),
+                c.getString(COL_IDX_NAME),
+                c.getString(COL_IDX_FULLNAME),
+                c.getString(COL_IDX_STREET),
+                c.getString(COL_IDX_ADDITIONAL_ADDRESS),
+                c.getString(COL_IDX_CITY),
+                c.getString(COL_IDX_PROVINCE),
+                c.getString(COL_IDX_POSTAL_CODE),
+                c.getString(COL_IDX_COUNTRY_CODE),
+                new LatLng(c.getDouble(COL_IDX_LATITUDE), c.getDouble(COL_IDX_LONGITUDE)),
+                c.getString(COL_IDX_MOBILE_PHONE),
+                c.getString(COL_IDX_HOME_PHONE),
+                c.getString(COL_IDX_WORK_PHONE),
+                c.getString(COL_IDX_COMMENTS),
                 c.getString(COL_IDX_PREFERRED_NOTICE),
-                i2s(c.getInt(COL_IDX_MAX_CYCLISTS_COUNT)),
-                b2s(1 - c.getInt(COL_IDX_CURRENTLY_AVAILABLE)), // It is NOT_currently_available in Host
-                b2s(c.getInt(COL_IDX_HAS_BED)), c.getString(COL_IDX_DISTANCE_TO_BIKESHOP),
-                c.getString(COL_IDX_DISTANCE_TO_CAMPGROUND), b2s(c.getInt(COL_IDX_HAS_FOOD)),
-                b2s(c.getInt(COL_IDX_HAS_KITCHEN)), b2s(c.getInt(COL_IDX_HAS_LAUNDRY)),
-                b2s(c.getInt(COL_IDX_HAS_LAWNSPACE)), c.getString(COL_IDX_DISTANCE_TO_MOTEL),
-                b2s(c.getInt(COL_IDX_HAS_SAG)), b2s(c.getInt(COL_IDX_HAS_SHOWER)),
-                b2s(c.getInt(COL_IDX_HAS_STORAGE)), d2s(c.getDouble(COL_IDX_LATITUDE)),
-                d2s(c.getDouble(COL_IDX_LONGITUDE)),
-                dte2s(DateConverter.longToDate(c.getLong(COL_IDX_LAST_ACCESS))),
-                dte2s(DateConverter.longToDate(c.getLong(COL_IDX_CREATED))),
+                c.getInt(COL_IDX_MAX_CYCLISTS_COUNT),
+                c.getString(COL_IDX_DISTANCE_TO_MOTEL),
+                c.getString(COL_IDX_DISTANCE_TO_CAMPGROUND),
+                c.getString(COL_IDX_DISTANCE_TO_BIKESHOP),
+                getBool(c, COL_IDX_HAS_STORAGE),
+                getBool(c, COL_IDX_HAS_SHOWER),
+                getBool(c, COL_IDX_HAS_KITCHEN),
+                getBool(c, COL_IDX_HAS_LAWNSPACE),
+                getBool(c, COL_IDX_HAS_SAG),
+                getBool(c, COL_IDX_HAS_BED),
+                getBool(c, COL_IDX_HAS_LAUNDRY),
+                getBool(c, COL_IDX_HAS_FOOD),
                 c.getString(COL_IDX_SPOKEN_LANGUAGES),
-                c.getString(COL_IDX_PROFILE_PICTURE_SMALL),
-                c.getString(COL_IDX_PROFILE_PICTURE_SMALL),
-                c.getString(COL_IDX_PROFILE_PICTURE_LARGE));
+                getBool(c, COL_IDX_CURRENTLY_AVAILABLE),
+                new SimpleUser.Picture(c.getString(COL_IDX_PROFILE_PICTURE_SMALL),
+                        c.getString(COL_IDX_PROFILE_PICTURE_LARGE)),
+
+                DateConverter.longToDate(c.getLong(COL_IDX_CREATED)),
+                DateConverter.longToDate(c.getLong(COL_IDX_LAST_ACCESS)));
+    }
+
+    private static boolean getBool(@NonNull Cursor c, int col) {
+        return c.getInt(col) != 0;
     }
 }

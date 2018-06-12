@@ -25,9 +25,9 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.Host;
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.repository.Repository;
 import fi.bitrite.android.ws.repository.UserRepository;
@@ -129,26 +129,26 @@ public class MessageThreadListAdapter extends
                     | DateUtils.FORMAT_SHOW_YEAR
                     | DateUtils.FORMAT_ABBREV_RELATIVE).toString());
 
-            @SuppressLint("UseSparseArrays") Map<Integer, Host> participants = new HashMap<>();
+            @SuppressLint("UseSparseArrays") Map<Integer, User> participants = new HashMap<>();
             mDisposables.add(Observable.merge(
                     mUserRepository.get(getParticipantIdsWithoutCurrentUser(thread),
                             Repository.ShouldSaveInDb.YES))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(userResource -> {
-                        Host user = userResource.data;
+                        User user = userResource.data;
                         if (user == null) {
                             return;
                         }
 
-                        participants.put(user.getId(), user);
+                        participants.put(user.id, user);
                         mIcon.setUsers(participants.values());
 
                         List<String> names = new ArrayList<>(participants.size());
-                        for (Host participant : participants.values()) {
+                        for (User participant : participants.values()) {
                             // TODO(saemy): Eventually, put accessor performing this null-check into User.
-                            names.add(TextUtils.isEmpty(participant.getFullname())
-                                    ? participant.getName()
-                                    : participant.getFullname());
+                            names.add(TextUtils.isEmpty(participant.fullname)
+                                    ? participant.name
+                                    : participant.fullname);
                         }
                         mLblParticipants.setText(TextUtils.join(", ", names));
 
@@ -181,8 +181,8 @@ public class MessageThreadListAdapter extends
          */
         private Set<Integer> getParticipantIdsWithoutCurrentUser(MessageThread thread) {
             final Set<Integer> participantIds = new HashSet<>(thread.participantIds);
-            final Host loggedInUser = mLoggedInUserHelper.get();
-            int loggedInUserId = loggedInUser != null ? loggedInUser.getId() : -1;
+            final User loggedInUser = mLoggedInUserHelper.get();
+            int loggedInUserId = loggedInUser != null ? loggedInUser.id : -1;
             participantIds.remove(loggedInUserId);
 
             if (participantIds.isEmpty()) {

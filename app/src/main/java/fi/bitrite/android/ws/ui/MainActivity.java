@@ -39,7 +39,7 @@ import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.di.account.AccountComponent;
 import fi.bitrite.android.ws.di.account.AccountComponentManager;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.ui.listadapter.NavigationListAdapter;
@@ -68,12 +68,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             new NavigationItem(NavigationController.NAVIGATION_TAG_MAP,
                     R.drawable.ic_map_grey600_24dp, R.string.navigation_item_map),
 
-            // Starred hosts
+            // Starred users
             new NavigationItem(NavigationController.NAVIGATION_TAG_FAVORITE_USERS,
                     R.drawable.ic_favorite_grey600_24dp, R.string.navigation_item_favorites),
 
             // Messages
-           mMessageNavigationItem
+            mMessageNavigationItem
     );
     private final List<NavigationItem> mSecondaryNavigationItems = Arrays.asList(
             // Settings
@@ -404,15 +404,15 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(maybeUser -> {
                         if (maybeUser.isNonNull()) {
-                            Host loggedInUser = maybeUser.data;
+                            SimpleUser loggedInUser = maybeUser.data;
 
-                            mLblFullname.setText(loggedInUser.getFullname());
-                            mLblUsername.setText(loggedInUser.getName());
+                            mLblFullname.setText(loggedInUser.fullname);
+                            mLblUsername.setText(loggedInUser.name);
 
-                            String profilePhotoUrl = loggedInUser.getPicture();
+                            String profilePhotoUrl = loggedInUser.profilePicture.getSmallUrl();
                             if (TextUtils.isEmpty(profilePhotoUrl)) {
                                 mImgUserPhoto.setImageResource(
-                                        R.drawable.default_hostinfo_profile);
+                                        R.drawable.default_userinfo_profile);
                             } else {
                                 Picasso.with(MainActivity.this)
                                         .load(profilePhotoUrl)

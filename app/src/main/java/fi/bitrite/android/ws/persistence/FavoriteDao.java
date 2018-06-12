@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.model.Feedback;
-import fi.bitrite.android.ws.model.Host;
+import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.persistence.db.AccountDatabase;
 
 @AccountScope
@@ -75,18 +75,18 @@ public class FavoriteDao extends Dao {
         });
     }
 
-    public void add(@NonNull Host user, @Nullable List<Feedback> receivedFeedbacks) {
+    public void add(@NonNull User user, @Nullable List<Feedback> receivedFeedbacks) {
         // Saves the user.
         mUserDao.executeTransactional(db -> {
             // They are in the same DB so we can save the user and their feedback transactional.
             mUserDao.save(db, user);
-            mFeedbackDao.saveForRecipient(db, user.getId(), receivedFeedbacks);
+            mFeedbackDao.saveForRecipient(db, user.id, receivedFeedbacks);
 
             return null;
         });
 
         // Marks the user as a favorite.
-        add(user.getId());
+        add(user.id);
     }
 
     public void remove(int userId) {
