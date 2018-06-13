@@ -91,7 +91,9 @@ public class UserCircleImageView extends CircleImageView {
             color = colors.get(Math.abs(colorHash) % colors.size());
         }
 
-        Picasso.with(getContext()).load(url).into(this);
+        if (!TextUtils.isEmpty(url)) {
+            Picasso.with(getContext()).load(url).into(this);
+        }
         setText(text);
         setCircleBackgroundColor(color);
     }

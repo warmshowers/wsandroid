@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.TextUtils;
 import android.util.SparseArray;
 
 import com.squareup.picasso.Picasso;
@@ -194,7 +195,7 @@ public class MessageNotificationController {
             }
 
             String pictureUrl = partner.profilePicture.getSmallUrl();
-            if (pictureUrl != null) {
+            if (!TextUtils.isEmpty(pictureUrl)) {
                 Target target = new Target() {
                     @Override
                     public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
