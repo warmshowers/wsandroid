@@ -65,7 +65,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
@@ -92,7 +91,6 @@ public class MapFragment extends BaseFragment implements
     private static final String DIALOG_ERROR = "dialog_error";
     private static final String TAG = "MapFragment";
 
-    @Inject AuthenticationController mAuthenticationController;
     @Inject LoggedInUserHelper mLoggedInUserHelper;
     @Inject UserRepository mUserRepository;
     @Inject FavoriteRepository mFavoriteRepository;

@@ -121,7 +121,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         AndroidInjection.inject(this);
         mAccountHelper.switchAccount(mAccountManager.getCurrentAccount().getValue().data);
 
-        super.onCreate(savedInstanceState);
+        // If there is no account it could be that the app was put to the background and eventually
+        // got destroyed. Then the user removed their Warmshowers account on the device. When they
+        // restart the app there is a savedInstanceState. However, the account is no longer around.
+        // Therefore, start without any saved instance state when having no account around.
+        super.onCreate(mAccountHelper.hasAccount() ? savedInstanceState : null);
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -220,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         handleActionIntents(intent);
     }
     private void handleActionIntents(Intent intent) {
-        if (mAccountHelper.mAccount != null) {
+        if (mAccountHelper.hasAccount()) {
             // We need an account to be able to show any fragments.
             handleSearchIntent(intent);
             handleMessageThreadIntent(intent);
@@ -242,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     private void moveToMainFragmentIfNeeded() {
-        if (mAccountHelper.mAccount != null && mNavigationController.isBackstackEmpty()) {
+        if (mAccountHelper.hasAccount() && mNavigationController.isBackstackEmpty()) {
             // There is a new account we switch to -> show the main fragment.
             mNavigationController.navigateToMainFragment();
         }
@@ -369,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             mAccount = account;
 
             // Initialize the new.
-            if (mAccount != null) {
+            if (hasAccount()) {
                 AccountComponent accountComponent = mAccountComponentManager.get(mAccount);
                 accountComponent.inject(this);
             }
@@ -380,9 +385,13 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             }
         }
 
+        boolean hasAccount() {
+            return mAccount != null;
+        }
+
         void resume() {
             isPaused = false;
-            if (mAccount != null) {
+            if (hasAccount()) {
                 mDisposables = new CompositeDisposable();
                 mDisposables.add(handleLoggedInUser());
                 mDisposables.add(handleNewMessageThreadCount());
