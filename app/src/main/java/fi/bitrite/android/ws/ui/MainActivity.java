@@ -360,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         @Inject LoggedInUserHelper mLoggedInUserHelper;
         @Inject MessageRepository mMessageRepository;
 
-        private boolean isPaused = false;
+        private boolean mIsPaused = true;
         private CompositeDisposable mDisposables;
 
         void switchAccount(Account account) {
@@ -369,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             }
 
             // Pause the old.
-            pause();
+            doPause();
 
             mAccount = account;
 
@@ -380,9 +380,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             }
 
             // Resume the new.
-            if (!isPaused) {
-                resume();
-            }
+            doResume();
         }
 
         boolean hasAccount() {
@@ -390,8 +388,11 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         }
 
         void resume() {
-            isPaused = false;
-            if (hasAccount()) {
+            mIsPaused = false;
+            doResume();
+        }
+        private void doResume() {
+            if (!mIsPaused && hasAccount()) {
                 mDisposables = new CompositeDisposable();
                 mDisposables.add(handleLoggedInUser());
                 mDisposables.add(handleNewMessageThreadCount());
@@ -399,7 +400,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         }
 
         void pause() {
-            isPaused = true;
+            mIsPaused = true;
+            doPause();
+        }
+        private void doPause() {
             if (mDisposables != null) {
                 mDisposables.dispose();
             }
