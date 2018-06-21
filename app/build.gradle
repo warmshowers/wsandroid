@@ -137,12 +137,17 @@ android {
         release.setRoot('build-types/release')
     }
 
+    def versionMajor = 2
+    def versionMinor = 0
+    def versionPatch = 0
+    def versionBuild = 0 // bump for dogfood builds, public betas, etc.
+
     defaultConfig {
-        versionName "2.0.0-beta2"
-        versionCode 41 // Always increase when changing versionName.
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
 
         minSdkVersion 14
-        compileSdkVersion 26 // also update in .travis.yml
+        compileSdkVersion 27 // also update in .travis.yml
         targetSdkVersion 22
 
         multiDexEnabled true
