@@ -6,11 +6,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.reactivex.disposables.Disposable;
 
 public class ProgressDialog extends DialogFragment {
 
@@ -55,29 +56,24 @@ public class ProgressDialog extends DialogFragment {
         return dialog;
     }
 
-    public class Disposable {
-        private final FragmentManager mFragmentManager;
-        private final String mTag;
-
-        Disposable(FragmentManager fragmentManager, String tag) {
-            mFragmentManager = fragmentManager;
-            mTag = tag;
-        }
-
-        public void dispose() {
-            final Fragment dialog = mFragmentManager.findFragmentByTag(mTag);
-            if (dialog != null) {
-                dismiss();
-            }
-        }
-    }
-
     public Disposable show(@NonNull FragmentActivity parent) {
         String tag = "progressDialog-" + Integer.toString(mDialogId.getAndIncrement());
         FragmentManager fragmentManager = parent.getSupportFragmentManager();
 
         show(fragmentManager, tag);
 
-        return new Disposable(fragmentManager, tag);
+        return new Disposable() {
+            private boolean mDisposed;
+
+            @Override
+            public void dispose() {
+                dismiss(); // Idempotent
+                mDisposed = true;
+            }
+            @Override
+            public boolean isDisposed() {
+                return mDisposed;
+            }
+        };
     }
 }

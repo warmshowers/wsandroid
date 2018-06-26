@@ -53,6 +53,7 @@ import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
 import static android.graphics.PorterDuff.Mode.MULTIPLY;
@@ -95,7 +96,7 @@ public class UserFragment extends BaseFragment {
     @BindColor(R.color.primaryColorAccent) int mFavoritedColor;
     @BindColor(R.color.primaryTextColor) int mNonFavoritedColor;
 
-    private ProgressDialog.Disposable mDownloadUserInfoProgressDisposable;
+    private Disposable mDownloadUserInfoProgressDisposable;
 
     private int mUserId;
 

@@ -31,6 +31,7 @@ import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Responsible for letting the user type in a message and then sending it to an other user
@@ -51,7 +52,7 @@ public class ContactUserFragment extends BaseFragment {
     private String mRecipientName;
     private String mRecipientFullname;
 
-    private ProgressDialog.Disposable mProgressDisposable;
+    private Disposable mProgressDisposable;
 
     public static Fragment create(SimpleUser recipient) {
         Bundle bundle = new Bundle();

@@ -56,7 +56,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
         }
     };
 
-    private ProgressDialog.Disposable mProgressDisposable;
+    private Disposable mProgressDisposable;
 
     @Override
     protected void onCreate(Bundle icicle) {

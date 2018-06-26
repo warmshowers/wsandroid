@@ -34,6 +34,7 @@ import fi.bitrite.android.ws.ui.util.DialogHelper;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Responsible for letting the user type in a message and then sending it to a user
@@ -58,7 +59,7 @@ public class FeedbackFragment extends BaseFragment {
     private int mDateWeMetYear;
 
     private DatePickerDialog mDatePickerDialog;
-    private ProgressDialog.Disposable mProgressDisposable;
+    private Disposable mProgressDisposable;
 
     private int mRecipientId;
     private String mRecipientFullname;

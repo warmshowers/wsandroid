@@ -56,7 +56,7 @@ public class SearchFragment extends BaseFragment {
     private String mQuery;
 
     private CompositeDisposable mDisposables;
-    private ProgressDialog.Disposable mProgressDisposable;
+    private Disposable mProgressDisposable;
 
     public static Fragment create(String query) {
         Bundle bundle = new Bundle();
