@@ -8,119 +8,123 @@
     android:background="@color/backgroundLightGrey"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="28dp"
-        app:cardCornerRadius="4dp">
+        android:layout_height="match_parent">
 
-        <android.support.constraint.ConstraintLayout
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="28dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="20dp">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="28dp"
+            app:cardCornerRadius="4dp">
 
-            <TextView
-                android:id="@+id/auth_title_greeting"
-                style="@style/TextAppearance.AppCompat.Title"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/greeting"
-                android:textColor="@color/primaryColorAccent"
-                android:textSize="28sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="match_parent"
+                android:paddingBottom="28dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="20dp">
 
-            <TextView
-                android:id="@+id/auth_title_description"
-                style="@style/TextAppearance.AppCompat.Subhead"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif-light"
-                android:text="@string/enter_credentials"
-                android:textSize="22sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/auth_title_greeting" />
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/auth_til_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/auth_title_description">
-
-                <EditText
-                    android:id="@+id/auth_txt_username"
-                    style="@style/WsInputText"
+                <TextView
+                    android:id="@+id/auth_title_greeting"
+                    style="@style/TextAppearance.AppCompat.Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/username_hint"
-                    android:inputType="textEmailAddress"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/greeting"
+                    android:textColor="@color/primaryColorAccent"
+                    android:textSize="28sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/auth_til_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/auth_til_username"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/primaryColor">
-
-                <EditText
-                    android:id="@+id/auth_txt_password"
-                    style="@style/WsInputText"
+                <TextView
+                    android:id="@+id/auth_title_description"
+                    style="@style/TextAppearance.AppCompat.Subhead"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/password_hint"
-                    android:inputType="textPassword"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                    android:layout_marginTop="4dp"
+                    android:fontFamily="sans-serif-light"
+                    android:text="@string/enter_credentials"
+                    android:textSize="22sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/auth_title_greeting" />
 
-            </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/auth_til_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/auth_title_description">
 
-            <Button
-                android:id="@+id/auth_btn_login"
-                style="@style/button_dark"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:minHeight="@dimen/minimum_height_touch_target"
-                android:text="@string/button_text_login"
-                android:theme="@style/button_primary_raised"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/auth_til_password" />
+                    <EditText
+                        android:id="@+id/auth_txt_username"
+                        style="@style/WsInputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/username_hint"
+                        android:inputType="textEmailAddress"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
-            <Button
-                android:id="@+id/auth_btn_forgot_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:minHeight="@dimen/minimum_height_touch_target"
-                android:text="@string/button_text_forgot_password"
-                android:theme="@style/button_primary_flat"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/auth_btn_login" />
+                </android.support.design.widget.TextInputLayout>
 
-        </android.support.constraint.ConstraintLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/auth_til_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/auth_til_username"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/primaryColor">
 
-    </android.support.v7.widget.CardView>
+                    <EditText
+                        android:id="@+id/auth_txt_password"
+                        style="@style/WsInputText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/password_hint"
+                        android:inputType="textPassword"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/auth_btn_login"
+                    style="@style/button_dark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:minHeight="@dimen/minimum_height_touch_target"
+                    android:text="@string/button_text_login"
+                    android:theme="@style/button_primary_raised"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/auth_til_password" />
+
+                <Button
+                    android:id="@+id/auth_btn_forgot_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:minHeight="@dimen/minimum_height_touch_target"
+                    android:text="@string/button_text_forgot_password"
+                    android:theme="@style/button_primary_flat"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/auth_btn_login" />
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v7.widget.CardView>
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>
