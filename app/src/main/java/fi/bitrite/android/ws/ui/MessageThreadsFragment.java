@@ -34,7 +34,6 @@ import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class MessageThreadsFragment extends BaseFragment {
 
@@ -48,7 +47,6 @@ public class MessageThreadsFragment extends BaseFragment {
     @BindView(R.id.threads_lists) RecyclerView mThreadList;
 
     private boolean mDidReload = false;
-    private Disposable mDisposable;
     private MessageThreadListAdapter mThreadListAdapter;
 
     private Parcelable mThreadListState;
@@ -65,6 +63,7 @@ public class MessageThreadsFragment extends BaseFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_message_threads, container, false);
         ButterKnife.bind(this, view);
 
@@ -77,13 +76,6 @@ public class MessageThreadsFragment extends BaseFragment {
 
         mSwipeRefresh.setOnRefreshListener(this::reloadThreads);
 
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle icicle) {
-        super.onActivityCreated(icicle);
-
         mThreadListAdapter = new MessageThreadListAdapter(
                 mLoggedInUserHelper, mMessageRepository, getNavigationController(), mUserRepository);
         mThreadList.setAdapter(mThreadListAdapter);
@@ -94,85 +86,67 @@ public class MessageThreadsFragment extends BaseFragment {
                 mThreadList.getContext(), layoutManager.getOrientation(), false);
         mThreadList.addItemDecoration(dividerItemDecoration);
 
-        if (icicle != null) {
-            mThreadListState = icicle.getParcelable(ICICLE_KEY_THREADS_STATE);
+        if (savedInstanceState != null) {
+            mThreadListState = savedInstanceState.getParcelable(ICICLE_KEY_THREADS_STATE);
         }
-    }
 
-    private void reloadThreads() {
-        mSwipeRefresh.setRefreshing(true);
-        mMessageRepository.reloadThreads()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> mSwipeRefresh.setRefreshing(false),
-                        throwable -> {
-                            mSwipeRefresh.setRefreshing(false);
+        init();
 
-                            Toast.makeText(getContext(), R.string.messages_reload_failed,
-                                    Toast.LENGTH_SHORT).show();
-                        });
+        return view;
     }
 
     @SuppressLint("UseSparseArrays")
-    @Override
-    public void onResume() {
-        super.onResume();
-
+    public void init() {
         class Container {
             private Map<Integer, MessageThread> threads;
             private Disposable disposable;
         }
         final Container c = new Container();
-        mDisposable = mMessageRepository.getAll().subscribe(threadObservables -> {
-            if (c.disposable != null) {
-                c.disposable.dispose();
-            }
+        getCreateDestroyViewDisposable().add(mMessageRepository
+                .getAll()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(threadObservables -> {
+                    if (c.disposable != null) {
+                        c.disposable.dispose();
+                    }
 
-            // Reserves the number of items that eventually are going to be populated in the list.
-            // Then it scrolls to the previously preserved position (after recreation of the
-            // fragment).
-            mThreadListAdapter.reserveItems(threadObservables.size());
-            if (mThreadListState != null) {
-                LinearLayoutManager layoutManager =
-                        (LinearLayoutManager) mThreadList.getLayoutManager();
-                layoutManager.onRestoreInstanceState(mThreadListState);
-                mThreadListState = null;
-            }
+                    // Reserves the number of items that eventually are going to be populated in the
+                    // list. Then it scrolls to the previously preserved position (after recreation
+                    // of the fragment).
+                    mThreadListAdapter.reserveItems(threadObservables.size());
+                    if (mThreadListState != null) {
+                        LinearLayoutManager layoutManager =
+                                (LinearLayoutManager) mThreadList.getLayoutManager();
+                        layoutManager.onRestoreInstanceState(mThreadListState);
+                        mThreadListState = null;
+                    }
 
-            c.threads = new HashMap<>(threadObservables.size()); // No sparse. We need #values().
-            c.disposable = Observable.merge(threadObservables)
-                    .observeOn(Schedulers.computation())
-                    // Buffers updates together to avoid flickering effect.
-                    .buffer(100, TimeUnit.MILLISECONDS)
-                    .subscribe(threadResourceList -> {
-                        boolean oneUpdated = false;
-                        for (Resource<MessageThread> threadResource : threadResourceList) {
-                            MessageThread thread = threadResource.data;
-                            if (thread == null) {
-                                continue;
-                            }
-
-                            c.threads.put(thread.id, thread);
-                            oneUpdated = true;
-                        }
-
-                        if (!oneUpdated) {
-                            return;
-                        }
-
-                        // Replaces the thread items.
-                        mThreadListAdapter.replace(new ArrayList<>(c.threads.values()));
-                    });
-        });
+                    c.threads = new HashMap<>(threadObservables.size()); // No sparse. We need #values().
+                    c.disposable = Observable.merge(threadObservables)
+                            .filter(Resource::hasData)
+                            .map(threadResource -> threadResource.data)
+                            .map(thread -> {
+                                c.threads.put(thread.id, thread);
+                                return thread;
+                            })
+                            .observeOn(AndroidSchedulers.mainThread())
+                            // Buffers updates together to avoid flickering effect.
+                            .debounce(100, TimeUnit.MILLISECONDS)
+                            .subscribe(thread ->
+                                    mThreadListAdapter.replace(new ArrayList<>(c.threads.values())));
+                    getCreateDestroyViewDisposable().add(c.disposable);
+                }));
     }
 
-    @Override
-    public void onPause() {
-        mDisposable.dispose();
-
-        LinearLayoutManager layoutManager = (LinearLayoutManager) mThreadList.getLayoutManager();
-        mThreadListState = layoutManager.onSaveInstanceState();
-
-        super.onPause();
+    private void reloadThreads() {
+        mSwipeRefresh.setRefreshing(true);
+        getCreateDestroyViewDisposable().add(
+                mMessageRepository.reloadThreads()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnEvent(t -> mSwipeRefresh.setRefreshing(false))
+                        .subscribe(() -> {}, throwable -> Toast.makeText(
+                                getContext(), R.string.messages_reload_failed, Toast.LENGTH_LONG)
+                                .show()));
     }
 
     @Override
@@ -180,7 +154,9 @@ public class MessageThreadsFragment extends BaseFragment {
         super.onSaveInstanceState(outState);
 
         // Saves the threadList's offset.
-        outState.putParcelable(ICICLE_KEY_THREADS_STATE, mThreadListState);
+        LinearLayoutManager layoutManager = (LinearLayoutManager) mThreadList.getLayoutManager();
+        Parcelable threadListState = layoutManager.onSaveInstanceState();
+        outState.putParcelable(ICICLE_KEY_THREADS_STATE, threadListState);
     }
 
     @Override

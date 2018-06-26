@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -26,6 +27,8 @@ import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.ui.view.AccountAuthenticatorFragmentActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * The activity responsible for getting Warmshowers credentials from the user,
@@ -58,6 +61,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
 
     private Disposable mProgressDisposable;
 
+    private Disposable mResumePauseDisposable;
+    private BehaviorSubject<LoginResult> mLoginResult = BehaviorSubject.create();
+
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -82,6 +88,43 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
 
         // Shows the keyboard
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // We only listen to login results as long as the app is in the foreground. If it was in the
+        // background when the result appeared we catch up on taking care of it as the very next
+        // thing.
+        mResumePauseDisposable = mLoginResult
+                .filter(result -> !result.isHandled)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    result.isHandled = true;
+
+                    if (result.throwable != null) {
+                        mProgressDisposable.dispose();
+                        Toast.makeText(this, R.string.http_server_access_failure, Toast.LENGTH_LONG)
+                                .show();
+                    } else if (result.response != null) {
+                        // The following we add for usage in MainActivity::onActivityResult().
+                        Intent intent = new Intent();
+                        intent.putExtras(result.response);
+                        setResult(0, intent);
+                        setAccountAuthenticatorResult(result.response);
+                        finish();
+                    } else {
+                        mProgressDisposable.dispose();
+                        Toast.makeText(this, R.string.authentication_failed, Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+    }
+
+    @Override
+    protected void onPause() {
+        mResumePauseDisposable.dispose();
+        super.onPause();
     }
 
     /**
@@ -127,11 +170,10 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
 
         mProgressDisposable = ProgressDialog.create(R.string.authenticating).show(this);
 
-        // FIXME(saemy): This call fails if the screen rotation is changed while it is on the fly.
-        // This also fails if we put the app in the background due to the calls to finish() or
-        // Toast.makeText() that are only supported if the app is not stopped.
-        mAuthenticationManager.login(username, password)
-                .observeOn(AndroidSchedulers.mainThread())
+        // The following callback can be happening when the app is pushed to the background. We
+        // update the {@link mLoginResult} observable, s.t. we only react on the change when the app
+        // is in the foreground.
+        Disposable unused = mAuthenticationManager.login(username, password)
                 .subscribe(result -> {
                     Bundle response = new Bundle();
                     response.putString(android.accounts.AccountManager.KEY_ACCOUNT_NAME, username);
@@ -162,25 +204,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                         response.putString(
                                 android.accounts.AccountManager.KEY_AUTHTOKEN, authTokenStr);
 
-                        setAccountAuthenticatorResult(response);
-
-                        // The following we add for usage in MainActivity::onActivityResult().
-                        Intent intent = new Intent();
-                        intent.putExtras(response);
-                        setResult(0, intent);
-
-                        finish();
+                        mLoginResult.onNext(new LoginResult(response));
                     } else {
-                        mProgressDisposable.dispose();
-
-                        Toast.makeText(this, R.string.authentication_failed, Toast.LENGTH_LONG)
-                                .show();
+                        mLoginResult.onNext(new LoginResult());
                     }
                 }, error -> {
-                    mProgressDisposable.dispose();
-
-                    Toast.makeText(this, R.string.http_server_access_failure, Toast.LENGTH_SHORT)
-                            .show();
+                    mLoginResult.onNext(new LoginResult(error));
                 });
     }
 
@@ -197,5 +226,24 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
     @Override
     public void onBackPressed() {
         // Disallow it.
+    }
+
+    private class LoginResult {
+        final Bundle response;
+        final Throwable throwable;
+        boolean isHandled = false;
+
+        private LoginResult() {
+            response = null;
+            throwable = null;
+        }
+        private LoginResult(@NonNull Bundle response) {
+            this.response = response;
+            this.throwable = null;
+        }
+        private LoginResult(@NonNull Throwable throwable) {
+            this.response = null;
+            this.throwable = throwable;
+        }
     }
 }

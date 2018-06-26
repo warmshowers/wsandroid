@@ -50,9 +50,8 @@ import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.MaybeNull;
 import fi.bitrite.android.ws.util.ObjectUtils;
 import fi.bitrite.android.ws.util.Tools;
-import io.reactivex.Observable;
+import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -67,7 +66,6 @@ public class UserFragment extends BaseFragment {
     public static final String TAG = "UserFragment";
 
     private static final String KEY_USER_ID = "user_id";
-    private static final String KEY_USER = "user";
 
     @Inject FavoriteRepository mFavoriteRepository;
     @Inject FeedbackRepository mFeedbackRepository;
@@ -96,6 +94,7 @@ public class UserFragment extends BaseFragment {
     @BindColor(R.color.primaryColorAccent) int mFavoritedColor;
     @BindColor(R.color.primaryTextColor) int mNonFavoritedColor;
 
+    private BehaviorSubject<UserInfoLoadResult> mLastUserInfoLoadResult = BehaviorSubject.create();
     private Disposable mDownloadUserInfoProgressDisposable;
 
     private int mUserId;
@@ -104,7 +103,6 @@ public class UserFragment extends BaseFragment {
             BehaviorSubject.createDefault(new MaybeNull<>());
     private final BehaviorSubject<List<Feedback>> mFeedbacks = BehaviorSubject.create();
     private final BehaviorSubject<Boolean> mFavorite = BehaviorSubject.create();
-    private CompositeDisposable mDisposables;
 
     private boolean mDbFavoriteStatus;
 
@@ -137,7 +135,9 @@ public class UserFragment extends BaseFragment {
         mDbFavoriteStatus = mFavoriteRepository.isFavorite(mUserId);
         mFavorite.onNext(mDbFavoriteStatus);
 
-        getUserInformation();
+        if (!mLastUserInfoLoadResult.hasValue()) {
+            loadUserInformation();
+        }
 
         return view;
     }
@@ -146,22 +146,32 @@ public class UserFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        mDisposables = new CompositeDisposable();
-        mDisposables.add(mUser
+        getResumePauseDisposable().add(mUser
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> updateUserViewContent()));
 
-        mDisposables.add(mFeedbacks
+        getResumePauseDisposable().add(mFeedbacks
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(feedbacks -> updateFeedbacksViewContent()));
 
-        mDisposables.add(mFavorite
+        getResumePauseDisposable().add(mFavorite
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(isFavorite -> {
                     saveUserIfFavorite();
 
                     mCkbFavorite.setChecked(isFavorite);
                     mImgFavorite.setColorFilter(isFavorite ? mFavoritedColor : mNonFavoritedColor);
+                }));
+        getResumePauseDisposable().add(mLastUserInfoLoadResult
+                .filter(result -> !result.isHandled)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    result.isHandled = true;
+
+                    mDownloadUserInfoProgressDisposable.dispose();
+                    if (result.throwable != null) {
+                        HttpErrorHelper.showErrorToast(getContext(), result.throwable);
+                    }
                 }));
     }
 
@@ -184,12 +194,6 @@ public class UserFragment extends BaseFragment {
         }
 
         mDbFavoriteStatus = isFavorite;
-    }
-
-    @Override
-    public void onPause() {
-        mDisposables.dispose();
-        super.onPause();
     }
 
     @OnCheckedChanged(R.id.user_ckb_favorite)
@@ -338,42 +342,48 @@ public class UserFragment extends BaseFragment {
         startActivity(i);
     }
 
-    private void getUserInformation() {
+    private void loadUserInformation() {
         mDownloadUserInfoProgressDisposable = ProgressDialog.create(R.string.user_info_in_progress)
                 .show(getActivity());
 
+        // Structure for decoupling the message send callback that is processed upon arrival from
+        // its handler that can only be executed when the app is in the foreground. Callback.
         AtomicInteger numFinished = new AtomicInteger(0);
-        Observable.merge(
+        UserInfoLoadResult result = new UserInfoLoadResult();
+        Disposable unused = Maybe.merge(
                 mUserRepository.get(mUserId)
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(userResource -> {
                             if (userResource.hasData()) {
                                 mUser.onNext(new MaybeNull<>(userResource.data));
                             }
-
-                            // TODO(saemy): Error handling.
-//                        if (userResource.isError()) {
-//                            RestClient.reportError(getContext(), userResource.error);
-//                        }
-
+                            if (userResource.isError()) {
+                                result.throwable = userResource.error;
+                            }
                             return !userResource.isLoading();
-                        }),
+                        })
+                        .filter(finished -> finished)
+                        .firstElement(),
                 mFeedbackRepository.getForRecipient(mUserId)
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(feedbacksResource -> {
                             if (feedbacksResource.hasData()) {
                                 mFeedbacks.onNext(feedbacksResource.data);
                             }
-                            // TODO(saemy): Error handling.
+                            if (feedbacksResource.isError()) {
+                                result.throwable = feedbacksResource.error;
+                            }
                             return !feedbacksResource.isLoading();
-                        }))
+                        })
+                        .filter(finished -> finished)
+                        .firstElement())
+                .filter(finished -> numFinished.incrementAndGet() >= 2)
+                .firstElement()
                 .subscribe(finished -> {
-                    if (finished && numFinished.incrementAndGet() >= 2) {
-                        mDownloadUserInfoProgressDisposable.dispose();
-                    }
+                    mLastUserInfoLoadResult.onNext(result);
                 }, throwable -> {
-                    mDownloadUserInfoProgressDisposable.dispose();
-                    HttpErrorHelper.showErrorToast(getContext(), throwable);
+                    result.throwable = throwable;
+                    mLastUserInfoLoadResult.onNext(result);
                 });
     }
 
@@ -415,6 +425,11 @@ public class UserFragment extends BaseFragment {
     @Override
     protected CharSequence getTitle() {
         return getString(R.string.title_fragment_user);
+    }
+
+    private class UserInfoLoadResult {
+        Throwable throwable = null;
+        boolean isHandled = false;
     }
 }
 

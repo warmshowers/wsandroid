@@ -19,7 +19,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.model.MessageThread;
 import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.MessageListAdapter;
@@ -27,6 +26,7 @@ import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import io.reactivex.CompletableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.BehaviorSubject;
 
 public class MessageThreadFragment extends BaseFragment {
 
@@ -41,8 +41,9 @@ public class MessageThreadFragment extends BaseFragment {
     @BindView(R.id.all_btn_submit) ImageButton mBtnSubmit;
 
     private int mThreadId;
-    private Disposable mDisposable;
     private MessageListAdapter mMessageListAdapter;
+
+    private BehaviorSubject<MessageSendResult> mLastMessageSendResult = BehaviorSubject.create();
 
     public static Fragment create(int threadId) {
         Bundle bundle = new Bundle();
@@ -72,29 +73,15 @@ public class MessageThreadFragment extends BaseFragment {
                 .onErrorComplete() // TODO(saemy): Error handling.
                 .subscribe();
 
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
         mMessageListAdapter = new MessageListAdapter(mLoggedInUserHelper, mUserRepository);
         mLstMessage.setAdapter(mMessageListAdapter);
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        mDisposable = mMessageRepository.get(mThreadId)
+        getCreateDestroyViewDisposable().add(mMessageRepository
+                .get(mThreadId)
+                .filter(resource -> resource.data != null)
+                .map(resource -> resource.data)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(resource -> {
-                    MessageThread thread = resource.data;
-                    if (thread == null) {
-                        return;
-                    }
-
+                .subscribe(thread -> {
                     // Forwards the messages to the list adapter.
                     mMessageListAdapter.replaceRx(thread.messages)
                             .observeOn(AndroidSchedulers.mainThread())
@@ -106,14 +93,33 @@ public class MessageThreadFragment extends BaseFragment {
 
                     // Sets the title.
                     setTitle(thread.subject);
-                });
+                }));
+
+        return view;
     }
 
     @Override
-    public void onPause() {
-        mDisposable.dispose();
+    public void onResume() {
+        super.onResume();
 
-        super.onPause();
+        // Structure for decoupling the message send callback that is processed upon arrival from
+        // its handler that can only be executed when the app is in the foreground. Handler.
+        getResumePauseDisposable().add(mLastMessageSendResult
+                .filter(result -> !result.isHandled)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    result.isHandled = true;
+
+                    if (result.throwable != null) {
+                        // This should not happen, if there is no network connection we schedule
+                        // sending the message for when it is back.
+                        Toast.makeText(getContext(), R.string.message_send_failed,
+                                Toast.LENGTH_LONG)
+                                .show();
+                    } else {
+                        mEdtNewMessage.setText("");
+                    }
+                }));
     }
 
     @Override
@@ -129,16 +135,24 @@ public class MessageThreadFragment extends BaseFragment {
             return;
         }
 
-        mMessageRepository.sendMessage(mThreadId, message)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> mEdtNewMessage.setText(""),
-                        throwable -> {
-                            // This should not happen, if there is no network connection we schedule
-                            // sending the message for when it is back.
-                            Toast.makeText(getContext(), R.string.message_send_failed,
-                                    Toast.LENGTH_SHORT)
-                                    .show();
-                        });
+        // Structure for decoupling the message send callback that is processed upon arrival from
+        // its handler that can only be executed when the app is in the foreground. Callback.
+        Disposable unused = mMessageRepository
+                .sendMessage(mThreadId, message)
+                .subscribe(() -> mLastMessageSendResult.onNext(new MessageSendResult()),
+                        throwable -> mLastMessageSendResult.onNext(new MessageSendResult(throwable)));
+    }
+
+    private class MessageSendResult {
+        final Throwable throwable;
+        boolean isHandled = false;
+
+        private MessageSendResult() {
+            this.throwable = null;
+        }
+        private MessageSendResult(@NonNull Throwable throwable) {
+            this.throwable = throwable;
+        }
     }
 }
 

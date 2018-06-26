@@ -35,6 +35,7 @@ import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Responsible for letting the user type in a message and then sending it to a user
@@ -60,9 +61,9 @@ public class FeedbackFragment extends BaseFragment {
 
     private DatePickerDialog mDatePickerDialog;
     private Disposable mProgressDisposable;
+    private BehaviorSubject<FeedbackSendResult> mLastFeedbackSendResult = BehaviorSubject.create();
 
     private int mRecipientId;
-    private String mRecipientFullname;
 
     public static Fragment create(int recipientId) {
         Bundle bundle = new Bundle();
@@ -98,15 +99,19 @@ public class FeedbackFragment extends BaseFragment {
                     mTxtDateWeMet.setText(Tools.getDateAsMY(getContext(), date.getTimeInMillis()));
                 }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
 
-        mUserRepository.get(mRecipientId)
+        getCreateDestroyViewDisposable().add(mUserRepository
+                .get(mRecipientId)
                 .filter(Resource::hasData)
                 .map(userResource -> userResource.data)
                 .firstOrError()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(recipient -> {
-                    mRecipientFullname = recipient.fullname;
                     mLblRating.setText(getString(
-                            R.string.lbl_feedback_overall_experience, mRecipientFullname));
-                });
+                            R.string.lbl_feedback_overall_experience, recipient.fullname));
+                }, throwable -> {
+                    Log.e(WSAndroidApplication.TAG, throwable.toString());
+                    // TODO(saemy): Error handling.
+                }));
 
         return view;
     }
@@ -118,6 +123,25 @@ public class FeedbackFragment extends BaseFragment {
         boolean isConnected = Tools.isNetworkConnected(getContext());
         mLblNoNetworkWarning.setVisibility(isConnected ? View.GONE : View.VISIBLE);
         mBtnSubmit.setEnabled(isConnected);
+
+        // Structure for decoupling the feedback send callback that is processed upon arrival from
+        // its handler that can only be executed when the app is in the foreground. Handler.
+        getResumePauseDisposable().add(mLastFeedbackSendResult
+                .filter(result -> !result.isHandled)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    result.isHandled = true;
+
+                    mProgressDisposable.dispose();
+                    if (result.throwable != null) {
+                        new AlertDialog.Builder(getContext())
+                                .setMessage(R.string.feedback_error_sending)
+                                .create()
+                                .show();
+                    } else {
+                        getActivity().onBackPressed();
+                    }
+                }));
     }
 
     @OnClick(R.id.feedback_txt_date_we_met)
@@ -150,18 +174,16 @@ public class FeedbackFragment extends BaseFragment {
         Feedback.Relation relation = getSelectedRelation();
         Feedback.Rating rating = getSelectedRating();
 
+        // Structure for decoupling the feedback send callback that is processed upon arrival from
+        // its handler that can only be executed when the app is in the foreground. Callback.
         int dateWeMetMonth = mDateWeMetMonth + 1; // This is 0-based.
-        mFeedbackRepository.giveFeedback(mRecipientId, body, relation, rating, mDateWeMetYear,
-                dateWeMetMonth)
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnEvent(t -> mProgressDisposable.dispose())
-                .subscribe(() -> getActivity().onBackPressed(), throwable -> {
-                    Log.e(WSAndroidApplication.TAG, "Failed to send feedback", throwable);
-                    new AlertDialog.Builder(getContext())
-                            .setMessage(R.string.feedback_error_sending)
-                            .create()
-                            .show();
-                });
+        Disposable unused = mFeedbackRepository
+                .giveFeedback(mRecipientId, body, relation, rating, mDateWeMetYear, dateWeMetMonth)
+                .subscribe(() -> mLastFeedbackSendResult.onNext(new FeedbackSendResult()),
+                        throwable -> {
+                            Log.e(WSAndroidApplication.TAG, "Failed to send feedback", throwable);
+                            mLastFeedbackSendResult.onNext(new FeedbackSendResult(throwable));
+                        });
     }
 
     private Feedback.Relation getSelectedRelation() {
@@ -189,5 +211,17 @@ public class FeedbackFragment extends BaseFragment {
     @Override
     protected CharSequence getTitle() {
         return getString(R.string.title_fragment_feedback);
+    }
+
+    private class FeedbackSendResult {
+        final Throwable throwable;
+        boolean isHandled = false;
+
+        private FeedbackSendResult() {
+            this.throwable = null;
+        }
+        private FeedbackSendResult(@NonNull Throwable throwable) {
+            this.throwable = throwable;
+        }
     }
 }

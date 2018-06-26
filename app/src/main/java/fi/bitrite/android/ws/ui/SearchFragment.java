@@ -36,7 +36,6 @@ import fi.bitrite.android.ws.ui.util.DialogHelper;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -52,10 +51,10 @@ public class SearchFragment extends BaseFragment {
 
     private UserListAdapter mSearchResultListAdapter;
 
-    private BehaviorSubject<ArrayList<Integer>> mUserIds;
     private String mQuery;
 
-    private CompositeDisposable mDisposables;
+    private final BehaviorSubject<List<Integer>> mUserIds = BehaviorSubject.create();
+    private final BehaviorSubject<SearchResult> mLastSearchResult = BehaviorSubject.create();
     private Disposable mProgressDisposable;
 
     public static Fragment create(String query) {
@@ -76,8 +75,6 @@ public class SearchFragment extends BaseFragment {
         if (mQuery == null) {
             // If we return from the UserFragment after clicking an entry, we often do not need to
             // re-do all initialization here, as it is still around.
-
-            mUserIds = BehaviorSubject.create();
 
             // Checks if we already have the search result.
             boolean searchSuccessful = icicle != null && icicle.containsKey(KEY_USER_IDS);
@@ -105,26 +102,42 @@ public class SearchFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        addDisposable(mUserIds.observeOn(AndroidSchedulers.mainThread())
+        getResumePauseDisposable().add(mUserIds
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userIds -> {
                     List<Observable<Resource<User>>> users = mUserRepository.get(userIds);
                     mSearchResultListAdapter.resetDataset(users, 0);
                 }));
-    }
 
-    @Override
-    public void onPause() {
-        mDisposables.dispose();
-        mDisposables = null;
+        // Structure for decoupling the message send callback that is processed upon arrival from
+        // its handler that can only be executed when the app is in the foreground. Handler.
+        getResumePauseDisposable().add(mLastSearchResult
+                .filter(result -> !result.isHandled)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    result.isHandled = true;
 
-        super.onPause();
+                    if (mProgressDisposable != null) {
+                        mProgressDisposable.dispose();
+                    }
+
+                    if (result.throwable != null) {
+                        // TODO(saemy): Better error message.
+                        DialogHelper.alert(getContext(), R.string.http_server_access_failure);
+                    } else {
+                        if (result.userIds.isEmpty()) {
+                            DialogHelper.alert(getContext(), R.string.no_results);
+                        }
+                        mUserIds.onNext(result.userIds);
+                    }
+                }));
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        ArrayList<Integer> userIds = mUserIds.getValue();
-        if (userIds != null) {
-            outState.putIntegerArrayList(KEY_USER_IDS, userIds);
+        SearchResult lastSearchResult = mLastSearchResult.getValue();
+        if (lastSearchResult != null && lastSearchResult.userIds != null) {
+            outState.putIntegerArrayList(KEY_USER_IDS, new ArrayList<>(lastSearchResult.userIds));
         }
 
         super.onSaveInstanceState(outState);
@@ -134,22 +147,15 @@ public class SearchFragment extends BaseFragment {
         mProgressDisposable = ProgressDialog.create(R.string.performing_search)
                 .show(getActivity());
 
-        addDisposable(mUserRepository.searchByKeyword(text)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(searchResult -> {
-                    ArrayList<Integer> userIds = new ArrayList<>(searchResult);
-                    mUserIds.onNext(userIds);
-
-                    mProgressDisposable.dispose();
-
-                    if (searchResult.isEmpty()) {
-                        DialogHelper.alert(getContext(), R.string.no_results);
-                    }
-                }, throwable -> {
-                    // TODO(saemy): Error handling.
-                    Log.e(WSAndroidApplication.TAG, throwable.getMessage());
-                    mProgressDisposable.dispose();
-                }));
+        // Structure for decoupling the message send callback that is processed upon arrival from
+        // its handler that can only be executed when the app is in the foreground. Callback
+        Disposable unused = mUserRepository
+                .searchByKeyword(text)
+                .subscribe(userIds -> mLastSearchResult.onNext(new SearchResult(userIds)),
+                        throwable -> {
+                            Log.e(WSAndroidApplication.TAG, throwable.getMessage());
+                            mLastSearchResult.onNext(new SearchResult(throwable));
+                        });
     }
 
     @OnItemClick(R.id.search_lst_result)
@@ -165,13 +171,6 @@ public class SearchFragment extends BaseFragment {
             title = title + ": \"" + mQuery + "\"";
         }
         return title;
-    }
-
-    private void addDisposable(Disposable disposable) {
-        if (mDisposables == null) {
-            mDisposables = new CompositeDisposable();
-        }
-        mDisposables.add(disposable);
     }
 
     private final static Comparator<User> mComparator = (left, right) -> {
@@ -225,6 +224,21 @@ public class SearchFragment extends BaseFragment {
                         span, matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
             return spannable;
+        }
+    }
+
+    private class SearchResult {
+        final List<Integer> userIds;
+        final Throwable throwable;
+        boolean isHandled = false;
+
+        private SearchResult(@NonNull List<Integer> userIds) {
+            this.userIds = userIds;
+            this.throwable = null;
+        }
+        private SearchResult(@NonNull Throwable throwable) {
+            this.userIds = null;
+            this.throwable = throwable;
         }
     }
 }

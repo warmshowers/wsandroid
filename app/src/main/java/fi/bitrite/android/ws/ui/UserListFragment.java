@@ -68,10 +68,12 @@ public class UserListFragment extends BaseFragment {
 
         mLblUsersAtAddress.setText(getResources().getQuantityString(
                 R.plurals.user_count, userIds.size(), userIds.size()));
-        userListAdapter.getUsers().observeOn(AndroidSchedulers.mainThread())
+        getCreateDestroyViewDisposable().add(userListAdapter.getUsers()
+                .observeOn(AndroidSchedulers.mainThread())
+                .firstElement()
                 .subscribe(sortedUsers -> mLblMultipleUserAddress.setText(!sortedUsers.isEmpty()
                         ? sortedUsers.get(0).getFullAddress()
-                        : ""));
+                        : "")));
 
         return view;
     }

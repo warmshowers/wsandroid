@@ -32,6 +32,7 @@ import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Responsible for letting the user type in a message and then sending it to an other user
@@ -53,6 +54,7 @@ public class ContactUserFragment extends BaseFragment {
     private String mRecipientFullname;
 
     private Disposable mProgressDisposable;
+    private BehaviorSubject<MessageSendResult> mLastMessageSendResult = BehaviorSubject.create();
 
     public static Fragment create(SimpleUser recipient) {
         Bundle bundle = new Bundle();
@@ -83,6 +85,34 @@ public class ContactUserFragment extends BaseFragment {
         boolean isConnected = Tools.isNetworkConnected(getContext());
         mLblNoNetworkWarning.setVisibility(isConnected ? View.GONE : View.VISIBLE);
         mBtnSubmit.setEnabled(isConnected);
+
+        // Structure for decoupling the message send callback that is processed upon arrival from
+        // its handler that can only be executed when the app is in the foreground. Handler.
+        getResumePauseDisposable().add(mLastMessageSendResult
+                .filter(result -> !result.isHandled)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    result.isHandled = true;
+
+                    mProgressDisposable.dispose();
+                    if (result.threadId != null) {
+                        // The back action should take us from the message thread to the caller of this
+                        // fragment and not this form fragment itself.
+                        final NavigationController navigationController = getNavigationController();
+                        navigationController.popBackStack();
+
+                        if (result.threadId != MessageRepository.STATUS_NEW_THREAD_ID_NOT_IDENTIFIABLE) {
+                            // This is a valid threadId.
+                            navigationController.navigateToMessageThread(result.threadId);
+                        } else {
+                            // We just navigate to the thread list...
+                            navigationController.navigateToMessageThreads();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), R.string.message_thread_create_failed,
+                                Toast.LENGTH_LONG).show();
+                    }
+                }));
     }
 
     @OnClick(R.id.all_btn_submit)
@@ -98,41 +128,39 @@ public class ContactUserFragment extends BaseFragment {
         mProgressDisposable = ProgressDialog.create(R.string.sending_message)
                 .show(getActivity());
 
+        // Structure for decoupling the message send callback that is processed upon arrival from
+        // its handler that can only be executed when the app is in the foreground. Callback.
         List<String> recipients = Collections.singletonList(mRecipientName);
-        mMessageRepository.createThread(subject, message, recipients)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(threadId -> {
-                    if (threadId == MessageRepository.STATUS_NEW_THREAD_ID_NOT_YET_KNOWN) {
-                        // We wait for the threadId to become available.
-                        return;
-                    }
-
-                    mProgressDisposable.dispose();
-
-                    // The back action should take us from the message thread to the caller of this
-                    // fragment and not this form fragment itself.
-                    final NavigationController navigationController = getNavigationController();
-                    navigationController.popBackStack();
-
-                    if (threadId != MessageRepository.STATUS_NEW_THREAD_ID_NOT_IDENTIFIABLE) {
-                        // This is a valid threadId.
-                        navigationController.navigateToMessageThread(threadId);
-                    } else {
-                        // We just navigate to the thread list...
-                        navigationController.navigateToMessageThreads();
-                    }
-                }, throwable -> {
-                    mProgressDisposable.dispose();
-
-                    Toast.makeText(getContext(), R.string.message_thread_create_failed,
-                            Toast.LENGTH_LONG).show();
-                    Log.e(WSAndroidApplication.TAG,
-                            "Failed to create a new message thread: " + throwable.getMessage());
-                });
+        Disposable unused = mMessageRepository
+                .createThread(subject, message, recipients)
+                // We wait for the threadId to become available.
+                .filter(threadId -> threadId != MessageRepository.STATUS_NEW_THREAD_ID_NOT_YET_KNOWN)
+                .subscribe(threadId -> mLastMessageSendResult.onNext(new MessageSendResult(threadId)),
+                        throwable -> {
+                            Log.e(WSAndroidApplication.TAG,
+                                    "Failed to create a new message thread: "
+                                    + throwable.getMessage());
+                            mLastMessageSendResult.onNext(new MessageSendResult(throwable));
+                        });
     }
 
     @Override
     protected CharSequence getTitle() {
         return getString(R.string.title_fragment_contact_user, mRecipientFullname);
+    }
+
+    private class MessageSendResult {
+        final Integer threadId;
+        final Throwable throwable;
+        boolean isHandled = false;
+
+        private MessageSendResult(@NonNull Integer threadId) {
+            this.threadId = threadId;
+            this.throwable = null;
+        }
+        private MessageSendResult(@NonNull Throwable throwable) {
+            this.threadId = null;
+            this.throwable = throwable;
+        }
     }
 }
