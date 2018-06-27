@@ -52,6 +52,7 @@ public class ProgressDialog extends DialogFragment {
         dialog.setMessage(getString(mMessage));
         dialog.setIndeterminate(true);
         dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
 
         return dialog;
     }
