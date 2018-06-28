@@ -5,6 +5,7 @@ import android.content.Context;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.di.account.AccountScope;
@@ -19,21 +20,14 @@ public class AccountDatabase extends Database {
 
     @Inject
     public AccountDatabase(Context context, AccountSchemaDefinition schemaDefinition,
-                           AccountManager accountManager) {
+                           @Named("accountUserId") int accountUserId) {
         super(context, schemaDefinition);
 
-        accountManager.getCurrentUserId().subscribe(userId -> {
-            // Closes the current db (if it is open).
-            getDatabase().close();
+        if (accountUserId == AccountManager.UNKNOWN_USER_ID) {
+            throw new IllegalStateException("Unknown user id");
+        }
 
-            if (userId != AccountManager.UNKNOWN_USER_ID) {
-                // Opens the db for the new accountId.
-                getDatabase().open(getDbName(userId));
-            }
-        });
-    }
-
-    private static String getDbName(int accountId) {
-        return String.format(Locale.US, DB_NAME, accountId);
+        final String dbName = String.format(Locale.US, DB_NAME, accountUserId);
+        getDatabase().open(dbName);
     }
 }

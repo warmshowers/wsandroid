@@ -48,7 +48,6 @@ public class LockableDatabase {
      * unlock it 2x to release it)
      */
     private final Lock mWriteLock;
-    private boolean hasInitialWriteLock = true;
 
     {
         final ReadWriteLock lock = new ReentrantReadWriteLock(true);
@@ -64,7 +63,7 @@ public class LockableDatabase {
      *
      * @see #execute(boolean, DbCallback)
      */
-    private ThreadLocal<Boolean> inTransaction = new ThreadLocal<>();
+    private ThreadLocal<Boolean> mInTransaction = new ThreadLocal<>();
 
     private SchemaDefinition mSchemaDefinition;
 
@@ -72,9 +71,6 @@ public class LockableDatabase {
                             @NonNull final SchemaDefinition schemaDefinition) {
         mContext = context;
         mSchemaDefinition = schemaDefinition;
-
-        // Initial write lock s.t. no access happens prior to opening the database.
-        lockWrite();
     }
 
     /**
@@ -135,10 +131,13 @@ public class LockableDatabase {
      */
     private <T> T execute(final boolean transactional, @NonNull final DbCallback<T> callback) {
         lockRead();
-        final boolean doTransaction = transactional && inTransaction.get() == null;
+        final boolean doTransaction = transactional && mInTransaction.get() == null;
         try {
+            if (mDb == null) {
+                throw new IllegalStateException("Database is not open");
+            }
             if (doTransaction) {
-                inTransaction.set(Boolean.TRUE);
+                mInTransaction.set(Boolean.TRUE);
                 mDb.beginTransaction();
             }
             try {
@@ -156,19 +155,18 @@ public class LockableDatabase {
             }
         } finally {
             if (doTransaction) {
-                inTransaction.set(null);
+                mInTransaction.set(null);
             }
             unlockRead();
         }
     }
 
     public void open(String dbName) {
-        if (!hasInitialWriteLock) {
-            lockWrite();
-        }
-        hasInitialWriteLock = false;
-
+        lockWrite();
         try {
+            // Close the old connection.
+            closeWithoutWriteLock();
+
             mDb = mContext.openOrCreateDatabase(dbName, Context.MODE_PRIVATE, null);
 
             if (mSchemaDefinition.getVersion() > mDb.getVersion()) {
@@ -186,6 +184,14 @@ public class LockableDatabase {
     }
 
     public void close() {
+        lockWrite();
+        try {
+            closeWithoutWriteLock();
+        } finally {
+            unlockWrite();
+        }
+    }
+    private void closeWithoutWriteLock() {
         if (!isOpen()) {
             return;
         }
