@@ -14,6 +14,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.squareup.picasso.Picasso;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.MessageThread;
@@ -84,7 +86,7 @@ public class MessageNotificationController {
         // observables. As soon as the list changes, we no longer listen to changes of the old one
         // and re-register ourselves to all the observables of the new list.
         final SerialDisposable threadListDisposable = new SerialDisposable();
-        mMessageRepository.getAll().subscribe(observables -> {
+        Disposable repositoryDisposable = mMessageRepository.getAll().subscribe(observables -> {
             Disposable disposable = handleNewThreadList(observables);
             threadListDisposable.set(disposable);
         });
@@ -95,6 +97,7 @@ public class MessageNotificationController {
             @Override
             public void dispose() {
                 mDisposed = true;
+                repositoryDisposable.dispose();
                 threadListDisposable.dispose();
                 dismissAllNotifications();
             }
@@ -112,9 +115,8 @@ public class MessageNotificationController {
                 .filter(Resource::hasData)
                 .map(resource -> resource.data)
                 .filter(thread -> {
-                    if (mMessagesAreComingFromDb) {
-                        mMessagesAreComingFromDb &= seenThreadIds.add(thread.id);
-                    }
+                    mMessagesAreComingFromDb =
+                            mMessagesAreComingFromDb && seenThreadIds.add(thread.id);
 
                     boolean hasNew = thread.hasNewMessages();
                     if (!hasNew) {
@@ -135,8 +137,11 @@ public class MessageNotificationController {
                 .flatMap(this::loadParticipantsIntoNotificationEntry)
                 .observeOn(AndroidSchedulers.mainThread()) // Why is this needed Picasso?
                 .flatMap(this::loadPartnerBitmapIntoNotificationEntry)
-//                .buffer(1, TimeUnit.SECONDS) // Limit number of updates during burst.
-                .subscribe(this::updateNotification);
+//                .debounce(1, TimeUnit.SECONDS) // Limit number of updates during burst. FIXME: does not deliver all the entries
+                .subscribe(this::updateNotification, e -> {
+                    // TODO(saemy): Error handling. E.g. when loading a participant fails.
+                    Log.e(WSAndroidApplication.TAG, e.toString());
+                });
     }
 
     /**
@@ -164,17 +169,25 @@ public class MessageNotificationController {
         // Loads the author of the message.
         SparseArray<User> participants = entry.participants;
 
-        if (participants.size() != entry.thread.participantIds.size()) { // TODO(saemy): Does not support changing participant list.
+        Set<Integer> toBeFetchedParticipantIds = new HashSet<>(participants.size());
+        for (Integer participantId : entry.thread.participantIds) {
+            if (participants.get(participantId) == null) {
+                toBeFetchedParticipantIds.add(participantId);
+            }
+        }
+
+        if (!toBeFetchedParticipantIds.isEmpty()) {
             // Fetches the participating users from the repository.
-            return Observable.mergeDelayError(mUserRepository.get(entry.thread.participantIds))
+            return Observable.mergeDelayError(mUserRepository.get(toBeFetchedParticipantIds))
                     .filter(Resource::hasData)
-                    .map(userResource -> {
-                        User user = userResource.data;
-                        entry.participants.append(user.id, user);
+                    .map(userResource -> userResource.data)
+                    .map(user -> {
+                        entry.participants.put(user.id, user);
+                        toBeFetchedParticipantIds.remove(user.id);
                         return entry;
                     })
                     // Only fire once we loaded all participants.
-                    .filter(e -> e.participants.size() == e.thread.participantIds.size());
+                    .filter(e -> toBeFetchedParticipantIds.isEmpty());
         } else {
             return Observable.just(entry);
         }
@@ -276,7 +289,8 @@ public class MessageNotificationController {
         Notification.MessagingStyle style = new Notification.MessagingStyle(us.fullname)
                 .setConversationTitle(entry.thread.subject);
         for (Message message : entry.thread.messages) {
-            String authorName = entry.participants.get(message.authorId).fullname;
+            User participant = entry.participants.get(message.authorId);
+            String authorName = participant != null ? participant.fullname : "";
             Notification.MessagingStyle.Message msg = new Notification.MessagingStyle.Message(
                     message.body, message.date.getTime(), authorName);
             if (message.isNew) {
@@ -308,8 +322,8 @@ public class MessageNotificationController {
         }
 
         assert entry.latestNewMessage != null;
-        String newestMessageAuthorName =
-                entry.participants.get(entry.latestNewMessage.authorId).fullname;
+        User participant = entry.participants.get(entry.latestNewMessage.authorId);
+        String newestMessageAuthorName = participant != null ? participant.fullname : "";
         return new NotificationCompat.Builder(mApplicationContext, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_bicycle_white_24dp)
                 .setLargeIcon(entry.partnerProfileBitmap)
