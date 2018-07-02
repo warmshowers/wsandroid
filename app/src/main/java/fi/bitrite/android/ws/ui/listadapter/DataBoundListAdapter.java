@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.reactivex.Completable;
 import io.reactivex.Single;
@@ -44,13 +45,13 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
 
 
     @Nullable
-    private List<T> items;
+    private List<T> mItems;
 
     private int mReservedItemCount = -1;
 
     // Each time data is set, we update this variable so that if DiffUtil calculation returns
     // after repetitive updates, we can ignore the old calculation.
-    private int dataVersion = 0;
+    private AtomicInteger mDataVersion = new AtomicInteger(0);
 
     @Override
     public final ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -62,8 +63,8 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (items != null && position < items.size()) {
-            holder.binding.bind(items.get(position));
+        if (mItems != null && position < mItems.size()) {
+            holder.binding.bind(mItems.get(position));
         }
     }
 
@@ -77,30 +78,29 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
 
     @MainThread
     public Completable replaceRx(List<T> update) {
+        final int dataVersion = mDataVersion.incrementAndGet();
         return Completable.create(emitter -> {
-            dataVersion++;
-
             mReservedItemCount = -1;
 
             if (update != null) {
                 sort(update);
             }
 
-            if (items == null) {
+            if (mItems == null) {
                 if (update != null) {
-                    items = update;
+                    mItems = update;
                     notifyDataSetChanged();
                 }
                 emitter.onComplete();
             } else if (update == null) {
-                int oldSize = items.size();
-                items = null;
+                int oldSize = mItems.size();
+                mItems = null;
                 notifyItemRangeRemoved(0, oldSize);
                 emitter.onComplete();
             } else {
-                final int startVersion = dataVersion;
-                final List<T> oldItems = items;
+                final List<T> oldItems = mItems;
 
+                // FIXME(saemy): Detach at some point?
                 Single.<DiffUtil.DiffResult>create(emitter2 -> emitter2.onSuccess(
                         DiffUtil.calculateDiff(new DiffUtil.Callback() {
                             @Override
@@ -133,16 +133,16 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
                         .subscribeOn(Schedulers.computation())
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(diffResult -> {
-                            if (startVersion != dataVersion) {
+                            if (dataVersion != mDataVersion.get()) {
                                 // ignore update
                                 return 0;
                             }
-                            items = update;
+                            mItems = update;
                             diffResult.dispatchUpdatesTo(DataBoundListAdapter.this);
                             return 0;
                         })
                         .toCompletable()
-                        .subscribe(emitter::onComplete);
+                        .subscribe(emitter::onComplete, emitter::onError);
             }
         }).subscribeOn(AndroidSchedulers.mainThread());
     }
@@ -169,6 +169,6 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
     public int getItemCount() {
         return mReservedItemCount >= 0
                 ? mReservedItemCount
-                : items == null ? 0 : items.size();
+                : mItems == null ? 0 : mItems.size();
     }
 }
