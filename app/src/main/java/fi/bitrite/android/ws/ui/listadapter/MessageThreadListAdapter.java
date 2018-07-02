@@ -76,7 +76,8 @@ public class MessageThreadListAdapter extends
                && left.subject.equals(right.subject)
                && left.started.equals(right.started)
                && left.isRead() == right.isRead()
-               && left.lastUpdated.equals(right.lastUpdated);
+               && left.lastUpdated.equals(right.lastUpdated)
+               && left.messages.size() == right.messages.size();
     }
 
     class ItemBinding implements DataBoundListAdapter.ViewDataBinding<MessageThread> {
