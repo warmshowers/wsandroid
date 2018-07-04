@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.util;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
@@ -8,7 +9,10 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.format.DateUtils;
@@ -18,6 +22,8 @@ import android.widget.RelativeLayout;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.Locale;
 
 import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.WSAndroidApplication;
@@ -36,10 +42,10 @@ public class Tools {
     /**
      * Return distance between two points in km/miles
      *
-     * @param l1
-     * @param l2
+     * @param l1 First location
+     * @param l2 Second location
      * @param distanceUnit (mi or km)
-     * @return
+     * @return Calculated distance between the two specified points of location
      */
     static public int calculateDistanceBetween(Location l1, Location l2,
                                                SettingsRepository.DistanceUnit distanceUnit) {
@@ -86,13 +92,7 @@ public class Tools {
         return isConnected;
     }
 
-    /**
-     * Send a report to Google Analytics about  category/action
-     *
-     * @param context
-     * @param category
-     * @param action
-     */
+    // Send a report to Google Analytics about  category/action
     static public void gaReportException(Context context, String category, String action) {
 
         Tracker exceptionTracker = ((WSAndroidApplication) context.getApplicationContext())
@@ -105,12 +105,9 @@ public class Tools {
         );
     }
 
-    /**
+    /*
      * Scale an image to its view
      * From https://argillander.wordpress.com/2011/11/24/scale-image-into-imageview-then-resize-imageview-to-match-the-image/
-     *
-     * @param view
-     * @param boundBoxInDp
      */
     static public void scaleImage(ImageView view, int boundBoxInDp) {
         // Get the ImageView and its bitmap
@@ -148,16 +145,35 @@ public class Tools {
         view.setLayoutParams(params);
     }
 
-    /**
+    /*
      * Get locale-sensitive date string in format Month Year
-     *
-     * @param context
-     * @param timeInMillis
-     * @return
      */
     public static String getDateAsMY(Context context, long timeInMillis) {
         int flags = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR
                     | DateUtils.FORMAT_NO_MONTH_DAY;
         return DateUtils.formatDateTime(context, timeInMillis, flags);
     }
+
+    /**
+     * Gets the specific locale for the current device configuration.
+     * Defaults to default Locale ({@link Locale#getDefault}) if no context is specified.
+     *
+     * @param context Context used for retrieving the locale
+     * @return The current Locale of the device
+     */
+    @NonNull
+    public static Locale getLocale(@Nullable Context context) {
+        if (context == null) {
+            return Locale.getDefault();
+        }
+
+        final Resources resources = context.getResources();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return resources.getConfiguration().getLocales().get(0);
+        } else {
+            //noinspection deprecation
+            return resources.getConfiguration().locale;
+        }
+    }
+
 }

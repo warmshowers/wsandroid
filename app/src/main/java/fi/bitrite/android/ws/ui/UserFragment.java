@@ -239,7 +239,8 @@ public class UserFragment extends BaseFragment {
 
         DateFormat simpleDate = DateFormat.getDateInstance();
         String activeDate = simpleDate.format(user.lastAccess);
-        String createdDate = new SimpleDateFormat("yyyy").format(user.created);
+        String createdDate =
+                new SimpleDateFormat("yyyy", Tools.getLocale(getContext())).format(user.created);
 
         mLblLoginInfo.setText(getString(R.string.search_user_summary, createdDate, activeDate));
         mLblLimitations.setText(getString(

@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -29,8 +28,10 @@ import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.ui.widget.UserCircleImageView;
+import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class UserListAdapter extends ArrayAdapter<User> {
@@ -56,7 +57,8 @@ public class UserListAdapter extends ArrayAdapter<User> {
         mComparator = comparator;
         mDecorator = decorator;
 
-        mUsers.observeOn(AndroidSchedulers.mainThread())
+        final Disposable unused = mUsers
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::resetDataset);
     }
 
@@ -64,7 +66,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
         @SuppressLint("UseSparseArrays") // We need loadedUsers.values()
         final Map<Integer, User> loadedUsers = new HashMap<>();
 
-        Observable.merge(users)
+        final Disposable unused = Observable.merge(users)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(userResource -> {
                     final User user = userResource.data;
@@ -114,7 +116,7 @@ public class UserListAdapter extends ArrayAdapter<User> {
         DateFormat simpleDate = DateFormat.getDateInstance();
         String activeDate = simpleDate.format(user.lastAccess);
         String createdDate =
-                new SimpleDateFormat("yyyy", Locale.US).format(user.created);
+                new SimpleDateFormat("yyyy", Tools.getLocale(getContext())).format(user.created);
 
         String memberString =
                 getContext().getString(R.string.search_user_summary, createdDate, activeDate);

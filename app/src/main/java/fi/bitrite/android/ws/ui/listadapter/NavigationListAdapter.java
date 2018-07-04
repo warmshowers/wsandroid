@@ -21,6 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.ui.model.NavigationItem;
+import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -28,6 +29,7 @@ import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
 public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.Item> {
+
     private final Observable<NavigationItem> mOnClickSubject;
 
     public static NavigationListAdapter create(
@@ -67,6 +69,7 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
             View view = LayoutInflater.from(getContext())
                     .inflate(R.layout.item_navigation, parent, false);
             item.setView(view);
+
             return view;
         }
     }
@@ -79,6 +82,8 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
         private CompositeDisposable mDisposables = new CompositeDisposable();
 
         private View mView;
+
+        private Locale mLocale;
 
         @BindColor(R.color.backgroundLightGrey) int mColorActive;
         @BindColor(android.R.color.transparent) int mColorInactive;
@@ -102,13 +107,19 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
             mOnClickSubject.onNext(mNavigationItem);
         }
 
-        boolean hasView() {
+        private boolean hasView() {
             return mView != null;
         }
-        View getView() {
+
+        private View getView() {
             return mView;
         }
-        void setView(View view) {
+
+        private void setView(View view) {
+            if (mLocale == null) {
+                mLocale = Tools.getLocale(view.getContext().getApplicationContext());
+            }
+
             mView = view;
             ButterKnife.bind(this, view);
             mIcon.setImageResource(mNavigationItem.iconResourceId);
@@ -128,8 +139,7 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
             mDisposables.add(mNavigationItem.notificationCount.subscribe(notificationCount -> {
                 mLayoutNotificationCount.setVisibility(
                         notificationCount > 0 ? View.VISIBLE : View.GONE);
-                mTxtNotificationCount.setText(
-                        String.format(Locale.getDefault(), "%d", notificationCount));
+                mTxtNotificationCount.setText(String.format(mLocale, "%d", notificationCount));
             }));
         }
     }
