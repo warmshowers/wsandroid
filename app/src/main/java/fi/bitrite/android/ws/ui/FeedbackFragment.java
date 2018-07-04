@@ -81,9 +81,9 @@ public class FeedbackFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         // Set mTxtDateWeMet to current date for default
-        Calendar now = Calendar.getInstance();
-        String hostedOn = Tools.getDateAsMY(getContext(), now.getTimeInMillis());
-        mTxtDateWeMet.setText(hostedOn);
+        final Calendar now = Calendar.getInstance(Tools.getLocale(getContext()));
+        final String hostedOn = Tools.getDateAsMY(getContext(), now.getTimeInMillis());
+        mTxtDateWeMet.setHint(hostedOn);
         mDateWeMetMonth = now.get(Calendar.MONTH);
         mDateWeMetYear = now.get(Calendar.YEAR);
 
@@ -94,7 +94,7 @@ public class FeedbackFragment extends BaseFragment {
                     mDateWeMetMonth = monthOfYear;
                     mDateWeMetYear = year;
 
-                    Calendar date = Calendar.getInstance();
+                    final Calendar date = Calendar.getInstance();
                     date.set(year, monthOfYear, dayOfMonth);
                     mTxtDateWeMet.setText(Tools.getDateAsMY(getContext(), date.getTimeInMillis()));
                 }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
@@ -197,7 +197,6 @@ public class FeedbackFragment extends BaseFragment {
 
     private Feedback.Rating getSelectedRating() {
         // Keep in sync with R.array.feedback_rating_options.
-        Feedback.Rating rating;
         switch (mSelRating.getSelectedItemPosition()) {
             case 0: return Feedback.Rating.Positive;
             case 1: return Feedback.Rating.Neutral;

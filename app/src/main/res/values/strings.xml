@@ -113,7 +113,8 @@
         <item quantity="other">Every %d minutes</item>
     </plurals>
     <string name="prefs_message_refresh_interval_min_summary_disabled">Disabled</string>
-    <string name="prefs_message_refresh_interval_min_dialog_message">Specify how often your messages should be refreshed from the server (in minutes).</string>
+    <string name="prefs_message_refresh_interval_min_dialog_message">Specify how often your messages should be refreshed from the server.</string>
+    <string name="prefs_message_refresh_interval_min_hint">Interval (minutes)</string>
 
     <string name="ga_property_id" translatable="false">UA-13228014-2</string>
     <string name="prefs_ga_collect_stats_key" translatable="false">ga_collect_stats</string>
@@ -123,7 +124,7 @@
 
     <string name="prefscat_dev_title">Developer settings</string>
     <string name="prefs_dev_simulate_no_network_key" translatable="false">dev_simulate_no_network</string>
-    <string name="prefs_dev_simulate_no_network_title">Simulate no net</string>
+    <string name="prefs_dev_simulate_no_network_title">Simulate No Service</string>
 
     <!-- The center of the Americas. -->
     <string name="prefs_map_location_latitude_default">21.0000</string>
@@ -239,9 +240,12 @@
 
     <string name="content_description_your_avatar">Your avatar</string>
     <string name="content_description_avatar_of_var">%s’s avatar</string>
+    <string name="content_description_notification_count">Notification count</string>
+    <string name="content_description_members_marker_map">Members</string>
+    <string name="content_description_member_marker_map">Member</string>
 
     <string name="menu_goto_profile">Show profile</string>
     <string name="menu_goto_profiles">Show profiles</string>
 
-    <string name="enable">Enable</string>
+    <string name="enabled">Enabled</string>
 </resources>

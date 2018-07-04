@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFF">
@@ -23,6 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="96dp"
             android:layout_marginTop="48dp"
+            android:importantForAccessibility="no"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             app:srcCompat="@drawable/ic_favorite_grey600_24dp" />

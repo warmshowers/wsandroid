@@ -201,4 +201,28 @@
 
     <string name="content_description_your_avatar">Tu foto de perfil</string>
     <string name="content_description_avatar_of_var">Foto de perfil de %s</string>
+    <string name="content_description_notification_count">Número de notificaciones</string>
+    <string name="content_description_members_marker_map">Miembros</string>
+    <string name="content_description_member_marker_map">Miembro</string>
+
+    <string name="prefs_message_refresh_interval_min_title">Frecuencia de la encuesta de mensajes</string>
+    <plurals name="prefs_message_refresh_interval_min_summary">
+        <item quantity="one">Cada minuto</item>
+        <item quantity="other">Cada %d minutos</item>
+    </plurals>
+    <string name="prefs_message_refresh_interval_min_summary_disabled">Desactivado</string>
+    <string name="enabled">Activado</string>
+    <string name="prefs_message_refresh_interval_min_dialog_message">Especifique con qué frecuencia deben actualizarse los mensajes desde el servidor.</string>
+    <string name="prefs_message_refresh_interval_min_hint">Intervalo (minutos)</string>
+    <string name="prefscat_dev_title">Parámetros de desarrollo</string>
+    <string name="prefs_dev_simulate_no_network_title">Simular Sin Servicio</string>
+    <string name="message_mark_read">Marcar como leído</string>
+    <string name="message_mark_unread">Marcar como no leído</string>
+    <string name="message_send_failed">Fallo al enviar el mensaje.</string>
+    <string name="menu_goto_profile">Mostrar perfil</string>
+    <string name="menu_goto_profiles">Mostrar perfiles</string>
+    <string name="message_new_hint">Escriba un mensaje</string>
+    <string name="messages_reload_failed">Error al obtener mensajes.</string>
+    <string name="message_thread_create_failed">Error al crear una nueva conversación.</string>
+    <string name="feedback_error_sending">El comentario no fue enviado.</string>
 </resources>

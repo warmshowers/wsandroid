@@ -92,6 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:focusable="false"
+                android:labelFor="@id/feedback_txt_date_we_met"
                 android:text="@string/feedback_date_we_met" />
 
             <EditText
@@ -101,8 +102,9 @@
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
                 android:focusable="false"
-                android:paddingTop="10dp"
-                android:text="May 2010" />
+                android:hint="2018"
+                android:inputType="date"
+                android:paddingTop="10dp" />
 
         </LinearLayout>
 
@@ -117,6 +119,7 @@
                 style="@style/WsText.subHead"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:labelFor="@id/feedback_sel_relation"
                 android:text="@string/feedback_how_we_met_prompt" />
 
             <Spinner

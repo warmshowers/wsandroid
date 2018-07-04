@@ -108,14 +108,15 @@
         <item quantity="other">Alle %d Minuten</item>
     </plurals>
     <string name="prefs_message_refresh_interval_min_summary_disabled">Deaktiviert</string>
-    <string name="prefs_message_refresh_interval_min_dialog_message">Wähle, all wieviele Minuten deine Mitteilungen automatisch vom Server geladen werden sollen.</string>
+    <string name="prefs_message_refresh_interval_min_dialog_message">Wähle aus, wie häufig deine Mitteilungen automatisch vom Server geladen werden sollen.</string>
+    <string name="prefs_message_refresh_interval_min_hint">Intervall (in Minuten)</string>
 
     <string name="prefs_ga_collect_stats_title">Anonyme Benutzungsstatistiken senden</string>
     <string name="prefs_ga_collect_stats_summary_on">Nutzungsstatistiken werden gelegentlich an Google Analytics gesendet, um den Entwickelnden die Verbesserung der App zu erleichtern</string>
     <string name="prefs_ga_collect_stats_summary_off">Gerade werden keine Statistiken zur Verbesserung der App an Google Analytics versandt</string>
 
     <string name="prefscat_dev_title">Entwicklereinstellungen</string>
-    <string name="prefs_dev_simulate_no_network_title">Simuliere kein Netzwerk</string>
+    <string name="prefs_dev_simulate_no_network_title">Simuliere Kein Netz</string>
 
     <!-- Non-english speakers might prefer the default location to be over Africa, Europe & Central Asia. -->
     <!-- Sorry to all Brits (who default to the US) and rest of the non-western world. -->
@@ -234,5 +235,8 @@
     <string name="menu_goto_profile">Profil ansehen</string>
     <string name="menu_goto_profiles">Profile ansehen</string>
 
-    <string name="enable">Aktiviert</string>
+    <string name="enabled">Aktiviert</string>
+    <string name="content_description_notification_count">Anzahl Meldungen</string>
+    <string name="content_description_members_marker_map">Mitglieder</string>
+    <string name="content_description_member_marker_map">Mitglied</string>
 </resources>

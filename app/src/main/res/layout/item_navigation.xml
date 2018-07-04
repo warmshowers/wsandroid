@@ -16,6 +16,7 @@
         android:id="@+id/icon_menu_item"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -48,6 +49,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:contentDescription="@string/content_description_notification_count"
+            android:labelFor="@id/txt_menu_item_notification_count"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_rounded_square_12dp" />
 
