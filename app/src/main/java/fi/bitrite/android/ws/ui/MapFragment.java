@@ -670,12 +670,9 @@ public class MapFragment extends BaseFragment implements
                    || cluster.getSize() >= getResources().getInteger(R.integer.min_cluster_size);
         }
 
-        /**
+        /*
          * Attempt to determine the location status of items in the cluster, whether all in one location
          * or in a variety of locations.
-         *
-         * @param cluster
-         * @return
          */
         protected ClusterStatus clusterLocationStatus(Cluster<ClusterUser> cluster) {
             HashSet<String> latLngs = new HashSet<>();
@@ -698,7 +695,7 @@ public class MapFragment extends BaseFragment implements
 
     class ClusterInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         private View mPopup = null;
-        private LayoutInflater mInflater = null;
+        private LayoutInflater mInflater;
 
         ClusterInfoWindowAdapter(LayoutInflater inflater) {
             this.mInflater = inflater;
@@ -763,7 +760,7 @@ public class MapFragment extends BaseFragment implements
         @BindView(R.id.snippet) TextView mLblSnippet;
 
         private View mPopup = null;
-        private LayoutInflater mInflater = null;
+        private LayoutInflater mInflater;
 
         SingleUserInfoWindowAdapter(LayoutInflater inflater) {
             mInflater = inflater;

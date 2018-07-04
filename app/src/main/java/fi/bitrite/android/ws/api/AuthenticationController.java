@@ -3,7 +3,6 @@ package fi.bitrite.android.ws.api;
 import android.accounts.Account;
 import android.support.annotation.WorkerThread;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 import javax.inject.Inject;
@@ -93,7 +92,7 @@ public class AuthenticationController {
          */
         @WorkerThread
         @Override
-        public boolean handleCsrfValidationError() throws IOException {
+        public boolean handleCsrfValidationError() {
             // Waits for the response to become available.
             try {
                 Response<String> response =

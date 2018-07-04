@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onBackPressed() {
-        if (mMainLayout.isDrawerOpen(Gravity.START | Gravity.LEFT)) {
+        if (mMainLayout.isDrawerOpen(Gravity.START)) {
             mMainLayout.closeDrawers();
             return;
         }

@@ -379,9 +379,7 @@ public class UserFragment extends BaseFragment {
                         .firstElement())
                 .filter(finished -> numFinished.incrementAndGet() >= 2)
                 .firstElement()
-                .subscribe(finished -> {
-                    mLastUserInfoLoadResult.onNext(result);
-                }, throwable -> {
+                .subscribe(finished -> mLastUserInfoLoadResult.onNext(result), throwable -> {
                     result.throwable = throwable;
                     mLastUserInfoLoadResult.onNext(result);
                 });

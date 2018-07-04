@@ -30,7 +30,7 @@ public class RefreshIntervalPreference extends EditTextPreference {
         if (defaultObj != null && defaultObj instanceof String) {
             try {
                 mDefaultValue = Integer.parseInt((String) defaultObj);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
         }
         return defaultObj;

@@ -18,7 +18,7 @@ public class ResponseInterceptor implements Interceptor {
          * Requests a new CSRF token from the API endpoint.
          * @return True, iff a new CSRF token was optained.
          */
-        boolean handleCsrfValidationError() throws IOException;
+        boolean handleCsrfValidationError();
 
         /**
          * Invalidates the current auth token and re-authenticates the user to obtain a new token

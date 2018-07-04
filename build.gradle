@@ -15,10 +15,10 @@ buildscript {
 }
 
 ext {
-    isTravisBuild = "true".equals(System.getenv("TRAVIS"))
+    isTravisBuild = "true" == System.getenv("TRAVIS")
 
     // Allows for -Dpre-dex=false to be set
-    isPreDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+    isPreDexEnabled = "true" == System.getProperty("pre-dex", "true")
 }
 
 // Loads the local properties.

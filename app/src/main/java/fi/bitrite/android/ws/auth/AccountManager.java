@@ -281,8 +281,6 @@ public class AccountManager {
      * account service. Any account with the same username is updated or, if none found, a new one
      * is created.
      *
-     * @param username
-     * @param password
      * @return The login result
      */
     public Observable<LoginResult> login(String username, String password) {

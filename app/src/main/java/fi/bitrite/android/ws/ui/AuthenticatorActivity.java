@@ -159,6 +159,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
         editText.setKeyListener(null);
     }
 
+
     @OnClick(R.id.auth_btn_login)
     public void login() {
         String username = mTxtUsername.getText().toString();
@@ -208,9 +209,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                     } else {
                         mLoginResult.onNext(new LoginResult());
                     }
-                }, error -> {
-                    mLoginResult.onNext(new LoginResult(error));
-                });
+                }, error -> mLoginResult.onNext(new LoginResult(error)));
     }
 
     /**

@@ -4,7 +4,6 @@ import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
-import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +31,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType,
                              String authTokenType, String[] requiredFeatures,
-                             Bundle options) throws NetworkErrorException {
+                             Bundle options) {
         final Intent intent = new Intent(context, AuthenticatorActivity.class)
                 // Used by {@link AuthenticatorActivity}.
                 .putExtra(AccountManager.KEY_ACCOUNT_TYPE, accountType)
@@ -48,7 +47,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account,
-                               String authTokenType, Bundle options) throws NetworkErrorException {
+                               String authTokenType, Bundle options) {
         // Checks if the auth token is already available.
         String authToken = accountManager.peekAuthToken(account, authTokenType);
         if (!TextUtils.isEmpty(authToken)) {
@@ -84,14 +83,13 @@ public class Authenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account,
-                                     Bundle options) throws NetworkErrorException {
+                                     Bundle options) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Bundle hasFeatures(
-            AccountAuthenticatorResponse response, Account account, String[] features)
-            throws NetworkErrorException {
+            AccountAuthenticatorResponse response, Account account, String[] features) {
         Bundle result = new Bundle();
         result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, false);
         return result;
@@ -100,7 +98,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle updateCredentials(
             AccountAuthenticatorResponse response, Account account, String authTokenType,
-            Bundle options) throws NetworkErrorException {
+            Bundle options) {
         throw new UnsupportedOperationException();
     }
 

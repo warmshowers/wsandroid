@@ -56,12 +56,12 @@ public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem>
     /**
      * Any modifications should be synchronized on mQuadTree.
      */
-    private final Collection<QuadItem<T>> mItems = new ArrayList<QuadItem<T>>();
+    private final Collection<QuadItem<T>> mItems = new ArrayList<>();
 
     /**
      * Any modifications should be synchronized on mQuadTree.
      */
-    private final PointQuadTree<QuadItem<T>> mQuadTree = new PointQuadTree<QuadItem<T>>(0, 1, 0, 1);
+    private final PointQuadTree<QuadItem<T>> mQuadTree = new PointQuadTree<>(0, 1, 0, 1);
 
     private static final SphericalMercatorProjection PROJECTION =
             new SphericalMercatorProjection(1);
@@ -102,9 +102,9 @@ public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem>
 
         final double zoomSpecificSpan = MAX_DISTANCE_AT_ZOOM / Math.pow(2, discreteZoom) / 256;
 
-        final Set<QuadItem<T>> visitedCandidates = new HashSet<QuadItem<T>>();
-        final Set<Cluster<T>> results = new HashSet<Cluster<T>>();
-        final Map<QuadItem<T>, Double> distanceToCluster = new HashMap<QuadItem<T>, Double>();
+        final Set<QuadItem<T>> visitedCandidates = new HashSet<>();
+        final Set<Cluster<T>> results = new HashSet<>();
+        final Map<QuadItem<T>, Double> distanceToCluster = new HashMap<>();
         final Map<QuadItem<T>, StaticCluster<T>> itemToCluster = new HashMap<>();
 
         synchronized (mQuadTree) {
@@ -151,7 +151,7 @@ public class WSNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem>
 
     @Override
     public Collection<T> getItems() {
-        final List<T> items = new ArrayList<T>();
+        final List<T> items = new ArrayList<>();
         synchronized (mQuadTree) {
             for (QuadItem<T> quadItem : mItems) {
                 items.add(quadItem.mClusterItem);

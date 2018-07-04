@@ -126,7 +126,6 @@ public class LockableDatabase {
      * </p>
      *
      * @param transactional <code>true</code> the callback must be executed in a transactional context.
-     * @param callback
      * @return Whatever {@link DbCallback#doDbWork(SQLiteDatabase)} returns.
      */
     private <T> T execute(final boolean transactional, @NonNull final DbCallback<T> callback) {
