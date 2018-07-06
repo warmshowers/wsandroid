@@ -98,7 +98,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
         // thing.
         mResumePauseDisposable = mLoginResult
                 .filter(result -> !result.isHandled)
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
                     result.isHandled = true;
 
