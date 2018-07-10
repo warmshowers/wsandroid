@@ -13,37 +13,41 @@ import javax.inject.Inject;
 import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.ui.util.ActionBarTitleHelper;
 import fi.bitrite.android.ws.ui.util.NavigationController;
+import fi.bitrite.android.ws.util.SerialCompositeDisposable;
 import io.reactivex.disposables.CompositeDisposable;
 
 public abstract class BaseFragment extends Fragment implements Injectable {
 
     @Inject ActionBarTitleHelper mActionBarTitleHelper;
 
-    private CompositeDisposable mCreateDestroyDisposable = new CompositeDisposable();
-    private CompositeDisposable mCreateDestroyViewDisposable = new CompositeDisposable();
-    private CompositeDisposable mStartStopDisposable = new CompositeDisposable();
-    private CompositeDisposable mResumePauseDisposable = new CompositeDisposable();
+    private final SerialCompositeDisposable mCreateDestroyDisposable =
+            new SerialCompositeDisposable();
+    private final SerialCompositeDisposable mCreateDestroyViewDisposable =
+            new SerialCompositeDisposable();
+    private final SerialCompositeDisposable mStartStopDisposable = new SerialCompositeDisposable();
+    private final SerialCompositeDisposable mResumePauseDisposable =
+            new SerialCompositeDisposable();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        mCreateDestroyDisposable.reset();
         super.onCreate(savedInstanceState);
-        mCreateDestroyDisposable = new CompositeDisposable();
     }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mCreateDestroyViewDisposable = new CompositeDisposable();
+        mCreateDestroyViewDisposable.reset();
         return super.onCreateView(inflater, container, savedInstanceState);
     }
     @Override
     public void onStart() {
-        mStartStopDisposable = new CompositeDisposable();
+        mStartStopDisposable.reset();
         super.onStart();
     }
     @Override
     public void onResume() {
-        mResumePauseDisposable = new CompositeDisposable();
+        mResumePauseDisposable.reset();
         super.onResume();
         setTitle(getTitle());
     }
@@ -74,19 +78,19 @@ public abstract class BaseFragment extends Fragment implements Injectable {
     }
 
     NavigationController getNavigationController() {
-        return ((MainActivity)getActivity()).getNavigationController();
+        return ((MainActivity) getActivity()).getNavigationController();
     }
 
     CompositeDisposable getCreateDestroyDisposable() {
-        return mCreateDestroyDisposable;
+        return mCreateDestroyDisposable.get();
     }
     CompositeDisposable getCreateDestroyViewDisposable() {
-        return mCreateDestroyViewDisposable;
+        return mCreateDestroyViewDisposable.get();
     }
     CompositeDisposable getStartStopDisposable() {
-        return mStartStopDisposable;
+        return mStartStopDisposable.get();
     }
     CompositeDisposable getResumePauseDisposable() {
-        return mResumePauseDisposable;
+        return mResumePauseDisposable.get();
     }
 }

@@ -47,6 +47,7 @@ import fi.bitrite.android.ws.ui.model.NavigationItem;
 import fi.bitrite.android.ws.ui.util.ActionBarTitleHelper;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
+import fi.bitrite.android.ws.util.SerialCompositeDisposable;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
@@ -102,7 +103,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private ActionBarDrawerToggle mDrawerToggle;
     private NavigationController mNavigationController;
 
-    private CompositeDisposable mResumePauseDisposables;
+    private final SerialCompositeDisposable mCreateDestroyDisposables = new SerialCompositeDisposable();
+    private final SerialCompositeDisposable mResumePauseDisposables = new SerialCompositeDisposable();
 
     /**
      * Creates an intent that sends, when used, the user to that message thread. This is needed for
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        mCreateDestroyDisposables.reset();
         // super.onCreate() re-constructs the previous state - i.e. might start a fragment. We need
         // an account to be able to show any fragments.
         AndroidInjection.inject(this);
@@ -160,14 +163,18 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         NavigationListAdapter primaryNavigationListAdapter = NavigationListAdapter.create(
                 this, mPrimaryNavigationItems,
                 mNavigationController.getTopLevelNavigationItemTag());
-        primaryNavigationListAdapter.getOnClickSubject().subscribe(this::onNavigationItemClicked);
+        mCreateDestroyDisposables.add(primaryNavigationListAdapter.getOnClickSubject()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onNavigationItemClicked));
         mPrimaryNavigationList.setAdapter(primaryNavigationListAdapter);
 
         // Secondary navigation.
         NavigationListAdapter secondaryNavigationListAdapter = NavigationListAdapter.create(
                 this, mSecondaryNavigationItems,
                 mNavigationController.getTopLevelNavigationItemTag());
-        secondaryNavigationListAdapter.getOnClickSubject().subscribe(this::onNavigationItemClicked);
+        mCreateDestroyDisposables.add(secondaryNavigationListAdapter.getOnClickSubject()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onNavigationItemClicked));
         mSecondaryNavigationList.setAdapter(secondaryNavigationListAdapter);
 
         // Listen for changes in the back stack
@@ -183,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     public void onResume() {
         super.onResume();
 
-        mResumePauseDisposables = new CompositeDisposable();
+        mResumePauseDisposables.reset();
 
         mAccountManager.setMainActivity(this);
 
@@ -216,6 +223,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mAccountManager.setMainActivity(null);
         mAccountHelper.pause();
         super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        mCreateDestroyDisposables.dispose();
+        super.onDestroy();
     }
 
     @Override
