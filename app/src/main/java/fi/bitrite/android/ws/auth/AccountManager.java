@@ -6,14 +6,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.WarmshowersWebservice;
 import fi.bitrite.android.ws.api.response.LoginResponse;
 import fi.bitrite.android.ws.di.AppScope;
@@ -42,8 +46,8 @@ public class AccountManager {
     private final android.accounts.AccountManager mAndroidAccountManager;
     private final ReentrantReadWriteLock mLock = new ReentrantReadWriteLock();
 
-    private final BehaviorSubject<Account[]> mAccounts;
-    private final BehaviorSubject<MaybeNull<Account>> mCurrentAccount;
+    private final BehaviorSubject<Account[]> mAccounts = BehaviorSubject.create();
+    private final BehaviorSubject<MaybeNull<Account>> mCurrentAccount = BehaviorSubject.create();
     private final Observable<Integer> mCurrentUserId;
 
     private Activity mMainActivity = null;
@@ -55,42 +59,9 @@ public class AccountManager {
         mGeneralWebservice = generalWebservice;
         mAndroidAccountManager = androidAccountManager;
 
-        Account[] accounts = mAndroidAccountManager.getAccountsByType(ACCOUNT_TYPE);
-        mAccounts = BehaviorSubject.createDefault(accounts);
-        mAndroidAccountManager.addOnAccountsUpdatedListener(accounts_unused -> {
-            Account[] newAccounts = mAndroidAccountManager.getAccountsByType(ACCOUNT_TYPE);
-            if (!Arrays.equals(mAccounts.getValue(),
-                    newAccounts)) { // They need to be in the same order!
-                mAccounts.onNext(newAccounts);
-            }
-        }, null, false);
-
-
-        mCurrentAccount = BehaviorSubject.createDefault(new MaybeNull<>(
-                // TODO(saemy): Remember the one used last time.
-                accounts.length > 0 ? accounts[0] : null));
-
-        // Removes the current account if it got removed and uses a new one if no other is used.
-        mAccounts.subscribe(newAccounts -> {
-            MaybeNull<Account> current = mCurrentAccount.getValue();
-            if (current.isNonNull() && !Arrays.asList(newAccounts).contains(current.data)) {
-                // Our current account no longer exists.
-                setCurrentAccount(newAccounts.length > 0 ? newAccounts[0] : null);
-            } else if (current.isNull() && newAccounts.length > 0) {
-                // We did not have any account set so far.
-                setCurrentAccount(newAccounts[0]);
-            }
-
-            if (newAccounts.length == 0) {
-                // There are no accounts. Lets ask the user to create one.
-                createNewAccount().subscribe(a -> {}, e -> {
-                    // TODO(saemy): Error handling.
-                });
-            } else {
-                // We have an account and therefore no longer need to create a new one.
-                dismissEventuallyCreateOrAuth();
-            }
-        });
+        mAndroidAccountManager.addOnAccountsUpdatedListener(
+                accounts_unused -> handleAccountUpdate(), null, false);
+        handleAccountUpdate();
 
         mCurrentUserId = mCurrentAccount
                 .map(maybeAccount -> maybeAccount.isNonNull()
@@ -115,6 +86,53 @@ public class AccountManager {
     }
     public Observable<Integer> getCurrentUserId() {
         return mCurrentUserId;
+    }
+
+    private void handleAccountUpdate() {
+        Account[] newAccounts = mAndroidAccountManager.getAccountsByType(ACCOUNT_TYPE);
+        // Ensure that we do not consider any accounts without an account userId.
+        List<Account> newAccountsFiltered = new LinkedList<>();
+        for(Account account : newAccounts) {
+            int accountUserId = getUserId(account);
+            if (accountUserId == UNKNOWN_USER_ID) {
+                // Ignore this account.
+                Log.w(WSAndroidApplication.TAG,
+                        "Ignoring account due to not having a userId: " + account.name);
+                continue;
+            }
+            newAccountsFiltered.add(account);
+        }
+        newAccounts = newAccountsFiltered.toArray(new Account[newAccountsFiltered.size()]);
+
+        if (Arrays.equals(mAccounts.getValue(), newAccounts)) { // They need to be in the same order!
+            // Nothing changed.
+            return;
+        }
+        mAccounts.onNext(newAccounts);
+
+        // Removes the current account if it got removed and uses a new one if no other is used.
+        MaybeNull<Account> current = mCurrentAccount.getValue();
+        if (current == null) {
+            // Initial value.
+            // TODO(saemy): Remember the one used last time.
+            setCurrentAccount(newAccounts.length > 0 ? newAccounts[0] : null);
+        } else if (current.isNonNull() && !Arrays.asList(newAccounts).contains(current.data)) {
+            // Our current account no longer exists.
+            setCurrentAccount(newAccounts.length > 0 ? newAccounts[0] : null);
+        } else if (current.isNull() && newAccounts.length > 0) {
+            // We did not have any account set so far.
+            setCurrentAccount(newAccounts[0]);
+        }
+
+        if (newAccounts.length == 0) {
+            // There are no accounts. Lets ask the user to create one.
+            createNewAccount().subscribe(a -> {}, e -> {
+                // TODO(saemy): Error handling.
+            });
+        } else {
+            // We have an account and therefore no longer need to create a new one.
+            dismissEventuallyCreateOrAuth();
+        }
     }
 
     /**
@@ -299,18 +317,19 @@ public class AccountManager {
                     // access to the AccountManager to avoid that race.
                     return executeWithWriteLock(v -> {
                         boolean isExistingAccount =
-                                Arrays.asList(mAccounts.getValue()).contains(account);
+                                Arrays.asList(mAndroidAccountManager.getAccountsByType(ACCOUNT_TYPE))
+                                        .contains(account);
                         if (!isExistingAccount) {
                             // This explicitly does not save any password as it is stored in
                             // plaintext on the device. On rooted devices this is an issue! Instead,
                             // the auth token is stored along the account to avoid re-logins.
                             mAndroidAccountManager.addAccountExplicitly(account, null, null);
-
-                            // Sets the user id.
-                            int userId = loginResponse.user.id;
-                            mAndroidAccountManager.setUserData(
-                                    account, KEY_USER_ID, Integer.toString(userId));
                         }
+
+                        // Sets the user id.
+                        int userId = loginResponse.user.id;
+                        mAndroidAccountManager.setUserData(
+                                account, KEY_USER_ID, Integer.toString(userId));
 
                         // Updates the CSRF token.
                         String csrfToken = loginResponse.csrfToken;
@@ -321,6 +340,14 @@ public class AccountManager {
                                 new AuthToken(loginResponse.sessionName, loginResponse.sessionId);
                         mAndroidAccountManager.setAuthToken(
                                 account, AUTH_TOKEN_TYPE, authToken.toString());
+
+                        if (isExistingAccount) {
+                            // The account might have been previously filtered due to a missing
+                            // userId. When the data becomes available no update is triggered as the
+                            // account list does not change. Therefore, we trigger the update
+                            // manually.
+                            handleAccountUpdate();
+                        }
 
                         // Fires the callback.
                         AuthData authData = new AuthData(account, authToken, csrfToken);
