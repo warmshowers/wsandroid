@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Warmshowers</string>
     <string name="about">À propos</string>
-    <string name="about_1">Développé par les volontaires de Warmshowers.org, menés par l\'auteur original Johannes Staffans.\nTraducteur français: Jean-Francois Beaulieu </string>
+    <string name="about_1">Développé par les volontaires de Warmshowers.org.\nTraducteur français: Jean-Francois Beaulieu </string>
     <string name="about_2">Cette application est en <i>open source</i> sous la license Apache 2.0. Contribuez en <i>forkant</i> le dépôt à github.com/warmshowers/wsandroid\nVous pouvez signaler des problèmes à cet endroit ou en utilisant la feuille de contact sur le site web de Warmshowers au fr.warmshowers.org/contact</string>
     <string name="account">Compte</string>
     <string name="alert_neutral_button">OK</string>
