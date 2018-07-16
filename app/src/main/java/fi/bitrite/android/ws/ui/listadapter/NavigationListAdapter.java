@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.ui.listadapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -23,7 +24,7 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.ui.model.NavigationItem;
 import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.Observable;
-import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -31,6 +32,7 @@ import io.reactivex.subjects.Subject;
 public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.Item> {
 
     private final Observable<NavigationItem> mOnClickSubject;
+    private Locale mLocale;
 
     public static NavigationListAdapter create(
             Context context, List<NavigationItem> navigationItems,
@@ -60,31 +62,26 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
     @NonNull
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         final Item item = getItem(position);
-
-        // We need a new view for every item since we want to be able to change its background if
-        // selected.
-        if (item.hasView()) {
-            return item.getView();
-        } else {
-            View view = LayoutInflater.from(getContext())
-                    .inflate(R.layout.item_navigation, parent, false);
-            item.setView(view);
-
-            return view;
-        }
+        @SuppressLint("ViewHolder") View view = LayoutInflater.from(getContext())
+                .inflate(R.layout.item_navigation, parent, false);
+        ItemInjector itemInjector = new ItemInjector(item, view);
+        view.setTag(position);
+        return view;
     }
 
     static class Item {
-        private final NavigationItem mNavigationItem;
-        private final BehaviorSubject<String> mCurrentTag;
-        private final Subject<NavigationItem> mOnClickSubject;
+        final NavigationItem navigationItem;
+        final BehaviorSubject<String> currentTag;
+        final Subject<NavigationItem> onClickSubject;
 
-        private CompositeDisposable mDisposables = new CompositeDisposable();
-
-        private View mView;
-
-        private Locale mLocale;
-
+        Item(NavigationItem navigationItem, BehaviorSubject<String> currentTag,
+             Subject<NavigationItem> onClickSubject) {
+            this.navigationItem = navigationItem;
+            this.currentTag = currentTag;
+            this.onClickSubject = onClickSubject;
+        }
+    }
+    class ItemInjector {
         @BindColor(R.color.backgroundLightGrey) int mColorActive;
         @BindColor(android.R.color.transparent) int mColorInactive;
 
@@ -94,53 +91,37 @@ public class NavigationListAdapter extends ArrayAdapter<NavigationListAdapter.It
         @BindView(R.id.layout_menu_item_notification_count) FrameLayout mLayoutNotificationCount;
         @BindView(R.id.txt_menu_item_notification_count) TextView mTxtNotificationCount;
 
-        Item(NavigationItem navigationItem, BehaviorSubject<String> currentTag,
-             Subject<NavigationItem> onClickSubject) {
-            mNavigationItem = navigationItem;
-            mCurrentTag = currentTag;
-            mOnClickSubject = onClickSubject;
+        private Item mItem;
+
+        ItemInjector(Item item, View view) {
+            mItem = item;
+
+            if (mLocale == null) {
+                mLocale = Tools.getLocale(view.getContext().getApplicationContext());
+            }
+
+            ButterKnife.bind(this, view);
+            mIcon.setImageResource(item.navigationItem.iconResourceId);
+            mLabel.setText(item.navigationItem.labelResourceId);
+
+            Disposable mUnused1 = item.currentTag.subscribe(currentItemTag -> {
+                int backgroundColor = currentItemTag.equals(item.navigationItem.tag)
+                        ? mColorActive
+                        : mColorInactive;
+                mLayoutNavigationItem.setBackgroundColor(backgroundColor);
+            });
+
+            Disposable mUnused2 = item.navigationItem.notificationCount.subscribe(notificationCount -> {
+                mLayoutNotificationCount.setVisibility(
+                        notificationCount > 0 ? View.VISIBLE : View.GONE);
+                mTxtNotificationCount.setText(String.format(mLocale, "%d", notificationCount));
+            });
         }
 
         @OnClick(R.id.layout_navigation_item)
         public void onClick() {
             // Informs the observers about this click event.
-            mOnClickSubject.onNext(mNavigationItem);
-        }
-
-        private boolean hasView() {
-            return mView != null;
-        }
-
-        private View getView() {
-            return mView;
-        }
-
-        private void setView(View view) {
-            if (mLocale == null) {
-                mLocale = Tools.getLocale(view.getContext().getApplicationContext());
-            }
-
-            mView = view;
-            ButterKnife.bind(this, view);
-            mIcon.setImageResource(mNavigationItem.iconResourceId);
-            mLabel.setText(mNavigationItem.labelResourceId);
-
-            // Disconnect from old notifications.
-            mDisposables.dispose();
-            mDisposables = new CompositeDisposable();
-
-            mDisposables.add(mCurrentTag.subscribe(currentItemTag -> {
-                int backgroundColor = currentItemTag.equals(mNavigationItem.tag)
-                        ? mColorActive
-                        : mColorInactive;
-                mLayoutNavigationItem.setBackgroundColor(backgroundColor);
-            }));
-
-            mDisposables.add(mNavigationItem.notificationCount.subscribe(notificationCount -> {
-                mLayoutNotificationCount.setVisibility(
-                        notificationCount > 0 ? View.VISIBLE : View.GONE);
-                mTxtNotificationCount.setText(String.format(mLocale, "%d", notificationCount));
-            }));
+            mItem.onClickSubject.onNext(mItem.navigationItem);
         }
     }
 }
