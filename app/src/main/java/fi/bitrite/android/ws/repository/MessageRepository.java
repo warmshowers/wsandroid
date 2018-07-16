@@ -119,13 +119,16 @@ public class MessageRepository extends Repository<MessageThread> {
         return Observable.<Integer>create(emitter -> {
             String recipientNames = TextUtils.join(",", recipients);
             mWebservice.createMessageThread(recipientNames, subject, message)
-                    .subscribe(response -> {
+                    .filter(response -> {
+                        // Throwing errors is not allowed in onSuccess().
                         if (!response.isSuccessful()) {
                             throw new Exception(response.errorBody().toString());
                         } else if (!response.body().isSuccessful) {
                             throw new Exception("Retreived an unsuccessful response.");
                         }
-
+                        return true;
+                    })
+                    .subscribe(response -> {
                         // This is the initial success message. We do not know any threadId yet.
                         emitter.onNext(STATUS_NEW_THREAD_ID_NOT_YET_KNOWN);
 
@@ -470,7 +473,9 @@ public class MessageRepository extends Repository<MessageThread> {
         Completable.concat(completables)
                 // Ignores errors. However, aborts sending any more messages as soon as one failed.
                 .onErrorComplete()
-                .doFinally(() -> reloadThread(thread.id, thread))
+                .andThen(reloadThread(thread.id, thread))
+                .ignoreElements()
+                .onErrorComplete()
                 .subscribe();
     }
 
@@ -507,15 +512,17 @@ public class MessageRepository extends Repository<MessageThread> {
             }
 
             mWebservice.sendMessage(thread.id, message.rawBody)
-                    .subscribe(response -> {
+                    .filter(response -> {
+                        // Throwing errors is not allowed in onSuccess().
                         if (!response.isSuccessful()) {
                             throw new Exception(response.errorBody().toString());
                         } else if (!response.body().isSuccessful) {
                             throw new Exception("Retreived an unsuccessful response.");
                         }
-
+                        return true;
+                    })
+                    .subscribe(response -> {
                         // Sending the message was successful.
-
                         // We mark the temporary db message as pushed.
                         Message newMessage = message.cloneForIsPushed(true);
                         Collections.replaceAll(thread.messages, message, newMessage);
