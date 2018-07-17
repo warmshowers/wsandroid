@@ -88,6 +88,7 @@ public class MessageListAdapter extends
         return left.id == right.id
                && left.threadId == right.threadId
                && left.authorId == right.authorId
+               && left.isPushed == right.isPushed
                && left.date.equals(right.date)
                && left.rawBody.equals(right.rawBody);
     }
