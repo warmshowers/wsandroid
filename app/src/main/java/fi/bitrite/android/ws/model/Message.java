@@ -38,8 +38,8 @@ public class Message {
         this.threadId = threadId;
         this.authorId = authorId;
         this.date = date;
-        this.rawBody = rawBody;
-        this.body = parseBody(rawBody);
+        this.rawBody = stripRawBody(rawBody);
+        this.body = parseBody(this.rawBody);
         this.isNew = isNew;
         this.isPushed = isPushed;
     }
@@ -52,14 +52,19 @@ public class Message {
     }
 
     /**
-     * Removes the <p>...</p>\r\n surrounding all messages sent from the web interface and then
-     * returns the html-parsed body.
+     * Removes the <p>...</p>\r\n surrounding all messages sent from the web interface.
+     */
+    private static String stripRawBody(String rawBody) {
+        if (rawBody.startsWith("<p>") && rawBody.endsWith("</p>\r\n")) {
+            rawBody = rawBody.substring(3, rawBody.length()-6);
+        }
+        return rawBody;
+    }
+    /**
+     * Replaces \n by <br/> and then returns the html-parsed body.
      */
     private static Spanned parseBody(String rawBody) {
-        String body = rawBody;
-        if (body.startsWith("<p>") && body.endsWith("</p>\r\n")) {
-            body = body.substring(3, body.length()-6);
-        }
-        return Html.fromHtml(body);
+        rawBody = rawBody.replace("\n", "<br/>");
+        return Html.fromHtml(rawBody);
     }
 }

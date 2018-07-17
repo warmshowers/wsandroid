@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.ui.listadapter;
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.ContextMenu;
@@ -161,7 +162,8 @@ public class MessageThreadListAdapter extends
                 // TODO(saemy): Show oldest unread message?
                 Message newestMessage =
                         Collections.max(thread.messages, MessageListAdapter.COMPARATOR);
-                mLblPreview.setText(newestMessage.body);
+                String body = newestMessage.rawBody.replace('\n', ' ');
+                mLblPreview.setText(Html.fromHtml(body));
 
                 if (!newestMessage.isPushed) {
                     mLblLastUpdated.setText("..."); // TODO(saemy): Add a hourglass icon?
