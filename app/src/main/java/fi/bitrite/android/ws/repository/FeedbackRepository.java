@@ -44,7 +44,7 @@ public class FeedbackRepository {
     }
 
     public Completable saveForRecipient(int recipientId, @NonNull List<Feedback> feedbacks) {
-        return getAppFeedbackRepository().save(recipientId, feedbacks);
+        return getAppFeedbackRepository().saveRx(recipientId, feedbacks);
     }
 
     public Completable giveFeedback(

@@ -191,8 +191,7 @@ public class MessageRepository extends Repository<MessageThread> {
                     thread.participantIds, messages, new Date());
 
             // Saves the thread in the db.
-            save(threadId, thread)
-                    .blockingAwait(); // TODO(saemy): Remove blocking.
+            save(threadId, thread);
 
             // We persisted the message. This is enough for success. We eventually post it to the
             // server.
@@ -249,8 +248,9 @@ public class MessageRepository extends Repository<MessageThread> {
                     new Pushable<>(isRead, false), thread.participantIds,
                     newMessages, thread.lastUpdated);
 
-            save(thread.id, thread)
-                    .concatWith(setRemoteThreadReadStatus(threadId, isRead))
+            save(thread.id, thread);
+
+            setRemoteThreadReadStatus(threadId, isRead)
                     .subscribe(emitter::onComplete, emitter::onError);
         });
     }
@@ -268,8 +268,8 @@ public class MessageRepository extends Repository<MessageThread> {
                         return;
                     }
                     thread = thread.cloneForReadStatus(new Pushable<>(isRead, true));
-                    save(thread.id, thread)
-                            .subscribe(emitter::onComplete, emitter::onError);
+                    save(thread.id, thread);
+                    emitter.onComplete();
                 }));
     }
 
@@ -377,10 +377,10 @@ public class MessageRepository extends Repository<MessageThread> {
                     }
 
                     final MessageThread theFinalNewThread = newThread;
-                    return save(newThread.id, newThread)
-                            .toObservable()
-                            .map(o -> new LoadResult<>(LoadResult.Source.NETWORK,
-                                    theFinalNewThread));
+                    save(newThread.id, newThread);
+
+                    return Observable.just(new LoadResult<>(
+                            LoadResult.Source.NETWORK, theFinalNewThread));
                 });
     }
 
@@ -526,7 +526,7 @@ public class MessageRepository extends Repository<MessageThread> {
                         // We mark the temporary db message as pushed.
                         Message newMessage = message.cloneForIsPushed(true);
                         Collections.replaceAll(thread.messages, message, newMessage);
-                        mMessageDao.saveMessage(newMessage);
+                        save(thread.id, thread);
 
                         mSyncingMessages.remove(syncingKey);
 

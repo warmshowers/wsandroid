@@ -20,19 +20,22 @@ public abstract class Repository<T> {
             BehaviorSubject.create();
     private final ConcurrentMap<Integer, CacheEntry> mCache = new ConcurrentHashMap<>();
 
-    Completable save(int id, @NonNull T data) {
+    void save(int id, @NonNull T data) {
+        CacheEntry newCacheEntry = new CacheEntry();
+
+        CacheEntry cacheEntry = mCache.putIfAbsent(id, newCacheEntry);
+        if (cacheEntry == null) {
+            cacheEntry = newCacheEntry;
+        }
+
+        cacheEntry.data.onNext(Resource.success(data));
+
+        saveInDb(id, data);
+    }
+    Completable saveRx(int id, @NonNull T data) {
         // Does the save in the background.
         return Completable.create(emitter -> {
-            CacheEntry newCacheEntry = new CacheEntry();
-
-            CacheEntry cacheEntry = mCache.putIfAbsent(id, newCacheEntry);
-            if (cacheEntry == null) {
-                cacheEntry = newCacheEntry;
-            }
-
-            cacheEntry.data.onNext(Resource.success(data));
-
-            saveInDb(id, data);
+            save(id, data);
             emitter.onComplete();
         }).subscribeOn(Schedulers.io());
     }

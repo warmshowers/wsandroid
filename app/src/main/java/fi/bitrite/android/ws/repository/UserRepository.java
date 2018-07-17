@@ -53,7 +53,7 @@ public class UserRepository {
     }
 
     public Completable save(@NonNull User user) {
-        return getAppUserRepository().save(user.id, user);
+        return getAppUserRepository().saveRx(user.id, user);
     }
 
     public Observable<List<Integer>> searchByKeyword(String keyword) {
