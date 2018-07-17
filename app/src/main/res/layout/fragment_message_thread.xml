@@ -30,13 +30,16 @@
             android:id="@+id/thread_edt_new_message"
             style="@style/WsInputText"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:background="@android:color/white"
             android:hint="@string/message_new_hint"
-            android:inputType="text|textMultiLine|textCapSentences|textAutoCorrect" />
+            android:inputType="text|textMultiLine|textCapSentences|textAutoCorrect"
+            android:maxLines="6"
+            android:minLines="1"
+            android:padding="12dp"
+            android:scrollbars="vertical" />
 
         <ImageButton
             android:id="@+id/all_btn_submit"
