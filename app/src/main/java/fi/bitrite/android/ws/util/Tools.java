@@ -61,6 +61,9 @@ public class Tools {
     }
 
     static public GeoPoint locationToLatLng(Location location) {
+        if (location == null) {
+            return null;
+        }
         return new GeoPoint(location.getLatitude(), location.getLongitude());
     }
     static public Location latLngToLocation(IGeoPoint latLng) {

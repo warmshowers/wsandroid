@@ -6,12 +6,15 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -24,11 +27,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.common.collect.Lists;
 
 import org.osmdroid.api.IGeoPoint;
@@ -51,8 +49,11 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import butterknife.BindColor;
+import butterknife.BindDrawable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
@@ -67,6 +68,7 @@ import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.UserMarker;
 import fi.bitrite.android.ws.ui.util.UserMarkerClusterer;
+import fi.bitrite.android.ws.util.LocationManager;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.Completable;
@@ -83,7 +85,13 @@ public class MapFragment extends BaseFragment {
     @Inject FavoriteRepository mFavoriteRepository;
     @Inject SettingsRepository mSettingsRepository;
 
+    @BindColor(R.color.primaryColor) int mColorPrimary;
+    @BindColor(R.color.primaryWhite) int mColorPrimaryWhite;
+    @BindColor(R.color.primaryButtonDisable) int mColorPrimaryButtonDisable;
+    @BindDrawable(R.drawable.ic_my_location_white_24dp) Drawable mIcMyLocationWhite;
+    @BindDrawable(R.drawable.ic_my_location_grey600_24dp) Drawable mIcMyLocationGrey;
     @BindView(R.id.map) MapView mMap;
+    @BindView(R.id.map_btn_goto_current_location) FloatingActionButton mBtnGotoCurrentLocation;
     private IMapController mMapController;
 
     private Unbinder mUnbinder;
@@ -114,24 +122,10 @@ public class MapFragment extends BaseFragment {
     private int mLastPositionType;
     private ZoomedLocation mLastPosition;
     private ZoomedLocation mOsmdroidBug1055_positionBeingSet;
-    private FusedLocationProviderClient mFusedLocationClient;
+    private final LocationManager mLocationManager = new LocationManager();
+
+    private boolean mHasEnabledLocationProviders;
     private Location mLastDeviceLocation;
-    private final LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            if (locationResult == null) {
-                return;
-            }
-
-            mLastDeviceLocation = locationResult.getLastLocation();
-            // FIXME(saemy): Clear cluster info window cache as the distance to this distance is not
-            //               re-calculated.
-
-            // As we know more location details, we do (another) initial map move. This does not
-            // affect the current location, if we already moved to a more detailed location.
-            doInitialMapMove();
-        }
-    };
 
     public static MapFragment create() {
         MapFragment mapFragment = new MapFragment();
@@ -151,9 +145,6 @@ public class MapFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
-
 
         UserMarkerClusterer.MarkerFactory singleLocationMarkerFactory =
                 new UserMarkerClusterer.MarkerFactory(
@@ -235,21 +226,37 @@ public class MapFragment extends BaseFragment {
         // Register the settings change listener. That does an initial call to the handler.
         mSettingsRepository.registerOnChangeListener(mOnSettingsChangeListener);
 
-        LocationRequest locationRequest = new LocationRequest()
-                .setInterval(60000)
-                .setFastestInterval(60000)
-                .setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        mFusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, null);
-
         // Adds a button to navigate to the current GPS position.
         if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             requestPermissions(new String[]{ Manifest.permission.ACCESS_FINE_LOCATION }, 0);
+        } else {
+            startLocationManager();
         }
+
+        getResumePauseDisposable().add(mLocationManager.getHasEnabledProviders()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(hasEnabledProviders -> {
+                    mHasEnabledLocationProviders = hasEnabledProviders;
+                    setGotoCurrentLocationStatus();
+                }));
+        getResumePauseDisposable().add(mLocationManager.getBestLocation()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(location -> {
+                    mLastDeviceLocation = location;
+                    // FIXME(saemy): Clear cluster info window cache as the distance to this distance is not
+                    //               re-calculated.
+
+                    setGotoCurrentLocationStatus();
+
+                    // As we know more location details, we do (another) initial map move. This does not
+                    // affect the current location, if we already moved to a more detailed location.
+                    doInitialMapMove();
+                }));
     }
 
     @Override
     public void onPause() {
-        mFusedLocationClient.removeLocationUpdates(mLocationCallback);
+        mLocationManager.stop();
         mSettingsRepository.unregisterOnChangeListener(mOnSettingsChangeListener);
         mMap.onPause();
 
@@ -291,6 +298,43 @@ public class MapFragment extends BaseFragment {
         overlay.enableFollowLocation();
         overlay.setOptionsMenuEnabled(true);
         mMap.getOverlays().add(overlay);
+
+        startLocationManager();
+    }
+
+    private void startLocationManager() {
+        mLocationManager.start((android.location.LocationManager) getActivity().getSystemService(
+                Context.LOCATION_SERVICE));
+    }
+
+    @OnClick(R.id.map_btn_goto_current_location)
+    void onGotoCurrentLocationClicked() {
+        if (mLastDeviceLocation == null) {
+            Toast.makeText(getContext(), R.string.unknown_location, Toast.LENGTH_SHORT)
+                    .show();
+        } else {
+            moveMapToLocation(
+                    Tools.locationToLatLng(mLastDeviceLocation), 14, POSITION_PRIORITY_FORCED);
+        }
+    }
+    private void setGotoCurrentLocationStatus() {
+        mBtnGotoCurrentLocation.setEnabled(mLastDeviceLocation != null
+                                           || mHasEnabledLocationProviders);
+
+        int fillColor;
+        Drawable icon;
+        if (mLastDeviceLocation != null) {
+            icon = mIcMyLocationWhite;
+            fillColor = mColorPrimary;
+        } else if (mHasEnabledLocationProviders) {
+            icon = mIcMyLocationGrey;
+            fillColor = mColorPrimaryWhite;
+        } else {
+            icon = mIcMyLocationWhite;
+            fillColor = mColorPrimaryButtonDisable;
+        }
+        mBtnGotoCurrentLocation.setImageDrawable(icon);
+        mBtnGotoCurrentLocation.setBackgroundTintList(ColorStateList.valueOf(fillColor));
     }
 
     /**
@@ -302,7 +346,7 @@ public class MapFragment extends BaseFragment {
             return;
         }
 
-        if (mLastPositionType < positionPriority) {
+        if (mLastPositionType < positionPriority || positionPriority == POSITION_PRIORITY_FORCED) {
             mLastPositionType = positionPriority;
 
             if (zoom < 0) {

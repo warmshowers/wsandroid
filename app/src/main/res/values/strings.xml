@@ -246,4 +246,6 @@
     <string name="menu_goto_profiles">Show profiles</string>
 
     <string name="enabled">Enabled</string>
+
+    <string name="unknown_location">Position not yet known</string>
 </resources>

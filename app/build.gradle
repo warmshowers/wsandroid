@@ -52,7 +52,6 @@ dependencies {
     implementation "com.android.support:support-v4:$supportLibVersion"
     implementation "com.github.MKergall:osmbonuspack:$osmbonuspackVersion"
     implementation "com.google.android.gms:play-services-analytics:$playServicesVersion"
-    implementation "com.google.android.gms:play-services-location:$playServicesVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation "com.google.dagger:dagger-android:$daggerVersion"

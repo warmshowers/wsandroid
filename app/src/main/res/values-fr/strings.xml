@@ -229,4 +229,6 @@
     <string name="messages_reload_failed">Erreur lors de l\'obtention de messages.</string>
     <string name="message_thread_create_failed">Erreur lors de la création d’une nouvelle conversation.</string>
     <string name="feedback_error_sending">L’envoi du commentaire a échoué.</string>
+
+    <string name="unknown_location">Position inconnue</string>
 </resources>

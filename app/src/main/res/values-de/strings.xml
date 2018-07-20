@@ -237,4 +237,6 @@
     <string name="content_description_notification_count">Anzahl Meldungen</string>
     <string name="content_description_members_marker_map">Mitglieder</string>
     <string name="content_description_member_marker_map">Mitglied</string>
+
+    <string name="unknown_location">Position noch nicht bekannt</string>
 </resources>
