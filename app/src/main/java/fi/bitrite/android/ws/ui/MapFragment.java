@@ -27,8 +27,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.collect.Lists;
-
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.clustering.StaticCluster;
@@ -46,6 +44,7 @@ import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -494,7 +493,7 @@ public class MapFragment extends BaseFragment {
             marker.setAnchor(UserMarker.ANCHOR_CENTER, UserMarker.ANCHOR_BOTTOM);
             marker.setIcon(getResources().getDrawable(R.drawable.map_markers_single));
             marker.setOnMarkerClickListener((m, mapView) -> {
-                new MultiUserSelectDialog().show(Lists.newArrayList(user));
+                new MultiUserSelectDialog().show(new ArrayList<>(Collections.singletonList(user)));
                 return true;
             });
             mMarkerClusterer.add(marker);
