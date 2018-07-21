@@ -2,8 +2,6 @@ package fi.bitrite.android.ws;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
-import android.support.multidex.MultiDex;
 
 import javax.inject.Inject;
 
@@ -35,11 +33,5 @@ public abstract class BaseWSAndroidApplication extends Application implements Ha
     @Override
     public DispatchingAndroidInjector<Activity> activityInjector() {
         return mDispatchingAndroidInjector;
-    }
-
-    @Override
-    protected void attachBaseContext(Context context) {
-        super.attachBaseContext(context);
-        MultiDex.install(this);
     }
 }
