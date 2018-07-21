@@ -5,7 +5,7 @@
 
     <!-- The apps Analytics Tracking Id -->
     <!-- TODO: Figure out how to use the strings version of this -->
-    <string name="ga_trackingId">UA-13228014-2</string>
+    <string name="ga_trackingId">@string/ga_trackingId</string>
 
     <!-- Percentage of events to include in reports -->
     <string name="ga_sampleFrequency">100.0</string>

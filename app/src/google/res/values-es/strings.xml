@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefs_ga_collect_stats_title">Enviar estadísticas anónimas</string>
+    <string name="prefs_ga_collect_stats_summary_on">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
+    <string name="prefs_ga_collect_stats_summary_off">Enviar estadísticas a Google Analytics ayuda a los desarrolladores a entender el uso de la aplicación y a mejorarla, pero puedes desinscribirte.</string>
+</resources>

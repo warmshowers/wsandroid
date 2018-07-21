@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefs_ga_collect_stats_title">Anonyme Benutzungsstatistiken senden</string>
+    <string name="prefs_ga_collect_stats_summary_on">Nutzungsstatistiken werden gelegentlich an Google Analytics gesendet, um den Entwickelnden die Verbesserung der App zu erleichtern</string>
+    <string name="prefs_ga_collect_stats_summary_off">Gerade werden keine Statistiken zur Verbesserung der App an Google Analytics versandt</string>
+</resources>

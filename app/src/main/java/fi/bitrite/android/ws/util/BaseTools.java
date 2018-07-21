@@ -19,22 +19,18 @@ import android.text.format.DateUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.Locale;
 
 import fi.bitrite.android.ws.BuildConfig;
-import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.repository.SettingsRepository;
 
 /**
  * General simple tools, mostly public methods.
  */
-public class Tools {
+public class BaseTools {
 
     // Convert text ("About me" == Comments from user data) to form to add to TextView
     public static Spanned siteHtmlToHtml(String text) {
@@ -95,19 +91,6 @@ public class Tools {
         }
 
         return isConnected;
-    }
-
-    // Send a report to Google Analytics about  category/action
-    static public void gaReportException(Context context, String category, String action) {
-
-        Tracker exceptionTracker = ((WSAndroidApplication) context.getApplicationContext())
-                .getTracker(WSAndroidApplication.TrackerName.APP_TRACKER);
-
-        exceptionTracker.send(new HitBuilders.EventBuilder()
-                .setCategory(category)
-                .setAction(action)
-                .build()
-        );
     }
 
     /*

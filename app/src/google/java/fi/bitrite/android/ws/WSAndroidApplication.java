@@ -1,11 +1,5 @@
 package fi.bitrite.android.ws;
 
-import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
-import android.preference.PreferenceManager;
-import android.support.multidex.MultiDex;
-
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
@@ -13,23 +7,14 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
-import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasActivityInjector;
-import fi.bitrite.android.ws.di.AppComponent;
 import fi.bitrite.android.ws.di.AppInjector;
+import fi.bitrite.android.ws.repository.SettingsRepository;
 
-public class WSAndroidApplication extends Application implements HasActivityInjector {
+public class WSAndroidApplication extends BaseWSAndroidApplication {
 
-    public static final String TAG = "WSAndroidApplication";
-    private static AppInjector mAppInjector;
-
-    @Inject DispatchingAndroidInjector<Activity> mDispatchingAndroidInjector;
+    @Inject SettingsRepository mSettingsRepository;
 
     private final HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
-
-    public static AppComponent getAppComponent() {
-        return mAppInjector.getAppComponent();
-    }
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
         String PROPERTY_ID = getString(R.string.ga_property_id);
@@ -53,26 +38,14 @@ public class WSAndroidApplication extends Application implements HasActivityInje
         // Set automatic activity reports, per http://stackoverflow.com/a/24983778/215713
         GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
         analytics.enableAutoActivityReports(this);
-
-        boolean gaOptOut = !PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean("ga_collect_stats", true);
-        analytics.setAppOptOut(gaOptOut);
-
-        mAppInjector = AppInjector.create(this);
-
-        // Injected variables are available from this point.
+        analytics.setAppOptOut(!mSettingsRepository.canCollectStats());
     }
 
     @Override
-    public DispatchingAndroidInjector<Activity> activityInjector() {
-        return mDispatchingAndroidInjector;
+    protected AppInjector inject() {
+        return AppInjector.create(this);
     }
 
-    @Override
-    protected void attachBaseContext(Context context) {
-        super.attachBaseContext(context);
-        MultiDex.install(this);
-    }
 
     // Google Analytics Support
     public enum TrackerName {

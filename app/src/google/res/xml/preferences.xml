@@ -10,11 +10,6 @@
         android:summary="@string/prefs_distance_unit_summary"
         android:title="@string/prefs_distance_unit_title" />
 
-    <ListPreference
-        android:key="@string/prefs_tile_source_key"
-        android:summary="@string/prefs_tile_source_summary"
-        android:title="@string/prefs_tile_source_title" />
-
     <fi.bitrite.android.ws.ui.preference.RefreshIntervalPreference
         android:defaultValue="@integer/prefs_message_refresh_interval_min_default"
         android:dialogMessage="@string/prefs_message_refresh_interval_min_dialog_message"
@@ -22,4 +17,10 @@
         android:key="@string/prefs_message_refresh_interval_min_key"
         android:title="@string/prefs_message_refresh_interval_min_title" />
 
+    <SwitchPreference
+        android:defaultValue="@bool/prefs_ga_collect_stats_default"
+        android:key="@string/prefs_ga_collect_stats_key"
+        android:summaryOff="@string/prefs_ga_collect_stats_summary_off"
+        android:summaryOn="@string/prefs_ga_collect_stats_summary_on"
+        android:title="@string/prefs_ga_collect_stats_title" />
 </PreferenceScreen>

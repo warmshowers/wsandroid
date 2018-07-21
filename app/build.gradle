@@ -15,65 +15,6 @@ repositories {
 //    }
 //}
 
-ext {
-    assertjVersion = '3.9.0'
-    butterknifeVersion = '8.8.1'
-    constraintLayoutVersion = '1.1.2'
-    daggerVersion = '2.13'
-    gsonVersion = '2.8.1'
-    guavaVersion = '20.0'
-    jsonVersion = '20170516'
-    junitVersion = '4.12'
-    materialDialogsVersion = '0.9.6.0' // Depends on the android support lib. Their version must match ours.
-    multidexVersion = '1.0.3'
-    osmbonuspackVersion = '6.5.1'
-    osmdroidVersion = '6.0.1'
-    picassoVersion = '2.5.2'
-    playServicesVersion = '11.6.2'
-    retrofitVersion = '2.3.0'
-    robolectricVersion = '3.7'
-    rxAndroidVersion = '2.0.1'
-    rxJavaVersion = '2.1.7'
-    supportLibVersion = '27.0.1'
-}
-
-dependencies {
-    annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
-    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion" // https://github.com/afollestad/material-dialogs
-    implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
-    implementation "com.android.support:appcompat-v7:$supportLibVersion"
-    implementation "com.android.support:cardview-v7:$supportLibVersion"
-    implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
-    implementation "com.android.support:design:$supportLibVersion"
-    implementation "com.android.support:multidex:$multidexVersion"
-    implementation "com.android.support:preference-v14:$supportLibVersion"
-    implementation "com.android.support:support-v4:$supportLibVersion"
-    implementation "com.github.MKergall:osmbonuspack:$osmbonuspackVersion"
-    implementation "com.google.android.gms:play-services-analytics:$playServicesVersion"
-    implementation "com.google.code.gson:gson:$gsonVersion"
-    implementation "com.google.dagger:dagger:$daggerVersion"
-    implementation "com.google.dagger:dagger-android:$daggerVersion"
-    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
-    implementation "com.google.guava:guava:$guavaVersion"
-    implementation "com.jakewharton:butterknife:$butterknifeVersion"
-    implementation "com.squareup.picasso:picasso:$picassoVersion"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
-    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
-    implementation "org.osmdroid:osmdroid-android:$osmdroidVersion"
-
-    testImplementation "junit:junit:$junitVersion"
-    testImplementation "org.assertj:assertj-core:$assertjVersion"
-    testImplementation "org.json:json:$jsonVersion"
-    testImplementation "org.robolectric:robolectric:$robolectricVersion"
-    testImplementation "org.robolectric:shadows-multidex:$robolectricVersion"
-    testImplementation "org.robolectric:shadows-supportv4:$robolectricVersion"
-}
-
 android {
     buildToolsVersion "27.0.3" // also update in .travis.yml
 
@@ -116,6 +57,16 @@ android {
         }
     }
 
+    flavorDimensions "mode"
+    productFlavors {
+        floss {
+            dimension "mode"
+        }
+        google {
+            dimension "mode"
+        }
+    }
+
     lintOptions {
         // FIXME(saemy): Make this an error for release builds on travis.
         warning 'MissingTranslation'
@@ -154,4 +105,64 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+}
+
+ext {
+    assertjVersion = '3.9.0'
+    butterknifeVersion = '8.8.1'
+    constraintLayoutVersion = '1.1.2'
+    daggerVersion = '2.13'
+    gsonVersion = '2.8.1'
+    guavaVersion = '20.0'
+    jsonVersion = '20170516'
+    junitVersion = '4.12'
+    materialDialogsVersion = '0.9.6.0' // Depends on the android support lib. Their version must match ours.
+    multidexVersion = '1.0.3'
+    osmbonuspackVersion = '6.5.1'
+    osmdroidVersion = '6.0.1'
+    picassoVersion = '2.5.2'
+    playServicesVersion = '11.6.2'
+    retrofitVersion = '2.3.0'
+    robolectricVersion = '3.7'
+    rxAndroidVersion = '2.0.1'
+    rxJavaVersion = '2.1.7'
+    supportLibVersion = '27.0.1'
+}
+
+dependencies {
+    annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion" // https://github.com/afollestad/material-dialogs
+    implementation "com.afollestad.material-dialogs:commons:$materialDialogsVersion"
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    implementation "com.android.support:cardview-v7:$supportLibVersion"
+    implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
+    implementation "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support:multidex:$multidexVersion"
+    implementation "com.android.support:preference-v14:$supportLibVersion"
+    implementation "com.android.support:support-v4:$supportLibVersion"
+    implementation "com.github.MKergall:osmbonuspack:$osmbonuspackVersion"
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "com.google.dagger:dagger:$daggerVersion"
+    implementation "com.google.dagger:dagger-android:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    implementation "com.jakewharton:butterknife:$butterknifeVersion"
+    implementation "com.squareup.picasso:picasso:$picassoVersion"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
+    implementation "org.osmdroid:osmdroid-android:$osmdroidVersion"
+
+    googleImplementation "com.google.android.gms:play-services-analytics:$playServicesVersion"
+
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
+    testImplementation "org.json:json:$jsonVersion"
+    testImplementation "org.robolectric:robolectric:$robolectricVersion"
+    testImplementation "org.robolectric:shadows-multidex:$robolectricVersion"
+    testImplementation "org.robolectric:shadows-supportv4:$robolectricVersion"
 }
