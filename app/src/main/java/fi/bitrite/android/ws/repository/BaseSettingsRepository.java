@@ -8,20 +8,16 @@ import android.text.TextUtils;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
-import javax.inject.Inject;
-
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.di.AppScope;
 import fi.bitrite.android.ws.model.ZoomedLocation;
 
-@AppScope
-public class SettingsRepository {
+public abstract class BaseSettingsRepository {
     public enum DistanceUnit {
         KILOMETER,
         MILES,
     }
 
-    private final SharedPreferences mSharedPreferences;
+    final SharedPreferences mSharedPreferences;
 
     private final static String KEY_MAP_LAST_LOCATION = "map_last_location";
     private final static String KEYSUFFIX_LOCATION_LATITUDE = "_latitude";
@@ -31,13 +27,11 @@ public class SettingsRepository {
     private final String mKeyDistanceUnit;
     private final String mKeyTileSource;
     private final String mKeyMessageRefreshInterval;
-    private final String mKeyGaCollectStats;
     private final String mKeyDevSimulateNoNetwork;
 
     private final String mDefaultDistanceUnit;
     private final String mDefaultTileSource = TileSourceFactory.DEFAULT_TILE_SOURCE.name();
     private final int mDefaultMessageRefreshInterval;
-    private final boolean mDefaultGaCollectStats;
     private final boolean mDefaultDevSimulateNoNetwork;
 
     private final float mDefaultMapLocationLatitude;
@@ -51,21 +45,18 @@ public class SettingsRepository {
     private final String mDistanceUnitKilometerLong;
     private final String mDistanceUnitMilesLong;
 
-    @Inject
-    SettingsRepository(Context context) {
+    BaseSettingsRepository(Context context) {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         final Resources res = context.getResources();
         mKeyDistanceUnit = res.getString(R.string.prefs_distance_unit_key);
         mKeyTileSource = res.getString(R.string.prefs_tile_source_key);
         mKeyMessageRefreshInterval = res.getString(R.string.prefs_message_refresh_interval_min_key);
-        mKeyGaCollectStats = res.getString(R.string.prefs_ga_collect_stats_key);
         mKeyDevSimulateNoNetwork = res.getString(R.string.prefs_dev_simulate_no_network_key);
 
         mDefaultDistanceUnit = res.getString(R.string.prefs_distance_unit_default);
         mDefaultMessageRefreshInterval =
                 res.getInteger(R.integer.prefs_message_refresh_interval_min_default);
-        mDefaultGaCollectStats = res.getBoolean(R.bool.prefs_ga_collect_stats_default);
         mDefaultDevSimulateNoNetwork = res.getBoolean(R.bool.prefs_dev_simulate_no_network_default);
 
         mDefaultMapLocationLatitude =
@@ -153,10 +144,6 @@ public class SettingsRepository {
                 mKeyMessageRefreshInterval, Integer.toString(mDefaultMessageRefreshInterval)));
     }
 
-    public boolean canCollectStats() {
-        return mSharedPreferences.getBoolean(mKeyGaCollectStats, mDefaultGaCollectStats);
-    }
-
     public boolean isDevSimulateNoNetwork() {
         return mSharedPreferences.getBoolean(
                 mKeyDevSimulateNoNetwork, mDefaultDevSimulateNoNetwork);
@@ -180,9 +167,6 @@ public class SettingsRepository {
     }
     public String getMessageRefreshIntervalKey() {
         return mKeyMessageRefreshInterval;
-    }
-    public String getCanCollectStatsKey() {
-        return mKeyGaCollectStats;
     }
     public String getDevSimulateNoNetworkKey() {
         return mKeyDevSimulateNoNetwork;
