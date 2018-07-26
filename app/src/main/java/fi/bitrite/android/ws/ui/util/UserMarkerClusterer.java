@@ -6,9 +6,11 @@ import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -57,7 +59,7 @@ public class UserMarkerClusterer extends RadiusMarkerClusterer {
                 ? mSingleLocationMarkerFactory
                 : mMultiLocationMarkerFactory;
         Marker marker = markerFactory.createMarker(
-                mapView, cluster.getPosition(), Integer.toString(cluster.getSize()));
+                mapView, cluster.getPosition(), cluster.getSize(), !isSingleLocationCluster);
 
         marker.setOnMarkerClickListener((m, mv) ->
                 mOnClusterClickListener != null
@@ -70,6 +72,8 @@ public class UserMarkerClusterer extends RadiusMarkerClusterer {
     }
 
     public static class MarkerFactory {
+        private static final int[] BUCKETS = {10, 20, 50, 100, 200, 500, 1000};
+
         private float mAnchorH = Marker.ANCHOR_CENTER;
         private float mAnchorV = Marker.ANCHOR_CENTER;
         private float mTextAnchorH = Marker.ANCHOR_CENTER;
@@ -98,19 +102,65 @@ public class UserMarkerClusterer extends RadiusMarkerClusterer {
             mTextPaddingY = paddingY;
         }
 
-        Marker createMarker(MapView mapView, GeoPoint position, String text) {
+        Marker createMarker(MapView mapView, GeoPoint position, int clusterSize, boolean useBuckets) {
             Marker marker = new Marker(mapView);
             marker.setPosition(position);
             marker.setInfoWindow(null);
             marker.setAnchor(mAnchorH, mAnchorV);
 
-            Drawable textDrawable = new TextDrawable(mapView.getContext(), text);
-            Drawable[] layers = { mIconDrawable, textDrawable };
+            String iconText;
+            Drawable iconDrawable;
+            if (useBuckets) {
+                int bucket = getBucket(clusterSize);
+                iconDrawable = mIconDrawable.getConstantState().newDrawable().mutate();
+                iconDrawable.setColorFilter(getClusterColor(bucket), PorterDuff.Mode.SRC);
+                iconText = getClusterText(bucket);
+            } else {
+                iconText = Integer.toString(clusterSize);
+                iconDrawable = mIconDrawable;
+            }
+            Drawable textDrawable = new TextDrawable(mapView.getContext(), iconText);
+            Drawable[] layers = { iconDrawable, textDrawable };
             marker.setIcon(new LayerDrawable(layers));
             return marker;
         }
 
+        /**
+         * Gets the "bucket" for a particular cluster. By default, uses the number of points within
+         * the cluster, bucketed to some set points.
+         */
+        private int getBucket(int size) {
+            if (size <= BUCKETS[0]) {
+                return size;
+            }
+            for (int i = 0; i < BUCKETS.length - 1; ++i) {
+                if (size < BUCKETS[i + 1]) {
+                    return BUCKETS[i];
+                }
+            }
+            return BUCKETS[BUCKETS.length - 1];
+        }
+
+        @ColorInt
+        private int getClusterColor(int clusterSize) {
+            final float hueRange = 220;
+            final float sizeRange = 300;
+            final float size = Math.min(clusterSize, sizeRange);
+            final float hue =
+                    (sizeRange - size)*(sizeRange - size) / (sizeRange*sizeRange) * hueRange;
+            return Color.HSVToColor(new float[]{ hue, 1f, .6f });
+        }
+
+        private String getClusterText(int bucket) {
+            if (bucket < BUCKETS[0]) {
+                return String.valueOf(bucket);
+            }
+            return String.valueOf(bucket) + "+";
+        }
+
         private class TextDrawable extends Drawable {
+            private static final int TEXT_PADDING = 32;
+
             private final String mText;
 
             private final Paint mPaint;
@@ -142,12 +192,16 @@ public class UserMarkerClusterer extends RadiusMarkerClusterer {
 
             @Override
             public int getIntrinsicWidth() {
-                return mTextBounds.width();
+                return getIntrinsicSize();
             }
             @Override
             public int getIntrinsicHeight() {
-                return mTextBounds.height();
+                return getIntrinsicSize();
             }
+            private int getIntrinsicSize() {
+                return Math.max(mTextBounds.width(), mTextBounds.height()) + TEXT_PADDING;
+            }
+
             @Override
             public void setAlpha(int alpha) {
             }
