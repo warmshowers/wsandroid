@@ -9,7 +9,8 @@ import java.util.Set;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class LocationManager {
-    private static final int TWO_MINUTES = 1000 * 60 * 2;
+    private static final int MIN_TIME_BETWEEN_LOCATION_UPDATES_MS = 1000 * 20; // 20s
+    private static final int TWO_MINUTES_MS = 1000 * 60 * 2;
 
     private android.location.LocationManager mAndroidLocationManager;
 
@@ -39,7 +40,7 @@ public class LocationManager {
     private void startProvider(String provider) {
         updateLocationIfBetter(mAndroidLocationManager.getLastKnownLocation(provider));
         mAndroidLocationManager.requestLocationUpdates(
-                provider, TWO_MINUTES, 0, mLocationListener);
+                provider, MIN_TIME_BETWEEN_LOCATION_UPDATES_MS, 0, mLocationListener);
         boolean isEnabled = mAndroidLocationManager.isProviderEnabled(provider);
         if (isEnabled) {
             mLocationListener.onProviderEnabled(provider);
@@ -98,8 +99,8 @@ public class LocationManager {
 
         // Check whether the new location fix is newer or older
         long timeDelta = location.getTime() - currentBestLocation.getTime();
-        boolean isSignificantlyNewer = timeDelta > TWO_MINUTES;
-        boolean isSignificantlyOlder = timeDelta < -TWO_MINUTES;
+        boolean isSignificantlyNewer = timeDelta > TWO_MINUTES_MS;
+        boolean isSignificantlyOlder = timeDelta < -TWO_MINUTES_MS;
         boolean isNewer = timeDelta > 0;
 
         // If it's been more than two minutes since the current location, use the new location
