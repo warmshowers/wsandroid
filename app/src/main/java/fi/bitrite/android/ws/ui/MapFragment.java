@@ -40,7 +40,8 @@ import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer;
+import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.BehaviorSubject;
 
 public class MapFragment extends BaseFragment {
     private static final String KEY_MAP_TARGET_LAT_LNG = "map_target_lat_lng";
@@ -125,7 +127,8 @@ public class MapFragment extends BaseFragment {
     private final LocationManager mLocationManager = new LocationManager();
 
     private boolean mHasEnabledLocationProviders;
-    private Location mLastDeviceLocation;
+    private final BehaviorSubject<Location> mLastDeviceLocation = BehaviorSubject.create();
+    private MyLocationNewOverlay mDeviceLocationOverlay;
 
     public static MapFragment create() {
         MapFragment mapFragment = new MapFragment();
@@ -242,7 +245,7 @@ public class MapFragment extends BaseFragment {
         getResumePauseDisposable().add(mLocationManager.getBestLocation()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(location -> {
-                    mLastDeviceLocation = location;
+                    mLastDeviceLocation.onNext(location);
                     // FIXME(saemy): Clear cluster info window cache as the distance to this distance is not
                     //               re-calculated.
 
@@ -291,13 +294,13 @@ public class MapFragment extends BaseFragment {
         }
     }
     private void handleAccessFineLocationGranted() {
-        MyLocationNewOverlay overlay =
-                new MyLocationNewOverlay(new GpsMyLocationProvider(getContext()), mMap);
-        overlay.enableMyLocation();
-        overlay.setDrawAccuracyEnabled(true);
-        overlay.enableFollowLocation();
-        overlay.setOptionsMenuEnabled(true);
-        mMap.getOverlays().add(overlay);
+        mDeviceLocationOverlay = new MyLocationNewOverlay(mLocationProvider, mMap);
+        mDeviceLocationOverlay.enableMyLocation();
+        mDeviceLocationOverlay.setDrawAccuracyEnabled(true);
+        mDeviceLocationOverlay.getEnableAutoStop(); // Stop following location on map move by user.
+        mDeviceLocationOverlay.disableFollowLocation(); // Initially do not follow the current location.
+        mDeviceLocationOverlay.setOptionsMenuEnabled(true);
+        mMap.getOverlays().add(mDeviceLocationOverlay);
 
         startLocationManager();
     }
@@ -309,21 +312,23 @@ public class MapFragment extends BaseFragment {
 
     @OnClick(R.id.map_btn_goto_current_location)
     void onGotoCurrentLocationClicked() {
-        if (mLastDeviceLocation == null) {
+        mDeviceLocationOverlay.enableFollowLocation(); // Follow the current location.
+        if (mLastDeviceLocation.getValue() == null) {
             Toast.makeText(getContext(), R.string.unknown_location, Toast.LENGTH_SHORT)
                     .show();
         } else {
-            moveMapToLocation(
-                    Tools.locationToLatLng(mLastDeviceLocation), 14, POSITION_PRIORITY_FORCED);
+            double zoom = Math.max(13, Math.min(17, mMap.getZoomLevelDouble())); // zoom \in [13,17]
+            moveMapToLocation(Tools.locationToLatLng(mLastDeviceLocation.getValue()), zoom,
+                    POSITION_PRIORITY_FORCED);
         }
     }
     private void setGotoCurrentLocationStatus() {
-        mBtnGotoCurrentLocation.setEnabled(mLastDeviceLocation != null
+        mBtnGotoCurrentLocation.setEnabled(mLastDeviceLocation.getValue() != null
                                            || mHasEnabledLocationProviders);
 
         int fillColor;
         Drawable icon;
-        if (mLastDeviceLocation != null) {
+        if (mLastDeviceLocation.getValue() != null) {
             icon = mIcMyLocationWhite;
             fillColor = mColorPrimary;
         } else if (mHasEnabledLocationProviders) {
@@ -378,8 +383,8 @@ public class MapFragment extends BaseFragment {
             return;
         }
 
-        if (mLastDeviceLocation != null) {
-            moveMapToLocation(Tools.locationToLatLng(mLastDeviceLocation), showUserZoom,
+        if (mLastDeviceLocation.getValue() != null) {
+            moveMapToLocation(Tools.locationToLatLng(mLastDeviceLocation.getValue()), showUserZoom,
                     POSITION_PRIORITY_LAST_DEVICE_POSITION);
             return;
         }
@@ -525,9 +530,9 @@ public class MapFragment extends BaseFragment {
      * Returns the distance to given point or -1 if the current position is unknown.
      */
     private double calculateDistanceTo(IGeoPoint latLng) {
-        return mLastDeviceLocation != null
+        return mLastDeviceLocation.getValue() != null
                 ? Tools.calculateDistanceBetween(
-                Tools.latLngToLocation(latLng), mLastDeviceLocation, mDistanceUnit)
+                Tools.latLngToLocation(latLng), mLastDeviceLocation.getValue(), mDistanceUnit)
                 : -1;
     }
     private void sendMessage(@StringRes final int messageId) {
@@ -600,5 +605,31 @@ public class MapFragment extends BaseFragment {
                     .show();
         }
     }
+
+    private IMyLocationProvider mLocationProvider = new IMyLocationProvider() {
+        private Disposable mDisposable;
+
+        @Override
+        public boolean startLocationProvider(IMyLocationConsumer locationConsumer) {
+            if (locationConsumer == null) {
+                return false;
+            }
+            mDisposable = mLastDeviceLocation
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(location -> locationConsumer.onLocationChanged(location, this));
+            return true;
+        }
+        @Override
+        public void stopLocationProvider() {
+            mDisposable.dispose();
+        }
+        @Override
+        public Location getLastKnownLocation() {
+            return mLastDeviceLocation.getValue();
+        }
+        @Override
+        public void destroy() {
+        }
+    };
 }
 
