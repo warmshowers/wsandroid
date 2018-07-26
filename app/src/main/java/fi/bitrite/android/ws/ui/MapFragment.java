@@ -36,6 +36,7 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -190,6 +191,12 @@ public class MapFragment extends BaseFragment {
         mMap.setVerticalMapRepetitionEnabled(false);
         mMap.setBuiltInZoomControls(false);
         mMap.setMultiTouchControls(true);
+
+        String tileSourceStr = mSettingsRepository.getTileSourceStr();
+        if (!TileSourceFactory.containsTileSource(tileSourceStr)) {
+            tileSourceStr = TileSourceFactory.DEFAULT_TILE_SOURCE.name();
+        }
+        mMap.setTileSource(TileSourceFactory.getTileSource(tileSourceStr));
 
         if (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             handleAccessFineLocationGranted();
