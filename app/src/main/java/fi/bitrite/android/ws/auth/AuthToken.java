@@ -23,4 +23,11 @@ public class AuthToken {
 
         return new AuthToken(name, id);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return other != null
+               && other instanceof AuthToken
+               && toString().equals(other.toString());
+    }
 }

@@ -35,7 +35,6 @@ import dagger.android.AndroidInjection;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.di.account.AccountComponent;
 import fi.bitrite.android.ws.di.account.AccountComponentManager;
@@ -368,7 +367,6 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private final AccountHelper mAccountHelper = new AccountHelper();
     public class AccountHelper {
         @Inject Account mAccount;
-        @Inject AuthenticationController mAuthenticationController;
         @Inject DispatchingAndroidInjector<Fragment> mDispatchingAndroidInjector;
         @Inject LoggedInUserHelper mLoggedInUserHelper;
         @Inject MessageRepository mMessageRepository;
