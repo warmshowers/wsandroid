@@ -29,6 +29,7 @@ import io.reactivex.Maybe;
 import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
@@ -224,7 +225,7 @@ public class AccountManager {
                 try {
                     Bundle result = tokenFuture.getResult();
 
-                    handleIntentInBundle(result)
+                    Disposable unused = handleIntentInBundle(result)
                             .subscribe(result2 -> {
                                 String authTokenStr = result2.getString(
                                         android.accounts.AccountManager.KEY_AUTHTOKEN);

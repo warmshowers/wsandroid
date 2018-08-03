@@ -13,8 +13,7 @@ import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.auth.AuthData;
 import fi.bitrite.android.ws.auth.AuthToken;
 import fi.bitrite.android.ws.di.account.AccountScope;
-import io.reactivex.Completable;
-import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 import retrofit2.Response;
 
@@ -26,21 +25,22 @@ import retrofit2.Response;
 @AccountScope
 public class AuthenticationController {
     private final AccountManager mAccountManager;
+    private final Account mAccount;
     private final WarmshowersAccountWebservice mWebservice;
 
     private final BehaviorSubject<AuthData> mAuthData = BehaviorSubject.create();
 
-    private Account mCurrentAccount;
-
     @Inject
     public AuthenticationController(AccountManager accountManager,
+                                    Account account,
                                     HeaderInterceptor headerInterceptor,
                                     ResponseInterceptor responseInterceptor,
                                     WarmshowersAccountWebservice warmshowersWebservice) {
         mAccountManager = accountManager;
+        mAccount = account;
         mWebservice = warmshowersWebservice;
 
-        mAuthData.filter(AuthData::isValid)
+        Disposable unused = mAuthData.filter(AuthData::isValid)
                 .subscribe(authData -> {
                     headerInterceptor.setSessionCookie(authData.authToken.name,
                             authData.authToken.id);
@@ -50,29 +50,19 @@ public class AuthenticationController {
         // We handle auth-related API call errors.
         responseInterceptor.setHandler(mResponseInterceptorHandler);
 
-        mAccountManager.getCurrentAccount()
-                .flatMap(account -> {
-                    mCurrentAccount = account.data;
-                    return account.isNonNull()
-                            ? initAuthData(mCurrentAccount).toObservable()
-                            : Observable.just(account);
-                })
-                .subscribe(a -> {}, e -> {
-                    // TODO(saemy): Exception handling...
-                    mAuthData.onNext(new AuthData());
-                });
+        initAuthData();
     }
 
-    private Completable initAuthData(Account account) {
-        mCurrentAccount = account;
-        return Completable.create(emitter -> mAccountManager
+    private void initAuthData() {
+        Disposable unused = mAccountManager
                 // We disallow the user to change their account (the username field is disabled).
-                .getAuthToken(account)
+                .getAuthToken(mAccount)
                 .subscribe(authToken -> {
-                    String csrfToken = mAccountManager.getCsrfToken(account);
-                    mAuthData.onNext(new AuthData(account, authToken, csrfToken));
-                    emitter.onComplete();
-                }, emitter::onError));
+                    String csrfToken = mAccountManager.getCsrfToken(mAccount);
+                    mAuthData.onNext(new AuthData(mAccount, authToken, csrfToken));
+                }, e -> {
+                    // TODO(saemy): Error handling.
+                });
     }
 
     public BehaviorSubject<AuthData> getAuthData() {
@@ -129,23 +119,23 @@ public class AuthenticationController {
          * @return True, iff a new auth token was obtained.
          */
         @Override
-        public boolean handleAuthTokenExpiration() {
-            final AuthData authData = mAuthData.getValue();
+        public boolean handleAuthTokenExpiration(AuthToken oldAuthToken) {
+            AuthData authData = mAuthData.getValue();
+            if (authData != null && authData.authToken.equals(oldAuthToken)) {
+                synchronized (this) {
+                    authData = mAuthData.getValue();
+                    if (authData != null && authData.authToken.equals(oldAuthToken)) {
+                        // Invalidates the current auth token s.t. it gets updated.
+                        mAccountManager.invalidateAuthToken(authData.authToken);
+                        mAuthData.onNext(new AuthData());
 
-            // Invalidates the current auth token s.t. it gets updated.
-            mAccountManager.invalidateAuthToken(authData.authToken);
-
-            // Resets the account container. This reloads the account which in turn requires the
-            // auth token to be updated.
-            // Waits for the auth token to show up.
-            try {
-                initAuthData(authData.account)
-                        .blockingAwait(); // FIXME(saemy): Remove blocking.
-
-                return true;
-            } catch (Throwable e) {
-                return false;
+                        // Triggers another requests for the auth token.
+                        initAuthData();
+                    }
+                }
             }
+
+            return waitForAuthToken();
         }
 
         /**
@@ -157,7 +147,7 @@ public class AuthenticationController {
          */
         @Override
         public boolean waitForAuthToken() {
-            if (mAuthData.hasValue()) {
+            if (mAuthData.hasValue() && mAuthData.getValue().isValid()) {
                 return true;
             }
 
@@ -168,9 +158,9 @@ public class AuthenticationController {
             AuthData authData;
             do {
                 authData = it.next();
-            } while (authData == null && --maxIterations > 0);
+            } while (!authData.isValid() && --maxIterations > 0);
 
-            return true;
+            return authData.isValid();
         }
     };
 }
