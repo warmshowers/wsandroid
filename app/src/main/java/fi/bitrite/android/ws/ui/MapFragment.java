@@ -69,7 +69,6 @@ import fi.bitrite.android.ws.repository.BaseSettingsRepository;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.SettingsRepository;
-import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.UserMarker;
@@ -77,6 +76,7 @@ import fi.bitrite.android.ws.ui.util.UserMarkerClusterer;
 import fi.bitrite.android.ws.util.LocationManager;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import fi.bitrite.android.ws.util.Tools;
+import fi.bitrite.android.ws.util.UserRegionalCache;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -88,7 +88,7 @@ public class MapFragment extends BaseFragment {
     private static final String TAG = "MapFragment";
 
     @Inject LoggedInUserHelper mLoggedInUserHelper;
-    @Inject UserRepository mUserRepository;
+    @Inject UserRegionalCache mUserRegionalCache;
     @Inject FavoriteRepository mFavoriteRepository;
     @Inject SettingsRepository mSettingsRepository;
 
@@ -171,8 +171,6 @@ public class MapFragment extends BaseFragment {
         mMarkerClusterer.setSingleLocationMarkerFactory(singleLocationMarkerFactory);
         mMarkerClusterer.setMultiLocationMarkerFactory(multiLocationMarkerFactory);
         mMarkerClusterer.setOnClusterClickListener(this::onClusterClick);
-
-        loadOfflineUsers();
     }
 
     @Nullable
@@ -239,6 +237,9 @@ public class MapFragment extends BaseFragment {
 
             doInitialMapMove();
         });
+
+        loadOfflineUsers();
+        loadCachedUsers();
 
         return view;
     }
@@ -475,7 +476,7 @@ public class MapFragment extends BaseFragment {
         } else {
             mProgressLoadingUsers.setVisibility(View.VISIBLE);
             getResumePauseDisposable().add(
-                    mUserRepository.searchByLocation(mMap.getBoundingBox())
+                    mUserRegionalCache.searchByLocation(mMap.getBoundingBox())
                             .observeOn(AndroidSchedulers.mainThread())
                             .doFinally(() -> mProgressLoadingUsers.setVisibility(View.GONE))
                             .filter(searchResult -> !searchResult.isEmpty())
@@ -499,19 +500,22 @@ public class MapFragment extends BaseFragment {
         mLoadOfflineUserDisposable = Observable.merge(mFavoriteRepository.getFavorites())
                 .filter(Resource::hasData)
                 .map(userResource -> userResource.data)
+                // Users pop up twice as one is the error since we might not be able to load it
+                // from the network.
+                .filter(user -> mOfflineUserIds.add(user.id))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
-                    // Users pop up twice as one is the error since we might not be able to load it
-                    // from the network.
-                    boolean added = mOfflineUserIds.add(user.id);
-                    if (!added) {
-                        return;
-                    }
-
                     addUserToCluster(user);
                     mMarkerClusterer.invalidate();
                 });
         getCreateDestroyDisposable().add(mLoadOfflineUserDisposable);
+    }
+
+    private void loadCachedUsers() {
+        for (UserSearchByLocationResponse.User user : mUserRegionalCache.getAllCached()) {
+            addUserToCluster(user.toSimpleUser());
+        }
+        mMarkerClusterer.invalidate();
     }
 
     private void addUserToCluster(SimpleUser user) {
