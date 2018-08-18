@@ -55,8 +55,10 @@ public class FavoriteUsersFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_favorite_users, container, false);
         ButterKnife.bind(this, view);
 
-        mUserListAdapter = new UserListAdapter(
-                getContext(), UserListAdapter.COMPERATOR_FULLNAME_ASC, null);
+        if (mUserListAdapter == null) {
+            mUserListAdapter = new UserListAdapter(
+                    getContext(), UserListAdapter.COMPERATOR_FULLNAME_ASC, null);
+        }
         mLstUsers.setAdapter(mUserListAdapter);
 
         registerForContextMenu(mLstUsers);

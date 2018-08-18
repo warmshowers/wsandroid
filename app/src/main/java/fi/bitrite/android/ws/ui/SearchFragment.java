@@ -91,8 +91,10 @@ public class SearchFragment extends BaseFragment {
         }
 
         // Initializes the search result list.
-        Decorator decorator = new Decorator(mQuery, mDecoratorForegroundColor);
-        mSearchResultListAdapter = new UserListAdapter(getContext(), mComparator, decorator);
+        if (mSearchResultListAdapter == null) {
+            Decorator decorator = new Decorator(mQuery, mDecoratorForegroundColor);
+            mSearchResultListAdapter = new UserListAdapter(getContext(), mComparator, decorator);
+        }
         mLstSearchResult.setAdapter(mSearchResultListAdapter);
 
         return view;

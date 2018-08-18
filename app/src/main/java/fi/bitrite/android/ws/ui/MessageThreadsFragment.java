@@ -68,7 +68,7 @@ public class MessageThreadsFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         // TODO(saemy): Make reloads more intelligent than just every time we load the fragment.
-  //      Last reloaded?
+        // Last reloaded?
         if (!mDidReload) {
             mDidReload = true;
             reloadThreads();
@@ -76,8 +76,12 @@ public class MessageThreadsFragment extends BaseFragment {
 
         mSwipeRefresh.setOnRefreshListener(this::reloadThreads);
 
-        mThreadListAdapter = new MessageThreadListAdapter(
-                mLoggedInUserHelper, mMessageRepository, getNavigationController(), mUserRepository);
+        // Initializes the message list.
+        if (mThreadListAdapter == null) {
+            mThreadListAdapter = new MessageThreadListAdapter(
+                    mLoggedInUserHelper, mMessageRepository, getNavigationController(),
+                    mUserRepository);
+        }
         mThreadList.setAdapter(mThreadListAdapter);
 
         // Add dividers between message threads in the recycler view.
