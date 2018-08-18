@@ -17,6 +17,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
+import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.WarmshowersWebservice;
 import fi.bitrite.android.ws.api.response.LoginResponse;
@@ -36,7 +37,6 @@ import retrofit2.Response;
 public class AccountManager {
     public final static int UNKNOWN_USER_ID = 0;
 
-    private final static String ACCOUNT_TYPE = "org.warmshowers";
     private final static String AUTH_TOKEN_TYPE = "FULL_ACCESS";
 
     private final static String KEY_USER_ID = "user_id";
@@ -89,7 +89,7 @@ public class AccountManager {
     }
 
     private void handleAccountUpdate() {
-        Account[] newAccounts = mAndroidAccountManager.getAccountsByType(ACCOUNT_TYPE);
+        Account[] newAccounts = mAndroidAccountManager.getAccountsByType(BuildConfig.ACCOUNT_TYPE);
         // Ensure that we do not consider any accounts without an account userId.
         List<Account> newAccountsFiltered = new LinkedList<>();
         for(Account account : newAccounts) {
@@ -184,7 +184,7 @@ public class AccountManager {
 
             // Asks the user to create the new account. This is done by showing the login page.
             mAndroidAccountManager.addAccount(
-                    ACCOUNT_TYPE, AUTH_TOKEN_TYPE, null, options, mMainActivity,
+                    BuildConfig.ACCOUNT_TYPE, AUTH_TOKEN_TYPE, null, options, mMainActivity,
                     accountManagerCallback, null);
         }).toObservable().firstOrError();
     }
@@ -270,7 +270,7 @@ public class AccountManager {
         };
     }
 
-    private void startActivityForResult(Intent intent, MaybeObserver<? super Bundle> observer){
+    private void startActivityForResult(Intent intent, MaybeObserver<? super Bundle> observer) {
         MainActivity mainActivity = (MainActivity) mMainActivity;
         if (mainActivity != null) {
             mainActivity.startActivityForResultRx(intent)
@@ -310,14 +310,15 @@ public class AccountManager {
                     }
                     LoginResponse loginResponse = response.body();
 
-                    Account account = new Account(username, ACCOUNT_TYPE);
+                    Account account = new Account(username, BuildConfig.ACCOUNT_TYPE);
 
                     // (@link AccountManager#addAccountExplicitly} triggers notifications which in
                     // turn try to access e.g. the userId of that account. We therefore synchronize
                     // access to the AccountManager to avoid that race.
                     return executeWithWriteLock(v -> {
                         boolean isExistingAccount =
-                                Arrays.asList(mAndroidAccountManager.getAccountsByType(ACCOUNT_TYPE))
+                                Arrays.asList(mAndroidAccountManager.getAccountsByType(
+                                        BuildConfig.ACCOUNT_TYPE))
                                         .contains(account);
                         if (!isExistingAccount) {
                             // This explicitly does not save any password as it is stored in
@@ -393,13 +394,14 @@ public class AccountManager {
 
     public void invalidateAuthToken(@NonNull AuthToken authToken) {
         executeWithWriteLock(v -> {
-            mAndroidAccountManager.invalidateAuthToken(ACCOUNT_TYPE, authToken.toString());
+            mAndroidAccountManager.invalidateAuthToken(BuildConfig.ACCOUNT_TYPE,
+                    authToken.toString());
             return null;
         });
     }
 
     public void removeAccount(@NonNull String username) {
-        Account account = new Account(username, ACCOUNT_TYPE);
+        Account account = new Account(username, BuildConfig.ACCOUNT_TYPE);
         removeAccount(account);
     }
     public void removeAccount(@NonNull Account account) {

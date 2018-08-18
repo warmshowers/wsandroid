@@ -101,12 +101,18 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+            resValue 'string', 'account_type', 'org.warmshowers.debug'
+            buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers.debug"'
         }
 
         release {
             if (doSignRelease) {
                 signingConfig signingConfigs.release
             }
+            resValue 'string', 'account_type', 'org.warmshowers'
+            buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers"'
         }
     }
 
@@ -124,17 +130,6 @@ android {
         unitTests {
             includeAndroidResources = true
         }
-    }
-
-    sourceSets {
-        // Move the build types to build-types/<type>
-        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
-        // This moves them out of them default location under src/<type>/... which would
-        // conflict with src/ being used by the main source set.
-        // Adding new build types or product flavors should be accompanied
-        // by a similar customization.
-        debug.setRoot('build-types/debug')
-        release.setRoot('build-types/release')
     }
 
     def versionMajor = 2
