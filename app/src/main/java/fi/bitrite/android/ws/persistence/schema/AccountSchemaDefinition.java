@@ -10,7 +10,7 @@ import fi.bitrite.android.ws.persistence.schema.migrations.account.AccountMigrat
 
 @AccountScope
 public class AccountSchemaDefinition extends SchemaDefinition {
-    private final static int VERSION = 2;
+    private final static int VERSION = 3;
 
     @Inject
     AccountSchemaDefinition(AccountMigrations accountMigrations) {
@@ -66,6 +66,16 @@ public class AccountSchemaDefinition extends SchemaDefinition {
                    "user_id INTEGER NOT NULL, " +
 
                    "PRIMARY KEY(thread_id, user_id), " +
+                   "FOREIGN KEY(thread_id) REFERENCES message_thread(id) " +
+                   "  ON UPDATE CASCADE ON DELETE CASCADE " +
+                   ")");
+
+        db.execSQL("DROP TABLE IF EXISTS message_draft");
+        db.execSQL("CREATE TABLE message_draft (" +
+                   "thread_id INTEGER NOT NULL, " +
+                   "body TEXT NOT NULL, " +
+
+                   "PRIMARY KEY(thread_id), " +
                    "FOREIGN KEY(thread_id) REFERENCES message_thread(id) " +
                    "  ON UPDATE CASCADE ON DELETE CASCADE " +
                    ")");

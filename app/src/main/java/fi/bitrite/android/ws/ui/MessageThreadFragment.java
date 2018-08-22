@@ -95,6 +95,8 @@ public class MessageThreadFragment extends BaseFragment {
                     setTitle(thread.subject);
                 }));
 
+        mEdtNewMessage.setText(mMessageRepository.getAndDeleteDraft(mThreadId));
+
         return view;
     }
 
@@ -120,6 +122,16 @@ public class MessageThreadFragment extends BaseFragment {
                         mEdtNewMessage.setText("");
                     }
                 }));
+    }
+
+    @Override
+    public void onDestroyView() {
+        final String newBody = mEdtNewMessage.getText().toString();
+        if (!TextUtils.isEmpty(newBody)) {
+            mMessageRepository.saveDraft(mThreadId, newBody);
+        }
+
+        super.onDestroyView();
     }
 
     @Override

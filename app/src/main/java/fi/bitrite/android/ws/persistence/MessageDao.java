@@ -65,6 +65,17 @@ public class MessageDao extends Dao {
         final static int COL_IDX_USER_ID = 1;
     }
 
+    private static class MessageDraftTable {
+        final static String NAME = "message_draft";
+
+        final static String[] DEFAULT_COLUMNS = {
+                "thread_id", "body",
+        };
+
+        final static int COL_IDX_THREAD_ID = 0;
+        final static int COL_IDX_BODY = 1;
+    }
+
     @Inject
     MessageDao(AccountDatabase db) {
         super(db.getDatabase());
@@ -249,5 +260,30 @@ public class MessageDao extends Dao {
             }
         }
         return messages;
+    }
+
+    public String getAndDeleteDraft(int threadId) {
+        return executeTransactional(db -> {
+            String body = "";
+            try (Cursor cursor = db.query(MessageDraftTable.NAME, MessageDraftTable.DEFAULT_COLUMNS,
+                    "thread_id = ?", int2str(threadId), null, null, null, null)) {
+                if (cursor.moveToFirst()) {
+                    body = cursor.getString(MessageDraftTable.COL_IDX_BODY);
+                    db.delete(MessageDraftTable.NAME, "thread_id = ?", int2str(threadId));
+                }
+            }
+            return body;
+        });
+    }
+
+    public void saveDraft(int threadId, String body) {
+        executeTransactional(db -> {
+            ContentValues cv = new ContentValues();
+            cv.put("thread_id", threadId);
+            cv.put("body", body);
+
+            insertOrUpdate(db, MessageDraftTable.NAME, cv, threadId);
+            return null;
+        });
     }
 }

@@ -547,4 +547,21 @@ public class MessageRepository extends Repository<MessageThread> {
                     });
         });
     }
+
+    ///// Message drafts.
+
+    /**
+     * Gets a stored draft for the given thread id or an empty string. This automatically deletes
+     * that draft in the database.
+     */
+    public String getAndDeleteDraft(int threadId) {
+        return mMessageDao.getAndDeleteDraft(threadId);
+    }
+
+    /**
+     * Saves a draft for a given thread id. Any existing draft for that thread is overwritten.
+     */
+    public void saveDraft(int threadId, String body) {
+        mMessageDao.saveDraft(threadId, body);
+    }
 }
