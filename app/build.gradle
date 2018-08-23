@@ -26,13 +26,13 @@ ext {
     junitVersion = '4.12'
     materialDialogsVersion = '0.9.6.0' // Depends on the android support lib. Their version must match ours.
     multidexVersion = '1.0.3'
-    osmbonuspackVersion = '6.5.1'
-    osmdroidVersion = '6.0.1'
+    osmbonuspackVersion = '6.5.2'
+    osmdroidVersion = '6.0.2'
     picassoVersion = '2.5.2'
     playServicesVersion = '11.6.2'
     retrofitVersion = '2.3.0'
     robolectricVersion = '3.7'
-    rxAndroidVersion = '2.0.1'
+    rxAndroidVersion = '2.0.2'
     rxJavaVersion = '2.1.7'
     supportLibVersion = '27.0.1'
 }
