@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.persistence.schema;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
@@ -7,6 +8,8 @@ import javax.inject.Inject;
 
 import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.persistence.schema.migrations.account.AccountMigrations;
+import fi.bitrite.android.ws.persistence.schema.migrations.app.MigrationTo4;
+import io.reactivex.disposables.Disposable;
 
 @AccountScope
 public class AccountSchemaDefinition extends SchemaDefinition {
@@ -21,13 +24,13 @@ public class AccountSchemaDefinition extends SchemaDefinition {
     void runDbUpgrade(@NonNull SQLiteDatabase db) {
         if (db.getVersion() == 0) {
             createDatabaseFromScratch(db);
+            recoverSavedFavoriteUserIds(db);
+        } else {
+            migrateDatabase(db);
         }
-
-        migrateDatabase(db);
     }
 
-    @Override
-    void createDatabaseFromScratch(@NonNull SQLiteDatabase db) {
+    private void createDatabaseFromScratch(@NonNull SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS favorite_user");
         db.execSQL("CREATE TABLE favorite_user (" +
                    "user_id INTEGER NOT NULL, " +
@@ -79,6 +82,20 @@ public class AccountSchemaDefinition extends SchemaDefinition {
                    "FOREIGN KEY(thread_id) REFERENCES message_thread(id) " +
                    "  ON UPDATE CASCADE ON DELETE CASCADE " +
                    ")");
+    }
+
+    private void recoverSavedFavoriteUserIds(@NonNull SQLiteDatabase db) {
+        Disposable unused = MigrationTo4.savedFavoriteUserIds.subscribe(favoriteUserIds -> {
+            ContentValues cv = new ContentValues();
+            for (Integer userId : favoriteUserIds) {
+                cv.put("user_id", userId);
+                db.insert("favorite_user", null, cv);
+            }
+
+            // Mark the savedFavoriteUserIds as completed s.t. no other account imports the
+            // favorites.
+            MigrationTo4.savedFavoriteUserIds.onComplete();
+        });
     }
 
     @Override

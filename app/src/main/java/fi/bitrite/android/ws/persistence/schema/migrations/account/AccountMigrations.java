@@ -10,7 +10,6 @@ import fi.bitrite.android.ws.persistence.schema.migrations.Migrations;
 
 @AccountScope
 public class AccountMigrations implements Migrations {
-    @Inject MigrationTo1 mMigrationTo1;
     @Inject MigrationTo2 mMigrationTo2;
     @Inject MigrationTo3 mMigrationTo3;
 
@@ -24,7 +23,6 @@ public class AccountMigrations implements Migrations {
     @SuppressWarnings("fallthrough")
     public void upgradeDatabase(@NonNull SQLiteDatabase db) {
         switch (db.getVersion()) {
-            case 0: mMigrationTo1.recoverSavedFavoriteUserIds(db);
             case 1: mMigrationTo2.fixMessageStatus(db);
             case 2: mMigrationTo3.addMessageDraftTable(db);
         }

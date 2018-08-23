@@ -66,7 +66,6 @@ public abstract class SchemaDefinition {
         mMigrations.upgradeDatabase(db);
     }
 
-    abstract void createDatabaseFromScratch(@NonNull SQLiteDatabase db);
     abstract void runDbUpgrade(@NonNull final SQLiteDatabase db);
 
     public abstract int getVersion();

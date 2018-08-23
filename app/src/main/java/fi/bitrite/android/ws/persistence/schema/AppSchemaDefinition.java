@@ -26,8 +26,7 @@ public class AppSchemaDefinition extends SchemaDefinition {
         }
     }
 
-    @Override
-    void createDatabaseFromScratch(@NonNull SQLiteDatabase db) {
+    private void createDatabaseFromScratch(@NonNull SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS user");
         db.execSQL("CREATE TABLE user (" +
                    "id INTEGER NOT NULL, " +
