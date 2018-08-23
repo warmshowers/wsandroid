@@ -493,6 +493,8 @@ public class MapFragment extends BaseFragment {
             marker.setAnchor(UserMarker.ANCHOR_CENTER, UserMarker.ANCHOR_BOTTOM);
             marker.setIcon(getResources().getDrawable(R.drawable.map_markers_single));
             marker.setOnMarkerClickListener((m, mapView) -> {
+                // We need a new ArrayList here, as it gets sorted in {@link UserListAdapter} and
+                // Collections.singletonList() provides a non-mutable list.
                 new MultiUserSelectDialog().show(new ArrayList<>(Collections.singletonList(user)));
                 return true;
             });
