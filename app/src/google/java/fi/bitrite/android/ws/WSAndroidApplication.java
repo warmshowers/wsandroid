@@ -17,7 +17,7 @@ public class WSAndroidApplication extends BaseWSAndroidApplication {
     private final HashMap<TrackerName, Tracker> mTrackers = new HashMap<>();
 
     public synchronized Tracker getTracker(TrackerName trackerId) {
-        String PROPERTY_ID = getString(R.string.ga_property_id);
+        final String TRACKING_ID = getString(R.string.ga_tracking_id);
 
         if (!mTrackers.containsKey(trackerId)) {
 
@@ -26,7 +26,7 @@ public class WSAndroidApplication extends BaseWSAndroidApplication {
                     ? analytics.newTracker(R.xml.app_tracker)
                     : (trackerId == TrackerName.GLOBAL_TRACKER)
                             ? analytics.newTracker(R.xml.global_tracker)
-                            : analytics.newTracker(PROPERTY_ID);
+                            : analytics.newTracker(TRACKING_ID);
             mTrackers.put(trackerId, t);
         }
         return mTrackers.get(trackerId);
