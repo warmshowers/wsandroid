@@ -47,7 +47,6 @@ import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.ui.view.FeedbackTable;
 import fi.bitrite.android.ws.util.GlobalInfo;
-import fi.bitrite.android.ws.util.MaybeNull;
 import fi.bitrite.android.ws.util.ObjectUtils;
 import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.Maybe;
@@ -99,8 +98,7 @@ public class UserFragment extends BaseFragment {
 
     private int mUserId;
 
-    private final BehaviorSubject<MaybeNull<User>> mUser =
-            BehaviorSubject.createDefault(new MaybeNull<>());
+    private final BehaviorSubject<User> mUser = BehaviorSubject.create();
     private final BehaviorSubject<List<Feedback>> mFeedbacks = BehaviorSubject.create();
     private final BehaviorSubject<Boolean> mFavorite = BehaviorSubject.create();
 
@@ -138,7 +136,7 @@ public class UserFragment extends BaseFragment {
         if (!mLastUserInfoLoadResult.hasValue()) {
             loadUserInformation();
         }
-
+        mLayoutDetails.setVisibility(View.GONE);
         return view;
     }
 
@@ -180,11 +178,8 @@ public class UserFragment extends BaseFragment {
         if (isFavorite == mDbFavoriteStatus) {
             return;
         }
-        if (mUser.getValue().isNull()) {
-            return;
-        }
 
-        User user = mUser.getValue().data;
+        User user = mUser.getValue();
         List<Feedback> feedback = mFeedbacks.getValue();
 
         if (isFavorite) {
@@ -211,14 +206,9 @@ public class UserFragment extends BaseFragment {
     }
 
     private void updateUserViewContent() {
-        MaybeNull<User> maybeUser = mUser.getValue();
-        mLayoutDetails.setVisibility(maybeUser.isNonNull() ? View.VISIBLE : View.GONE);
+        mLayoutDetails.setVisibility(View.VISIBLE);
 
-        if (maybeUser.isNull()) {
-            return;
-        }
-
-        final User user = maybeUser.data;
+        final User user = mUser.getValue();
 
         mLblName.setText(user.fullname);
         setTitle(user.fullname);
@@ -356,7 +346,7 @@ public class UserFragment extends BaseFragment {
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(userResource -> {
                             if (userResource.hasData()) {
-                                mUser.onNext(new MaybeNull<>(userResource.data));
+                                mUser.onNext(userResource.data);
                             }
                             if (userResource.isError()) {
                                 result.throwable = userResource.error;
@@ -394,10 +384,7 @@ public class UserFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        User user = mUser.getValue().data;
-        if (user == null) {
-            return super.onOptionsItemSelected(item);
-        }
+        User user = mUser.getValue();
 
         switch (item.getItemId()) {
             case R.id.menuSendMessage:
