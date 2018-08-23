@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefs_ga_collect_stats_summary_on">Envoyer des données statistiques à Google Analytics aide les développeurs à comprendre l\'usage de l\'application et à l\'améliorer, mais vous pouvez désactiver cette option.</string>
+    <string name="prefs_ga_collect_stats_summary_off">Envoyer des données statistiques à Google Analytics aide les développeurs à comprendre l\'usage de l\'application et à l\'améliorer, mais vous pouvez désactiver cette option.</string>
+    <string name="prefs_ga_collect_stats_title">Envoyer des données anonymes</string>
+</resources>
