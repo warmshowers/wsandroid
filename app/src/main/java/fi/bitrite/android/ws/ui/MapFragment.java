@@ -561,7 +561,7 @@ public class MapFragment extends BaseFragment implements
 
     @Override
     protected CharSequence getTitle() {
-        return getString(R.string.app_title);
+        return getString(R.string.app_name);
     }
 
     enum ClusterStatus {none, some, all}

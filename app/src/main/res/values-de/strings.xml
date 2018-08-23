@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Warmshowers</string>
-    <string name="app_title">"Warmshowers</string>
     <string name="app_version">Version %1$s</string>
-    <string name="label">Warmshowers</string>
     <string name="authenticating">Authentifizieren …</string>
     <string name="need_account">Starten der App ohne Warmshowers-Kontodaten nicht möglich</string>
     <string name="authentication_failed">Login fehlgeschlagen. Bitte gib deine Kontodaten erneut ein.</string>

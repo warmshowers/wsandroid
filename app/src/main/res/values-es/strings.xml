@@ -1,9 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Warmshowers</string>
-    <string name="app_title">"Warmshowers"</string>
     <string name="app_version">Versión %1$s</string>
-    <string name="label">Warmshowers</string>
     <string name="authenticating">Autenticando …</string>
     <string name="need_account">No puede ejecutarse sin las credenciales de WarmShowers</string>
     <string name="authentication_failed">Falla de autenticación. Ingresa nuevamente tus credenciales.</string>

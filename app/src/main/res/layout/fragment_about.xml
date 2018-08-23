@@ -27,7 +27,7 @@
             android:layout_marginBottom="10dp"
             android:gravity="center_horizontal"
             android:paddingTop="15dp"
-            android:text="@string/app_title"
+            android:text="@string/app_name"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
