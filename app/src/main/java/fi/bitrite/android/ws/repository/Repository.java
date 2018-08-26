@@ -96,30 +96,21 @@ public abstract class Repository<T> {
                 T data = result.data;
 
                 if (result.isFromDb()) {
-                    // We got the data from the db. We set it as an intermediate and wait until we
-                    // get the truth from the network.
+                    // We got the data from the db.
                     if (data != null) {
                         isInDb.set(true);
-
-                        if (observables.size() == 2) {
-                            // There is an ongoing network load.
-                            Resource<T> currentData = cacheData.getValue();
-                            if (currentData == null || currentData.isSuccess()) {
-                                // The above check avoids to set the loading value in the rare case
-                                // where the network response is received earlier than the one from
-                                // the db.
-                                // TODO(saemy): Can this even happen in Observable.concat?
-                                cacheData.onNext(Resource.loading(data));
-                            }
-                        } else {
-                            // The element does not get refreshed from the network.
-                            cacheData.onNext(Resource.success(data));
-                        }
+                        // If we will receive results from the network call in the future,
+                        // set the data from the db as an intermediate.
+                        Resource<T> res = (observables.size() == 2)
+                                ? Resource.loading(data)
+                                : Resource.success(data);
+                        cacheData.onNext(res);
                     }
                 } else {
                     // We got the data from the network.
                     boolean shouldSave = shouldSaveInDb == ShouldSaveInDb.YES
-                            || (isInDb.get() && shouldSaveInDb == ShouldSaveInDb.IF_ALREADY_IN_DB);
+                                         || (isInDb.get()
+                                             && shouldSaveInDb == ShouldSaveInDb.IF_ALREADY_IN_DB);
                     if (shouldSave) {
                         // We save it to the db.
                         saveInDb(id, result.data);
