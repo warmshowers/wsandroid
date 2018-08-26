@@ -156,10 +156,10 @@ public class UserFragment extends BaseFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(isFavorite -> {
                     saveUserIfFavorite();
-
                     mCkbFavorite.setChecked(isFavorite);
                     mImgFavorite.setColorFilter(isFavorite ? mFavoritedColor : mNonFavoritedColor);
                 }));
+
         getResumePauseDisposable().add(mLastUserInfoLoadResult
                 .filter(result -> !result.isHandled)
                 .observeOn(AndroidSchedulers.mainThread())
