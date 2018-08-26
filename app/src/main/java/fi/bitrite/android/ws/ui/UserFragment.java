@@ -169,6 +169,9 @@ public class UserFragment extends BaseFragment {
                     mDownloadUserInfoProgressDisposable.dispose();
                     if (result.throwable != null) {
                         HttpErrorHelper.showErrorToast(getContext(), result.throwable);
+                        if (mUser.getValue() == null) {
+                            getFragmentManager().popBackStack();
+                        }
                     }
                 }));
     }
