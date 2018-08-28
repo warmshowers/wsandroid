@@ -124,7 +124,7 @@ public class MapFragment extends BaseFragment {
 
     private int mLastPositionType;
     private ZoomedLocation mLastPosition;
-    private ZoomedLocation mOsmdroidBug1055_positionBeingSet;
+    private boolean mOsmdroidBug_suppressCallbacks;
     private final LocationManager mLocationManager = new LocationManager();
 
     private boolean mHasEnabledLocationProviders;
@@ -211,11 +211,17 @@ public class MapFragment extends BaseFragment {
             mMap.addMapListener(new MapListener() {
                 @Override
                 public boolean onScroll(ScrollEvent event) {
+                    if (mOsmdroidBug_suppressCallbacks) {
+                        return false;
+                    }
                     onPositionChange(mMap.getZoomLevelDouble());
                     return true;
                 }
                 @Override
                 public boolean onZoom(ZoomEvent event) {
+                    if (mOsmdroidBug_suppressCallbacks) {
+                        return false;
+                    }
                     onPositionChange(event.getZoomLevel());
                     return true;
                 }
@@ -364,12 +370,12 @@ public class MapFragment extends BaseFragment {
             if (zoom < 0) {
                 zoom = getResources().getInteger(R.integer.prefs_map_location_zoom_default);
             }
-            // FIXME(saemy): This osmdroid code is buggy as mMap.isLayoutOccured() is false and
-            // therefore the center is not correctly returned in the listener to these changes...
-            mOsmdroidBug1055_positionBeingSet = new ZoomedLocation(center, zoom);
+            // FIXME(saemy): osmdroid does not provide a possibility to just move to a center+zoom
+            // which issues the callbacks only once. So we suppress any spurious callback calls.
+            mOsmdroidBug_suppressCallbacks = true;
             mMapController.setZoom(zoom);
+            mOsmdroidBug_suppressCallbacks = false;
             mMapController.setCenter(center);
-            mOsmdroidBug1055_positionBeingSet = null;
         }
     }
     private void doInitialMapMove() {
@@ -412,9 +418,7 @@ public class MapFragment extends BaseFragment {
     private Disposable mDelayedUserFetchDisposable;
     private void onPositionChange(double zoom) {
         IGeoPoint mapCenter = mMap.getMapCenter();
-        mLastPosition = mOsmdroidBug1055_positionBeingSet != null
-                ? mOsmdroidBug1055_positionBeingSet
-                : new ZoomedLocation(mapCenter.getLatitude(), mapCenter.getLongitude(), zoom);
+        mLastPosition = new ZoomedLocation(mapCenter.getLatitude(), mapCenter.getLongitude(), zoom);
 
         // If not connected, we'll switch to offline/starred users mode
         if (!Tools.isNetworkConnected(getContext())) {
