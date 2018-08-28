@@ -491,7 +491,7 @@ public class MapFragment extends BaseFragment {
                         || !existingMarker.getPosition().equals(user.location);
         if (isNew) {
             if (existingMarker != null) {
-                // FIXME(saemy): Remove the old marker.
+                mMarkerClusterer.remove(existingMarker);
             }
 
             UserMarker marker = new UserMarker(getContext(), mMap, user);

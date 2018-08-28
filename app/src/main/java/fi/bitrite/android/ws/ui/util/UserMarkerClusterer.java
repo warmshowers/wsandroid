@@ -47,6 +47,10 @@ public class UserMarkerClusterer extends RadiusMarkerClusterer {
         mMultiLocationMarkerFactory = markerFactory;
     }
 
+    public boolean remove(Marker marker){
+        return mItems.remove(marker);
+    }
+
     @Override
     public Marker buildClusterMarker(StaticCluster cluster, MapView mapView) {
         boolean isSingleLocationCluster = true;
