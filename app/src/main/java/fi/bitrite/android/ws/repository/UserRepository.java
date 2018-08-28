@@ -2,7 +2,7 @@ package fi.bitrite.android.ws.repository;
 
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.maps.model.LatLng;
+import org.osmdroid.util.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,16 +53,16 @@ public class UserRepository {
     }
 
     public Completable save(@NonNull User user) {
-        return getAppUserRepository().saveRx(user.id, user);
+        return getAppUserRepository().save(user);
     }
 
     public Observable<List<Integer>> searchByKeyword(String keyword) {
         return getAppUserRepository().searchByKeyword(keyword);
     }
 
-    public Observable<List<UserSearchByLocationResponse.User>> searchByLocation(LatLng northEast,
-                                                                                LatLng southWest) {
-        return getAppUserRepository().searchByLocation(northEast, southWest);
+    public Observable<List<UserSearchByLocationResponse.User>> searchByLocation(
+            BoundingBox boundingBox) {
+        return getAppUserRepository().searchByLocation(boundingBox);
     }
 
     /**
@@ -81,7 +81,7 @@ public class UserRepository {
      * users.
      */
     @AppScope
-    static class AppUserRepository extends Repository<User> {
+    public static class AppUserRepository extends Repository<User> {
         @Inject UserDao mUserDao;
         WarmshowersAccountWebservice mLastWebservice;
 
@@ -96,6 +96,10 @@ public class UserRepository {
                 users.add(get(userId, shouldSaveInDb));
             }
             return users;
+        }
+
+        public Completable save(@NonNull User user) {
+            return saveRx(user.id, user);
         }
 
         @Override
@@ -151,13 +155,13 @@ public class UserRepository {
                     });
         }
 
-        Observable<List<UserSearchByLocationResponse.User>> searchByLocation(LatLng northEast,
-                                                                             LatLng southWest) {
+        Observable<List<UserSearchByLocationResponse.User>> searchByLocation(
+                BoundingBox boundingBox) {
 
-            final double minLat = southWest.latitude;
-            final double minLon = southWest.longitude;
-            final double maxLat = northEast.latitude;
-            final double maxLon = northEast.longitude;
+            final double minLat = boundingBox.getLatSouth();
+            final double minLon = boundingBox.getLonWest();
+            final double maxLat = boundingBox.getLatNorth();
+            final double maxLon = boundingBox.getLonEast();
             final double centerLat = (minLat + maxLat) / 2.0f;
             final double centerLon = (minLon + maxLon) / 2.0f;
 

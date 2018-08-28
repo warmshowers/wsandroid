@@ -100,6 +100,9 @@
     <string name="distance_unit_kilometers_short">km</string>
     <string name="distance_unit_miles_short">mi</string>
 
+    <string name="prefs_tile_source_title">Kartentyp</string>
+    <string name="prefs_tile_source_summary">%1$s</string>
+
     <string name="prefs_message_refresh_interval_min_title">Aktualisierungsintervall für Nachrichten</string>
     <plurals name="prefs_message_refresh_interval_min_summary">
         <item quantity="one">Jede Minute</item>
@@ -237,4 +240,6 @@
     <string name="content_description_notification_count">Anzahl Meldungen</string>
     <string name="content_description_members_marker_map">Mitglieder</string>
     <string name="content_description_member_marker_map">Mitglied</string>
+
+    <string name="unknown_location">Position noch nicht bekannt</string>
 </resources>

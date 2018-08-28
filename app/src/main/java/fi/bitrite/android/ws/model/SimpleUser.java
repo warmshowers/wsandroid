@@ -2,7 +2,7 @@ package fi.bitrite.android.ws.model;
 
 import android.text.TextUtils;
 
-import com.google.android.gms.maps.model.LatLng;
+import org.osmdroid.api.IGeoPoint;
 
 import java.util.Date;
 
@@ -34,7 +34,7 @@ public class SimpleUser {
     public final String province;
     public final String postalCode;
     public final String countryCode;
-    public final LatLng location;
+    public final IGeoPoint location;
 
     public final boolean isCurrentlyAvailable;
     public final Picture profilePicture;
@@ -43,7 +43,7 @@ public class SimpleUser {
     public final Date lastAccess;
 
     public SimpleUser(int id, String name, String fullname, String street, String city,
-                      String province, String postalCode, String countryCode, LatLng location,
+                      String province, String postalCode, String countryCode, IGeoPoint location,
                       boolean isCurrentlyAvailable, Picture profilePicture, Date created,
                       Date lastAccess) {
         this.id = id;

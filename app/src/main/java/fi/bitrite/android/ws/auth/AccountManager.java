@@ -22,6 +22,7 @@ import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.WarmshowersWebservice;
 import fi.bitrite.android.ws.api.response.LoginResponse;
 import fi.bitrite.android.ws.di.AppScope;
+import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.MainActivity;
 import fi.bitrite.android.ws.util.MaybeNull;
 import io.reactivex.Maybe;
@@ -44,8 +45,9 @@ public class AccountManager {
 
     private final WarmshowersWebservice mGeneralWebservice;
     private final android.accounts.AccountManager mAndroidAccountManager;
-    private final ReentrantReadWriteLock mLock = new ReentrantReadWriteLock();
+    private final UserRepository.AppUserRepository mAppUserRepository;
 
+    private final ReentrantReadWriteLock mLock = new ReentrantReadWriteLock();
     private final BehaviorSubject<Account[]> mAccounts = BehaviorSubject.create();
     private final BehaviorSubject<MaybeNull<Account>> mCurrentAccount = BehaviorSubject.create();
     private final Observable<Integer> mCurrentUserId;
@@ -55,9 +57,11 @@ public class AccountManager {
 
     @Inject
     AccountManager(WarmshowersWebservice generalWebservice,
-                   android.accounts.AccountManager androidAccountManager) {
+                   android.accounts.AccountManager androidAccountManager,
+                   UserRepository.AppUserRepository appUserRepository) {
         mGeneralWebservice = generalWebservice;
         mAndroidAccountManager = androidAccountManager;
+        mAppUserRepository = appUserRepository;
 
         mAndroidAccountManager.addOnAccountsUpdatedListener(
                 accounts_unused -> handleAccountUpdate(), null, false);
@@ -304,6 +308,18 @@ public class AccountManager {
     public Observable<LoginResult> login(String username, String password) {
         return mGeneralWebservice.login(username, password)
                 .subscribeOn(Schedulers.io())
+                .flatMap(response -> {
+                    if (response.isSuccessful()) {
+                        // Stores the account in the repository. With this it is already available
+                        // without the need of any further network accesses.
+                        return mAppUserRepository.save(response.body().user.toUser())
+                                .toSingle(() -> response)
+                                .toObservable();
+
+                    } else {
+                        return Observable.just(response);
+                    }
+                })
                 .map(response -> {
                     if (!response.isSuccessful()) {
                         return new LoginResult(response);

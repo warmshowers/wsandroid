@@ -6,13 +6,13 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
 import javax.inject.Inject;
 
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.di.AppScope;
+import fi.bitrite.android.ws.model.ZoomedLocation;
 
 @AppScope
 public class SettingsRepository {
@@ -29,11 +29,13 @@ public class SettingsRepository {
     private final static String KEYSUFFIX_LOCATION_ZOOM = "_zoom";
 
     private final String mKeyDistanceUnit;
+    private final String mKeyTileSource;
     private final String mKeyMessageRefreshInterval;
     private final String mKeyGaCollectStats;
     private final String mKeyDevSimulateNoNetwork;
 
     private final String mDefaultDistanceUnit;
+    private final String mDefaultTileSource = TileSourceFactory.DEFAULT_TILE_SOURCE.name();
     private final int mDefaultMessageRefreshInterval;
     private final boolean mDefaultGaCollectStats;
     private final boolean mDefaultDevSimulateNoNetwork;
@@ -55,6 +57,7 @@ public class SettingsRepository {
 
         final Resources res = context.getResources();
         mKeyDistanceUnit = res.getString(R.string.prefs_distance_unit_key);
+        mKeyTileSource = res.getString(R.string.prefs_tile_source_key);
         mKeyMessageRefreshInterval = res.getString(R.string.prefs_message_refresh_interval_min_key);
         mKeyGaCollectStats = res.getString(R.string.prefs_ga_collect_stats_key);
         mKeyDevSimulateNoNetwork = res.getString(R.string.prefs_dev_simulate_no_network_key);
@@ -113,17 +116,21 @@ public class SettingsRepository {
         }
     }
 
-    private void setLocation(String key, CameraPosition position) {
+    public String getTileSourceStr() {
+        return mSharedPreferences.getString(mKeyTileSource, mDefaultTileSource);
+    }
+
+    private void setLocation(String key, ZoomedLocation position) {
         mSharedPreferences
                 .edit()
-                .putFloat(key + KEYSUFFIX_LOCATION_LATITUDE, (float) position.target.latitude)
-                .putFloat(key + KEYSUFFIX_LOCATION_LONGITUDE, (float) position.target.longitude)
-                .putFloat(key + KEYSUFFIX_LOCATION_ZOOM, position.zoom)
+                .putFloat(key + KEYSUFFIX_LOCATION_LATITUDE, (float) position.location.getLatitude())
+                .putFloat(key + KEYSUFFIX_LOCATION_LONGITUDE, (float) position.location.getLongitude())
+                .putFloat(key + KEYSUFFIX_LOCATION_ZOOM, (float) position.zoom)
                 .apply();
 
     }
 
-    public CameraPosition getLastMapLocation(boolean defaultIfNone) {
+    public ZoomedLocation getLastMapLocation(boolean defaultIfNone) {
         if (!mSharedPreferences.contains(KEY_MAP_LAST_LOCATION + KEYSUFFIX_LOCATION_LATITUDE)
             && !defaultIfNone) {
             return null;
@@ -135,9 +142,9 @@ public class SettingsRepository {
         float zoom = mSharedPreferences.getFloat(
                 KEY_MAP_LAST_LOCATION + KEYSUFFIX_LOCATION_ZOOM, mDefaultMapLocationZoom);
 
-        return new CameraPosition(new LatLng(latitude, longitude), zoom, 0, 0);
+        return new ZoomedLocation(latitude, longitude, zoom);
     }
-    public void setLastMapLocation(CameraPosition position) {
+    public void setLastMapLocation(ZoomedLocation position) {
         setLocation(KEY_MAP_LAST_LOCATION, position);
     }
 

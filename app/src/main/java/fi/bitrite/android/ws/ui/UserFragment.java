@@ -324,8 +324,8 @@ public class UserFragment extends BaseFragment {
      * Send a geo intent so that we can view the user on external maps application
      */
     public void sendGeoIntent(@NonNull User user) {
-        String lat = Double.toString(user.location.latitude);
-        String lng = Double.toString(user.location.longitude);
+        String lat = Double.toString(user.location.getLatitude());
+        String lng = Double.toString(user.location.getLongitude());
         String query = Uri.encode(lat + "," + lng + "(" + user.fullname + ")");
         Uri uri = Uri.parse("geo:" + lat + "," + lng + "?q=" + query);
 

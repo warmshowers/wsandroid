@@ -104,6 +104,10 @@
     <string name="distance_unit_kilometers_short_raw" translatable="false">km</string>
     <string name="distance_unit_miles_short_raw" translatable="false">mi</string>
 
+    <string name="prefs_tile_source_key" translatable="false">tile_source</string>
+    <string name="prefs_tile_source_title">Map type</string>
+    <string name="prefs_tile_source_summary">%1$s</string>
+
     <string name="prefs_message_refresh_interval_min_key" translatable="false">message_reload_interval_min</string>
     <string name="prefs_message_refresh_interval_min_title">Messages poll frequency</string>
     <plurals name="prefs_message_refresh_interval_min_summary">
@@ -246,4 +250,6 @@
     <string name="menu_goto_profiles">Show profiles</string>
 
     <string name="enabled">Enabled</string>
+
+    <string name="unknown_location">Position not yet known</string>
 </resources>
