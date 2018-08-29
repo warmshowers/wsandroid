@@ -19,23 +19,22 @@ If you find something within the code you’d like to see changed for performanc
 * More translations (see [#234](https://github.com/warmshowers/wsandroid/issues/234))
   * We currently support English, German, French, and Spanish
   * Currently, we do not use Transifex, POEditor, or other services but as soon as someone would like to help, we’re going to look into it
-  
+
 * Tests of any kind—UI tests, unit tests, integration tests, you name it
 
 ## OSS libraries in use (aka, Thank You!)
 
 Without these libraries, our lives would be a whole lot more difficult. So thank you all for developing and maintaining those fine pieces of software!
 
-* [Dagger2](https://github.com/google/dagger)
+* [AssertJ](https://github.com/joel-costigliola/assertj-core)
 * [ButterKnife](https://github.com/JakeWharton/butterknife)
-* [Material Dialogs](https://github.com/afollestad/material-dialogs)
+* [Dagger2](https://github.com/google/dagger)
 * [Gson](https://github.com/google/gson)
-* [Guava](https://github.com/google/guava)
-* [Android Maps Utils](https://github.com/googlemaps/android-maps-utils)
+* [JUnit](https://github.com/junit-team/junit4)
+* [Osmdroid](https://osmdroid.github.io/osmdroid)
+* [OSMBonusPack](https://github.com/MKergall/osmbonuspack)
 * [Picasso](https://github.com/square/picasso)
 * [Retrofit 2](https://github.com/square/retrofit)
-* [RxJava 2](https://github.com/ReactiveX/RxJava)
-* [RxAndroid](https://github.com/ReactiveX/RxAndroid)
-* [AssertJ](https://github.com/joel-costigliola/assertj-core)
 * [Robolectric](https://github.com/robolectric/robolectric)
-* [JUnit](https://github.com/junit-team/junit4)
+* [RxAndroid](https://github.com/ReactiveX/RxAndroid)
+* [RxJava 2](https://github.com/ReactiveX/RxJava)
