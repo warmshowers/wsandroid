@@ -29,14 +29,15 @@ public class LoggedInUserHelper {
 
         userRepository.get(mUserId, Repository.ShouldSaveInDb.YES)
                 .subscribe(resource -> {
-                    User user = resource.data;
-                    if (user == null) {
+                    if (resource.isError() && resource.error != null) {
                         Log.e(LoggedInUserHelper.class.getName(),
                                 resource.error.getMessage());
-                        return;
                     }
 
-                    mLoggedInUser.onNext(new MaybeNull<>(user));
+                    User user = resource.data;
+                    if (user != null && !user.equals(mLoggedInUser.getValue().data)) {
+                        mLoggedInUser.onNext(new MaybeNull<>(user));
+                    }
                 }); // FIXME(saemy): Error handling.
     }
 

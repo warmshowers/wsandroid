@@ -342,12 +342,11 @@ public class UserFragment extends BaseFragment {
 
         // Structure for decoupling the message send callback that is processed upon arrival from
         // its handler that can only be executed when the app is in the foreground. Callback.
-        AtomicInteger numFinished = new AtomicInteger(0);
         UserInfoLoadResult result = new UserInfoLoadResult();
-        Disposable unused = Maybe.merge(
+        Disposable unused = Maybe.mergeDelayError(
                 mUserRepository.get(mUserId)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .map(userResource -> {
+                        .filter(userResource -> {
                             if (userResource.hasData()) {
                                 mUser.onNext(userResource.data);
                             }
@@ -356,11 +355,10 @@ public class UserFragment extends BaseFragment {
                             }
                             return !userResource.isLoading();
                         })
-                        .filter(finished -> finished)
                         .firstElement(),
                 mFeedbackRepository.getForRecipient(mUserId)
                         .observeOn(AndroidSchedulers.mainThread())
-                        .map(feedbacksResource -> {
+                        .filter(feedbacksResource -> {
                             if (feedbacksResource.hasData()) {
                                 mFeedbacks.onNext(feedbacksResource.data);
                             }
@@ -369,14 +367,13 @@ public class UserFragment extends BaseFragment {
                             }
                             return !feedbacksResource.isLoading();
                         })
-                        .filter(finished -> finished)
                         .firstElement())
-                .filter(finished -> numFinished.incrementAndGet() >= 2)
-                .firstElement()
-                .subscribe(finished -> mLastUserInfoLoadResult.onNext(result), throwable -> {
+                .doOnComplete(() -> mLastUserInfoLoadResult.onNext(result))
+                .doOnError(throwable -> {
                     result.throwable = throwable;
                     mLastUserInfoLoadResult.onNext(result);
-                });
+                })
+                .subscribe();
     }
 
     @Override
