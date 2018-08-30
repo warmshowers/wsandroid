@@ -264,7 +264,7 @@ public class LoadedArea {
                                     // | D l---+-l
                                     // |   : C |
                                     // q-------q
-                                    addRect(nextRet, new BoundingBox(ln, qe, qs, lw)); // C
+                                    addRect(nextRet, new BoundingBox(ls, qe, qs, lw)); // C
                                     addRect(nextRet, new BoundingBox(qn, lw, qs, qw)); // D
                                     break;
                             }

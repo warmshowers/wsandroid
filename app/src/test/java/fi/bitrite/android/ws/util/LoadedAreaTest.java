@@ -242,6 +242,7 @@ public class LoadedAreaTest {
                 ));
     }
 
+    @Test
     public void topLeftCornerOverlappingTest() {
         // l-----l
         // | q---+---q
@@ -260,6 +261,7 @@ public class LoadedAreaTest {
                 ));
     }
 
+    @Test
     public void topRightCornerOverlappingTest() {
         //     l-----l
         // q---+---q |
@@ -278,6 +280,7 @@ public class LoadedAreaTest {
                 ));
     }
 
+    @Test
     public void bottomRightCornerOverlappingTest() {
         // q-------q
         // |   : A |
@@ -296,6 +299,7 @@ public class LoadedAreaTest {
                 ));
     }
 
+    @Test
     public void bottomLeftCornerOverlappingTest() {
         //   q-------q
         //   | A :   |
