@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -82,6 +83,7 @@ public abstract class Repository<T> {
             Observable<LoadResult<T>> lfn = loadFromNetwork(id);
             if (lfn != null) {
                 cacheEntry.freshness = Freshness.REFRESHING;
+                cacheEntry.data.onNext(Resource.loading(resource == null ? null : resource.data));
                 observables.add(lfn.subscribeOn(Schedulers.io()));
             }
         }
@@ -92,7 +94,7 @@ public abstract class Repository<T> {
             final AtomicBoolean isInDb = new AtomicBoolean(false);
 
             // We listen for the results.
-            Observable.concat(observables).subscribe(result -> {
+            Disposable unused = Observable.concat(observables).subscribe(result -> {
                 T data = result.data;
 
                 if (result.isFromDb()) {
