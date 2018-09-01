@@ -13,6 +13,8 @@ import android.text.TextUtils;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -83,32 +85,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
     }
 
     private void setSummary() {
+        // distance units
         findPreference(mKeyDistanceUnit).setSummary(getString(
                 R.string.prefs_distance_unit_summary,
                 mSettingsRepository.getDistanceUnitLong()));
 
-        // Sets the available map sources.
-        final ListPreference tileSourcePreference = (ListPreference) findPreference(mTileMapSource);
-        tileSourcePreference.setSummary(getString(
-                R.string.prefs_tile_source_summary,
-                mSettingsRepository.getTileSourceStr()));
-        final List<String> tileSourceNames = new LinkedList<>();
-        for (ITileSource tileSource : TileSourceFactory.getTileSources()) {
-            if(tileSource == TileSourceFactory.PUBLIC_TRANSPORT
-               || tileSource == TileSourceFactory.ChartbundleENRL
-               || tileSource == TileSourceFactory.ChartbundleENRH
-               || tileSource == TileSourceFactory.ChartbundleWAC) {
-                // Blacklisted tile sources.
-                continue;
-            }
-            tileSourceNames.add(tileSource.name());
-        }
-        CharSequence[] tileSourceNamesCS =
-                tileSourceNames.toArray(new CharSequence[tileSourceNames.size()]);
-        tileSourcePreference.setEntries(tileSourceNamesCS);
-        tileSourcePreference.setEntryValues(tileSourceNamesCS);
-        tileSourcePreference.setDefaultValue(TileSourceFactory.DEFAULT_TILE_SOURCE.name());
+        // map sources
+        setAvailableMapSources((ListPreference) findPreference(mTileMapSource));
 
+        // message refresh interval
         Resources res = getResources();
         int intervalMin = mSettingsRepository.getMessageRefreshIntervalMin();
         findPreference(mKeyMessageRefreshInterval).setSummary(intervalMin > 0
@@ -121,9 +106,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
     public void onDisplayPreferenceDialog(Preference preference) {
         DialogFragment dialogFragment = null;
         if (TextUtils.equals(preference.getKey(), mKeyMessageRefreshInterval)) {
-            dialogFragment = RefreshIntervalPreferenceDialogFragment
-                    .create(preference.getKey());
-
+            dialogFragment = RefreshIntervalPreferenceDialogFragment.create(preference.getKey());
         }
 
         if (dialogFragment != null) {
@@ -132,5 +115,53 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
         } else {
             super.onDisplayPreferenceDialog(preference);
         }
+    }
+
+    private void setAvailableMapSources(final ListPreference tileSourcePreference) {
+        tileSourcePreference.setSummary(getString(
+                R.string.prefs_tile_source_summary,
+                mSettingsRepository.getTileSourceStr()));
+        final List<String> tileSourceNames = new LinkedList<>();
+        final List<String> tileSourceValues = new LinkedList<>();
+        final List<ITileSource> tileSources = TileSourceFactory.getTileSources();
+
+        // Blacklist unused sources
+        List<ITileSource> blacklisted_sources = Arrays.asList(
+                TileSourceFactory.PUBLIC_TRANSPORT,  // overlay only
+                TileSourceFactory.ChartbundleENRL,   // Chartbundle US Aviation Charts
+                TileSourceFactory.ChartbundleENRH,
+                TileSourceFactory.ChartbundleWAC);
+        tileSources.removeAll(blacklisted_sources);
+
+        // Some maps are only available in the US
+        List<ITileSource> usOnlySources = Arrays.asList(
+                TileSourceFactory.USGS_SAT,
+                TileSourceFactory.USGS_TOPO);
+        tileSources.removeAll(usOnlySources);
+
+        Collections.sort(tileSources, (o1, o2) -> o1.name().compareTo(o2.name()));
+
+        // Add regular map sources first
+        for (ITileSource tileSource : tileSources) {
+            tileSourceNames.add(tileSource.name());
+            tileSourceValues.add(tileSource.name());
+        }
+
+        // Add us-only sources
+        for (ITileSource tileSource : usOnlySources) {
+            // Shorten name and add a notice: "USGS National Map Topo" -> "USGS Topo (US only)"
+            String name = tileSource.name().replace("National Map ", "");
+            tileSourceNames.add(getString(R.string.prefs_tile_source_us_only, name));
+            tileSourceValues.add(tileSource.name());
+        }
+
+        CharSequence[] tileSourceNamesCS =
+                tileSourceNames.toArray(new CharSequence[tileSourceNames.size()]);
+        CharSequence[] tileSourceValuesCS =
+                tileSourceValues.toArray(new CharSequence[tileSourceValues.size()]);
+
+        tileSourcePreference.setEntries(tileSourceNamesCS);
+        tileSourcePreference.setEntryValues(tileSourceValuesCS);
+        tileSourcePreference.setDefaultValue(TileSourceFactory.DEFAULT_TILE_SOURCE.name());
     }
 }

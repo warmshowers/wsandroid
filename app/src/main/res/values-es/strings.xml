@@ -94,6 +94,8 @@
 
     <string name="prefs_distance_unit_title">Unidad de distancia</string>
     <string name="prefs_distance_unit_summary">Denunciar distancias en %1$s</string>
+    <string name="prefs_tile_source_title">Estilo de mapa</string>
+    <string name="prefs_tile_source_us_only">%1$s (sólo EE.UU.)</string>
     <string name="distance_unit_kilometers_long">Kilómetros</string>
     <string name="distance_unit_miles_long">Millas</string>
     <string name="distance_unit_kilometers_short">km</string>
