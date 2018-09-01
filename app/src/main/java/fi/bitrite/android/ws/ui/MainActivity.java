@@ -316,13 +316,13 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private void onNavigationItemClicked(NavigationItem navigationItem) {
         final String itemTag = navigationItem.tag;
 
+        // Closes the drawer.
+        mMainLayout.closeDrawers();
+
         // No action if this is the current fragment.
         if (itemTag.equals(mNavigationController.getTopLevelNavigationItemTag().getValue())) {
             return;
         }
-
-        // Closes the drawer.
-        mMainLayout.closeDrawers();
 
         // Shows the fragment.
         mNavigationController.navigateToTag(itemTag);
