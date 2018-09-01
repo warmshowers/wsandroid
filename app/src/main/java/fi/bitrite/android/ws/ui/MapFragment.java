@@ -19,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +40,7 @@ import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.ScaleBarOverlay;
 import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer;
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -61,6 +63,7 @@ import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.model.ZoomedLocation;
+import fi.bitrite.android.ws.repository.BaseSettingsRepository;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.SettingsRepository;
@@ -128,7 +131,9 @@ public class MapFragment extends BaseFragment {
 
     private boolean mHasEnabledLocationProviders;
     private final BehaviorSubject<Location> mLastDeviceLocation = BehaviorSubject.create();
+
     private MyLocationNewOverlay mDeviceLocationOverlay;
+    private int mMapZoomMinLoad;
 
     public static MapFragment create() {
         MapFragment mapFragment = new MapFragment();
@@ -202,7 +207,9 @@ public class MapFragment extends BaseFragment {
             // The else case is handled in onResume.
         }
 
+        mMapZoomMinLoad = getResources().getInteger(R.integer.map_zoom_min_load);
         mMap.getOverlays().add(mMarkerClusterer);
+        addScaleBarOverlay();
 
         mMap.addOnFirstLayoutListener((v, left, top, right, bottom) -> {
             // We add this only here due to issues in osmdroid's setCenter/setZoom when the first
@@ -334,6 +341,7 @@ public class MapFragment extends BaseFragment {
                     POSITION_PRIORITY_FORCED);
         }
     }
+
     private void setGotoCurrentLocationStatus() {
         mBtnGotoCurrentLocation.setEnabled(mLastDeviceLocation.getValue() != null
                                            || mHasEnabledLocationProviders);
@@ -352,6 +360,27 @@ public class MapFragment extends BaseFragment {
         }
         mBtnGotoCurrentLocation.setImageDrawable(icon);
         mBtnGotoCurrentLocation.setBackgroundTintList(ColorStateList.valueOf(fillColor));
+    }
+
+    private void addScaleBarOverlay() {
+        ScaleBarOverlay mScaleBarOverlay = new ScaleBarOverlay(mMap);
+
+        // Place at bottom left with same margins as FAB
+        int offset = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16,
+                getResources().getDisplayMetrics()));
+        mScaleBarOverlay.setAlignBottom(true);
+        mScaleBarOverlay.setScaleBarOffset(offset, offset);
+        mScaleBarOverlay.setMinZoom(mMapZoomMinLoad);
+
+        // Use distance unit set in prefs
+        mDistanceUnit = mSettingsRepository.getDistanceUnit();
+        ScaleBarOverlay.UnitsOfMeasure unit = (
+                mDistanceUnit == BaseSettingsRepository.DistanceUnit.MILES)
+                ? ScaleBarOverlay.UnitsOfMeasure.imperial
+                : ScaleBarOverlay.UnitsOfMeasure.metric;
+        mScaleBarOverlay.setUnitsOfMeasure(unit);
+
+        mMap.getOverlays().add(mScaleBarOverlay);
     }
 
     /**
@@ -437,7 +466,7 @@ public class MapFragment extends BaseFragment {
         getResumePauseDisposable().add(mDelayedUserFetchDisposable);
     }
     private void fetchUsersForCurrentMapPosition() {
-        if (mLastPosition.zoom < getResources().getInteger(R.integer.map_zoom_min_load)) {
+        if (mLastPosition.zoom < mMapZoomMinLoad) {
             sendMessage(R.string.users_dont_load);
         } else {
             sendMessage(R.string.loading_users);
