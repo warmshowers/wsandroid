@@ -205,6 +205,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mResumePauseDisposables.add(mAccountManager.getCurrentAccount()
                 .subscribe(nullableAccount -> {
                     Account previousAccount = mAccountHelper.mAccount;
+
+                    if (previousAccount != null && previousAccount.equals(nullableAccount.data)) {
+                        // Account did not change, do nothing.
+                        return;
+                    }
+
                     mAccountHelper.switchAccount(nullableAccount.data);
 
                     if (nullableAccount.isNull() ||
