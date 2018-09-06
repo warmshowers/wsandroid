@@ -1,11 +1,13 @@
 package fi.bitrite.android.ws.ui.util;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentTransaction;
 
 import org.osmdroid.api.IGeoPoint;
+import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 
@@ -105,17 +107,26 @@ public class NavigationController {
 
     public void navigateToAccount() {
         // TODO: Implement
-//        navigateTo(
-//                "account",
-//                AccountFragment.create());
+//        navigateTo("account", AccountFragment.create());
     }
 
     public void navigateToMap() {
         // This is the main fragment.
-        navigateTo(NAVIGATION_TAG_MAP, MapFragment.create(), false, true);
+        MapFragment fragment =
+                (MapFragment) getFromBackstackOrCreate(NAVIGATION_TAG_MAP, MapFragment::create);
+
+        navigateTo(NAVIGATION_TAG_MAP, fragment, true, false);
     }
+
     public void navigateToMap(IGeoPoint latLng) {
-        navigateTo(NAVIGATION_TAG_MAP, MapFragment.create(latLng), false);
+        // Open map fragment at specific location
+        MapFragment fragment =
+                (MapFragment) getFromBackstackOrCreate(NAVIGATION_TAG_MAP, MapFragment::create);
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(MapFragment.KEY_MAP_TARGET_LAT_LNG,
+                new GeoPoint(latLng.getLatitude(), latLng.getLongitude()));
+        fragment.setArguments(arguments);
+        navigateTo(NAVIGATION_TAG_MAP, fragment, false);
     }
 
     public void navigateToMessageThreads() {
@@ -135,8 +146,9 @@ public class NavigationController {
         navigateTo(NAVIGATION_TAG_FAVORITE_USERS, FavoriteUsersFragment.create(), true);
     }
 
-    public void navigateToUser(int userId) {
-        navigateTo(NAVIGATION_TAG_MAIN + "/user-" + userId, UserFragment.create(userId), false);
+    public void navigateToContactUser(SimpleUser recipient) {
+        navigateTo(NAVIGATION_TAG_MAIN + "/user-" + recipient.id + "/contact",
+                ContactUserFragment.create(recipient), false);
     }
 
     public void navigateToFeedback(int recipientId) {
@@ -144,9 +156,14 @@ public class NavigationController {
                 FeedbackFragment.create(recipientId), false);
     }
 
-    public void navigateToContactUser(SimpleUser recipient) {
-        navigateTo(NAVIGATION_TAG_MAIN + "/user-" + recipient.id + "/contact",
-                ContactUserFragment.create(recipient), false);
+    public void navigateToSearch(String query) {
+        navigateTo(NAVIGATION_TAG_MAIN + "/search-" + query.hashCode(),
+                SearchFragment.create(query), false);
+    }
+
+    public void navigateToUser(int userId) {
+        String tag = NAVIGATION_TAG_MAIN + "/user-" + userId;
+        navigateTo(tag, UserFragment.create(userId), false);
     }
 
     public void navigateToUserList(ArrayList<Integer> userIds) {
@@ -154,19 +171,23 @@ public class NavigationController {
                 UserListFragment.create(userIds), false);
     }
 
-    public void navigateToSearch(String query) {
-        navigateTo(NAVIGATION_TAG_MAIN + "/search-" + query.hashCode(),
-                SearchFragment.create(query), false);
+    interface FragmentCreator {
+        Fragment create();
+    }
+    private Fragment getFromBackstackOrCreate(String tag, FragmentCreator fragmentCreator) {
+        // reuse fragment from backstack or create a new one
+        Fragment fragment = mFragmentManager.findFragmentByTag(tag);
+        return (fragment == null) ? fragmentCreator.create() : fragment;
     }
 
     // The backstack is always destroyed when selecting a new item in the navigation drawer.
     // TODO(saemy): Should this be automatically done when using tags that are deeper than /xxx ?
     private void navigateTo(String tag, Fragment fragment, boolean deleteBackStack) {
-        navigateTo(tag, fragment, true, deleteBackStack);
+        navigateTo(tag, fragment, deleteBackStack, true);
     }
 
-    private void navigateTo(String tag, Fragment fragment, boolean addToBackStack,
-                            boolean deleteBackStack) {
+    private void navigateTo(String tag, Fragment fragment, boolean deleteBackStack,
+                            boolean addToBackStack) {
         // Empties the backstack if requested.
         if (deleteBackStack) {
             clearBackStack();
@@ -213,14 +234,13 @@ public class NavigationController {
     /**
      * Decides if the burger icon of the navigation drawer should be replaced by a back arrow.
      *
-     * @return true, iff a back arrow should be displayed.
+     * @return true if a back arrow should be displayed.
      */
     public boolean isShowHomeAsUp() {
         int backStackSize = mFragmentManager.getBackStackEntryCount();
         if (backStackSize == 0) {
             return false;
         }
-
 
         BackStackEntry entry = mFragmentManager.getBackStackEntryAt(backStackSize - 1);
         String tag = entry.getName();

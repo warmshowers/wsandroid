@@ -38,7 +38,6 @@ import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBox;
-import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
@@ -84,7 +83,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class MapFragment extends BaseFragment {
-    private static final String KEY_MAP_TARGET_LAT_LNG = "map_target_lat_lng";
+    public static final String KEY_MAP_TARGET_LAT_LNG = "map_target_lat_lng";
     private static final String TAG = "MapFragment";
 
     @Inject LoggedInUserHelper mLoggedInUserHelper;
@@ -139,16 +138,7 @@ public class MapFragment extends BaseFragment {
     @BindInt(R.integer.map_zoom_min_load) int mMapZoomMinLoad;
 
     public static MapFragment create() {
-        MapFragment mapFragment = new MapFragment();
-        Bundle bundle = new Bundle();
-        mapFragment.setArguments(bundle);
-        return mapFragment;
-    }
-    public static MapFragment create(IGeoPoint latLng) {
-        MapFragment mapFragment = create();
-        mapFragment.getArguments().putParcelable(KEY_MAP_TARGET_LAT_LNG,
-                new GeoPoint(latLng.getLatitude(), latLng.getLongitude()));
-        return mapFragment;
+        return new MapFragment();
     }
 
     @Override
@@ -415,8 +405,8 @@ public class MapFragment extends BaseFragment {
         float showUserZoom = getResources().getInteger(R.integer.map_showuser_zoom);
 
         // If we were launched with an intent asking us to zoom to a member
-        IGeoPoint targetLatLng = getArguments().getParcelable(KEY_MAP_TARGET_LAT_LNG);
-        if (targetLatLng != null) {
+        if (getArguments() != null && getArguments().containsKey(KEY_MAP_TARGET_LAT_LNG)) {
+            IGeoPoint targetLatLng = getArguments().getParcelable(KEY_MAP_TARGET_LAT_LNG);
             moveMapToLocation(targetLatLng, showUserZoom, POSITION_PRIORITY_FORCED);
             return;
         }
@@ -497,7 +487,7 @@ public class MapFragment extends BaseFragment {
 
     private void loadOfflineUsers() {
         // We'll show the starred users until we load a fresh version of them.
-        mLoadOfflineUserDisposable = Observable.merge(mFavoriteRepository.getFavorites())
+        Disposable loadOfflineUserDisposable = Observable.merge(mFavoriteRepository.getFavorites())
                 .filter(Resource::hasData)
                 .map(userResource -> userResource.data)
                 // Users pop up twice as one is the error since we might not be able to load it
@@ -508,7 +498,7 @@ public class MapFragment extends BaseFragment {
                     addUserToCluster(user);
                     mMarkerClusterer.invalidate();
                 });
-        getCreateDestroyDisposable().add(mLoadOfflineUserDisposable);
+        getCreateDestroyDisposable().add(loadOfflineUserDisposable);
     }
 
     private void loadCachedUsers() {
