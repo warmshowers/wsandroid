@@ -242,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         setIntent(intent);
         handleActionIntents(intent);
     }
+
     private void handleActionIntents(Intent intent) {
         if (mAccountHelper.hasAccount()) {
             // We need an account to be able to show any fragments.

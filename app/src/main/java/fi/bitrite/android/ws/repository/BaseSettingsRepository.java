@@ -23,6 +23,7 @@ public abstract class BaseSettingsRepository {
     private final static String KEYSUFFIX_LOCATION_LATITUDE = "_latitude";
     private final static String KEYSUFFIX_LOCATION_LONGITUDE = "_longitude";
     private final static String KEYSUFFIX_LOCATION_ZOOM = "_zoom";
+    private final static String HIDE_CURRENT_LOCATION_BTN = "hide_current_location_button";
 
     private final String mKeyDistanceUnit;
     private final String mKeyTileSource;
@@ -44,6 +45,7 @@ public abstract class BaseSettingsRepository {
     private final String mDistanceUnitMilesShort;
     private final String mDistanceUnitKilometerLong;
     private final String mDistanceUnitMilesLong;
+
 
     BaseSettingsRepository(Context context) {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -149,6 +151,13 @@ public abstract class BaseSettingsRepository {
                 mKeyDevSimulateNoNetwork, mDefaultDevSimulateNoNetwork);
     }
 
+    public void setHideLocationButton(boolean hideLocationButton) {
+        mSharedPreferences.edit().putBoolean(HIDE_CURRENT_LOCATION_BTN, hideLocationButton).apply();
+    }
+
+    public boolean getHideLocationButton() {
+        return mSharedPreferences.getBoolean(HIDE_CURRENT_LOCATION_BTN, false);
+    }
 
     public void registerOnChangeListener(
             SharedPreferences.OnSharedPreferenceChangeListener listener) {

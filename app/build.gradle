@@ -94,7 +94,7 @@ android {
 
         minSdkVersion 16
         compileSdkVersion 27 // also update in .travis.yml
-        targetSdkVersion 22
+        targetSdkVersion 27
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -121,7 +121,7 @@ ext {
     robolectricVersion = '3.7'
     rxAndroidVersion = '2.0.2'
     rxJavaVersion = '2.1.7'
-    supportLibVersion = '27.0.1'
+    supportLibVersion = '27.1.1'
 }
 
 dependencies {

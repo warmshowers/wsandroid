@@ -15,7 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.util.SparseArray;
@@ -85,6 +85,7 @@ import io.reactivex.subjects.BehaviorSubject;
 public class MapFragment extends BaseFragment {
     public static final String KEY_MAP_TARGET_LAT_LNG = "map_target_lat_lng";
     private static final String TAG = "MapFragment";
+    private static final int REQUEST_CODE_FINE_LOCATION = 124;
 
     @Inject LoggedInUserHelper mLoggedInUserHelper;
     @Inject UserRegionalCache mUserRegionalCache;
@@ -93,7 +94,6 @@ public class MapFragment extends BaseFragment {
 
     @BindColor(R.color.primaryColor) int mColorPrimary;
     @BindColor(R.color.primaryWhite) int mColorPrimaryWhite;
-    @BindColor(R.color.primaryButtonDisable) int mColorPrimaryButtonDisable;
     @BindDrawable(R.drawable.ic_my_location_white_24dp) Drawable mIcMyLocationWhite;
     @BindDrawable(R.drawable.ic_my_location_grey600_24dp) Drawable mIcMyLocationGrey;
     @BindView(R.id.map) MapView mMap;
@@ -103,10 +103,9 @@ public class MapFragment extends BaseFragment {
 
     private Unbinder mUnbinder;
 
-    private SparseArray<Marker> mClusteredUsers = new SparseArray<>();
+    private final SparseArray<Marker> mClusteredUsers = new SparseArray<>();
     private UserMarkerClusterer mMarkerClusterer;
 
-    private Disposable mLoadOfflineUserDisposable;
     private final List<Integer> mOfflineUserIds = new ArrayList<>();
 
     private Toast mLastToast = null;
@@ -126,10 +125,11 @@ public class MapFragment extends BaseFragment {
     private static final int POSITION_PRIORITY_LAST_STORED = 2;
     private static final int POSITION_PRIORITY_FORCED = 100;
 
+    private boolean hideLocationBtn;
     private int mLastPositionType;
     private ZoomedLocation mLastPosition;
     private boolean mOsmdroidBug_suppressCallbacks;
-    private final LocationManager mLocationManager = new LocationManager();
+    private LocationManager mLocationManager;
 
     private boolean mHasEnabledLocationProviders;
     private final BehaviorSubject<Location> mLastDeviceLocation = BehaviorSubject.create();
@@ -161,6 +161,10 @@ public class MapFragment extends BaseFragment {
         mMarkerClusterer.setSingleLocationMarkerFactory(singleLocationMarkerFactory);
         mMarkerClusterer.setMultiLocationMarkerFactory(multiLocationMarkerFactory);
         mMarkerClusterer.setOnClusterClickListener(this::onClusterClick);
+
+        hideLocationBtn = mSettingsRepository.getHideLocationButton();
+
+        loadOfflineUsers();
     }
 
     @Nullable
@@ -170,11 +174,12 @@ public class MapFragment extends BaseFragment {
         Context context = getContext();
         Configuration.getInstance().load(
                 context, PreferenceManager.getDefaultSharedPreferences(context));
-        //setting this before the layout is inflated is a good idea
-        //it 'should' ensure that the map has a writable location for the map cache, even without permissions
-        //if no tiles are displayed, you can try overriding the cache path using Configuration.getInstance().setCachePath
-        //see also StorageUtils
-        //note, the load method also sets the HTTP User Agent to your application's package name, abusing osm's tile servers will get you banned based on this string
+        // setting this before the layout is inflated is a good idea
+        // it 'should' ensure that the map has a writable location for the map cache, even without
+        // permissions. if no tiles are displayed, you can try overriding the cache path using
+        // Configuration.getInstance().setCachePath. see also StorageUtils. note, the load method
+        // also sets the HTTP User Agent to your application's package name, abusing osm's
+        // tile servers will get you banned based on this string
 
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         mUnbinder = ButterKnife.bind(this, view);
@@ -196,8 +201,7 @@ public class MapFragment extends BaseFragment {
         mMap.setTileSource(TileSourceFactory.getTileSource(tileSourceStr));
 
         if (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            handleAccessFineLocationGranted();
-            // The else case is handled in onResume.
+            addMyLocationOverlay();
         }
 
         mMap.getOverlays().add(mMarkerClusterer);
@@ -237,18 +241,93 @@ public class MapFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
         mMap.onResume();
 
         // Register the settings change listener. That does an initial call to the handler.
         mSettingsRepository.registerOnChangeListener(mOnSettingsChangeListener);
 
-        // Adds a button to navigate to the current GPS position.
-        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            requestPermissions(new String[]{ Manifest.permission.ACCESS_FINE_LOCATION }, 0);
-        } else {
+        if (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            hideLocationBtn = false;
+            if (mDeviceLocationOverlay == null) {
+                // if the user gave permission while the fragment was paused, mDeviceLocationOverlay
+                // is not initalized and the location button might be hidden
+                addMyLocationOverlay();
+            }
             startLocationManager();
+        } else {
+            setGotoCurrentLocationStatus();
         }
+        mBtnGotoCurrentLocation.setVisibility(hideLocationBtn ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public void onPause() {
+        if (mLocationManager != null) {
+            mLocationManager.stop();
+        }
+
+        mSettingsRepository.unregisterOnChangeListener(mOnSettingsChangeListener);
+        mMap.onPause();
+
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        if (mLastPosition != null) {
+            mSettingsRepository.setLastMapLocation(mLastPosition);
+        }
+        mSettingsRepository.setHideLocationButton(hideLocationBtn);
+
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+    }
+
+    private boolean hasPermission(String permission) {
+        return PackageManager.PERMISSION_GRANTED ==
+               ContextCompat.checkSelfPermission(requireActivity(), permission);
+    }
+
+    private void askForPermission(String permission, int requestCode) {
+        requestPermissions(new String[]{ permission }, requestCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_FINE_LOCATION:
+                if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    addMyLocationOverlay();
+                    startLocationManager();
+                    onGotoCurrentLocationClicked();
+                } else {
+                    // if the permission for location is denied with checked "Never ask again",
+                    // the current location button will be hidden.
+                    hideLocationBtn = !shouldShowRequestPermissionRationale(permissions[0]);
+                }
+
+                setGotoCurrentLocationStatus();
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void startLocationManager() {
+        if (mLocationManager == null) {
+            mLocationManager = new LocationManager();
+        }
+
+        mLocationManager.start(
+                (android.location.LocationManager) requireActivity().getSystemService(
+                        Context.LOCATION_SERVICE));
 
         getResumePauseDisposable().add(mLocationManager.getHasEnabledProviders()
                 .observeOn(AndroidSchedulers.mainThread())
@@ -271,43 +350,7 @@ public class MapFragment extends BaseFragment {
                 }));
     }
 
-    @Override
-    public void onPause() {
-        mLocationManager.stop();
-        mSettingsRepository.unregisterOnChangeListener(mOnSettingsChangeListener);
-        mMap.onPause();
-
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        if (mLastPosition != null) {
-            mSettingsRepository.setLastMapLocation(mLastPosition);
-        }
-
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mUnbinder.unbind();
-    }
-
-    private boolean hasPermission(String permission) {
-        return PackageManager.PERMISSION_GRANTED ==
-               ActivityCompat.checkSelfPermission(getContext(), permission);
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // ACCESS_FINE_LOCATION is granted.
-            handleAccessFineLocationGranted();
-        }
-    }
-    private void handleAccessFineLocationGranted() {
+    private void addMyLocationOverlay() {
         mDeviceLocationOverlay = new MyLocationNewOverlay(mLocationProvider, mMap);
         mDeviceLocationOverlay.enableMyLocation();
         mDeviceLocationOverlay.setDrawAccuracyEnabled(true);
@@ -315,21 +358,18 @@ public class MapFragment extends BaseFragment {
         mDeviceLocationOverlay.disableFollowLocation(); // Initially do not follow the current location.
         mDeviceLocationOverlay.setOptionsMenuEnabled(true);
         mMap.getOverlays().add(mDeviceLocationOverlay);
-
-        startLocationManager();
-    }
-
-    private void startLocationManager() {
-        mLocationManager.start((android.location.LocationManager) getActivity().getSystemService(
-                Context.LOCATION_SERVICE));
     }
 
     @OnClick(R.id.map_btn_goto_current_location)
     void onGotoCurrentLocationClicked() {
+        if (!hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            askForPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_CODE_FINE_LOCATION);
+            return;
+        }
+
         mDeviceLocationOverlay.enableFollowLocation(); // Follow the current location.
         if (mLastDeviceLocation.getValue() == null) {
-            Toast.makeText(getContext(), R.string.unknown_location, Toast.LENGTH_SHORT)
-                    .show();
+            Toast.makeText(getContext(), R.string.unknown_location, Toast.LENGTH_SHORT).show();
         } else {
             double zoom = Math.max(13, Math.min(17, mMap.getZoomLevelDouble())); // zoom \in [13,17]
             moveMapToLocation(Tools.locationToLatLng(mLastDeviceLocation.getValue()), zoom,
@@ -338,9 +378,6 @@ public class MapFragment extends BaseFragment {
     }
 
     private void setGotoCurrentLocationStatus() {
-        mBtnGotoCurrentLocation.setEnabled(mLastDeviceLocation.getValue() != null
-                                           || mHasEnabledLocationProviders);
-
         int fillColor;
         Drawable icon;
         if (mLastDeviceLocation.getValue() != null) {
@@ -350,8 +387,9 @@ public class MapFragment extends BaseFragment {
             icon = mIcMyLocationGrey;
             fillColor = mColorPrimaryWhite;
         } else {
-            icon = mIcMyLocationWhite;
-            fillColor = mColorPrimaryButtonDisable;
+            icon = mIcMyLocationGrey;
+            fillColor = mColorPrimaryWhite;
+            mBtnGotoCurrentLocation.setAlpha(0.7f);
         }
         mBtnGotoCurrentLocation.setImageDrawable(icon);
         mBtnGotoCurrentLocation.setBackgroundTintList(ColorStateList.valueOf(fillColor));
@@ -419,7 +457,8 @@ public class MapFragment extends BaseFragment {
             return;
         }
 
-        if (mLastDeviceLocation.getValue() != null) {
+        if (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+            && mLastDeviceLocation.getValue() != null) {
             moveMapToLocation(Tools.locationToLatLng(mLastDeviceLocation.getValue()), showUserZoom,
                     POSITION_PRIORITY_LAST_DEVICE_POSITION);
             return;
@@ -444,7 +483,7 @@ public class MapFragment extends BaseFragment {
         mLastPosition = new ZoomedLocation(mapCenter.getLatitude(), mapCenter.getLongitude(), zoom);
 
         // If not connected, we'll switch to offline/starred users mode
-        if (!Tools.isNetworkConnected(getContext())) {
+        if (!Tools.isNetworkConnected(requireContext())) {
             sendMessage(R.string.map_network_not_connected);
             return;
         }
@@ -460,6 +499,7 @@ public class MapFragment extends BaseFragment {
                 .subscribe(this::fetchUsersForCurrentMapPosition);
         getResumePauseDisposable().add(mDelayedUserFetchDisposable);
     }
+
     private void fetchUsersForCurrentMapPosition() {
         if (mLastPosition.zoom < mMapZoomMinLoad) {
             sendMessage(R.string.users_dont_load);
@@ -538,7 +578,7 @@ public class MapFragment extends BaseFragment {
      * - If the bounds are empty (all users at same place) then let it pop the info window
      * - Otherwise, move the camera to show the bounds of the map
      */
-    public boolean onClusterClick(MapView mapView, StaticCluster cluster) {
+    private boolean onClusterClick(MapView mapView, StaticCluster cluster) {
         // Find out the bounds of the users currently in cluster
         List<SimpleUser> users = new ArrayList<>(cluster.getSize());
         List<IGeoPoint> locations = new ArrayList<>(cluster.getSize());
@@ -587,11 +627,11 @@ public class MapFragment extends BaseFragment {
 
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager =
-                (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+                (SearchManager) requireActivity().getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getActivity().getComponentName()));
+                searchManager.getSearchableInfo(requireActivity().getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
     }
 
@@ -643,7 +683,7 @@ public class MapFragment extends BaseFragment {
         }
     }
 
-    private IMyLocationProvider mLocationProvider = new IMyLocationProvider() {
+    private final IMyLocationProvider mLocationProvider = new IMyLocationProvider() {
         private Disposable mDisposable;
 
         @Override
