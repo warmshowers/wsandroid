@@ -106,9 +106,6 @@ public class MapFragment extends BaseFragment {
     private SparseArray<Marker> mClusteredUsers = new SparseArray<>();
     private UserMarkerClusterer mMarkerClusterer;
 
-    private Disposable mLoadOfflineUserDisposable;
-    private final List<Integer> mOfflineUserIds = new ArrayList<>();
-
     private Toast mLastToast = null;
 
     private SettingsRepository.DistanceUnit mDistanceUnit;
@@ -500,18 +497,18 @@ public class MapFragment extends BaseFragment {
 
     private void loadOfflineUsers() {
         // We'll show the starred users until we load a fresh version of them.
-        mLoadOfflineUserDisposable = Observable.merge(mFavoriteRepository.getFavorites())
+        Disposable loadOfflineUserDisposable = Observable.merge(mFavoriteRepository.getFavorites())
                 .filter(Resource::hasData)
                 .map(userResource -> userResource.data)
                 // Users pop up twice as one is the error since we might not be able to load it
                 // from the network.
-                .filter(user -> mOfflineUserIds.add(user.id))
+                .distinct()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
                     addUserToCluster(user);
                     mMarkerClusterer.invalidate();
                 });
-        getCreateDestroyDisposable().add(mLoadOfflineUserDisposable);
+        getCreateDestroyDisposable().add(loadOfflineUserDisposable);
     }
 
     private void loadCachedUsers() {
