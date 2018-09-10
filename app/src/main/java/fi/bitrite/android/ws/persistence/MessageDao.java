@@ -125,6 +125,7 @@ public class MessageDao extends Dao {
             deleteParticipantsExcept(db, thread.id, thread.participantIds);
 
             List<Integer> messageIds = new ArrayList<>(thread.messages.size());
+            // FIXME: got java.util.ConcurrentModificationException, coming from MessageRepository.java:278
             for (Message message : thread.messages) {
                 messageIds.add(message.id);
                 saveMessage(db, message);

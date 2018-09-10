@@ -106,8 +106,6 @@ public class MapFragment extends BaseFragment {
     private final SparseArray<Marker> mClusteredUsers = new SparseArray<>();
     private UserMarkerClusterer mMarkerClusterer;
 
-    private final List<Integer> mOfflineUserIds = new ArrayList<>();
-
     private Toast mLastToast = null;
 
     private SettingsRepository.DistanceUnit mDistanceUnit;
@@ -530,9 +528,7 @@ public class MapFragment extends BaseFragment {
         Disposable loadOfflineUserDisposable = Observable.merge(mFavoriteRepository.getFavorites())
                 .filter(Resource::hasData)
                 .map(userResource -> userResource.data)
-                // Users pop up twice as one is the error since we might not be able to load it
-                // from the network.
-                .filter(user -> mOfflineUserIds.add(user.id))
+                .distinct()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
                     addUserToCluster(user);
