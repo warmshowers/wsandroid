@@ -3,6 +3,7 @@ package fi.bitrite.android.ws.util;
 import org.osmdroid.util.BoundingBox;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
@@ -19,6 +20,12 @@ import java.util.TreeSet;
 public class LoadedArea {
     private final static double ROUNDING_PRECISION = 0.0025; // ~300m
 
+    /**
+     * In case {@link #subtractLoadedAreas(BoundingBox)} would return more than the given number of
+     * ranges the smallest area that contains all of them is returned instead.
+     */
+    private final static int MAX_TO_BE_LOADED_AREAS = 10;
+
     // Keeps the loaded areas sorted by their left x-value. This allows one to only look at the
     // ones in this set that have a smaller left x-value than the right x-value of the search box.
     private final SortedSet<BoundingBox> mLoadedAreas = new TreeSet<>(mBoundingBoxComparator);
@@ -27,7 +34,29 @@ public class LoadedArea {
         // The loaded rect is expected to be previously pushed through subtractLoadedAreas. So it is
         // safe to round it up.
         roundUpRect(rect);
+
+        final double ln = rect.getLatNorth();
+        final double le = rect.getLonEast();
+        final double ls = rect.getLatSouth();
+        final double lw = rect.getLonWest();
+
         synchronized (mLoadedAreas) {
+            // We remove entries in the loaded areas that are completely overlapped.
+            Iterator<BoundingBox> it = mLoadedAreas.iterator();
+            while (it.hasNext()) {
+                final BoundingBox loadedArea = it.next();
+                final double qn = loadedArea.getLatNorth();
+                final double qe = loadedArea.getLonEast();
+                final double qs = loadedArea.getLatSouth();
+                final double qw = loadedArea.getLonWest();
+
+                final Overlap xOverlap = getOverlap(lw, le, qw, qe);
+                final Overlap yOverlap = getOverlap(ls, ln, qs, qn);
+
+                if (xOverlap == Overlap.OUTSIDE && yOverlap == Overlap.OUTSIDE) {
+                    it.remove();
+                }
+            }
             mLoadedAreas.add(rect);
         }
     }
@@ -273,6 +302,22 @@ public class LoadedArea {
                 }
                 ret = nextRet;
             }
+        }
+
+        if (ret.size() > MAX_TO_BE_LOADED_AREAS) {
+            // The smallest box that contains all non-loaded areas.
+            double n = Double.NEGATIVE_INFINITY;
+            double e = Double.NEGATIVE_INFINITY;
+            double s = Double.POSITIVE_INFINITY;
+            double w = Double.POSITIVE_INFINITY;
+            for (BoundingBox r : ret) {
+                n = Math.max(n, r.getLatNorth());
+                e = Math.max(e, r.getLonEast());
+                s = Math.min(s, r.getLatSouth());
+                w = Math.min(w, r.getLonWest());
+            }
+            ret.clear();
+            ret.add(new BoundingBox(n, e, s, w));
         }
         return ret;
     }
