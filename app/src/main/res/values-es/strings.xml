@@ -63,7 +63,6 @@
         <item quantity="other">Tienes %d mensajes sin leer.</item>
     </plurals>
     <string name="updateMessages">Actualizar</string>
-    <string name="loading_users">Cargando anfitriones …</string>
     <plurals name="users_at_location">
         <item quantity="one">%1$d anfitrion en %2$s</item>
         <item quantity="other">%1$d anfitriones en %2$s</item>

@@ -63,7 +63,6 @@
         <item quantity="other">You have %d unread messages.</item>
     </plurals>
     <string name="updateMessages">Update</string>
-    <string name="loading_users">Loading hosts …</string>
     <plurals name="users_at_location">
         <item quantity="one">%1$d user at %2$s</item>
         <item quantity="other">%1$d hosts at %2$s</item>
