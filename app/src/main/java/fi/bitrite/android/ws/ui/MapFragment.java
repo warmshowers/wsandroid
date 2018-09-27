@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ import javax.inject.Inject;
 
 import butterknife.BindColor;
 import butterknife.BindDrawable;
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -96,6 +98,7 @@ public class MapFragment extends BaseFragment {
     @BindDrawable(R.drawable.ic_my_location_white_24dp) Drawable mIcMyLocationWhite;
     @BindDrawable(R.drawable.ic_my_location_grey600_24dp) Drawable mIcMyLocationGrey;
     @BindView(R.id.map) MapView mMap;
+    @BindView(R.id.map_progress_loading_users) ProgressBar mProgressLoadingUsers;
     @BindView(R.id.map_btn_goto_current_location) FloatingActionButton mBtnGotoCurrentLocation;
     private IMapController mMapController;
 
@@ -133,7 +136,7 @@ public class MapFragment extends BaseFragment {
     private final BehaviorSubject<Location> mLastDeviceLocation = BehaviorSubject.create();
 
     private MyLocationNewOverlay mDeviceLocationOverlay;
-    private int mMapZoomMinLoad;
+    @BindInt(R.integer.map_zoom_min_load) int mMapZoomMinLoad;
 
     public static MapFragment create() {
         MapFragment mapFragment = new MapFragment();
@@ -189,6 +192,8 @@ public class MapFragment extends BaseFragment {
         mUnbinder = ButterKnife.bind(this, view);
         mMapController = mMap.getController();
 
+        mProgressLoadingUsers.setVisibility(View.GONE);
+
         mLastPositionType = -1;
         mLastPosition = null;
 
@@ -207,7 +212,6 @@ public class MapFragment extends BaseFragment {
             // The else case is handled in onResume.
         }
 
-        mMapZoomMinLoad = getResources().getInteger(R.integer.map_zoom_min_load);
         mMap.getOverlays().add(mMarkerClusterer);
         addScaleBarOverlay();
 
@@ -363,14 +367,14 @@ public class MapFragment extends BaseFragment {
     }
 
     private void addScaleBarOverlay() {
-        ScaleBarOverlay mScaleBarOverlay = new ScaleBarOverlay(mMap);
+        ScaleBarOverlay scaleBarOverlay = new ScaleBarOverlay(mMap);
 
         // Place at bottom left with same margins as FAB
         int offset = (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16,
                 getResources().getDisplayMetrics()));
-        mScaleBarOverlay.setAlignBottom(true);
-        mScaleBarOverlay.setScaleBarOffset(offset, offset);
-        mScaleBarOverlay.setMinZoom(mMapZoomMinLoad);
+        scaleBarOverlay.setAlignBottom(true);
+        scaleBarOverlay.setScaleBarOffset(offset, offset);
+        scaleBarOverlay.setMinZoom(mMapZoomMinLoad);
 
         // Use distance unit set in prefs
         mDistanceUnit = mSettingsRepository.getDistanceUnit();
@@ -378,9 +382,9 @@ public class MapFragment extends BaseFragment {
                 mDistanceUnit == BaseSettingsRepository.DistanceUnit.MILES)
                 ? ScaleBarOverlay.UnitsOfMeasure.imperial
                 : ScaleBarOverlay.UnitsOfMeasure.metric;
-        mScaleBarOverlay.setUnitsOfMeasure(unit);
+        scaleBarOverlay.setUnitsOfMeasure(unit);
 
-        mMap.getOverlays().add(mScaleBarOverlay);
+        mMap.getOverlays().add(scaleBarOverlay);
     }
 
     /**
@@ -469,16 +473,13 @@ public class MapFragment extends BaseFragment {
         if (mLastPosition.zoom < mMapZoomMinLoad) {
             sendMessage(R.string.users_dont_load);
         } else {
-            sendMessage(R.string.loading_users);
-
+            mProgressLoadingUsers.setVisibility(View.VISIBLE);
             getResumePauseDisposable().add(
                     mUserRepository.searchByLocation(mMap.getBoundingBox())
                             .observeOn(AndroidSchedulers.mainThread())
+                            .doFinally(() -> mProgressLoadingUsers.setVisibility(View.GONE))
+                            .filter(searchResult -> !searchResult.isEmpty())
                             .subscribe(searchResult -> {
-                                if (searchResult.isEmpty()) {
-                                    return;
-                                }
-
                                 for (UserSearchByLocationResponse.User user : searchResult) {
                                     addUserToCluster(user.toSimpleUser());
                                 }
@@ -487,6 +488,7 @@ public class MapFragment extends BaseFragment {
                             }, throwable -> {
                                 // TODO(saemy): Error handling.
                                 Log.e(TAG, throwable.getMessage());
+                                sendMessage(R.string.http_server_access_failure);
                             }));
         }
 

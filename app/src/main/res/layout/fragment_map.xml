@@ -13,6 +13,16 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+    <ProgressBar
+        android:id="@+id/map_progress_loading_users"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/ic_map_progress_loading_users_background"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="@id/map"
+        app:layout_constraintTop_toTopOf="@id/map" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/map_btn_goto_current_location"
         android:layout_width="wrap_content"
@@ -20,7 +30,7 @@
         android:layout_margin="16dp"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="@id/map"
-        app:layout_constraintRight_toRightOf="@id/map"
+        app:layout_constraintEnd_toEndOf="@id/map"
         app:srcCompat="@drawable/ic_my_location_white_24dp" />
 
 </android.support.constraint.ConstraintLayout>

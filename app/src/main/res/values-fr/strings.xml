@@ -44,7 +44,6 @@
     <string name="last_login"><u>Dernière connexion:</u></string>
     <string name="last_updated">Dernière mise à jour:</string>
     <string name="list_search_hint">Nom du membre ou de la ville</string>
-    <string name="loading_users">Chargement des hôtes…</string>
     <string name="location"><u>Localisation:</u></string>
     <string name="max_guests"><u>Invités max.:</u></string>
     <string name="member_since"><u>Membre depuis:</u></string>

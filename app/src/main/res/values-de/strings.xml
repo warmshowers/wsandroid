@@ -63,7 +63,6 @@
         <item quantity="other">Du hast %d ungelesene Nachrichten.</item>
     </plurals>
     <string name="updateMessages">Aktualisieren</string>
-    <string name="loading_users">Gastgeber werden geladen …</string>
     <plurals name="users_at_location">
         <item quantity="one">%1$d Gastgeber bei %2$s</item>
         <item quantity="other">%1$d Gastgeber bei %2$s</item>
