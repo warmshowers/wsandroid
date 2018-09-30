@@ -3,6 +3,8 @@ package fi.bitrite.android.ws.ui;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.ListPreference;
@@ -13,6 +15,8 @@ import android.text.TextUtils;
 import org.osmdroid.tileprovider.tilesource.ITileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -37,6 +41,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
 
     @BindString(R.string.prefs_distance_unit_key) String mKeyDistanceUnit;
     @BindString(R.string.prefs_tile_source_key) String mTileMapSource;
+    @BindString(R.string.prefs_offline_map_enabled) String mOfflineMap;
+    @BindString(R.string.prefs_offline_map_source) String mOfflineMapSource;
+    @BindString(R.string.prefs_offline_map_style) String mOfflineMapStyle;
     @BindString(R.string.prefs_message_refresh_interval_min_key) String mKeyMessageRefreshInterval;
 
     public static Fragment create() {
@@ -81,6 +88,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key == null) {
+            return;
+        }
+
+        // TODO: only update changed preference specified by key
         setSummary();
     }
 
@@ -90,8 +102,17 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
                 R.string.prefs_distance_unit_summary,
                 mSettingsRepository.getDistanceUnitLong()));
 
-        // map sources
-        setAvailableMapSources((ListPreference) findPreference(mTileMapSource));
+        // offline map sources
+        SwitchPreference offlineMap = (SwitchPreference) findPreference(mOfflineMap);
+        // offline maps need at least a offline map source to be enabled
+        offlineMap.setEnabled(!mSettingsRepository.getOfflineMapSource().isEmpty());
+
+        setAvailableOfflineMapSources((ListPreference) findPreference(mOfflineMapSource));
+        setAvailableOfflineStyleSources((ListPreference) findPreference(mOfflineMapStyle));
+
+        // online map sources
+        findPreference(mTileMapSource).setEnabled(!offlineMap.isChecked());
+        setAvailableOnlineMapSources((ListPreference) findPreference(mTileMapSource));
 
         // message refresh interval
         Resources res = getResources();
@@ -117,7 +138,49 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
         }
     }
 
-    private void setAvailableMapSources(final ListPreference tileSourcePreference) {
+    private void setAvailableOfflineMapSources(ListPreference pref) {
+        pref.setSummary(new File(mSettingsRepository.getOfflineMapSource()).getName());
+        File folder = new File(Environment.getExternalStorageDirectory(), "/oruxmaps/mapfiles");
+        setAvailableOfflineSources(pref, findFiles(new ArrayList<>(), folder.listFiles(), ".map"));
+    }
+
+    private void setAvailableOfflineStyleSources(ListPreference pref) {
+        pref.setSummary(new File(mSettingsRepository.getOfflineMapStyle()).getName());
+        File folder = new File(Environment.getExternalStorageDirectory(), "/oruxmaps/mapstyles");
+        setAvailableOfflineSources(pref, findFiles(new ArrayList<>(), folder.listFiles(), ".xml"));
+    }
+
+    private void setAvailableOfflineSources(ListPreference pref, List<File> rawSourceValues) {
+        final List<String> sourceNames = new LinkedList<>();
+        final List<String> sourceValues = new LinkedList<>();
+        for (File f : rawSourceValues) {
+            sourceNames.add(f.getName());
+            sourceValues.add(f.getAbsolutePath());
+        }
+
+        CharSequence[] sourceNamesCS = sourceNames.toArray(new CharSequence[0]);
+        CharSequence[] sourceValuesCS = sourceValues.toArray(new CharSequence[0]);
+
+        pref.setEntries(sourceNamesCS);
+        pref.setEntryValues(sourceValuesCS);
+    }
+
+    private List<File> findFiles(List<File> foundFiles, File[] filesArray, String ext) {
+        for (File file : filesArray) {
+            if (file.isDirectory()) {
+                findFiles(foundFiles,
+                        file.listFiles(path -> (path.isDirectory() || path.getName()
+                                .toLowerCase()
+                                .endsWith(ext))),
+                        ext);
+            } else if (file.getName().toLowerCase().endsWith(ext)) {
+                foundFiles.add(file);
+            }
+        }
+        return foundFiles;
+    }
+
+    private void setAvailableOnlineMapSources(final ListPreference tileSourcePreference) {
         tileSourcePreference.setSummary(getString(
                 R.string.prefs_tile_source_summary,
                 mSettingsRepository.getTileSourceStr()));

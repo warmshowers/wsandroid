@@ -114,6 +114,7 @@ ext {
     jsonVersion = '20170516'
     junitVersion = '4.12'
     osmbonuspackVersion = '6.5.2'
+    osmdroidMapforgeVersion = '6.0.1'
     osmdroidVersion = '6.0.2'
     picassoVersion = '2.5.2'
     playServicesVersion = '11.6.2'
@@ -147,6 +148,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
     implementation "org.osmdroid:osmdroid-android:$osmdroidVersion"
+    implementation "org.osmdroid:osmdroid-mapsforge:$osmdroidMapforgeVersion"
 
     googleImplementation "com.google.android.gms:play-services-analytics:$playServicesVersion"
 

@@ -109,6 +109,10 @@
     <string name="prefs_tile_source_summary">%1$s</string>
     <string name="prefs_tile_source_us_only">%1$s (US only)</string>
 
+    <string name="prefs_offline_map_enabled" translatable="false">offline_map_enabled</string>
+    <string name="prefs_offline_map_source" translatable="false">offline_map_source</string>
+    <string name="prefs_offline_map_style" translatable="false">offline_map_style</string>
+
     <string name="prefs_message_refresh_interval_min_key" translatable="false">message_reload_interval_min</string>
     <string name="prefs_message_refresh_interval_min_title">Messages poll frequency</string>
     <plurals name="prefs_message_refresh_interval_min_summary">

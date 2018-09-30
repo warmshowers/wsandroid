@@ -28,6 +28,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.mapsforge.map.rendertheme.ExternalRenderTheme;
+import org.mapsforge.map.rendertheme.XmlRenderTheme;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.clustering.StaticCluster;
@@ -35,7 +37,10 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
+import org.osmdroid.mapsforge.MapsForgeTileProvider;
+import org.osmdroid.mapsforge.MapsForgeTileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -45,6 +50,8 @@ import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer;
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -117,6 +124,7 @@ public class MapFragment extends BaseFragment {
                     mDistanceUnit = mSettingsRepository.getDistanceUnit();
                     mDistanceUnitShort = mSettingsRepository.getDistanceUnitShort();
                 }
+                // TODO: reflect changes in offline/online map
             };
 
     private static final int POSITION_PRIORITY_ESTIMATE = 0;
@@ -170,6 +178,10 @@ public class MapFragment extends BaseFragment {
         mMarkerClusterer.setOnClusterClickListener(this::onClusterClick);
 
         loadOfflineUsers();
+
+        if (mSettingsRepository.isOfflineMapEnabled()) {
+            MapsForgeTileSource.createInstance(getActivity().getApplication());
+        }
     }
 
     @Nullable
@@ -196,11 +208,31 @@ public class MapFragment extends BaseFragment {
         mMap.setBuiltInZoomControls(false);
         mMap.setMultiTouchControls(true);
 
-        String tileSourceStr = mSettingsRepository.getTileSourceStr();
-        if (!TileSourceFactory.containsTileSource(tileSourceStr)) {
-            tileSourceStr = TileSourceFactory.DEFAULT_TILE_SOURCE.name();
+        if (mSettingsRepository.isOfflineMapEnabled()) {
+            // use offline map
+            File[] maps = { new File(mSettingsRepository.getOfflineMapSource()) };
+            File style = new File(mSettingsRepository.getOfflineMapStyle());
+            XmlRenderTheme theme = null;
+            try {
+                theme = new ExternalRenderTheme(style);
+            } catch (FileNotFoundException ignore) {
+                 // default rendering theme is used if theme == null
+            }
+
+            MapsForgeTileSource fromFiles = MapsForgeTileSource.createFromFiles(
+                    maps, theme, style.getName());
+            MapsForgeTileProvider forge = new MapsForgeTileProvider(
+                    new SimpleRegisterReceiver(getContext()),
+                    fromFiles, null);
+            mMap.setTileProvider(forge);
+        } else {
+            // use online map
+            String tileSourceStr = mSettingsRepository.getTileSourceStr();
+            if (!TileSourceFactory.containsTileSource(tileSourceStr)) {
+                tileSourceStr = TileSourceFactory.DEFAULT_TILE_SOURCE.name();
+            }
+            mMap.setTileSource(TileSourceFactory.getTileSource(tileSourceStr));
         }
-        mMap.setTileSource(TileSourceFactory.getTileSource(tileSourceStr));
 
         if (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             handleAccessFineLocationGranted();

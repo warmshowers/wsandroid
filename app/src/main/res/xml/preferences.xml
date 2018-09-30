@@ -1,6 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:title="Map">
+
+        <SwitchPreference
+            android:key="@string/prefs_offline_map_enabled"
+            android:title="Offline maps"
+            android:summaryOn="Enabled (this disables online maps)"
+            android:summaryOff="Disabled (this enables online maps)"
+            android:checked="false" />
+
+        <ListPreference
+            android:key="@string/prefs_offline_map_source"
+            android:summary="@string/prefs_tile_source_summary"
+            android:title="Offline map source" />
+
+        <ListPreference
+            android:key="@string/prefs_offline_map_style"
+            android:summary="@string/prefs_tile_source_summary"
+            android:title="Offline map style" />
+
+        <ListPreference
+            android:key="@string/prefs_tile_source_key"
+            android:summary="@string/prefs_tile_source_summary"
+            android:title="Online map style" />
+            <!-- android:title="@string/prefs_tile_source_title" /> -->
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Messaging">
+
+    <fi.bitrite.android.ws.ui.preference.RefreshIntervalPreference
+        android:defaultValue="@integer/prefs_message_refresh_interval_min_default"
+        android:dialogMessage="@string/prefs_message_refresh_interval_min_dialog_message"
+        android:inputType="number"
+        android:key="@string/prefs_message_refresh_interval_min_key"
+        android:title="@string/prefs_message_refresh_interval_min_title" />
+
+    </PreferenceCategory>
 
     <ListPreference
         android:defaultValue="@string/prefs_distance_unit_default"
@@ -9,17 +50,5 @@
         android:key="@string/prefs_distance_unit_key"
         android:summary="@string/prefs_distance_unit_summary"
         android:title="@string/prefs_distance_unit_title" />
-
-    <ListPreference
-        android:key="@string/prefs_tile_source_key"
-        android:summary="@string/prefs_tile_source_summary"
-        android:title="@string/prefs_tile_source_title" />
-
-    <fi.bitrite.android.ws.ui.preference.RefreshIntervalPreference
-        android:defaultValue="@integer/prefs_message_refresh_interval_min_default"
-        android:dialogMessage="@string/prefs_message_refresh_interval_min_dialog_message"
-        android:inputType="number"
-        android:key="@string/prefs_message_refresh_interval_min_key"
-        android:title="@string/prefs_message_refresh_interval_min_title" />
 
 </PreferenceScreen>

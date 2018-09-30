@@ -25,6 +25,9 @@ public abstract class BaseSettingsRepository {
     private final static String KEYSUFFIX_LOCATION_ZOOM = "_zoom";
 
     private final String mKeyDistanceUnit;
+    private final String mOfflineMapEnabled;
+    private final String mOfflineMapSource;
+    private final String mOfflineMapStyle;
     private final String mKeyTileSource;
     private final String mKeyMessageRefreshInterval;
     private final String mKeyDevSimulateNoNetwork;
@@ -50,6 +53,11 @@ public abstract class BaseSettingsRepository {
 
         final Resources res = context.getResources();
         mKeyDistanceUnit = res.getString(R.string.prefs_distance_unit_key);
+
+        mOfflineMapEnabled= res.getString(R.string.prefs_offline_map_enabled);
+        mOfflineMapSource = res.getString(R.string.prefs_offline_map_source);
+        mOfflineMapStyle = res.getString(R.string.prefs_offline_map_style);
+
         mKeyTileSource = res.getString(R.string.prefs_tile_source_key);
         mKeyMessageRefreshInterval = res.getString(R.string.prefs_message_refresh_interval_min_key);
         mKeyDevSimulateNoNetwork = res.getString(R.string.prefs_dev_simulate_no_network_key);
@@ -105,6 +113,17 @@ public abstract class BaseSettingsRepository {
                 assert false;
                 return null;
         }
+    }
+
+    public boolean isOfflineMapEnabled() {
+        return mSharedPreferences.getBoolean(mOfflineMapEnabled, false);
+    }
+    public String getOfflineMapSource() {
+        return mSharedPreferences.getString(mOfflineMapSource, "");
+    }
+
+    public String getOfflineMapStyle() {
+        return mSharedPreferences.getString(mOfflineMapStyle, "");
     }
 
     public String getTileSourceStr() {
