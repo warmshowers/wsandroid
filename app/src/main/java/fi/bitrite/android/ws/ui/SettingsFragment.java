@@ -4,9 +4,11 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v14.preference.MultiSelectListPreference;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
@@ -104,10 +106,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
 
         // offline map sources
         SwitchPreference offlineMap = (SwitchPreference) findPreference(mOfflineMap);
-        // offline maps need at least a offline map source to be enabled
-        offlineMap.setEnabled(!mSettingsRepository.getOfflineMapSource().isEmpty());
-
-        setAvailableOfflineMapSources((ListPreference) findPreference(mOfflineMapSource));
+        // offline maps need at least one source to be enabled
+        offlineMap.setEnabled(mSettingsRepository.getOfflineMapSourceFiles().length > 0);
+        setAvailableOfflineMapSources(
+                (MultiSelectListPreference) findPreference(mOfflineMapSource));
         setAvailableOfflineStyleSources((ListPreference) findPreference(mOfflineMapStyle));
 
         // online map sources
@@ -138,31 +140,45 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Inject
         }
     }
 
-    private void setAvailableOfflineMapSources(ListPreference pref) {
-        pref.setSummary(new File(mSettingsRepository.getOfflineMapSource()).getName());
+    private void setAvailableOfflineMapSources(MultiSelectListPreference pref) {
+        File[] sourceFiles = mSettingsRepository.getOfflineMapSourceFiles();
+        StringBuilder summary = new StringBuilder();
+        if (sourceFiles.length > 0) {
+            for (File source : sourceFiles) {
+                summary.append(source.getName()).append(", ");
+            }
+            summary.replace(summary.lastIndexOf(","), summary.length(), "");
+        }
+        pref.setSummary(summary.toString());
+
         File folder = new File(Environment.getExternalStorageDirectory(), "/oruxmaps/mapfiles");
-        setAvailableOfflineSources(pref, findFiles(new ArrayList<>(), folder.listFiles(), ".map"));
+        Pair<CharSequence[], CharSequence[]>
+                entries = setAvailableOfflineSources(
+                findFiles(new ArrayList<>(), folder.listFiles(), ".map"));
+        pref.setEntries(entries.first);
+        pref.setEntryValues(entries.second);
     }
 
     private void setAvailableOfflineStyleSources(ListPreference pref) {
         pref.setSummary(new File(mSettingsRepository.getOfflineMapStyle()).getName());
         File folder = new File(Environment.getExternalStorageDirectory(), "/oruxmaps/mapstyles");
-        setAvailableOfflineSources(pref, findFiles(new ArrayList<>(), folder.listFiles(), ".xml"));
+        Pair<CharSequence[], CharSequence[]>
+                entries = setAvailableOfflineSources(
+                findFiles(new ArrayList<>(), folder.listFiles(), ".xml"));
+        pref.setEntries(entries.first);
+        pref.setEntryValues(entries.second);
     }
 
-    private void setAvailableOfflineSources(ListPreference pref, List<File> rawSourceValues) {
+    private Pair<CharSequence[], CharSequence[]> setAvailableOfflineSources(
+            List<File> rawSourceValues) {
         final List<String> sourceNames = new LinkedList<>();
         final List<String> sourceValues = new LinkedList<>();
         for (File f : rawSourceValues) {
             sourceNames.add(f.getName());
             sourceValues.add(f.getAbsolutePath());
         }
-
-        CharSequence[] sourceNamesCS = sourceNames.toArray(new CharSequence[0]);
-        CharSequence[] sourceValuesCS = sourceValues.toArray(new CharSequence[0]);
-
-        pref.setEntries(sourceNamesCS);
-        pref.setEntryValues(sourceValuesCS);
+        return new Pair<>(sourceNames.toArray(new CharSequence[0]),
+                sourceValues.toArray(new CharSequence[0]));
     }
 
     private List<File> findFiles(List<File> foundFiles, File[] filesArray, String ext) {

@@ -12,14 +12,12 @@
             android:summaryOff="Disabled (this enables online maps)"
             android:checked="false" />
 
-        <ListPreference
+        <MultiSelectListPreference
             android:key="@string/prefs_offline_map_source"
-            android:summary="@string/prefs_tile_source_summary"
             android:title="Offline map source" />
 
         <ListPreference
             android:key="@string/prefs_offline_map_style"
-            android:summary="@string/prefs_tile_source_summary"
             android:title="Offline map style" />
 
         <ListPreference

@@ -210,7 +210,6 @@ public class MapFragment extends BaseFragment {
 
         if (mSettingsRepository.isOfflineMapEnabled()) {
             // use offline map
-            File[] maps = { new File(mSettingsRepository.getOfflineMapSource()) };
             File style = new File(mSettingsRepository.getOfflineMapStyle());
             XmlRenderTheme theme = null;
             try {
@@ -220,7 +219,7 @@ public class MapFragment extends BaseFragment {
             }
 
             MapsForgeTileSource fromFiles = MapsForgeTileSource.createFromFiles(
-                    maps, theme, style.getName());
+                    mSettingsRepository.getOfflineMapSourceFiles(), theme, style.getName());
             MapsForgeTileProvider forge = new MapsForgeTileProvider(
                     new SimpleRegisterReceiver(getContext()),
                     fromFiles, null);

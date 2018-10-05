@@ -8,6 +8,12 @@ import android.text.TextUtils;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.ZoomedLocation;
 
@@ -118,8 +124,13 @@ public abstract class BaseSettingsRepository {
     public boolean isOfflineMapEnabled() {
         return mSharedPreferences.getBoolean(mOfflineMapEnabled, false);
     }
-    public String getOfflineMapSource() {
-        return mSharedPreferences.getString(mOfflineMapSource, "");
+    public File[] getOfflineMapSourceFiles() {
+        Set<String> sources = mSharedPreferences.getStringSet(mOfflineMapSource, Collections.singleton(""));
+        List<File> sourceFiles = new ArrayList<>();
+        for (String source : sources) {
+            sourceFiles.add(new File(source));
+        }
+        return sourceFiles.toArray(new File[0]);
     }
 
     public String getOfflineMapStyle() {
