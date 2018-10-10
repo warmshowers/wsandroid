@@ -92,7 +92,7 @@ android {
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
 
-        minSdkVersion 14
+        minSdkVersion 16
         compileSdkVersion 27 // also update in .travis.yml
         targetSdkVersion 22
 
