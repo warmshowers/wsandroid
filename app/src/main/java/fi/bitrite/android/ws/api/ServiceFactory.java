@@ -54,8 +54,7 @@ public class ServiceFactory {
 
     private static OkHttpClient.Builder createDefaultClientBuilder(
             DefaultInterceptor defaultInterceptor) {
-        return  new OkHttpClient.Builder()
-                .addInterceptor(defaultInterceptor);
+       return OkHttpClientProvider.createClientBuilder().addInterceptor(defaultInterceptor);
     }
     private static GsonBuilder createDefaultGsonBuilder() {
         final BooleanDeserializer booleanDeserializer = new BooleanDeserializer();
