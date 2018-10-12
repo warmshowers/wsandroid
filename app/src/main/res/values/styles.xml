@@ -90,12 +90,14 @@
     </style>
 
     <style name="button_primary_raised" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:fontFamily">sans-serif-light</item>
         <item name="colorControlHighlight">@color/primaryColorAccent</item>
         <item name="colorAccent">@color/primaryButtonDisable</item>
         <item name="colorButtonNormal">@color/primaryColor</item>
     </style>
 
     <style name="button_primary_flat" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
         <item name="colorAccent">@color/primaryColor</item>
     </style>
@@ -106,12 +108,14 @@
     </style>
 
     <style name="button_light_flat" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Borderless.Colored</item>
         <item name="colorAccent">@color/primaryTextColorLight</item>
     </style>
 
     <!-- Text Styles -->
     <style name="WsPictureOverlayTitle" parent="@android:style/TextAppearance">
+        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginRight">16dp</item>
         <item name="android:textColor">@color/primaryWhite</item>
@@ -119,6 +123,7 @@
     </style>
 
     <style name="WsPictureOverlayTitle.Medium">
+        <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textSize">14sp</item>
     </style>
 
