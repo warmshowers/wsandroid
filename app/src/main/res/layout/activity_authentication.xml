@@ -97,7 +97,7 @@
 
                 </android.support.design.widget.TextInputLayout>
 
-                <Button
+                <android.support.v7.widget.AppCompatButton
                     android:id="@+id/auth_btn_login"
                     style="@style/button_dark"
                     android:layout_width="match_parent"
@@ -110,7 +110,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/auth_til_password" />
 
-                <Button
+                <android.support.v7.widget.AppCompatButton
                     android:id="@+id/auth_btn_forgot_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
