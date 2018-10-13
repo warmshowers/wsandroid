@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -15,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -54,7 +54,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import butterknife.BindColor;
-import butterknife.BindDrawable;
 import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -95,8 +94,6 @@ public class MapFragment extends BaseFragment {
     @BindColor(R.color.primaryColor) int mColorPrimary;
     @BindColor(R.color.primaryWhite) int mColorPrimaryWhite;
     @BindColor(R.color.primaryButtonDisable) int mColorPrimaryButtonDisable;
-    @BindDrawable(R.drawable.ic_my_location_white_24dp) Drawable mIcMyLocationWhite;
-    @BindDrawable(R.drawable.ic_my_location_grey600_24dp) Drawable mIcMyLocationGrey;
     @BindView(R.id.map) MapView mMap;
     @BindView(R.id.map_progress_loading_users) ProgressBar mProgressLoadingUsers;
     @BindView(R.id.map_btn_goto_current_location) FloatingActionButton mBtnGotoCurrentLocation;
@@ -352,15 +349,18 @@ public class MapFragment extends BaseFragment {
                                            || mHasEnabledLocationProviders);
 
         int fillColor;
-        Drawable icon;
+        VectorDrawableCompat icon;
         if (mLastDeviceLocation.getValue() != null) {
-            icon = mIcMyLocationWhite;
+            icon = VectorDrawableCompat.create(getResources(), R.drawable.ic_my_location_white_24dp,
+                    null);
             fillColor = mColorPrimary;
         } else if (mHasEnabledLocationProviders) {
-            icon = mIcMyLocationGrey;
+            icon = VectorDrawableCompat.create(getResources(),
+                    R.drawable.ic_my_location_grey600_24dp, null);
             fillColor = mColorPrimaryWhite;
         } else {
-            icon = mIcMyLocationWhite;
+            icon = VectorDrawableCompat.create(getResources(), R.drawable.ic_my_location_white_24dp,
+                    null);
             fillColor = mColorPrimaryButtonDisable;
         }
         mBtnGotoCurrentLocation.setImageDrawable(icon);
