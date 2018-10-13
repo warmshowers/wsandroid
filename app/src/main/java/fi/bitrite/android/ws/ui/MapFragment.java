@@ -157,8 +157,7 @@ public class MapFragment extends BaseFragment {
         UserMarkerClusterer.MarkerFactory singleLocationMarkerFactory =
                 new UserMarkerClusterer.MarkerFactory(
                         getResources().getDrawable(R.drawable.map_markers_multiple));
-        singleLocationMarkerFactory.setTextAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_TOP);
-        singleLocationMarkerFactory.setTextPadding(0, 15);
+        singleLocationMarkerFactory.setTextAnchor(Marker.ANCHOR_CENTER, 0.3f);
 
         UserMarkerClusterer.MarkerFactory multiLocationMarkerFactory =
                 new UserMarkerClusterer.MarkerFactory(
