@@ -10,17 +10,7 @@
     android:layout_marginTop="7dp"
     android:elevation="1dp"
     android:orientation="vertical"
-    android:paddingBottom="5dp"
-    android:paddingTop="5dp"
-    tools:background="@drawable/message_incoming_bubble"
-    tools:layout_marginStart="@dimen/message_bubble_margin_small"
-    tools:layout_marginLeft="@dimen/message_bubble_margin_small"
-    tools:layout_marginEnd="@dimen/message_bubble_margin_big"
-    tools:layout_marginRight="@dimen/message_bubble_margin_big"
-    tools:paddingStart="@dimen/message_bubble_padding_big"
-    tools:paddingLeft="@dimen/message_bubble_padding_big"
-    tools:paddingEnd="@dimen/message_bubble_padding_small"
-    tools:paddingRight="@dimen/message_bubble_padding_small">
+    tools:background="@drawable/message_incoming_bubble" >
 
     <TextView
         android:id="@+id/message_lbl_sender"
@@ -29,6 +19,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:textSize="15sp"
+        android:padding="@dimen/message_bubble_padding"
         tools:text="@tools:sample/full_names" />
 
     <TextView
@@ -37,6 +28,7 @@
         android:layout_height="wrap_content"
         android:lineSpacingMultiplier="1.1"
         android:textSize="15sp"
+        android:padding="@dimen/message_bubble_padding"
         tools:maxLines="5"
         tools:text="@tools:sample/lorem/random" />
 
@@ -47,5 +39,6 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:textSize="13sp"
+        android:padding="@dimen/message_bubble_padding"
         tools:text="@tools:sample/date/hhmm" />
 </LinearLayout>

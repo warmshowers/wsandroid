@@ -100,8 +100,6 @@ public class MessageListAdapter extends
         @BindView(R.id.message_lbl_body) TextView mLblBody;
         @BindView(R.id.message_lbl_date) TextView mLblDate;
 
-        @BindDimen(R.dimen.message_bubble_padding_big) int mPaddingBubbleBig;
-        @BindDimen(R.dimen.message_bubble_padding_small) int mPaddingBubbleSmall;
         @BindDimen(R.dimen.message_bubble_margin_big) int mMarginBubbleBig;
         @BindDimen(R.dimen.message_bubble_margin_small) int mMarginBubbleSmall;
         @BindDrawable(R.drawable.message_incoming_bubble) Drawable mDrawableBubbleIncoming;
@@ -142,13 +140,6 @@ public class MessageListAdapter extends
             final User loggedInUser = mLoggedInUserHelper.get();
             final int loggedInUserId = loggedInUser == null ? -1 : loggedInUser.id;
             final boolean isIncoming = message.authorId != loggedInUserId;
-
-            // Sets the padding of the bubble.
-            mRoot.setPadding(
-                    isIncoming ? mPaddingBubbleBig : mPaddingBubbleSmall,
-                    mRoot.getPaddingTop(),
-                    isIncoming ? mPaddingBubbleSmall : mPaddingBubbleBig,
-                    mRoot.getPaddingBottom());
 
             // Sets the margin of the bubble.
             ViewGroup.MarginLayoutParams lp =
