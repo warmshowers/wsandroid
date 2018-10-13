@@ -117,7 +117,7 @@ public class UserMarkerClusterer extends RadiusMarkerClusterer {
             if (useBuckets) {
                 int bucket = getBucket(clusterSize);
                 iconDrawable = mIconDrawable.getConstantState().newDrawable().mutate();
-                iconDrawable.setColorFilter(getClusterColor(bucket), PorterDuff.Mode.SRC);
+                iconDrawable.setColorFilter(getClusterColor(bucket), PorterDuff.Mode.SRC_ATOP);
                 iconText = getClusterText(bucket);
             } else {
                 iconText = Integer.toString(clusterSize);
