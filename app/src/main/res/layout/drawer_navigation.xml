@@ -17,8 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="230dp"
         android:background="#F777"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -29,8 +29,8 @@
             android:scaleType="centerCrop"
             android:src="@drawable/default_userinfo_profile"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
@@ -39,12 +39,14 @@
             android:background="#C555"
             android:orientation="vertical"
             android:paddingBottom="8dp"
+            android:paddingStart="16dp"
             android:paddingLeft="16dp"
+            android:paddingEnd="16dp"
             android:paddingRight="16dp"
             android:paddingTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <TextView
                 android:id="@+id/nav_lbl_fullname"
@@ -73,8 +75,8 @@
         android:orientation="vertical"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/nav_drawer_header">
 
         <ListView

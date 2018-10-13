@@ -11,8 +11,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
         android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
         android:orientation="vertical">
 
         <TextView
@@ -41,8 +43,10 @@
                 android:id="@+id/preference_dialog_refresh_interval_edt_interval"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="-4dp"
                 android:layout_marginStart="-4dp"
+                android:layout_marginLeft="-4dp"
+                android:layout_marginEnd="-4dp"
+                android:layout_marginRight="-4dp"
                 android:inputType="number"
                 android:text="@string/prefs_message_refresh_interval_min_hint" />
 
