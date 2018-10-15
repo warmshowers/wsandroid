@@ -162,7 +162,13 @@ public class MessageThreadListAdapter extends
                 // TODO(saemy): Show oldest unread message?
                 Message newestMessage =
                         Collections.max(thread.messages, MessageListAdapter.COMPARATOR);
-                String body = newestMessage.rawBody.replace('\n', ' ');
+                String body = newestMessage.body.toString();
+                int lastLength;
+                do {
+                    lastLength = body.length();
+                    body = body.replaceAll("\n\n", "\n");
+                } while (lastLength != body.length());
+                body = body.trim().replaceAll("\n", " ");
                 mLblPreview.setText(Html.fromHtml(body));
 
                 if (!newestMessage.isPushed) {

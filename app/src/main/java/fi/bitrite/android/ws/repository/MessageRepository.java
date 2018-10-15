@@ -165,6 +165,11 @@ public class MessageRepository extends Repository<MessageThread> {
         }).subscribeOn(Schedulers.io());
     }
     public Completable sendMessage(int threadId, String body) {
+        // Format the message as if it was sent from the website.
+        body = "<p>" + body + "</p>";
+        body = body.replaceAll("\n", "<br />");
+        String finalBody = body;
+
         return Completable.create(emitter -> {
             // Creates and saves a new message.
             MessageThread thread = getRaw(threadId);
@@ -182,7 +187,8 @@ public class MessageRepository extends Repository<MessageThread> {
             // thread to make it distinguishable when it is compared to stored instances (which end
             // up to be the same instance in case we do no clone). We also set the lastUpdated field
             // to now.
-            Message message = new Message(id, threadId, authorId, new Date(), body, false, false);
+            Message message = new Message(id, threadId, authorId, new Date(), finalBody, false,
+                    false);
             List<Message> messages = new ArrayList<>(thread.messages);
             messages.add(message);
 
@@ -511,7 +517,7 @@ public class MessageRepository extends Repository<MessageThread> {
                 return;
             }
 
-            mWebservice.sendMessage(thread.id, message.rawBody)
+            mWebservice.sendMessage(thread.id, message.strippedRawBody)
                     .filter(response -> {
                         // Throwing errors is not allowed in onSuccess().
                         if (!response.isSuccessful()) {

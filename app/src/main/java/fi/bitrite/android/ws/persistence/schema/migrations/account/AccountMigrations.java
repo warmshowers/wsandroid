@@ -12,6 +12,7 @@ import fi.bitrite.android.ws.persistence.schema.migrations.Migrations;
 public class AccountMigrations implements Migrations {
     @Inject MigrationTo2 mMigrationTo2;
     @Inject MigrationTo3 mMigrationTo3;
+    @Inject MigrationTo4 mMigrationTo4;
 
     @Inject
     AccountMigrations() {
@@ -25,6 +26,7 @@ public class AccountMigrations implements Migrations {
         switch (db.getVersion()) {
             case 1: mMigrationTo2.fixMessageStatus(db);
             case 2: mMigrationTo3.addMessageDraftTable(db);
+            case 3: mMigrationTo4.reSurroundMessageBodiesWithParagraphTag(db);
         }
     }
 }
