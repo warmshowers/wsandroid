@@ -94,6 +94,8 @@ public class MapFragment extends BaseFragment {
     @BindColor(R.color.primaryColor) int mColorPrimary;
     @BindColor(R.color.primaryWhite) int mColorPrimaryWhite;
     @BindColor(R.color.primaryButtonDisable) int mColorPrimaryButtonDisable;
+    private VectorDrawableCompat mIcMyLocationWhite;
+    private VectorDrawableCompat mIcMyLocationGrey;
     @BindView(R.id.map) MapView mMap;
     @BindView(R.id.map_progress_loading_users) ProgressBar mProgressLoadingUsers;
     @BindView(R.id.map_btn_goto_current_location) FloatingActionButton mBtnGotoCurrentLocation;
@@ -187,6 +189,11 @@ public class MapFragment extends BaseFragment {
         mMapController = mMap.getController();
 
         mProgressLoadingUsers.setVisibility(View.GONE);
+
+        mIcMyLocationWhite = VectorDrawableCompat.create(
+                getResources(), R.drawable.ic_my_location_white_24dp, null);
+        mIcMyLocationGrey = VectorDrawableCompat.create(
+                getResources(), R.drawable.ic_my_location_grey600_24dp, null);
 
         mLastPositionType = -1;
         mLastPosition = null;
@@ -350,16 +357,13 @@ public class MapFragment extends BaseFragment {
         int fillColor;
         VectorDrawableCompat icon;
         if (mLastDeviceLocation.getValue() != null) {
-            icon = VectorDrawableCompat.create(getResources(), R.drawable.ic_my_location_white_24dp,
-                    null);
+            icon = mIcMyLocationWhite;
             fillColor = mColorPrimary;
         } else if (mHasEnabledLocationProviders) {
-            icon = VectorDrawableCompat.create(getResources(),
-                    R.drawable.ic_my_location_grey600_24dp, null);
+            icon = mIcMyLocationGrey;
             fillColor = mColorPrimaryWhite;
         } else {
-            icon = VectorDrawableCompat.create(getResources(), R.drawable.ic_my_location_white_24dp,
-                    null);
+            icon = mIcMyLocationWhite;
             fillColor = mColorPrimaryButtonDisable;
         }
         mBtnGotoCurrentLocation.setImageDrawable(icon);
