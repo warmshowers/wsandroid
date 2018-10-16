@@ -66,7 +66,7 @@ public class Message {
             // '\n' for newlines.
             rawBody = "<p>"
                       + rawBody.replace("\r", "")
-                              .replace("\n", "<br />")
+                              .replace("\n", "<br>")
                       + "</p>";
         }
         return rawBody.replace("\r\n", "");

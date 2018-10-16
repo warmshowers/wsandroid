@@ -21,6 +21,7 @@ public class MigrationTo4 {
         db.execSQL("UPDATE message SET body = '<p>' || body || '</p>\r\n' "
                    + "WHERE body LIKE '%</p>%' "
                    + "  OR body LIKE '%<br />%'"
+                   + "  OR body LIKE '%<br>%'"
                    + "  OR body LIKE '%<s>%'"
                    + "  OR body LIKE '%<strong>%'");
     }
