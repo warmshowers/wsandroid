@@ -163,12 +163,16 @@ public class MessageThreadListAdapter extends
                 Message newestMessage =
                         Collections.max(thread.messages, MessageListAdapter.COMPARATOR);
                 String body = newestMessage.body.toString();
+
+                // Recursively removes all "\n\n" by "\n". Therefore, "\n\n\n" becomes "\n", too.
                 int lastLength;
                 do {
                     lastLength = body.length();
-                    body = body.replaceAll("\n\n", "\n");
+                    body = body.replace("\n\n", "\n");
                 } while (lastLength != body.length());
-                body = body.trim().replaceAll("\n", " ");
+
+                // Replaces all remaining newlines by a single space.
+                body = body.trim().replace("\n", " ");
                 mLblPreview.setText(Html.fromHtml(body));
 
                 if (!newestMessage.isPushed) {

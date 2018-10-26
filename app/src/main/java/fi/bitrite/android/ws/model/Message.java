@@ -74,11 +74,17 @@ public class Message {
 
     /**
      * Returns the html-parsed body and removes the trailing newlines caused by the last paragraph.
+     *    - Html.fromHtml("<p>Lorem ipsum</p>") == "Lorem ipsum\n\n"
+     *    - parseBody("<p>Lorem ipsum</p>") == "Lorem ipsum"
      */
     private static CharSequence parseBody(String strippedRawBody) {
         Spanned body = Html.fromHtml(strippedRawBody);
+
+        // Find the last non-whitespace char and trim the body.
         int i = body.length()-1;
-        for (; i >= 0 && Character.isWhitespace(body.charAt(i)); --i);
+        while (i >= 0 && Character.isWhitespace(body.charAt(i))) {
+            --i;
+        }
         return body.subSequence(0, i+1);
     }
 }

@@ -167,7 +167,7 @@ public class MessageRepository extends Repository<MessageThread> {
     public Completable sendMessage(int threadId, String body) {
         // Format the message as if it was sent from the website.
         body = "<p>" + body + "</p>";
-        body = body.replaceAll("\n", "<br>");
+        body = body.replace("\n", "<br>");
         String finalBody = body;
 
         return Completable.create(emitter -> {
