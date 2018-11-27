@@ -14,7 +14,7 @@ import fi.bitrite.android.ws.ui.SettingsFragment;
 import fi.bitrite.android.ws.ui.UserFragment;
 
 @Module
-abstract class ActivitesModule {
+abstract class ActivitiesModule {
     @ContributesAndroidInjector
     abstract AboutFragment contributeAboutFragment();
 
