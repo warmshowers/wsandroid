@@ -15,7 +15,7 @@ import io.reactivex.disposables.CompositeDisposable;
 @AccountScope
 @Subcomponent(modules = {
         AccountModule.class,
-        ActivitesModule.class,
+        ActivitiesModule.class,
         AndroidInjectionModule.class,
         WebserviceModule.class,
 })
