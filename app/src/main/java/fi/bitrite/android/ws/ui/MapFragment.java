@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -54,6 +55,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import butterknife.BindColor;
+import butterknife.BindDrawable;
 import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -99,6 +101,8 @@ public class MapFragment extends BaseFragment {
     @BindView(R.id.map) MapView mMap;
     @BindView(R.id.map_progress_loading_users) ProgressBar mProgressLoadingUsers;
     @BindView(R.id.map_btn_goto_current_location) FloatingActionButton mBtnGotoCurrentLocation;
+    @BindDrawable(R.drawable.map_markers_favorite) Drawable mMapMarkersFavorite;
+    @BindDrawable(R.drawable.map_markers_single) Drawable mMapMarkersSingle;
     private IMapController mMapController;
 
     private Unbinder mUnbinder;
@@ -532,7 +536,8 @@ public class MapFragment extends BaseFragment {
                             .filter(searchResult -> !searchResult.isEmpty())
                             .subscribe(searchResult -> {
                                 for (UserSearchByLocationResponse.User user : searchResult) {
-                                    addUserToCluster(user.toSimpleUser());
+                                    addUserToCluster(user.toSimpleUser(),
+                                            mFavoriteRepository.isFavorite(user.id));
                                 }
                                 mMarkerClusterer.invalidate();
                                 mMap.invalidate();
@@ -555,7 +560,7 @@ public class MapFragment extends BaseFragment {
                 .distinct()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
-                    addUserToCluster(user);
+                    addUserToCluster(user, mFavoriteRepository.isFavorite(user.id));
                     mMarkerClusterer.invalidate();
                 });
         getCreateDestroyDisposable().add(loadOfflineUserDisposable);
@@ -563,33 +568,50 @@ public class MapFragment extends BaseFragment {
 
     private void loadCachedUsers() {
         for (UserSearchByLocationResponse.User user : mUserRegionalCache.getAllCached()) {
-            addUserToCluster(user.toSimpleUser());
+            addUserToCluster(user.toSimpleUser(), mFavoriteRepository.isFavorite(user.id));
         }
         mMarkerClusterer.invalidate();
     }
 
-    private void addUserToCluster(SimpleUser user) {
+    private void addUserToCluster(SimpleUser user, boolean isFavoriteHost) {
         // Only add to the cluster if it wasn't before or when its location changed.
         final Marker existingMarker = mClusteredUsers.get(user.id);
-        boolean isNew = existingMarker == null
-                        || !existingMarker.getPosition().equals(user.location);
-        if (isNew) {
-            if (existingMarker != null) {
-                mMarkerClusterer.remove(existingMarker);
-            }
-
-            UserMarker marker = new UserMarker(getContext(), mMap, user);
-            marker.setAnchor(UserMarker.ANCHOR_CENTER, UserMarker.ANCHOR_BOTTOM);
-            marker.setIcon(getResources().getDrawable(R.drawable.map_markers_single));
-            marker.setOnMarkerClickListener((m, mapView) -> {
-                // We need a new ArrayList here, as it gets sorted in {@link UserListAdapter} and
-                // Collections.singletonList() provides a non-mutable list.
-                new MultiUserSelectDialog().show(new ArrayList<>(Collections.singletonList(user)));
-                return true;
-            });
-            mMarkerClusterer.add(marker);
-            mClusteredUsers.put(user.id, marker);
+        if (!markerUpdateRequired(existingMarker, user, isFavoriteHost)) {
+            return;
         }
+        if (existingMarker != null) {
+            mMarkerClusterer.remove(existingMarker);
+        }
+
+        UserMarker marker = new UserMarker(getContext(), mMap, user);
+        marker.setAnchor(UserMarker.ANCHOR_CENTER, UserMarker.ANCHOR_BOTTOM);
+        marker.setIcon(getMarkerIconForHost(isFavoriteHost));
+        marker.setOnMarkerClickListener((m, mapView) -> {
+            // We need a new ArrayList here, as it gets sorted in {@link UserListAdapter} and
+            // Collections.singletonList() provides a non-mutable list.
+            new MultiUserSelectDialog().show(new ArrayList<>(Collections.singletonList(user)));
+            return true;
+        });
+        mMarkerClusterer.add(marker);
+        mClusteredUsers.put(user.id, marker);
+    }
+
+    private boolean markerUpdateRequired(final Marker existingMarker, SimpleUser user,
+                                         boolean isFavoriteHost) {
+        if (existingMarker == null) {
+            return true;
+        }
+        if (!existingMarker.getPosition().equals(user.location)) {
+            return true;
+        }
+        if (!existingMarker.getIcon().equals(getMarkerIconForHost(isFavoriteHost))) {
+            return true;
+        }
+        return false;
+    }
+
+    private Drawable getMarkerIconForHost(boolean isFavoriteHost) {
+        return isFavoriteHost ? mMapMarkersFavorite : mMapMarkersSingle;
     }
 
     /**
