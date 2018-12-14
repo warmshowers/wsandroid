@@ -24,18 +24,18 @@ public class ServiceFactory {
     private ServiceFactory() {}
 
     public static WarmshowersWebservice createWarmshowersWebservice(
-            DefaultInterceptor defaultInterceptor) {
+            String baseUrl, DefaultInterceptor defaultInterceptor) {
         OkHttpClient client = createDefaultClientBuilder(defaultInterceptor).build();
         Gson gson = createDefaultGsonBuilder().create();
 
-        return createDefaultRetrofitBuilder(client, gson)
+        return createDefaultRetrofitBuilder(baseUrl, client, gson)
                 .build()
                 .create(WarmshowersWebservice.class);
     }
 
     public static WarmshowersAccountWebservice createWarmshowersAccountWebservice(
-            DefaultInterceptor defaultInterceptor, HeaderInterceptor headerInterceptor,
-            ResponseInterceptor responseInterceptor) {
+            String baseUrl, DefaultInterceptor defaultInterceptor,
+            HeaderInterceptor headerInterceptor, ResponseInterceptor responseInterceptor) {
         OkHttpClient client = createDefaultClientBuilder(defaultInterceptor)
                 // They must be in correct order.
                 .addInterceptor(responseInterceptor)
@@ -47,7 +47,7 @@ public class ServiceFactory {
                 .registerTypeAdapter(Feedback.Rating.class, new RatingTypeAdapter())
                 .create();
 
-        return createDefaultRetrofitBuilder(client, gson)
+        return createDefaultRetrofitBuilder(baseUrl, client, gson)
                 .build()
                 .create(WarmshowersAccountWebservice.class);
     }
@@ -64,9 +64,11 @@ public class ServiceFactory {
                 .registerTypeAdapter(Boolean.class, booleanDeserializer)
                 .registerTypeAdapter(boolean.class, booleanDeserializer);
     }
-    private static Retrofit.Builder createDefaultRetrofitBuilder(OkHttpClient client, Gson gson) {
+    private static Retrofit.Builder createDefaultRetrofitBuilder(String baseUrl,
+                                                                 OkHttpClient client,
+                                                                 Gson gson) {
         return new Retrofit.Builder()
-                .baseUrl("https://www.warmshowers.org/")
+                .baseUrl(baseUrl)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(new StringConverterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gson))

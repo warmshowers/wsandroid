@@ -106,6 +106,7 @@ android {
 }
 
 ext {
+    androidxTestVersion = '1.0.0'
     assertjVersion = '3.9.0'
     butterknifeVersion = '8.8.1'
     constraintLayoutVersion = '1.1.2'
@@ -113,12 +114,13 @@ ext {
     gsonVersion = '2.8.1'
     jsonVersion = '20170516'
     junitVersion = '4.12'
+    okHttpVersion = '3.12.0'
     osmbonuspackVersion = '6.5.2'
     osmdroidVersion = '6.0.2'
     picassoVersion = '2.5.2'
     playServicesVersion = '11.6.2'
-    retrofitVersion = '2.3.0'
-    robolectricVersion = '3.7'
+    retrofitVersion = '2.5.0' // Dictates version of okhttp in their dependencies which clashes in tests.
+    robolectricVersion = '4.1'
     rxAndroidVersion = '2.0.2'
     rxJavaVersion = '2.1.7'
     supportLibVersion = '27.1.1'
@@ -150,6 +152,10 @@ dependencies {
 
     googleImplementation "com.google.android.gms:play-services-analytics:$playServicesVersion"
 
+    androidTestAnnotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
+    testAnnotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+    testImplementation "androidx.test:core:$androidxTestVersion"
+    testImplementation "com.squareup.okhttp3:mockwebserver:$okHttpVersion"
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.assertj:assertj-core:$assertjVersion"
     testImplementation "org.json:json:$jsonVersion"

@@ -198,6 +198,7 @@
     <string name="title_fragment_settings">Paramètres</string>
     <string name="title_fragment_users">Hôtes</string>
 
+    <string name="remember_password">Enregistrer le mot de passe?</string>
     <string name="button_text_forgot_password">Mot de passe oublié?</string>
     <string name="url_target_forgot_password">https://fr.warmshowers.org/user/password</string>
 
