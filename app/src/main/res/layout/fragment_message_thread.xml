@@ -48,10 +48,10 @@
             android:layout_gravity="center"
             android:background="@null"
             android:contentDescription="@string/send_message"
-            android:paddingEnd="12dp"
-            android:paddingLeft="0dp"
-            android:paddingRight="12dp"
             android:paddingStart="0dp"
+            android:paddingLeft="0dp"
+            android:paddingEnd="12dp"
+            android:paddingRight="12dp"
             app:srcCompat="@drawable/ic_send_black_24dp" />
     </LinearLayout>
 </LinearLayout>

@@ -10,13 +10,7 @@
     android:layout_marginTop="7dp"
     android:elevation="1dp"
     android:orientation="vertical"
-    android:paddingBottom="5dp"
-    android:paddingTop="5dp"
-    tools:background="@drawable/message_incoming_bubble"
-    tools:layout_marginLeft="@dimen/message_bubble_margin_small"
-    tools:layout_marginRight="@dimen/message_bubble_margin_big"
-    tools:paddingLeft="@dimen/message_bubble_padding_big"
-    tools:paddingRight="@dimen/message_bubble_padding_small">
+    tools:background="@drawable/message_incoming_bubble" >
 
     <TextView
         android:id="@+id/message_lbl_sender"
@@ -25,7 +19,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:textSize="15sp"
-        tools:text="John Snow" />
+        android:padding="@dimen/message_bubble_padding"
+        tools:text="@tools:sample/full_names" />
 
     <TextView
         android:id="@+id/message_lbl_body"
@@ -33,7 +28,9 @@
         android:layout_height="wrap_content"
         android:lineSpacingMultiplier="1.1"
         android:textSize="15sp"
-        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum" />
+        android:padding="@dimen/message_bubble_padding"
+        tools:maxLines="5"
+        tools:text="@tools:sample/lorem/random" />
 
     <TextView
         android:id="@+id/message_lbl_date"
@@ -42,5 +39,6 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:textSize="13sp"
-        tools:text="15:03" />
+        android:padding="@dimen/message_bubble_padding"
+        tools:text="@tools:sample/date/hhmm" />
 </LinearLayout>

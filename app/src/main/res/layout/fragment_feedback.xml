@@ -12,7 +12,9 @@
         android:divider="@drawable/divider"
         android:dividerPadding="-16dp"
         android:orientation="vertical"
+        android:paddingStart="@dimen/activity_horizontal_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:showDividers="middle">
 
@@ -136,15 +138,16 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:gravity="end"
             android:orientation="vertical"
             android:paddingBottom="@dimen/activity_horizontal_margin"
 
             android:paddingTop="@dimen/activity_horizontal_margin">
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/all_btn_submit"
                 style="@style/button_dark"
+                android:theme="@style/button_primary_raised"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/feedback_send" />

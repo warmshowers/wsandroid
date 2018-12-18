@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
 
     android:id="@+id/user_list_layout"
     android:layout_width="fill_parent"
@@ -18,8 +19,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="7dp"
         android:layout_marginStart="7dp"
+        android:layout_marginLeft="7dp"
         android:orientation="vertical">
 
         <TextView
@@ -27,7 +28,7 @@
             style="@style/WsText.subHead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Firstname Lastname" />
+            tools:text="@tools:sample/full_names" />
 
         <TextView
             android:id="@+id/user_list_lbl_location"
@@ -35,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
-            android:text="Gunnison, Co, USA" />
+            tools:text="@tools:sample/cities" />
 
         <TextView
             android:id="@+id/user_list_lbl_member_info"
@@ -43,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
-            android:text="Member since January 1, 2015. Last active 3 weeks ago.zz"
+            tools:text="Member since January 1, 2015. Last active 3 weeks ago."
             android:textColor="@android:color/darker_gray" />
 
     </LinearLayout>
