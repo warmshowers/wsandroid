@@ -2,7 +2,6 @@ package fi.bitrite.android.ws.model;
 
 import android.support.annotation.VisibleForTesting;
 import android.text.Html;
-import android.text.Spanned;
 
 import java.util.Date;
 
@@ -75,19 +74,23 @@ public class Message {
     }
 
     /**
-     * Returns the html-parsed body and removes the trailing newlines caused by the last paragraph.
-     *    - Html.fromHtml("<p>Lorem ipsum</p>") == "Lorem ipsum\n\n"
-     *    - parseBody("<p>Lorem ipsum</p>") == "Lorem ipsum"
+     * Returns the html-parsed body and removes the trailing two newlines caused by the last
+     * paragraph.
+     *   - Html.fromHtml("<p>Lorem ipsum</p>") == "Lorem ipsum\n\n"
+     *   - parseBody("<p>Lorem ipsum</p>") == "Lorem ipsum"
+     *
+     * Note: Any trailing <br> blocks in a paragraph are truncated, too:
+     *   - parseBody("<p>Lorem ipsum<br></p>") == "Lorem ipsum"
      */
     @VisibleForTesting
     static CharSequence parseBody(String strippedRawBody) {
-        Spanned body = Html.fromHtml(strippedRawBody);
+        CharSequence body = Html.fromHtml(strippedRawBody);
 
-        // Find the last non-whitespace char and trim the body.
-        int i = body.length() - 1;
-        while (i >= 0 && Character.isWhitespace(body.charAt(i))) {
-            --i;
+        // Strip the last two newline chars.
+        final int len = body.length();
+        if (body.charAt(len-1) == '\n' && body.charAt(len-2) == '\n') {
+            body = body.subSequence(0, len-2);
         }
-        return body.subSequence(0, i + 1);
+        return body;
     }
 }

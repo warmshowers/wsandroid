@@ -80,11 +80,11 @@ public class MessageTest {
 
     @Test
     public void parseBody() {
-        final String testString = "<p>foo</p><p>bar<br>baz<br></p>";
-        final String expected = "foo\n\nbar\nbaz\n";
+        final String testString = "<p>foo<br></p><p>bar<br>baz<br><br></p><p>&nbsp;</p><p>bzz </p>";
+        final String expected = "foo\n\nbar\nbaz\n\n\240\n\nbzz ";
 
         final CharSequence actual = Message.parseBody(testString);
 
-        assertThat(actual, is(equalTo(expected)));
+        assertThat(actual.toString(), is(equalTo(expected)));
     }
 }
