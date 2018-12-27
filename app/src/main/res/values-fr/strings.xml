@@ -181,6 +181,10 @@
     <string name="feedback_relation_guest">Invité</string>
     <string name="feedback_relation_met_while_traveling">Rencontré en voyage</string>
     <string name="feedback_relation_other">Autre</string>
+    <string name="feedback_relation_long_host">%1$s a accueilli %2$s</string>
+    <string name="feedback_relation_long_guest">%1$s était un invité de %2$s</string>
+    <string name="feedback_relation_long_met_while_traveling">%1$s et %2$s se sont rencontrés en voyageant</string>
+    <string name="feedback_relation_long_other">Autre</string>
 
     <string name="feedback_rating_positive">Positif</string>
     <string name="feedback_rating_neutral">Neutre</string>

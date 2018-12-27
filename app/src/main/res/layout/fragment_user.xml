@@ -14,7 +14,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="20dp" >
+        android:paddingBottom="20dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -376,14 +376,17 @@
                         tools:text="Feedback" />
                 </LinearLayout>
 
-                <fi.bitrite.android.ws.ui.view.FeedbackTable
-                    android:id="@+id/user_tbl_feedback"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/user_lst_feedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     android:layout_marginStart="56dp"
                     android:layout_marginLeft="56dp"
-                    android:paddingTop="4dp"
-                    android:shrinkColumns="0" />
+                    android:layout_weight="1"
+                    android:scrollbars="vertical"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    app:stackFromEnd="true"
+                    tools:listitem="@layout/item_feedback" />
 
             </LinearLayout>
         </LinearLayout>

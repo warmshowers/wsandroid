@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -27,9 +28,7 @@ import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -44,10 +43,9 @@ import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.FeedbackRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
+import fi.bitrite.android.ws.ui.listadapter.FeedbackListAdapter;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
-import fi.bitrite.android.ws.ui.view.FeedbackTable;
 import fi.bitrite.android.ws.util.GlobalInfo;
-import fi.bitrite.android.ws.util.ObjectUtils;
 import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -88,7 +86,7 @@ public class UserFragment extends BaseFragment {
     @BindView(R.id.user_lbl_comments) TextView mLblComments;
 
     @BindView(R.id.user_lbl_feedback) TextView mLblFeedback;
-    @BindView(R.id.user_tbl_feedback) FeedbackTable mTblFeedback;
+    @BindView(R.id.user_lst_feedback) RecyclerView mLstFeedback;
 
     @BindColor(R.color.primaryColorAccent) int mFavoritedColor;
     @BindColor(R.color.primaryTextColor) int mNonFavoritedColor;
@@ -103,6 +101,7 @@ public class UserFragment extends BaseFragment {
     private final BehaviorSubject<Boolean> mFavorite = BehaviorSubject.create();
 
     private boolean mDbFavoriteStatus;
+    private FeedbackListAdapter mFeedbackListAdapter;
 
     public static Fragment create(int userId) {
         Bundle bundle = new Bundle();
@@ -137,6 +136,12 @@ public class UserFragment extends BaseFragment {
             loadUserInformation();
         }
         mLayoutDetails.setVisibility(View.GONE);
+
+        mFeedbackListAdapter = new FeedbackListAdapter(mUserRepository);
+        mFeedbackListAdapter.setOnUserClickHandler(
+                user -> getNavigationController().navigateToUser(user.id));
+        mLstFeedback.setAdapter(mFeedbackListAdapter);
+
         return view;
     }
 
@@ -150,7 +155,12 @@ public class UserFragment extends BaseFragment {
 
         getResumePauseDisposable().add(mFeedbacks
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(feedbacks -> updateFeedbacksViewContent()));
+                .subscribe(feedbacks -> {
+                    mFeedbackListAdapter.replace(feedbacks);
+                    mLblFeedback.setText(feedbacks.isEmpty()
+                            ? getString(R.string.no_feedback_yet)
+                            : getString(R.string.feedback, feedbacks.size()));
+                }));
 
         getResumePauseDisposable().add(mFavorite
                 .observeOn(AndroidSchedulers.mainThread())
@@ -288,17 +298,6 @@ public class UserFragment extends BaseFragment {
             mImgPhoto.setContentDescription(
                     getString(R.string.content_description_avatar_of_var, user.getName()));
         }
-    }
-
-    private void updateFeedbacksViewContent() {
-        List<Feedback> feedbacks = mFeedbacks.getValue();
-        Collections.sort(feedbacks,
-                (left, right) -> ObjectUtils.compare(right.meetingDate, left.meetingDate));
-
-        mTblFeedback.setRows(feedbacks);
-        mLblFeedback.setText(feedbacks.isEmpty()
-                ? getString(R.string.no_feedback_yet)
-                : getString(R.string.feedback, feedbacks.size()));
     }
 
     private void contactUser(@NonNull User user) {

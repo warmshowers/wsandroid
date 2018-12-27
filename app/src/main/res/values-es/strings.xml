@@ -172,8 +172,12 @@
     <!-- new strings from 2.0 -->
     <string name="feedback_relation_host">Anfitrión</string>
     <string name="feedback_relation_guest">Huesped</string>
-    <string name="feedback_relation_met_while_traveling">Viajando</string>
+    <string name="feedback_relation_met_while_traveling">Conocieron mientras viajaban</string>
     <string name="feedback_relation_other">Otro</string>
+    <string name="feedback_relation_long_host">%1$s estaba hospedando %2$s</string>
+    <string name="feedback_relation_long_guest">%1$s fue un invitado de %2$s</string>
+    <string name="feedback_relation_long_met_while_traveling">%1$s y %2$s se conocieron mientras viajaba</string>
+    <string name="feedback_relation_long_other">Otro, %3$s</string>
 
     <string name="feedback_rating_positive">Positiva</string>
     <string name="feedback_rating_neutral">Neutral</string>
