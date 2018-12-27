@@ -437,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                             SimpleUser loggedInUser = maybeUser.data;
 
                             mLblFullname.setText(loggedInUser.fullname);
-                            mLblUsername.setText(loggedInUser.name);
+                            mLblUsername.setText(loggedInUser.username);
 
                             String profilePhotoUrl = loggedInUser.profilePicture.getSmallUrl();
                             if (TextUtils.isEmpty(profilePhotoUrl)) {

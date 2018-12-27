@@ -85,7 +85,7 @@ public class FavoriteUsersFragment extends BaseFragment {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             SimpleUser user = mUserListAdapter.getUser(info.position);
 
-            menu.setHeaderTitle(user.fullname);
+            menu.setHeaderTitle(user.getName());
             menu.add(Menu.NONE, CONTEXT_MENU_DELETE, 0, R.string.delete);
         }
     }

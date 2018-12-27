@@ -147,10 +147,7 @@ public class MessageThreadListAdapter extends
 
                         List<String> names = new ArrayList<>(participants.size());
                         for (User participant : participants.values()) {
-                            // TODO(saemy): Eventually, put accessor performing this null-check into User.
-                            names.add(TextUtils.isEmpty(participant.fullname)
-                                    ? participant.name
-                                    : participant.fullname);
+                            names.add(participant.getName());
                         }
                         mLblParticipants.setText(TextUtils.join(", ", names));
 

@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -163,12 +162,7 @@ public class MessageListAdapter extends
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(userResource -> {
                             User user = userResource.data;
-                            mLblSender.setText(user == null
-                                    ? ""
-                                    // TODO(saemy): Eventually, put accessor performing this null-check into User.
-                                    : TextUtils.isEmpty(user.name)
-                                            ? user.fullname
-                                            : user.name);
+                            mLblSender.setText(user == null ? "" : user.getName());
                         }));
             }
 

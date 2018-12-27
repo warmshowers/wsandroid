@@ -74,9 +74,7 @@ public class UserCircleImageView extends CircleImageView {
             url = null;
             StringBuilder labelSB = new StringBuilder();
             for (SimpleUser user : users) {
-                final String name = TextUtils.isEmpty(user.fullname)
-                        ? user.name
-                        : user.fullname;
+                final String name = user.getName();
                 colorHash ^= name.hashCode();
 
                 if (labelSB.length() < 2) {

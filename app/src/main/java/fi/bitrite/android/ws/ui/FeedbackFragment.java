@@ -106,7 +106,7 @@ public class FeedbackFragment extends BaseFragment {
                 .firstOrError()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(recipient -> mLblRating.setText(getString(
-                        R.string.lbl_feedback_overall_experience, recipient.fullname)), throwable -> {
+                        R.string.lbl_feedback_overall_experience, recipient.getName())), throwable -> {
                     Log.e(WSAndroidApplication.TAG, throwable.toString());
                     // TODO(saemy): Error handling.
                 }));

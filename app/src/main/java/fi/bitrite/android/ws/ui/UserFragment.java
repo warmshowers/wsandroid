@@ -213,8 +213,8 @@ public class UserFragment extends BaseFragment {
 
         final User user = mUser.getValue();
 
-        mLblName.setText(user.fullname);
-        setTitle(user.fullname);
+        mLblName.setText(user.getName());
+        setTitle(user.getName());
 
         // User Availability:
         // Set the user icon to black if they're available, otherwise gray
@@ -286,7 +286,7 @@ public class UserFragment extends BaseFragment {
                     .placeholder(R.drawable.default_userinfo_profile)
                     .into(mImgPhoto);
             mImgPhoto.setContentDescription(
-                    getString(R.string.content_description_avatar_of_var, user.name));
+                    getString(R.string.content_description_avatar_of_var, user.getName()));
         }
     }
 
@@ -319,7 +319,7 @@ public class UserFragment extends BaseFragment {
     public void sendGeoIntent(@NonNull User user) {
         String lat = Double.toString(user.location.getLatitude());
         String lng = Double.toString(user.location.getLongitude());
-        String query = Uri.encode(lat + "," + lng + "(" + user.fullname + ")");
+        String query = Uri.encode(lat + "," + lng + "(" + user.getName()+ ")");
         Uri uri = Uri.parse("geo:" + lat + "," + lng + "?q=" + query);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
