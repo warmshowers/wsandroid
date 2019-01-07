@@ -173,8 +173,6 @@ public class MapFragment extends BaseFragment {
         mMarkerClusterer.setOnClusterClickListener(this::onClusterClick);
 
         mHideLocationBtn = mSettingsRepository.getHideLocationButton();
-
-        loadOfflineUsers();
     }
 
     @Nullable
@@ -245,9 +243,9 @@ public class MapFragment extends BaseFragment {
             });
 
             doInitialMapMove();
+            onPositionChange(mMap.getZoomLevelDouble());
         });
 
-        loadOfflineUsers();
         loadCachedUsers();
 
         return view;
@@ -257,6 +255,9 @@ public class MapFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         mMap.onResume();
+
+        // Load favorite users and react to changes.
+        loadOfflineUsers();
 
         // Register the settings change listener. That does an initial call to the handler.
         mSettingsRepository.registerOnChangeListener(mOnSettingsChangeListener);
@@ -563,7 +564,7 @@ public class MapFragment extends BaseFragment {
                     addUserToCluster(user, mFavoriteRepository.isFavorite(user.id));
                     mMarkerClusterer.invalidate();
                 });
-        getCreateDestroyDisposable().add(loadOfflineUserDisposable);
+        getResumePauseDisposable().add(loadOfflineUserDisposable);
     }
 
     private void loadCachedUsers() {
@@ -583,7 +584,7 @@ public class MapFragment extends BaseFragment {
             mMarkerClusterer.remove(existingMarker);
         }
 
-        UserMarker marker = new UserMarker(getContext(), mMap, user);
+        UserMarker marker = new UserMarker(requireContext(), mMap, user);
         marker.setAnchor(UserMarker.ANCHOR_CENTER, UserMarker.ANCHOR_BOTTOM);
         marker.setIcon(getMarkerIconForHost(isFavoriteHost));
         marker.setOnMarkerClickListener((m, mapView) -> {
