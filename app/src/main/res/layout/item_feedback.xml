@@ -40,7 +40,7 @@
             android:layout_gravity="center"
             android:importantForAccessibility="yes"
             android:tint="#ff009900"
-            android:tooltipText="@string/feedback_relation_guest"
+            android:tooltipText="@string/feedback_relation_long_host"
             app:srcCompat="@drawable/ic_bicycle_white_24dp" />
 
         <Space

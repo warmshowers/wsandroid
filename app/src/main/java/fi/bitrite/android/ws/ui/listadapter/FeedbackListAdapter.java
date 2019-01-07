@@ -103,13 +103,13 @@ public class FeedbackListAdapter extends
         @BindString(R.string.feedback_relation_long_other) String mRelationStrLongOther;
 
         @ColorInt private final int mRatingColorPositive = Color.rgb(0, 153, 0);
-        @ColorInt private final int mRatingColorNeutral = Color.rgb(255, 128, 0);
+        @ColorInt private final int mRatingColorNeutral = Color.rgb(115, 115, 115);
         @ColorInt private final int mRatingColorNegative = Color.rgb(204, 0, 0);
         @BindString(R.string.feedback_rating_positive) String mRatingStrPositive;
         @BindString(R.string.feedback_rating_neutral) String mRatingStrNeutral;
         @BindString(R.string.feedback_rating_negative) String mRatingStrNegative;
 
-        private final SimpleDateFormat meetingDateFormat = new SimpleDateFormat("MMM ''yy", Locale.US);
+        private final SimpleDateFormat mMeetingDateFormat = new SimpleDateFormat("MMM ''yy", Locale.US);
 
         private final View mRoot;
         private CompositeDisposable mDisposables = new CompositeDisposable();
@@ -161,7 +161,7 @@ public class FeedbackListAdapter extends
                         setRelationAndRating(feedback);
                     }));
 
-            mLblMeetingDate.setText(meetingDateFormat.format(feedback.meetingDate));
+            mLblMeetingDate.setText(mMeetingDateFormat.format(feedback.meetingDate));
             mLblBody.setText(Html.fromHtml(feedback.body));
 
             setRelationAndRating(feedback);
@@ -174,16 +174,19 @@ public class FeedbackListAdapter extends
             String relationStrShort;
             String relationStrLong;
             switch (feedback.relation) {
-                case Guest:
-                    relationDrawable = mRelationDrawableGuest;
-                    relationStrShort = mRelationStrGuest;
-                    relationStrLong = mRelationStrLongGuest;
-                    break;
+                // The feedback keeps the role of the recipient of the feedback.
+                // We depict the role of the sender.
 
-                case Host:
+                case Guest:
                     relationDrawable = mRelationDrawableHost;
                     relationStrShort = mRelationStrHost;
                     relationStrLong = mRelationStrLongHost;
+                    break;
+
+                case Host:
+                    relationDrawable = mRelationDrawableGuest;
+                    relationStrShort = mRelationStrGuest;
+                    relationStrLong = mRelationStrLongGuest;
                     break;
 
                 case MetWhileTraveling:
@@ -232,7 +235,7 @@ public class FeedbackListAdapter extends
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 String relationStr = TextUtils.isEmpty(mRecipientName) || TextUtils.isEmpty(mSenderName)
                         ? relationStrShort
-                        : String.format(relationStrLong, mRecipientName, mSenderName);
+                        : String.format(relationStrLong, mSenderName, mRecipientName);
                 mImgRelationAndRating.setTooltipText(relationStr + ", " + ratingStr);
             }
         }

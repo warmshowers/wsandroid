@@ -206,7 +206,7 @@
     <string name="feedback_relation_guest">Guest</string>
     <string name="feedback_relation_met_while_traveling">Met while traveling</string>
     <string name="feedback_relation_other">Other</string>
-    <string name="feedback_relation_long_host">%1$s was hosting %2$s</string>
+    <string name="feedback_relation_long_host">%1$s hosted %2$s</string>
     <string name="feedback_relation_long_guest">%1$s was a guest of %2$s</string>
     <string name="feedback_relation_long_met_while_traveling">%1$s and %2$s met while traveling</string>
     <string name="feedback_relation_long_other">Other</string>
