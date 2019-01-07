@@ -53,7 +53,7 @@
     <string name="error_sending_message">No se pudo enviar tu mensaje. Verifica tus credenciales y la conexión a internet.</string>
     <string name="message_sent">Mensaje enviado.</string>
     <string name="about_1">"Desarrollado por voluntarios de Warmshowers.org. Traductora al español: lejuliaf@gmail.com</string>
-    <string name="about_2">Esta aplicación es de código abierto bajo la licencia Apache 2.0. Contribuye multiplicando nuestro repositorio en github.com/warmshowers/wsandroid.\nReporta problemas allí o en el formulario de contacto de Warmshowers, warmshowers.org/contact</string>
+    <string name="about_2">Esta aplicación es de código abierto bajo la licencia Apache 2.0. Contribuye multiplicando nuestro repositorio en github.com/warmshowers/wsandroid.\nReporta problemas allí.</string>
     <string name="feedback">Comentarios (%1$d)</string>
     <string name="error_retrieving_messages">Ocurrió un error al cargar los mensajes.</string>
     <string name="messages_in_progress">Cargando mensajes …</string>
