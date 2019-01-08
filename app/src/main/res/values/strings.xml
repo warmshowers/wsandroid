@@ -54,7 +54,7 @@
     <string name="message_sent">Message sent successfully.</string>
     <string name="about_1">"Developed by Warmshowers.org volunteers.</string>
     <string name="about_2">This application is open source under the Apache 2.0 license. Contribute by forking our repository at github.com/warmshowers/wsandroid.\nReport problems there or via the Warmshowers contact form, warmshowers.org/contact</string>
-    <string name="feedback">Feedback (%1$d)</string>
+    <string name="feedback">Feedback</string>
     <string name="error_retrieving_messages">An error occurred while retrieving messages.</string>
     <string name="messages_in_progress">Retrieving messages …</string>
     <string name="no_unread_messages">You have no unread messages.</string>

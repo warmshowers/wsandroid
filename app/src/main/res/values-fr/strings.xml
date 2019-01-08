@@ -22,7 +22,7 @@
     <string name="enter_credentials">Veuillez entrer votre nom d\'utilisateur et mot de passe</string>
     <string name="error_retrieving_messages">Une erreur s\'est produite lors de la récupération des messages.</string>
     <string name="error_sending_message">Le message n\'a pu être envoyé. Vérifiez vos informations de connexion et votre connexion internet</string>
-    <string name="feedback">Recommandation(s) (%1$d)</string>
+    <string name="feedback">Recommandations</string>
     <string name="home_phone"><u>Téléphone fixe:</u></string>
     <string name="mobile_phone"><u>Téléphone mobile:</u></string>
     <plurals name="user_count">

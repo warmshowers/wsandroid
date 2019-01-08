@@ -1,9 +1,7 @@
 package fi.bitrite.android.ws.ui.listadapter;
 
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
@@ -20,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.BindColor;
 import butterknife.BindDrawable;
 import butterknife.BindString;
 import butterknife.BindView;
@@ -102,9 +101,9 @@ public class FeedbackListAdapter extends
         @BindString(R.string.feedback_relation_long_met_while_traveling) String mRelationStrLongMetWhileTraveling;
         @BindString(R.string.feedback_relation_long_other) String mRelationStrLongOther;
 
-        @ColorInt private final int mRatingColorPositive = Color.rgb(0, 153, 0);
-        @ColorInt private final int mRatingColorNeutral = Color.rgb(115, 115, 115);
-        @ColorInt private final int mRatingColorNegative = Color.rgb(204, 0, 0);
+        @BindColor(R.color.rating_positive) int mRatingColorPositive;
+        @BindColor(R.color.rating_neutral) int mRatingColorNeutral;
+        @BindColor(R.color.rating_negative) int mRatingColorNegative;
         @BindString(R.string.feedback_rating_positive) String mRatingStrPositive;
         @BindString(R.string.feedback_rating_neutral) String mRatingStrNeutral;
         @BindString(R.string.feedback_rating_negative) String mRatingStrNegative;
@@ -141,19 +140,28 @@ public class FeedbackListAdapter extends
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(userResource -> {
                         final User recipient = userResource.data;
-                        mRecipientName = recipient == null ? "" : recipient.getName();
+                        if (recipient == null) {
+                            return;
+                        }
+
+                        mRecipientName = recipient.getName();
                         setRelationAndRating(feedback);
                     }));
 
+            mLblSender.setText("\u22EF"); // ...
             mDisposables.add(mUserRepository.get(feedback.senderId)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(userResource -> {
                         final User sender = userResource.data;
-                        mSenderName = sender == null ? "" : sender.getName();
+                        if (sender == null) {
+                            return;
+                        }
+
+                        mSenderName = sender.getName();
                         mLblSender.setText(mSenderName);
 
                         mLblSender.setOnClickListener((view) -> {
-                            if (mOnUserClickHandler != null && sender != null) {
+                            if (mOnUserClickHandler != null) {
                                 mOnUserClickHandler.handle(sender);
                             }
                         });

@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -91,6 +94,10 @@ public class UserFragment extends BaseFragment {
     @BindColor(R.color.primaryColorAccent) int mFavoritedColor;
     @BindColor(R.color.primaryTextColor) int mNonFavoritedColor;
 
+    @BindColor(R.color.rating_positive) int mRatingColorPositive;
+    @BindColor(R.color.rating_neutral) int mRatingColorNeutral;
+    @BindColor(R.color.rating_negative) int mRatingColorNegative;
+
     private BehaviorSubject<UserInfoLoadResult> mLastUserInfoLoadResult = BehaviorSubject.create();
     private Disposable mDownloadUserInfoProgressDisposable;
 
@@ -157,9 +164,28 @@ public class UserFragment extends BaseFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(feedbacks -> {
                     mFeedbackListAdapter.replace(feedbacks);
-                    mLblFeedback.setText(feedbacks.isEmpty()
-                            ? getString(R.string.no_feedback_yet)
-                            : getString(R.string.feedback, feedbacks.size()));
+                    if (feedbacks.isEmpty()) {
+                        mLblFeedback.setText(getString(R.string.no_feedback_yet));
+                    } else {
+                        int positiveCount = 0;
+                        int neutralCount = 0;
+                        int negativeCount = 0;
+                        for (Feedback feedback : feedbacks) {
+                            switch (feedback.rating) {
+                                case Positive: ++positiveCount; break;
+                                case Neutral: ++neutralCount; break;
+                                case Negative: ++negativeCount; break;
+                                default: throw new RuntimeException("Unknown rating");
+                            }
+                        }
+
+                        RatingCountStringBuilder rcsb =
+                                new RatingCountStringBuilder(getString(R.string.feedback));
+                        rcsb.appendRatingCount(positiveCount, mRatingColorPositive);
+                        rcsb.appendRatingCount(neutralCount, mRatingColorNeutral);
+                        rcsb.appendRatingCount(negativeCount, mRatingColorNegative);
+                        mLblFeedback.setText(rcsb.build());
+                    }
                 }));
 
         getResumePauseDisposable().add(mFavorite
@@ -415,6 +441,40 @@ public class UserFragment extends BaseFragment {
     private class UserInfoLoadResult {
         Throwable throwable = null;
         boolean isHandled = false;
+    }
+
+    /**
+     * Helps creating the rating count string. It consists of the non-zero rating counts with their
+     * respective color.
+     */
+    private static class RatingCountStringBuilder {
+        private final SpannableStringBuilder mRatingString;
+        private boolean mPrependSeperator = false;
+
+        RatingCountStringBuilder(String initialString) {
+            mRatingString = new SpannableStringBuilder(initialString + " (");
+        }
+
+        void appendRatingCount(int count, @ColorInt int color) {
+            if (count == 0) {
+                return;
+            }
+
+            int start = mRatingString.length();
+            if (mPrependSeperator) {
+                mRatingString.append('/');
+                ++start;
+            }
+            mPrependSeperator = true;
+
+            mRatingString.append(Integer.toString(count));
+            mRatingString.setSpan(new ForegroundColorSpan(color), start, mRatingString.length(), 0);
+        }
+
+        SpannableStringBuilder build() {
+            mRatingString.append(')');
+            return mRatingString;
+        }
     }
 }
 
