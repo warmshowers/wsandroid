@@ -17,8 +17,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -39,6 +40,7 @@ import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.MessageListAdapter;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
+import fi.bitrite.android.ws.util.WSGlide;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -135,7 +137,7 @@ public class MessageNotificationController {
                 })
                 .map(this::getNotificationEntry)
                 .flatMap(this::loadParticipantsIntoNotificationEntry)
-                .observeOn(AndroidSchedulers.mainThread()) // Why is this needed Picasso?
+                .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(this::loadPartnerBitmapIntoNotificationEntry)
 //                .debounce(1, TimeUnit.SECONDS) // Limit number of updates during burst. FIXME: does not deliver all the entries
                 .subscribe(this::updateNotification, e -> {
@@ -209,25 +211,23 @@ public class MessageNotificationController {
 
             String pictureUrl = partner.profilePicture.getSmallUrl();
             if (!TextUtils.isEmpty(pictureUrl)) {
-                Target target = new Target() {
+                Target<Bitmap> target = new SimpleTarget<Bitmap>() {
                     @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    public void onResourceReady(@NonNull Bitmap bitmap,
+                                                @Nullable Transition<? super Bitmap> transition) {
                         entry.partnerProfileBitmap = bitmap;
                         e.onNext(entry);
                     }
 
                     @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
+                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
                         // Ignore the error.
                         e.onNext(entry);
                     }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    }
                 };
 
-                Picasso.with(mApplicationContext)
+                WSGlide.with(mApplicationContext)
+                        .asBitmap()
                         .load(pictureUrl)
                         .into(target);
             } else {

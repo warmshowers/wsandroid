@@ -111,6 +111,9 @@
     <string name="prefs_message_refresh_interval_min_dialog_message">Wähle aus, wie häufig deine Mitteilungen automatisch vom Server geladen werden sollen.</string>
     <string name="prefs_message_refresh_interval_min_hint">Intervall (in Minuten)</string>
 
+    <string name="prefs_data_saver_mode_title">Datenspar-Modus</string>
+    <string name="prefs_data_saver_mode_summary">Lade keine daten-intensive Inhalte wie Bilder.</string>
+
     <string name="prefscat_dev_title">Entwicklereinstellungen</string>
     <string name="prefs_dev_simulate_no_network_title">Simuliere Kein Netz</string>
 

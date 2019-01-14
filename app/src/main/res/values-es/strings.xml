@@ -208,8 +208,13 @@
     </plurals>
     <string name="prefs_message_refresh_interval_min_summary_disabled">Desactivado</string>
     <string name="enabled">Activado</string>
+
     <string name="prefs_message_refresh_interval_min_dialog_message">Especifique con qué frecuencia deben actualizarse los mensajes desde el servidor.</string>
     <string name="prefs_message_refresh_interval_min_hint">Intervalo (minutos)</string>
+
+    <string name="prefs_data_saver_mode_title">Modo de ahorro de datos</string>
+    <string name="prefs_data_saver_mode_summary">Evitar la carga de datos de información intensiva como imágenes.</string>
+
     <string name="prefscat_dev_title">Parámetros de desarrollo</string>
     <string name="prefs_dev_simulate_no_network_title">Simular Sin Servicio</string>
     <string name="message_mark_read">Marcar como leído</string>
