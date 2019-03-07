@@ -197,6 +197,7 @@
     <string name="title_fragment_messages">Messages</string>
     <string name="title_fragment_settings">Paramètres</string>
     <string name="title_fragment_users">Hôtes</string>
+    <string name="title_fragment_filter_list">Host Filters</string>
 
     <string name="button_text_forgot_password">Mot de passe oublié?</string>
     <string name="url_target_forgot_password">https://fr.warmshowers.org/user/password</string>
@@ -229,4 +230,7 @@
     <string name="feedback_error_sending">L’envoi du commentaire a échoué.</string>
 
     <string name="unknown_location">Position inconnue</string>
+    <string name="button_clear_filters">Clear filters</string>
+    <string name="filter_last_access">Last Account Access</string>
+    <string name="filter_currently_available">Currently Available</string>
 </resources>

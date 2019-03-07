@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,6 +75,7 @@ import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.UserMarker;
 import fi.bitrite.android.ws.ui.util.UserMarkerClusterer;
+import fi.bitrite.android.ws.ui.util.HostFilterManager;
 import fi.bitrite.android.ws.util.LocationManager;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import fi.bitrite.android.ws.util.Tools;
@@ -93,6 +95,7 @@ public class MapFragment extends BaseFragment {
     @Inject UserRegionalCache mUserRegionalCache;
     @Inject FavoriteRepository mFavoriteRepository;
     @Inject SettingsRepository mSettingsRepository;
+    @Inject HostFilterManager mHostFilterManager;
 
     @BindColor(R.color.primaryColor) int mColorPrimary;
     @BindColor(R.color.primaryWhite) int mColorPrimaryWhite;
@@ -103,6 +106,7 @@ public class MapFragment extends BaseFragment {
     @BindView(R.id.map_btn_goto_current_location) FloatingActionButton mBtnGotoCurrentLocation;
     @BindDrawable(R.drawable.map_markers_favorite) Drawable mMapMarkersFavorite;
     @BindDrawable(R.drawable.map_markers_single) Drawable mMapMarkersSingle;
+    @BindView(R.id.btn_filter) ImageButton mFilterListButton;
     private IMapController mMapController;
 
     private Unbinder mUnbinder;
@@ -201,6 +205,12 @@ public class MapFragment extends BaseFragment {
                 getResources(), R.drawable.ic_my_location_white_24dp, null);
         mIcMyLocationGrey = VectorDrawableCompat.create(
                 getResources(), R.drawable.ic_my_location_grey600_24dp, null);
+
+        if (mHostFilterManager.isAnyFilterActive()) {
+            mFilterListButton.setImageResource(R.drawable.ic_filter_active);
+        } else {
+            mFilterListButton.setImageResource(R.drawable.ic_filter_inactive);
+        }
 
         mLastPositionType = -1;
         mLastPosition = null;
@@ -401,6 +411,11 @@ public class MapFragment extends BaseFragment {
         }
     }
 
+    @OnClick(R.id.btn_filter)
+    void onFilterClicked() {
+        getNavigationController().navigateToFilterList();
+    }
+
     private void setGotoCurrentLocationStatus() {
         int fillColor;
         VectorDrawableCompat icon;
@@ -576,6 +591,13 @@ public class MapFragment extends BaseFragment {
     private void addUserToCluster(SimpleUser user, boolean isFavoriteHost) {
         // Only add to the cluster if it wasn't before or when its location changed.
         final Marker existingMarker = mClusteredUsers.get(user.id);
+        if (!mHostFilterManager.filterHost(user)) {
+            if (existingMarker != null) {
+                mMarkerClusterer.remove(existingMarker);
+                mClusteredUsers.remove(user.id);
+            }
+            return;
+        }
         if (!markerUpdateRequired(existingMarker, user, isFavoriteHost)) {
             return;
         }

@@ -213,6 +213,7 @@
     <string name="title_fragment_messages">Mitteilungen</string>
     <string name="title_fragment_settings">Einstellungen</string>
     <string name="title_fragment_users">Gastgeber</string>
+    <string name="title_fragment_filter_list">Host Filters</string>
 
     <string name="message_thread_create_failed">Fehler beim Erstellen eines neuen Chats.</string>
     <string name="messages_reload_failed">Fehler beim Abrufen der Nachrichten.</string>
@@ -237,4 +238,7 @@
     <string name="content_description_member_marker_map">Mitglied</string>
 
     <string name="unknown_location">Position noch nicht bekannt</string>
+    <string name="button_clear_filters">Clear filters</string>
+    <string name="filter_last_access">Last Account Access</string>
+    <string name="filter_currently_available">Currently Available</string>
 </resources>

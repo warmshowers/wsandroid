@@ -13,6 +13,16 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+    <ImageButton
+        android:id="@+id/btn_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@null"
+        app:srcCompat="@drawable/ic_filter_inactive"
+        app:layout_constraintEnd_toEndOf="@id/map"
+        app:layout_constraintTop_toTopOf="@id/map" />
+
     <ProgressBar
         android:id="@+id/map_progress_loading_users"
         android:layout_width="42dp"
@@ -21,7 +31,8 @@
         android:background="@drawable/ic_map_progress_loading_users_background"
         android:padding="5dp"
         app:layout_constraintEnd_toEndOf="@id/map"
-        app:layout_constraintTop_toTopOf="@id/map" />
+        app:layout_constraintTop_toBottomOf="@id/btn_filter" />
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/map_btn_goto_current_location"
