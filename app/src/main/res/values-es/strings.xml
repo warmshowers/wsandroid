@@ -229,11 +229,11 @@
     <string name="filter_favorite_host">Favorite Host</string>
     <string name="any_update_time">Any time</string>
     <string name="single_day_diff">Yesterday</string>
-    <string name="plural_days_diff">%s days ago</string>
+    <string name="plural_days_diff">%d days ago</string>
     <string name="single_week_diff">1 week ago</string>
-    <string name="plural_weeks_diff">%s weeks ago</string>
+    <string name="plural_weeks_diff">%d weeks ago</string>
     <string name="single_month_diff">1 month ago</string>
     <string name="plural_months_diff">%d months ago</string>
     <string name="single_year_diff">1 year ago</string>
-    <string name="plural_years_diff">%s years ago</string>
+    <string name="plural_years_diff">%d years ago</string>
 </resources>
