@@ -140,29 +140,29 @@ public class FilterListFragment extends BaseFragment implements SeekBar.OnSeekBa
     private String convertLastAccessProgressToText(int progress) {
         int days = convertLastAccessProgressToDays(progress);
         if (days == 1) {
-            return "1 day";
+            return getString(R.string.single_day_diff);
         }
         if (days >= 0 && days < 7) {
-            return days + " days";
+            return String.format(getString(R.string.plural_days_diff), days);
         }
         if (days == 7) {
-            return "1 week";
+            return getString(R.string.single_week_diff);
         }
         if (days > 7 && days < 30) {
-            return days / 7 + " weeks";
+            return String.format(getString(R.string.plural_weeks_diff), days / 7);
         }
         if (days == 30) {
-            return "1 month";
+            return getString(R.string.single_month_diff);
         }
         if (days > 30 && days < 365) {
-            return days / 30 + " months";
+            return String.format(getString(R.string.plural_months_diff), days / 30);
         }
         if (days == 365) {
-            return "1 year";
+            return getString(R.string.single_year_diff);
         }
         if (days > 365) {
-            return days / 365 + " year";
+            return String.format(getString(R.string.plural_years_diff), days / 365);
         }
-        return "Any time";
+        return getString(R.string.any_update_time);
     }
 }
