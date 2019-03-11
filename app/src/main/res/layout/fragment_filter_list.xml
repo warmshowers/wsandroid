@@ -19,12 +19,12 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="start"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
+                android:gravity="start"
                 android:layout_weight="0.35"
                 android:text="@string/filter_last_access"
                 android:textSize="20sp"
@@ -33,7 +33,7 @@
                 android:id="@+id/last_access_text"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
+                android:gravity="start"
                 android:layout_weight="0.65"
                 android:textSize="20sp" />
         </LinearLayout>
@@ -47,13 +47,13 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="start"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.35"
-                android:gravity="left"
+                android:gravity="start"
                 android:text="@string/filter_currently_available"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -62,18 +62,18 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.65"
-                android:gravity="left" />
+                android:gravity="start" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:gravity="left"
+            android:gravity="start"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.35"
-                android:gravity="left"
+                android:gravity="start"
                 android:text="@string/filter_favorite_host"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -82,7 +82,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.65"
-                android:gravity="left" />
+                android:gravity="start" />
         </LinearLayout>
     </LinearLayout>
 
