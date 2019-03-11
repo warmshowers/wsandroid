@@ -25,6 +25,7 @@ public class FilterListFragment extends BaseFragment implements SeekBar.OnSeekBa
     @BindView(R.id.last_access_seekbar) SeekBar mLastAccessSeekBar;
     @BindView(R.id.last_access_text) TextView mLastAccessText;
     @BindView(R.id.currently_available_checkbox) CheckBox mCurrentlyAvailableCheckBox;
+    @BindView(R.id.favorite_host_checkbox) CheckBox mFavoriteHostCheckbox;
 
     public static Fragment create() {
         Bundle bundle = new Bundle();
@@ -47,6 +48,9 @@ public class FilterListFragment extends BaseFragment implements SeekBar.OnSeekBa
 
         mCurrentlyAvailableCheckBox.setChecked(
             mHostFilterManager.isFilterActive(HostFilterManager.CURRENTLY_AVAILABLE_FILTER_KEY));
+
+        mFavoriteHostCheckbox.setChecked(
+            mHostFilterManager.isFilterActive(HostFilterManager.FAVORITE_HOST_FILTER_KEY));
         return view;
     }
 
@@ -60,11 +64,23 @@ public class FilterListFragment extends BaseFragment implements SeekBar.OnSeekBa
         }
     }
 
+    @OnClick(R.id.favorite_host_checkbox)
+    void onFavoriteHostClicked(View view) {
+        boolean checked = ((CheckBox) view).isChecked();
+        if (checked) {
+            mHostFilterManager.activateFilter(HostFilterManager.FAVORITE_HOST_FILTER_KEY);
+        } else {
+            mHostFilterManager.deactivateFilter(HostFilterManager.FAVORITE_HOST_FILTER_KEY);
+        }
+    }
+
     @OnClick(R.id.btn_clear_filters)
     void onClearFiltersClicked(View view) {
         mLastAccessSeekBar.setProgress(10);
         mCurrentlyAvailableCheckBox.setChecked(false);
         mHostFilterManager.deactivateFilter(HostFilterManager.CURRENTLY_AVAILABLE_FILTER_KEY);
+        mFavoriteHostCheckbox.setChecked(false);
+        mHostFilterManager.deactivateFilter(HostFilterManager.FAVORITE_HOST_FILTER_KEY);
     }
 
     @Override

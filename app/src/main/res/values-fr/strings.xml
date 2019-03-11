@@ -233,4 +233,5 @@
     <string name="button_clear_filters">Clear filters</string>
     <string name="filter_last_access">Last Account Access</string>
     <string name="filter_currently_available">Currently Available</string>
+    <string name="filter_favorite_host">Favorite Host</string>
 </resources>
