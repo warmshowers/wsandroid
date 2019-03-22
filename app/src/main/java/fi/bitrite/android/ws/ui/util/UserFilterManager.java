@@ -11,28 +11,28 @@ import fi.bitrite.android.ws.repository.FavoriteRepository;
 
 
 /**
- * Manages filters for hosts displayed in MapFragment.
+ * Manages filters for users displayed in MapFragment.
  */
 @AccountScope
-public class HostFilterManager {
+public class UserFilterManager {
     public static final String RECENT_ACTIVITY_FILTER_KEY = "recentActivityFilter";
     public static final String CURRENTLY_AVAILABLE_FILTER_KEY = "currentlyAvailableFilter";
-    public static final String FAVORITE_HOST_FILTER_KEY = "favoriteHost";
+    public static final String FAVORITE_USER_FILTER_KEY = "favoriteUser";
 
-    private final HashMap<String, HostFilter> mFilters = new HashMap();
+    private final HashMap<String, UserFilter> mFilters = new HashMap<>();
 
     @Inject FavoriteRepository mFavoriteRepository;
 
     @Inject
-    HostFilterManager() {
+    UserFilterManager() {
         mFilters.put(RECENT_ACTIVITY_FILTER_KEY, new RecentActivityFilter());
         mFilters.put(CURRENTLY_AVAILABLE_FILTER_KEY, new CurrentlyAvailableFilter());
-        mFilters.put(FAVORITE_HOST_FILTER_KEY, new FavoriteHostFilter());
+        mFilters.put(FAVORITE_USER_FILTER_KEY, new FavoriteUserFilter());
     }
 
-    public boolean filterHost(SimpleUser host) {
-        for (HostFilter filter : mFilters.values()) {
-            if (!filter.filterHost(host)) {
+    public boolean filterUser(SimpleUser user) {
+        for (UserFilter filter : mFilters.values()) {
+            if (!filter.filterUser(user)) {
                 return false;
             }
         }
@@ -40,7 +40,7 @@ public class HostFilterManager {
     }
 
     public boolean isAnyFilterActive() {
-        for (HostFilter filter : mFilters.values()) {
+        for (UserFilter filter : mFilters.values()) {
             if (filter.isActive()) {
                 return true;
             }
@@ -49,6 +49,14 @@ public class HostFilterManager {
     }
 
     public class InvalidFilterException extends RuntimeException { }
+
+    public void setFilterActivated(String filterKey, boolean activated) {
+        if (activated) {
+            activateFilter(filterKey);
+        } else {
+            deactivateFilter(filterKey);
+        }
+    }
 
     public void activateFilter(String filterKey) {
         try {
@@ -90,8 +98,8 @@ public class HostFilterManager {
         } // UnsupportedOperationException is passed through
     }
 
-    abstract class HostFilter {
-        protected boolean isActive = false;
+    abstract class UserFilter {
+        boolean isActive = false;
 
         void activateFilter() {
             isActive = true;
@@ -109,42 +117,42 @@ public class HostFilterManager {
           throw new UnsupportedOperationException();
         }
 
-        boolean filterHost(SimpleUser host) {
+        boolean filterUser(SimpleUser user) {
             if (!isActive) {
                 return true;
             }
-            return filterHostInternal(host);
+            return filterUserInternal(user);
         }
-        abstract boolean filterHostInternal(SimpleUser host);
+        abstract boolean filterUserInternal(SimpleUser user);
     }
 
-    // A filter that returns true iff the host is a favaorite host.
-    private class FavoriteHostFilter extends HostFilter {
+    // A filter that returns true iff the user is a favaorite user.
+    private class FavoriteUserFilter extends UserFilter {
         @Override
-        boolean filterHostInternal(SimpleUser host) {
-            return mFavoriteRepository.isFavorite(host.id);
+        boolean filterUserInternal(SimpleUser user) {
+            return mFavoriteRepository.isFavorite(user.id);
         }
     }
 
-    // A filter that returns true iff the host is currently available.
-    private class CurrentlyAvailableFilter extends HostFilter {
+    // A filter that returns true iff the user is currently available.
+    private class CurrentlyAvailableFilter extends UserFilter {
         @Override
-        boolean filterHostInternal(SimpleUser host) {
-            return host.isCurrentlyAvailable;
+        boolean filterUserInternal(SimpleUser user) {
+            return user.isCurrentlyAvailable;
         }
     }
 
-    // A filter that returns true iff the host has accessed their account in the past N (defaults to
+    // A filter that returns true iff the user has accessed their account in the past N (defaults to
     // \infty) days.
-    private class RecentActivityFilter extends HostFilter {
+    private class RecentActivityFilter extends UserFilter {
         private int mLastAccessThresholdInDays = -1;
         @Override
-        boolean filterHostInternal(SimpleUser host) {
+        boolean filterUserInternal(SimpleUser user) {
             if (mLastAccessThresholdInDays < 0) {
                 return true;
             }
             return TimeUnit.DAYS.convert(System.currentTimeMillis() -
-                host.lastAccess.getTime(), TimeUnit.MILLISECONDS) < mLastAccessThresholdInDays;
+                user.lastAccess.getTime(), TimeUnit.MILLISECONDS) < mLastAccessThresholdInDays;
         }
 
         @Override

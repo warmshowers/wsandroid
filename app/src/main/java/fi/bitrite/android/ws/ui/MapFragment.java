@@ -73,9 +73,9 @@ import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.SettingsRepository;
 import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
 import fi.bitrite.android.ws.ui.util.NavigationController;
+import fi.bitrite.android.ws.ui.util.UserFilterManager;
 import fi.bitrite.android.ws.ui.util.UserMarker;
 import fi.bitrite.android.ws.ui.util.UserMarkerClusterer;
-import fi.bitrite.android.ws.ui.util.HostFilterManager;
 import fi.bitrite.android.ws.util.LocationManager;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import fi.bitrite.android.ws.util.Tools;
@@ -95,7 +95,7 @@ public class MapFragment extends BaseFragment {
     @Inject UserRegionalCache mUserRegionalCache;
     @Inject FavoriteRepository mFavoriteRepository;
     @Inject SettingsRepository mSettingsRepository;
-    @Inject HostFilterManager mHostFilterManager;
+    @Inject UserFilterManager mUserFilterManager;
 
     @BindColor(R.color.primaryColor) int mColorPrimary;
     @BindColor(R.color.primaryWhite) int mColorPrimaryWhite;
@@ -206,11 +206,9 @@ public class MapFragment extends BaseFragment {
         mIcMyLocationGrey = VectorDrawableCompat.create(
                 getResources(), R.drawable.ic_my_location_grey600_24dp, null);
 
-        if (mHostFilterManager.isAnyFilterActive()) {
-            mFilterListButton.setImageResource(R.drawable.ic_filter_active);
-        } else {
-            mFilterListButton.setImageResource(R.drawable.ic_filter_inactive);
-        }
+        mFilterListButton.setImageResource(mUserFilterManager.isAnyFilterActive()
+                ? R.drawable.ic_filter_active
+                : R.drawable.ic_filter_inactive);
 
         mLastPositionType = -1;
         mLastPosition = null;
@@ -591,7 +589,7 @@ public class MapFragment extends BaseFragment {
     private void addUserToCluster(SimpleUser user, boolean isFavoriteHost) {
         // Only add to the cluster if it wasn't before or when its location changed.
         final Marker existingMarker = mClusteredUsers.get(user.id);
-        if (!mHostFilterManager.filterHost(user)) {
+        if (!mUserFilterManager.filterUser(user)) {
             if (existingMarker != null) {
                 mMarkerClusterer.remove(existingMarker);
                 mClusteredUsers.remove(user.id);

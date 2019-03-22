@@ -17,15 +17,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.ui.util.HostFilterManager;
+import fi.bitrite.android.ws.ui.util.UserFilterManager;
 
 public class FilterListFragment extends BaseFragment implements SeekBar.OnSeekBarChangeListener {
 
-    @Inject HostFilterManager mHostFilterManager;
-    @BindView(R.id.last_access_seekbar) SeekBar mLastAccessSeekBar;
-    @BindView(R.id.last_access_text) TextView mLastAccessText;
-    @BindView(R.id.currently_available_checkbox) CheckBox mCurrentlyAvailableCheckBox;
-    @BindView(R.id.favorite_host_checkbox) CheckBox mFavoriteHostCheckbox;
+    @Inject UserFilterManager mUserFilterManager;
+    @BindView(R.id.filter_seek_last_access) SeekBar mSeekLastAccess;
+    @BindView(R.id.filter_lbl_last_access) TextView mLblLastAccess;
+    @BindView(R.id.filter_ckb_currently_available) CheckBox mCkbCurrentlyAvailable;
+    @BindView(R.id.filter_ckb_favorite_user) CheckBox mCkbFavoriteUser;
 
     public static Fragment create() {
         Bundle bundle = new Bundle();
@@ -40,47 +40,44 @@ public class FilterListFragment extends BaseFragment implements SeekBar.OnSeekBa
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_filter_list, container, false);
         ButterKnife.bind(this, view);
-        mHostFilterManager.activateFilter(HostFilterManager.RECENT_ACTIVITY_FILTER_KEY);
-        mLastAccessSeekBar.setOnSeekBarChangeListener(this);
-        mLastAccessSeekBar.setProgress(convertLastAccessDaysToProgress(
-              mHostFilterManager.getFilterValue(HostFilterManager.RECENT_ACTIVITY_FILTER_KEY)));
-        mLastAccessSeekBar.setMax(10);
+        mSeekLastAccess.setOnSeekBarChangeListener(this);
+        mSeekLastAccess.setProgress(convertLastAccessDaysToProgress(
+                mUserFilterManager.getFilterValue(UserFilterManager.RECENT_ACTIVITY_FILTER_KEY)));
+        mSeekLastAccess.setMax(mProgressToDays.length-1);
 
-        mCurrentlyAvailableCheckBox.setChecked(
-            mHostFilterManager.isFilterActive(HostFilterManager.CURRENTLY_AVAILABLE_FILTER_KEY));
+        mCkbCurrentlyAvailable.setChecked(
+            mUserFilterManager.isFilterActive(UserFilterManager.CURRENTLY_AVAILABLE_FILTER_KEY));
 
-        mFavoriteHostCheckbox.setChecked(
-            mHostFilterManager.isFilterActive(HostFilterManager.FAVORITE_HOST_FILTER_KEY));
+        mCkbFavoriteUser.setChecked(
+            mUserFilterManager.isFilterActive(UserFilterManager.FAVORITE_USER_FILTER_KEY));
         return view;
     }
 
-    @OnClick(R.id.currently_available_checkbox)
+    @OnClick(R.id.filter_ckb_currently_available)
     void onCurrentlyAvailableClicked(View view) {
-        boolean checked = ((CheckBox) view).isChecked();
-        if (checked) {
-            mHostFilterManager.activateFilter(HostFilterManager.CURRENTLY_AVAILABLE_FILTER_KEY);
-        } else {
-            mHostFilterManager.deactivateFilter(HostFilterManager.CURRENTLY_AVAILABLE_FILTER_KEY);
-        }
+        mUserFilterManager.setFilterActivated(
+                UserFilterManager.CURRENTLY_AVAILABLE_FILTER_KEY,
+                mCkbCurrentlyAvailable.isChecked());
     }
 
-    @OnClick(R.id.favorite_host_checkbox)
+    @OnClick(R.id.filter_ckb_favorite_user)
     void onFavoriteHostClicked(View view) {
-        boolean checked = ((CheckBox) view).isChecked();
-        if (checked) {
-            mHostFilterManager.activateFilter(HostFilterManager.FAVORITE_HOST_FILTER_KEY);
-        } else {
-            mHostFilterManager.deactivateFilter(HostFilterManager.FAVORITE_HOST_FILTER_KEY);
-        }
+        mUserFilterManager.setFilterActivated(
+                UserFilterManager.FAVORITE_USER_FILTER_KEY,
+                mCkbFavoriteUser.isChecked());
     }
 
-    @OnClick(R.id.btn_clear_filters)
+    @OnClick(R.id.filter_btn_clear)
     void onClearFiltersClicked(View view) {
-        mLastAccessSeekBar.setProgress(10);
-        mCurrentlyAvailableCheckBox.setChecked(false);
-        mHostFilterManager.deactivateFilter(HostFilterManager.CURRENTLY_AVAILABLE_FILTER_KEY);
-        mFavoriteHostCheckbox.setChecked(false);
-        mHostFilterManager.deactivateFilter(HostFilterManager.FAVORITE_HOST_FILTER_KEY);
+        mSeekLastAccess.setProgress(mSeekLastAccess.getMax());
+        mUserFilterManager.updateFilterValue(UserFilterManager.RECENT_ACTIVITY_FILTER_KEY, -1);
+        mUserFilterManager.deactivateFilter(UserFilterManager.RECENT_ACTIVITY_FILTER_KEY);
+
+        mCkbCurrentlyAvailable.setChecked(false);
+        mUserFilterManager.deactivateFilter(UserFilterManager.CURRENTLY_AVAILABLE_FILTER_KEY);
+
+        mCkbFavoriteUser.setChecked(false);
+        mUserFilterManager.deactivateFilter(UserFilterManager.FAVORITE_USER_FILTER_KEY);
     }
 
     @Override
@@ -90,79 +87,40 @@ public class FilterListFragment extends BaseFragment implements SeekBar.OnSeekBa
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-      mLastAccessText.setText(convertLastAccessProgressToText(progress));
-      mHostFilterManager.updateFilterValue(HostFilterManager.RECENT_ACTIVITY_FILTER_KEY,
+      mLblLastAccess.setText(convertLastAccessProgressToText(progress));
+      mUserFilterManager.updateFilterValue(UserFilterManager.RECENT_ACTIVITY_FILTER_KEY,
           convertLastAccessProgressToDays(progress));
+      if (fromUser) {
+          mUserFilterManager.activateFilter(UserFilterManager.RECENT_ACTIVITY_FILTER_KEY);
+      }
     }
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) { }
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) { }
 
-    // [0, 1, ... 10] -> {1, 2, 3, 7, 14, 30, 60, 90, 180, 365, -1}.
-    private int convertLastAccessProgressToDays(int progress) {
-        switch (progress) {
-            case 0: return 1;
-            case 1: return 2;
-            case 2: return 3;
-            case 3: return 7;
-            case 4: return 14;
-            case 5: return 30;
-            case 6: return 60;
-            case 7: return 90;
-            case 8: return 180;
-            case 9: return 365;
-            case 10: return -1;
-        }
-        return -1;
+    private final static Integer[] mProgressToDays = {1, 7, 30, -1};
+    private static int convertLastAccessProgressToDays(int progress) {
+        return mProgressToDays[progress];
     }
 
     // Inversion of convertLastAccessProgressToDays.
-    private int convertLastAccessDaysToProgress(int days) {
-        switch (days) {
-            case 1: return 0;
-            case 2: return 1;
-            case 3: return 2;
-            case 7: return 3;
-            case 14: return 4;
-            case 30: return 5;
-            case 60: return 6;
-            case 90: return 7;
-            case 180: return 8;
-            case 365: return 9;
-            case -1: return 10;
+    private static int convertLastAccessDaysToProgress(int days) {
+        for (int i = 0; i < mProgressToDays.length; ++i) {
+            if (days == mProgressToDays[i]) {
+                return i;
+            }
         }
-        return 10;
+        return mProgressToDays.length - 1;
     }
 
-    // TODO(dproctor): This needs to be internationalized. Perhaps something in
-    // android.text.format.DateUtils can be used?
     private String convertLastAccessProgressToText(int progress) {
-        int days = convertLastAccessProgressToDays(progress);
-        if (days == 1) {
-            return getString(R.string.single_day_diff);
+        final int days = convertLastAccessProgressToDays(progress);
+        switch (days) {
+            case 1: return getString(R.string.filter_diff_today);
+            case 7: return getString(R.string.filter_diff_this_week);
+            case 30: return getString(R.string.filter_diff_this_month);
+            default: return getString(R.string.filter_diff_any);
         }
-        if (days >= 0 && days < 7) {
-            return String.format(getString(R.string.plural_days_diff), days);
-        }
-        if (days == 7) {
-            return getString(R.string.single_week_diff);
-        }
-        if (days > 7 && days < 30) {
-            return String.format(getString(R.string.plural_weeks_diff), days / 7);
-        }
-        if (days == 30) {
-            return getString(R.string.single_month_diff);
-        }
-        if (days > 30 && days < 365) {
-            return String.format(getString(R.string.plural_months_diff), days / 30);
-        }
-        if (days == 365) {
-            return getString(R.string.single_year_diff);
-        }
-        if (days > 365) {
-            return String.format(getString(R.string.plural_years_diff), days / 365);
-        }
-        return getString(R.string.any_update_time);
     }
 }

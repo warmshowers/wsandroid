@@ -37,7 +37,6 @@ public class NavigationController {
     public final static String NAVIGATION_TAG_ACCOUNT = "account";
     public final static String NAVIGATION_TAG_SETTINGS = "settings";
     public final static String NAVIGATION_TAG_ABOUT = "about";
-    public final static String NAVIGATION_TAG_FILTER_LIST = "filterList";
 
     private final static String NAVIGATION_TAG_MAIN = NAVIGATION_TAG_MAP;
 
@@ -162,7 +161,7 @@ public class NavigationController {
     }
 
     public void navigateToFilterList() {
-        navigateTo(NAVIGATION_TAG_FILTER_LIST, FilterListFragment.create(), false);
+        navigateTo(NAVIGATION_TAG_MAIN + "/filter", FilterListFragment.create(), false);
     }
 
     // The backstack is always destroyed when selecting a new item in the navigation drawer.

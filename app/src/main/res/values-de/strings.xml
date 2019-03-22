@@ -166,7 +166,7 @@
     <string name="contact_host">Mitglied kontaktieren</string>
     <string name="search_user_summary">Dabei seit %1$s, zuletzt aktiv am %2$s</string>
     <string name="user_limitations">Maximale Gäste %1$d, gesprochene Sprachen %2$s</string>
-    <string name="favorite_host">Favoriten</string>
+    <string name="favorite_user">Favoriten</string>
     <string name="no_feedback_yet">Noch kein Feedback</string>
     <string name="mobile_phone_abbrev">Mobil: %1$s</string>
     <string name="home_phone_abbrev">Privat: %1$s</string>
@@ -213,7 +213,7 @@
     <string name="title_fragment_messages">Mitteilungen</string>
     <string name="title_fragment_settings">Einstellungen</string>
     <string name="title_fragment_users">Gastgeber</string>
-    <string name="title_fragment_filter_list">Host Filters</string>
+    <string name="title_fragment_filter_list">Gastgeber-Filter</string>
 
     <string name="message_thread_create_failed">Fehler beim Erstellen eines neuen Chats.</string>
     <string name="messages_reload_failed">Fehler beim Abrufen der Nachrichten.</string>
@@ -238,17 +238,11 @@
     <string name="content_description_member_marker_map">Mitglied</string>
 
     <string name="unknown_location">Position noch nicht bekannt</string>
-    <string name="button_clear_filters">Clear filters</string>
-    <string name="filter_last_access">Last Account Access</string>
-    <string name="filter_currently_available">Currently Available</string>
-    <string name="filter_favorite_host">Favorite Host</string>
-    <string name="any_update_time">Any time</string>
-    <string name="single_day_diff">Yesterday</string>
-    <string name="plural_days_diff">%d days ago</string>
-    <string name="single_week_diff">1 week ago</string>
-    <string name="plural_weeks_diff">%d weeks ago</string>
-    <string name="single_month_diff">1 month ago</string>
-    <string name="plural_months_diff">%d months ago</string>
-    <string name="single_year_diff">1 year ago</string>
-    <string name="plural_years_diff">%d years ago</string>
+
+    <string name="button_clear_filters">Filter zurücksetzen</string>
+    <string name="filter_last_access">Letzte Aktivität</string>
+    <string name="filter_diff_any">Irgendwann</string>
+    <string name="filter_diff_today">Heute</string>
+    <string name="filter_diff_this_week">Diese Woche</string>
+    <string name="filter_diff_this_month">Diesen Monat</string>
 </resources>

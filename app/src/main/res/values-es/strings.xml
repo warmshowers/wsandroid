@@ -145,7 +145,7 @@
     <string name="contact_host">Contactar a este miembro</string>
     <string name="search_user_summary">Miembro desde hace %1$s, última actividad %2$s</string>
     <string name="user_limitations">Nº máximo de huéspedes %1$d, Idiomas %2$s</string>
-    <string name="favorite_host">Agregar Anfitrión a Favoritos</string>
+    <string name="favorite_user">Agregar Anfitrión a Favoritos</string>
     <string name="no_feedback_yet">Sin comentarios aún</string>
     <string name="mobile_phone_abbrev">Teléfono Móvil: %1$s</string>
     <string name="home_phone_abbrev">Casa: %1$s</string>
@@ -223,17 +223,11 @@
     <string name="feedback_error_sending">El comentario no fue enviado.</string>
 
     <string name="unknown_location">Ubicación desconocida</string>
-    <string name="button_clear_filters">Clear filters</string>
-    <string name="filter_last_access">Last Account Access</string>
-    <string name="filter_currently_available">Currently Available</string>
-    <string name="filter_favorite_host">Favorite Host</string>
-    <string name="any_update_time">Any time</string>
-    <string name="single_day_diff">Yesterday</string>
-    <string name="plural_days_diff">%d days ago</string>
-    <string name="single_week_diff">1 week ago</string>
-    <string name="plural_weeks_diff">%d weeks ago</string>
-    <string name="single_month_diff">1 month ago</string>
-    <string name="plural_months_diff">%d months ago</string>
-    <string name="single_year_diff">1 year ago</string>
-    <string name="plural_years_diff">%d years ago</string>
+
+    <string name="button_clear_filters">Restablecer filtros</string>
+    <string name="filter_last_access">Última actividad</string>
+    <string name="filter_diff_any">Algún día</string>
+    <string name="filter_diff_today">Hoy</string>
+    <string name="filter_diff_this_week">Semana pasada</string>
+    <string name="filter_diff_this_month">Mes pasado</string>
 </resources>
