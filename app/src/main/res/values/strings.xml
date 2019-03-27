@@ -250,8 +250,14 @@
 
     <string name="button_clear_filters">Clear filters</string>
     <string name="filter_last_access">Last Account Access</string>
-    <string name="filter_diff_any">Any time</string>
     <string name="filter_diff_today">Today</string>
     <string name="filter_diff_this_week">This week</string>
     <string name="filter_diff_this_month">This month</string>
+    <string name="filter_diff_this_year">This year</string>
+    <string name="filter_diff_any">Any time</string>
+    <string name="filter_diff_short_today">1d</string>
+    <string name="filter_diff_short_this_week">1w</string>
+    <string name="filter_diff_short_this_month">1m</string>
+    <string name="filter_diff_short_this_year">1y</string>
+    <string name="filter_diff_short_any">&gt; 1y</string>
 </resources>

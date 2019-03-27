@@ -233,8 +233,14 @@
 
     <string name="button_clear_filters">Effacer les filtres</string>
     <string name="filter_last_access">Dernière activité</string>
-    <string name="filter_diff_any">Égal</string>
     <string name="filter_diff_today">Aujourd\'hui</string>
     <string name="filter_diff_this_week">Dernière semaine</string>
     <string name="filter_diff_this_month">Dernier mois</string>
+    <string name="filter_diff_this_year">Année dernière</string>
+    <string name="filter_diff_any">Égal</string>
+    <string name="filter_diff_short_today">auj.</string>
+    <string name="filter_diff_short_this_week">1 sem.</string>
+    <string name="filter_diff_short_this_month">1 m.</string>
+    <string name="filter_diff_short_this_year">1 a.</string>
+    <string name="filter_diff_short_any">&gt; 1 a.</string>
 </resources>

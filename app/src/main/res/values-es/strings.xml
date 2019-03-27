@@ -226,8 +226,14 @@
 
     <string name="button_clear_filters">Restablecer filtros</string>
     <string name="filter_last_access">Última actividad</string>
-    <string name="filter_diff_any">Algún día</string>
     <string name="filter_diff_today">Hoy</string>
     <string name="filter_diff_this_week">Semana pasada</string>
     <string name="filter_diff_this_month">Mes pasado</string>
+    <string name="filter_diff_this_year">Año pasado</string>
+    <string name="filter_diff_any">Algún día</string>
+    <string name="filter_diff_short_today">1 d.</string>
+    <string name="filter_diff_short_this_week">1 s.</string>
+    <string name="filter_diff_short_this_month">1 m.</string>
+    <string name="filter_diff_short_this_year">1 a.</string>
+    <string name="filter_diff_short_any">&gt; 1 a.</string>
 </resources>

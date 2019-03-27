@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
@@ -41,12 +42,23 @@
                 tools:text="2 weeks ago" />
         </LinearLayout>
 
-        <SeekBar
+        <com.xw.repo.BubbleSeekBar
             android:id="@+id/filter_seek_last_access"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            app:bsb_auto_adjust_section_mark="true"
+            app:bsb_hide_bubble="true"
+            app:bsb_second_track_color="@color/primaryColor"
+            app:bsb_section_text_color="@color/primaryTextColor"
+            app:bsb_section_text_position="below_section_mark"
+            app:bsb_seek_by_section="true"
+            app:bsb_seek_step_section="true"
+            app:bsb_show_section_mark="true"
+            app:bsb_show_section_text="true"
+            app:bsb_show_thumb_text="true"
+            app:bsb_touch_to_seek="true" />
 
         <LinearLayout
             android:layout_width="fill_parent"

@@ -241,8 +241,14 @@
 
     <string name="button_clear_filters">Filter zurücksetzen</string>
     <string name="filter_last_access">Letzte Aktivität</string>
-    <string name="filter_diff_any">Irgendwann</string>
     <string name="filter_diff_today">Heute</string>
     <string name="filter_diff_this_week">Diese Woche</string>
     <string name="filter_diff_this_month">Diesen Monat</string>
+    <string name="filter_diff_this_year">Dieses Jahr</string>
+    <string name="filter_diff_any">Irgendwann</string>
+    <string name="filter_diff_short_today">1 Tg.</string>
+    <string name="filter_diff_short_this_week">1 Wo.</string>
+    <string name="filter_diff_short_this_month">1 Mnt.</string>
+    <string name="filter_diff_short_this_year">1 Jr.</string>
+    <string name="filter_diff_short_any">&gt;1 Jr.</string>
 </resources>
