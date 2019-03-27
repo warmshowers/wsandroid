@@ -89,7 +89,7 @@ public class MessageListAdapter extends
                && left.authorId == right.authorId
                && left.isPushed == right.isPushed
                && left.date.equals(right.date)
-               && left.rawBody.equals(right.rawBody);
+               && left.strippedRawBody.equals(right.strippedRawBody);
     }
 
     class ItemBinding implements

@@ -13,7 +13,7 @@ import io.reactivex.disposables.Disposable;
 
 @AccountScope
 public class AccountSchemaDefinition extends SchemaDefinition {
-    private final static int VERSION = 3;
+    private final static int VERSION = 4;
 
     @Inject
     AccountSchemaDefinition(AccountMigrations accountMigrations) {
