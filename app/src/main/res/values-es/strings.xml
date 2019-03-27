@@ -145,7 +145,7 @@
     <string name="contact_host">Contactar a este miembro</string>
     <string name="search_user_summary">Miembro desde hace %1$s, última actividad %2$s</string>
     <string name="user_limitations">Nº máximo de huéspedes %1$d, Idiomas %2$s</string>
-    <string name="favorite_host">Agregar Anfitrión a Favoritos</string>
+    <string name="favorite_user">Agregar Anfitrión a Favoritos</string>
     <string name="no_feedback_yet">Sin comentarios aún</string>
     <string name="mobile_phone_abbrev">Teléfono Móvil: %1$s</string>
     <string name="home_phone_abbrev">Casa: %1$s</string>
@@ -194,6 +194,7 @@
     <string name="title_fragment_messages">Mensajes</string>
     <string name="title_fragment_settings">Configuraciones</string>
     <string name="title_fragment_users">Anfitrións</string>
+    <string name="title_fragment_filter_list">Host Filters</string>
 
     <string name="remember_password">¿Guardar la contraseña?</string>
     <string name="button_text_forgot_password">¿Has olvidado la contraseña?</string>
@@ -232,4 +233,17 @@
     <string name="feedback_error_sending">El comentario no fue enviado.</string>
 
     <string name="unknown_location">Ubicación desconocida</string>
+
+    <string name="button_clear_filters">Restablecer filtros</string>
+    <string name="filter_last_access">Última actividad</string>
+    <string name="filter_diff_today">Hoy</string>
+    <string name="filter_diff_this_week">Semana pasada</string>
+    <string name="filter_diff_this_month">Mes pasado</string>
+    <string name="filter_diff_this_year">Año pasado</string>
+    <string name="filter_diff_any">Algún día</string>
+    <string name="filter_diff_short_today">1 d.</string>
+    <string name="filter_diff_short_this_week">1 s.</string>
+    <string name="filter_diff_short_this_month">1 m.</string>
+    <string name="filter_diff_short_this_year">1 a.</string>
+    <string name="filter_diff_short_any">&gt; 1 a.</string>
 </resources>

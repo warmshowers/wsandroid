@@ -27,6 +27,7 @@ If you find something within the code you’d like to see changed for performanc
 Without these libraries, our lives would be a whole lot more difficult. So thank you all for developing and maintaining those fine pieces of software!
 
 * [AssertJ](https://github.com/joel-costigliola/assertj-core)
+* [BubbleSeekBar](https://github.com/woxingxiao/BubbleSeekBar)
 * [ButterKnife](https://github.com/JakeWharton/butterknife)
 * [Dagger 2](https://github.com/google/dagger)
 * [Glide](https://bumptech.github.io/glide/)

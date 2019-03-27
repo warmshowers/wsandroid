@@ -15,6 +15,7 @@ import fi.bitrite.android.ws.ui.AboutFragment;
 import fi.bitrite.android.ws.ui.ContactUserFragment;
 import fi.bitrite.android.ws.ui.FavoriteUsersFragment;
 import fi.bitrite.android.ws.ui.FeedbackFragment;
+import fi.bitrite.android.ws.ui.FilterListFragment;
 import fi.bitrite.android.ws.ui.MainActivity;
 import fi.bitrite.android.ws.ui.MapFragment;
 import fi.bitrite.android.ws.ui.MessageThreadFragment;
@@ -157,6 +158,10 @@ public class NavigationController {
     public void navigateToSearch(String query) {
         navigateTo(NAVIGATION_TAG_MAIN + "/search-" + query.hashCode(),
                 SearchFragment.create(query), false);
+    }
+
+    public void navigateToFilterList() {
+        navigateTo(NAVIGATION_TAG_MAIN + "/filter", FilterListFragment.create(), false);
     }
 
     // The backstack is always destroyed when selecting a new item in the navigation drawer.

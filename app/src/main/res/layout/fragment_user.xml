@@ -92,7 +92,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="56dp"
                         android:layout_marginLeft="56dp"
-                        android:text="@string/favorite_host" />
+                        android:text="@string/favorite_user" />
 
                     <CheckBox
                         android:id="@+id/user_ckb_favorite"
@@ -146,7 +146,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="32dp"
                         android:layout_marginLeft="32dp"
-                        android:text="Currently Available" />
+                        android:text="@string/currently_available" />
                 </LinearLayout>
 
                 <TextView

@@ -6,6 +6,7 @@ import fi.bitrite.android.ws.ui.AboutFragment;
 import fi.bitrite.android.ws.ui.ContactUserFragment;
 import fi.bitrite.android.ws.ui.FavoriteUsersFragment;
 import fi.bitrite.android.ws.ui.FeedbackFragment;
+import fi.bitrite.android.ws.ui.FilterListFragment;
 import fi.bitrite.android.ws.ui.MapFragment;
 import fi.bitrite.android.ws.ui.MessageThreadFragment;
 import fi.bitrite.android.ws.ui.MessageThreadsFragment;
@@ -44,4 +45,7 @@ abstract class ActivitiesModule {
 
     @ContributesAndroidInjector
     abstract UserFragment contributeUserFragment();
+
+    @ContributesAndroidInjector
+    abstract FilterListFragment contributeFilterListFragment();
 }
