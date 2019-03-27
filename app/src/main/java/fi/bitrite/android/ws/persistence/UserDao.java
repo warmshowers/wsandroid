@@ -115,7 +115,7 @@ public class UserDao extends Dao {
     public void save(SQLiteDatabase db, User user) {
         ContentValues cv = new ContentValues();
         cv.put("id", user.id);
-        cv.put("name", user.name);
+        cv.put("name", user.username);
         cv.put("fullname", user.fullname);
         cv.put("street", user.street);
         cv.put("additional_address", user.additionalAddress);

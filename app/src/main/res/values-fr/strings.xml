@@ -22,7 +22,7 @@
     <string name="enter_credentials">Veuillez entrer votre nom d\'utilisateur et mot de passe</string>
     <string name="error_retrieving_messages">Une erreur s\'est produite lors de la récupération des messages.</string>
     <string name="error_sending_message">Le message n\'a pu être envoyé. Vérifiez vos informations de connexion et votre connexion internet</string>
-    <string name="feedback">Recommandation(s) (%1$d)</string>
+    <string name="feedback">Recommandations</string>
     <string name="home_phone"><u>Téléphone fixe:</u></string>
     <string name="mobile_phone"><u>Téléphone mobile:</u></string>
     <plurals name="user_count">
@@ -181,6 +181,10 @@
     <string name="feedback_relation_guest">Invité</string>
     <string name="feedback_relation_met_while_traveling">Rencontré en voyage</string>
     <string name="feedback_relation_other">Autre</string>
+    <string name="feedback_relation_long_host">%1$s a accueilli %2$s</string>
+    <string name="feedback_relation_long_guest">%1$s était un invité de %2$s</string>
+    <string name="feedback_relation_long_met_while_traveling">%1$s et %2$s se sont rencontrés en voyageant</string>
+    <string name="feedback_relation_long_other">Autre</string>
 
     <string name="feedback_rating_positive">Positif</string>
     <string name="feedback_rating_neutral">Neutre</string>

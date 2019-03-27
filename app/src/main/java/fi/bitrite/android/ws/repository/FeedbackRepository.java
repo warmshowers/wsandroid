@@ -123,7 +123,7 @@ public class FeedbackRepository {
                     .map(userResource -> userResource.data)
                     .firstOrError()
                     .flatMap(recipient -> mLastAccountFeedbackRepository.mWebservice.giveFeedback(
-                            WarmshowersAccountWebservice.FEEDBACK_NODE_TYPE, recipient.name,
+                            WarmshowersAccountWebservice.FEEDBACK_NODE_TYPE, recipient.username,
                             body, relation, rating, yearWeMet, monthWeMet))
                     .flatMapCompletable(apiResponse -> {
                         if (!apiResponse.isSuccessful()) {

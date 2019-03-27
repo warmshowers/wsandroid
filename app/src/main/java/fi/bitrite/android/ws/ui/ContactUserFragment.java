@@ -40,7 +40,7 @@ import io.reactivex.subjects.BehaviorSubject;
  */
 public class ContactUserFragment extends BaseFragment {
 
-    private final static String KEY_RECIPIENT_NAME = "recipient_name";
+    private final static String KEY_RECIPIENT_USERNAME = "recipient_name";
     private final static String KEY_RECIPIENT_FULLNAME = "recipient_fullname";
 
     @Inject MessageRepository mMessageRepository;
@@ -58,7 +58,7 @@ public class ContactUserFragment extends BaseFragment {
 
     public static Fragment create(SimpleUser recipient) {
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_RECIPIENT_NAME, recipient.name);
+        bundle.putString(KEY_RECIPIENT_USERNAME, recipient.username);
         bundle.putString(KEY_RECIPIENT_FULLNAME, recipient.fullname);
 
         Fragment fragment = new ContactUserFragment();
@@ -72,7 +72,7 @@ public class ContactUserFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_contact_user, container, false);
         ButterKnife.bind(this, view);
 
-        mRecipientName = getArguments().getString(KEY_RECIPIENT_NAME);
+        mRecipientName = getArguments().getString(KEY_RECIPIENT_USERNAME);
         mRecipientFullname = getArguments().getString(KEY_RECIPIENT_FULLNAME);
 
         return view;

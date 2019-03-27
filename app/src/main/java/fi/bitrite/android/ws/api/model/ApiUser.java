@@ -28,7 +28,7 @@ public class ApiUser {
     }
 
     @SerializedName("uid") public int id;
-    public String name;
+    @SerializedName("name") public String username;
     public String theme;
     public int signatureFormat;
     public Date created;
@@ -85,9 +85,9 @@ public class ApiUser {
 
 
     public User toUser() {
-        return new User(id, name, fullname, street, additionalAddress, city, province, postalCode,
-                countryCode, new GeoPoint(latitude, longitude), mobilePhone, homePhone, workPhone,
-                comments, preferredNotice, maximalCyclistCount, distanceToMotel,
+        return new User(id, username, fullname, street, additionalAddress, city, province,
+                postalCode, countryCode, new GeoPoint(latitude, longitude), mobilePhone, homePhone,
+                workPhone, comments, preferredNotice, maximalCyclistCount, distanceToMotel,
                 distanceToCampground, distanceToBikeshop, hasStorage, hasShower, hasKitchen,
                 hasLawnspace, hasSag, hasBed, hasLaundry, hasFood, spokenLanguages,
                 !notCurrentlyAvailable,

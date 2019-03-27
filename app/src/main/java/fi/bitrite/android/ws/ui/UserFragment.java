@@ -4,10 +4,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,9 +31,7 @@ import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -44,10 +46,9 @@ import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.FeedbackRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
+import fi.bitrite.android.ws.ui.listadapter.FeedbackListAdapter;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
-import fi.bitrite.android.ws.ui.view.FeedbackTable;
 import fi.bitrite.android.ws.util.GlobalInfo;
-import fi.bitrite.android.ws.util.ObjectUtils;
 import fi.bitrite.android.ws.util.Tools;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -88,10 +89,14 @@ public class UserFragment extends BaseFragment {
     @BindView(R.id.user_lbl_comments) TextView mLblComments;
 
     @BindView(R.id.user_lbl_feedback) TextView mLblFeedback;
-    @BindView(R.id.user_tbl_feedback) FeedbackTable mTblFeedback;
+    @BindView(R.id.user_lst_feedback) RecyclerView mLstFeedback;
 
     @BindColor(R.color.primaryColorAccent) int mFavoritedColor;
     @BindColor(R.color.primaryTextColor) int mNonFavoritedColor;
+
+    @BindColor(R.color.rating_positive) int mRatingColorPositive;
+    @BindColor(R.color.rating_neutral) int mRatingColorNeutral;
+    @BindColor(R.color.rating_negative) int mRatingColorNegative;
 
     private BehaviorSubject<UserInfoLoadResult> mLastUserInfoLoadResult = BehaviorSubject.create();
     private Disposable mDownloadUserInfoProgressDisposable;
@@ -103,6 +108,7 @@ public class UserFragment extends BaseFragment {
     private final BehaviorSubject<Boolean> mFavorite = BehaviorSubject.create();
 
     private boolean mDbFavoriteStatus;
+    private FeedbackListAdapter mFeedbackListAdapter;
 
     public static Fragment create(int userId) {
         Bundle bundle = new Bundle();
@@ -137,6 +143,12 @@ public class UserFragment extends BaseFragment {
             loadUserInformation();
         }
         mLayoutDetails.setVisibility(View.GONE);
+
+        mFeedbackListAdapter = new FeedbackListAdapter(mUserRepository);
+        mFeedbackListAdapter.setOnUserClickHandler(
+                user -> getNavigationController().navigateToUser(user.id));
+        mLstFeedback.setAdapter(mFeedbackListAdapter);
+
         return view;
     }
 
@@ -150,7 +162,31 @@ public class UserFragment extends BaseFragment {
 
         getResumePauseDisposable().add(mFeedbacks
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(feedbacks -> updateFeedbacksViewContent()));
+                .subscribe(feedbacks -> {
+                    mFeedbackListAdapter.replace(feedbacks);
+                    if (feedbacks.isEmpty()) {
+                        mLblFeedback.setText(getString(R.string.no_feedback_yet));
+                    } else {
+                        int positiveCount = 0;
+                        int neutralCount = 0;
+                        int negativeCount = 0;
+                        for (Feedback feedback : feedbacks) {
+                            switch (feedback.rating) {
+                                case Positive: ++positiveCount; break;
+                                case Neutral: ++neutralCount; break;
+                                case Negative: ++negativeCount; break;
+                                default: throw new RuntimeException("Unknown rating");
+                            }
+                        }
+
+                        RatingCountStringBuilder rcsb =
+                                new RatingCountStringBuilder(getString(R.string.feedback));
+                        rcsb.appendRatingCount(positiveCount, mRatingColorPositive);
+                        rcsb.appendRatingCount(neutralCount, mRatingColorNeutral);
+                        rcsb.appendRatingCount(negativeCount, mRatingColorNegative);
+                        mLblFeedback.setText(rcsb.build());
+                    }
+                }));
 
         getResumePauseDisposable().add(mFavorite
                 .observeOn(AndroidSchedulers.mainThread())
@@ -213,8 +249,8 @@ public class UserFragment extends BaseFragment {
 
         final User user = mUser.getValue();
 
-        mLblName.setText(user.fullname);
-        setTitle(user.fullname);
+        mLblName.setText(user.getName());
+        setTitle(user.getName());
 
         // User Availability:
         // Set the user icon to black if they're available, otherwise gray
@@ -286,19 +322,8 @@ public class UserFragment extends BaseFragment {
                     .placeholder(R.drawable.default_userinfo_profile)
                     .into(mImgPhoto);
             mImgPhoto.setContentDescription(
-                    getString(R.string.content_description_avatar_of_var, user.name));
+                    getString(R.string.content_description_avatar_of_var, user.getName()));
         }
-    }
-
-    private void updateFeedbacksViewContent() {
-        List<Feedback> feedbacks = mFeedbacks.getValue();
-        Collections.sort(feedbacks,
-                (left, right) -> ObjectUtils.compare(right.meetingDate, left.meetingDate));
-
-        mTblFeedback.setRows(feedbacks);
-        mLblFeedback.setText(feedbacks.isEmpty()
-                ? getString(R.string.no_feedback_yet)
-                : getString(R.string.feedback, feedbacks.size()));
     }
 
     private void contactUser(@NonNull User user) {
@@ -319,7 +344,7 @@ public class UserFragment extends BaseFragment {
     public void sendGeoIntent(@NonNull User user) {
         String lat = Double.toString(user.location.getLatitude());
         String lng = Double.toString(user.location.getLongitude());
-        String query = Uri.encode(lat + "," + lng + "(" + user.fullname + ")");
+        String query = Uri.encode(lat + "," + lng + "(" + user.getName()+ ")");
         Uri uri = Uri.parse("geo:" + lat + "," + lng + "?q=" + query);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -416,6 +441,40 @@ public class UserFragment extends BaseFragment {
     private class UserInfoLoadResult {
         Throwable throwable = null;
         boolean isHandled = false;
+    }
+
+    /**
+     * Helps creating the rating count string. It consists of the non-zero rating counts with their
+     * respective color.
+     */
+    private static class RatingCountStringBuilder {
+        private final SpannableStringBuilder mRatingString;
+        private boolean mPrependSeperator = false;
+
+        RatingCountStringBuilder(String initialString) {
+            mRatingString = new SpannableStringBuilder(initialString + " (");
+        }
+
+        void appendRatingCount(int count, @ColorInt int color) {
+            if (count == 0) {
+                return;
+            }
+
+            int start = mRatingString.length();
+            if (mPrependSeperator) {
+                mRatingString.append('/');
+                ++start;
+            }
+            mPrependSeperator = true;
+
+            mRatingString.append(Integer.toString(count));
+            mRatingString.setSpan(new ForegroundColorSpan(color), start, mRatingString.length(), 0);
+        }
+
+        SpannableStringBuilder build() {
+            mRatingString.append(')');
+            return mRatingString;
+        }
     }
 }
 

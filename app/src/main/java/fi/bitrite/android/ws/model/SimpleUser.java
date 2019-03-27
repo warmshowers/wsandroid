@@ -26,7 +26,7 @@ public class SimpleUser {
     }
 
     public final int id;
-    public final String name;
+    public final String username;
     public final String fullname;
 
     public final String street;
@@ -42,12 +42,12 @@ public class SimpleUser {
     public final Date created;
     public final Date lastAccess;
 
-    public SimpleUser(int id, String name, String fullname, String street, String city,
+    public SimpleUser(int id, String username, String fullname, String street, String city,
                       String province, String postalCode, String countryCode, IGeoPoint location,
                       boolean isCurrentlyAvailable, Picture profilePicture, Date created,
                       Date lastAccess) {
         this.id = id;
-        this.name = name;
+        this.username = username;
         this.fullname = fullname;
 
         this.street = street;
@@ -62,6 +62,10 @@ public class SimpleUser {
 
         this.created = created;
         this.lastAccess = lastAccess;
+    }
+
+    public String getName() {
+        return TextUtils.isEmpty(fullname) ? username : fullname;
     }
 
     public String getStreetCityAddress() {

@@ -286,11 +286,11 @@ public class MessageNotificationController {
             return createNotificationBeforeApi24(entry, intent);
         }
 
-        Notification.MessagingStyle style = new Notification.MessagingStyle(us.fullname)
+        Notification.MessagingStyle style = new Notification.MessagingStyle(us.getName())
                 .setConversationTitle(entry.thread.subject);
         for (Message message : entry.thread.messages) {
             User participant = entry.participants.get(message.authorId);
-            String authorName = participant != null ? participant.fullname : "";
+            String authorName = participant != null ? participant.getName() : "";
             Notification.MessagingStyle.Message msg = new Notification.MessagingStyle.Message(
                     message.body, message.date.getTime(), authorName);
             if (message.isNew) {
@@ -323,7 +323,7 @@ public class MessageNotificationController {
 
         assert entry.latestNewMessage != null;
         User participant = entry.participants.get(entry.latestNewMessage.authorId);
-        String newestMessageAuthorName = participant != null ? participant.fullname : "";
+        String newestMessageAuthorName = participant != null ? participant.getName() : "";
         return new NotificationCompat.Builder(mApplicationContext, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_bicycle_white_24dp)
                 .setLargeIcon(entry.partnerProfileBitmap)

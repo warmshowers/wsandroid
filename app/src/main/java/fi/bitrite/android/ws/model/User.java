@@ -35,7 +35,7 @@ public class User extends SimpleUser {
     public final boolean hasFood;
     public final String spokenLanguages;
 
-    public User(int id, String name, String fullname, String street, String additionalAddress,
+    public User(int id, String username, String fullname, String street, String additionalAddress,
                 String city, String province, String postalCode, String countryCode,
                 IGeoPoint location, String mobilePhone, String homePhone, String workPhone,
                 String comments, String preferredNotice, int maximalCyclistCount,
@@ -44,7 +44,7 @@ public class User extends SimpleUser {
                 boolean hasSag, boolean hasBed, boolean hasLaundry, boolean hasFood,
                 String spokenLanguages, boolean isCurrentlyAvailable, Picture profilePicture,
                 Date created, Date lastAccess) {
-        super(id, name, fullname, street, city, province, postalCode, countryCode, location,
+        super(id, username, fullname, street, city, province, postalCode, countryCode, location,
                 isCurrentlyAvailable, profilePicture, created, lastAccess);
 
         this.additionalAddress = additionalAddress;

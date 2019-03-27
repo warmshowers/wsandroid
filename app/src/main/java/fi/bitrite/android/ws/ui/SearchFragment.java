@@ -182,7 +182,7 @@ public class SearchFragment extends BaseFragment {
 
         return caLeft != caRight
                 ? caRight - caLeft
-                : left.fullname.compareTo(right.fullname); // TODO(saemy): Something smarter?
+                : left.getName().compareTo(right.getName()); // TODO(saemy): Something smarter?
     };
 
     private static class Decorator implements UserListAdapter.Decorator {

@@ -37,7 +37,7 @@ import io.reactivex.subjects.BehaviorSubject;
 public class UserListAdapter extends ArrayAdapter<SimpleUser> {
 
     public final static Comparator<? super SimpleUser> COMPERATOR_FULLNAME_ASC =
-            (left, right) -> left.fullname.compareTo(right.fullname);
+            (left, right) -> left.getName().compareTo(right.getName());
 
     private final Comparator<? super SimpleUser> mComparator;
     private final Decorator mDecorator;
@@ -102,10 +102,10 @@ public class UserListAdapter extends ArrayAdapter<SimpleUser> {
 
         // Decorates the shown fields.
         if (mDecorator != null) {
-            mLblFullname.setText(mDecorator.decorateFullname(user.fullname));
+            mLblFullname.setText(mDecorator.decorateFullname(user.getName()));
             mLblLocation.setText(mDecorator.decorateLocation(user.getFullAddress()));
         } else {
-            mLblFullname.setText(user.fullname);
+            mLblFullname.setText(user.getName());
             mLblLocation.setText(user.getFullAddress());
         }
 

@@ -106,7 +106,7 @@ public class FeedbackFragment extends BaseFragment {
                 .firstOrError()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(recipient -> mLblRating.setText(getString(
-                        R.string.lbl_feedback_overall_experience, recipient.fullname)), throwable -> {
+                        R.string.lbl_feedback_overall_experience, recipient.getName())), throwable -> {
                     Log.e(WSAndroidApplication.TAG, throwable.toString());
                     // TODO(saemy): Error handling.
                 }));
@@ -187,9 +187,9 @@ public class FeedbackFragment extends BaseFragment {
     private Feedback.Relation getSelectedRelation() {
         // Keep in sync with R.array.feedback_relation_options.
         switch (mSelRelation.getSelectedItemPosition()) {
-            case 0: return Feedback.Relation.Guest;
-            case 1: return Feedback.Relation.Host;
-            case 2: return Feedback.Relation.MetWhileTraveling; // FIXME(saemy): Serialized to "MetWhileTraveling"?
+            case 0: return Feedback.Relation.Host;
+            case 1: return Feedback.Relation.Guest;
+            case 2: return Feedback.Relation.MetWhileTraveling;
             case 3: return Feedback.Relation.Other;
             default: throw new RuntimeException("Invalid option.");
         }

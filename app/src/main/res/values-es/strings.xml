@@ -54,7 +54,7 @@
     <string name="message_sent">Mensaje enviado.</string>
     <string name="about_1">"Desarrollado por voluntarios de Warmshowers.org. Traductora al español: lejuliaf@gmail.com</string>
     <string name="about_2">Esta aplicación es de código abierto bajo la licencia Apache 2.0. Contribuye multiplicando nuestro repositorio en github.com/warmshowers/wsandroid.\nReporta problemas allí.</string>
-    <string name="feedback">Comentarios (%1$d)</string>
+    <string name="feedback">Comentarios</string>
     <string name="error_retrieving_messages">Ocurrió un error al cargar los mensajes.</string>
     <string name="messages_in_progress">Cargando mensajes …</string>
     <string name="no_unread_messages">No tienes mensajes sin leer.</string>
@@ -172,8 +172,12 @@
     <!-- new strings from 2.0 -->
     <string name="feedback_relation_host">Anfitrión</string>
     <string name="feedback_relation_guest">Huesped</string>
-    <string name="feedback_relation_met_while_traveling">Viajando</string>
+    <string name="feedback_relation_met_while_traveling">Conocieron mientras viajaban</string>
     <string name="feedback_relation_other">Otro</string>
+    <string name="feedback_relation_long_host">%1$s estaba hospedando %2$s</string>
+    <string name="feedback_relation_long_guest">%1$s fue un invitado de %2$s</string>
+    <string name="feedback_relation_long_met_while_traveling">%1$s y %2$s se conocieron mientras viajaba</string>
+    <string name="feedback_relation_long_other">Otro, %3$s</string>
 
     <string name="feedback_rating_positive">Positiva</string>
     <string name="feedback_rating_neutral">Neutral</string>
