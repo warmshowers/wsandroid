@@ -50,14 +50,17 @@ cache:
     - "$HOME/.gradle/wrapper/"
 
 before_deploy:
-  - mv app/build/outputs/apk/release/app-release.apk wsandroid-$TRAVIS_TAG.apk
+  - mv app/build/outputs/apk/floss/release/app-floss-release.apk wsandroid-${TRAVIS_TAG}-floss.apk
+  - mv app/build/outputs/apk/google/release/app-google-release.apk wsandroid-${TRAVIS_TAG}-google.apk
 
 deploy:
   # Deploys the release APK for tagged revisions to GitHub.
   provider: releases
   api_key:
     secure: "dIzw4tJxXLPlA7wDdcgwLop6qcAU9lPTD4Z322APx6430Pevx93o6u8H6vnNMPytbpL4kpsxQjsqe+gz3DLB5vSUmftn0UF5GrjJTxNCeSj0wxW5kgeb2iuw4UsjpoI1FOroN0FxOg+CJUoD27MRwjjl4S9NnEVYmbcj9+8O8f4="
-  file: "wsandroid-$TRAVIS_TAG.apk"
+  file:
+    - "wsandroid-${TRAVIS_TAG}-floss.apk"
+    - "wsandroid-${TRAVIS_TAG}-google.apk"
   skip_cleanup: true
   on:
     tags: true
