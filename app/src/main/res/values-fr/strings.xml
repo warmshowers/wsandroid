@@ -221,6 +221,10 @@
     <string name="prefs_message_refresh_interval_min_summary_disabled">Désactivé</string>
     <string name="prefs_message_refresh_interval_min_dialog_message">Spécifiez la fréquence de rafraîchissement de vos messages à partir du serveur.</string>
     <string name="prefs_message_refresh_interval_min_hint">Intervalle (minutes)</string>
+
+    <string name="prefs_data_saver_mode_title">Mode économiseur de données</string>
+    <string name="prefs_data_saver_mode_summary">Empêcher le chargement d\'informations à forte intensité de données telles que des images.</string>
+
     <string name="prefscat_dev_title">Paramètres de développement</string>
     <string name="prefs_dev_simulate_no_network_title">Simuler une absence de service</string>
     <string name="message_mark_read">Marque comme lue</string>

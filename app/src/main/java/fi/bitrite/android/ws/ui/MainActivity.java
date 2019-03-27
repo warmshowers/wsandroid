@@ -20,7 +20,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -47,6 +47,7 @@ import fi.bitrite.android.ws.ui.util.ActionBarTitleHelper;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import fi.bitrite.android.ws.util.SerialCompositeDisposable;
+import fi.bitrite.android.ws.util.WSGlide;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
@@ -444,8 +445,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                                 mImgUserPhoto.setImageResource(
                                         R.drawable.default_userinfo_profile);
                             } else {
-                                Picasso.with(MainActivity.this)
+                                WSGlide.with(MainActivity.this)
                                         .load(profilePhotoUrl)
+                                        .apply(new RequestOptions()
+                                                .placeholder(R.drawable.default_userinfo_profile))
                                         .into(mImgUserPhoto); // largeUrl
                             }
                         } else {

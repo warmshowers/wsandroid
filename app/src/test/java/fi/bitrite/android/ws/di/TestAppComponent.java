@@ -8,6 +8,7 @@ import dagger.android.AndroidInjectionModule;
 import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.di.account.AccountComponentManager;
 import fi.bitrite.android.ws.di.account.TestAccountComponent;
+import fi.bitrite.android.ws.util.GlideDataSaverModeTest;
 
 @AppScope
 @Component(modules = {
@@ -35,4 +36,6 @@ public interface TestAppComponent extends AppComponent {
 
     AccountComponentManager getAccountComponentManager();
     AccountManager getAccountManager();
+
+    void inject(GlideDataSaverModeTest test);
 }

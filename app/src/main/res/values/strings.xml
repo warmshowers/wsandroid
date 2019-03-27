@@ -118,6 +118,10 @@
     <string name="prefs_message_refresh_interval_min_dialog_message">Specify how often your messages should be refreshed from the server.</string>
     <string name="prefs_message_refresh_interval_min_hint">Interval (minutes)</string>
 
+    <string name="prefs_data_saver_mode_key" translatable="false">data_saver</string>
+    <string name="prefs_data_saver_mode_title">Data saver mode</string>
+    <string name="prefs_data_saver_mode_summary">Prevent loading data intensive information such as images.</string>
+
     <string name="prefscat_dev_title">Developer settings</string>
     <string name="prefs_dev_simulate_no_network_key" translatable="false">dev_simulate_no_network</string>
     <string name="prefs_dev_simulate_no_network_title">Simulate No Service</string>

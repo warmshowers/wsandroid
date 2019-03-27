@@ -26,7 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -50,6 +50,7 @@ import fi.bitrite.android.ws.ui.listadapter.FeedbackListAdapter;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
+import fi.bitrite.android.ws.util.WSGlide;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -317,9 +318,9 @@ public class UserFragment extends BaseFragment {
         // If we're connected and there is a picture, get user picture.
         String url = user.profilePicture.getLargeUrl();
         if (!TextUtils.isEmpty(url)) {
-            Picasso.with(getContext())
+            WSGlide.with(requireContext())
                     .load(url)
-                    .placeholder(R.drawable.default_userinfo_profile)
+                    .apply(new RequestOptions().placeholder(R.drawable.default_userinfo_profile))
                     .into(mImgPhoto);
             mImgPhoto.setContentDescription(
                     getString(R.string.content_description_avatar_of_var, user.getName()));

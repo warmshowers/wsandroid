@@ -111,13 +111,13 @@ ext {
     butterknifeVersion = '8.8.1'
     constraintLayoutVersion = '1.1.2'
     daggerVersion = '2.13'
+    glideVersion = '4.8.0'
     gsonVersion = '2.8.1'
     jsonVersion = '20170516'
     junitVersion = '4.12'
     okHttpVersion = '3.12.0'
     osmbonuspackVersion = '6.5.2'
     osmdroidVersion = '6.0.2'
-    picassoVersion = '2.5.2'
     playServicesVersion = '11.6.2'
     retrofitVersion = '2.5.0' // Dictates version of okhttp in their dependencies which clashes in tests.
     robolectricVersion = '4.1'
@@ -127,6 +127,7 @@ ext {
 }
 
 dependencies {
+    annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
@@ -136,13 +137,13 @@ dependencies {
     implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:preference-v14:$supportLibVersion"
     implementation "com.android.support:support-v4:$supportLibVersion"
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.github.MKergall:osmbonuspack:$osmbonuspackVersion"
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation "com.google.dagger:dagger-android:$daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
-    implementation "com.squareup.picasso:picasso:$picassoVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
