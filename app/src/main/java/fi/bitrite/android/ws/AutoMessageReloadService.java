@@ -4,12 +4,12 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import io.reactivex.disposables.Disposable;
