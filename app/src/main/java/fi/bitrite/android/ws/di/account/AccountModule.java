@@ -1,8 +1,8 @@
 package fi.bitrite.android.ws.di.account;
 
 import android.accounts.Account;
+import android.support.annotation.Nullable;
 
-import javax.annotation.Nullable;
 import javax.inject.Named;
 
 import dagger.Module;

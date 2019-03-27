@@ -12,6 +12,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.annotation.Config;
 
 import fi.bitrite.android.ws.R;
 
@@ -86,6 +87,7 @@ public class AuthenticatorActivityTest {
     }
 
     @Test
+    @Config(sdk = 27)
     public void onCreate_withPresetUsername_disablesUsernameInput() throws Exception {
         final Intent intent =
                 new Intent(RuntimeEnvironment.application, AuthenticatorActivity.class);

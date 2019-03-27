@@ -273,7 +273,11 @@ public class MapFragment extends BaseFragment {
         } else {
             setGotoCurrentLocationStatus();
         }
-        mBtnGotoCurrentLocation.setVisibility(mHideLocationBtn ? View.GONE : View.VISIBLE);
+        if (mHideLocationBtn) {
+            mBtnGotoCurrentLocation.hide();
+        } else {
+            mBtnGotoCurrentLocation.show();
+        }
     }
 
     @Override
