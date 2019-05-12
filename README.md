@@ -1,11 +1,11 @@
-# WarmShowers for Android
+# WarmShowers for Android [![Build Status](https://travis-ci.org/warmshowers/wsandroid.svg?branch=master)](https://travis-ci.org/warmshowers/wsandroid) [![Gitter chat](https://badges.gitter.im/warmshowers-wsandroid/Lobby.png)](https://gitter.im/warmshowers-wsandroid/Lobby)
 
-[![Build Status](https://travis-ci.org/warmshowers/wsandroid.svg?branch=master)](https://travis-ci.org/warmshowers/wsandroid) [![Gitter chat](https://badges.gitter.im/warmshowers-wsandroid/Lobby.png)](https://gitter.im/warmshowers-wsandroid/Lobby)
-
-
-Also available in the Google Play store:
-
-https://play.google.com/store/apps/details?id=fi.bitrite.android.ws
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/fi.bitrite.android.ws/)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=fi.bitrite.android.ws)
 
 ## How may I help the project?
 
