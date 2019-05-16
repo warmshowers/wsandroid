@@ -107,7 +107,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                         mProgressDisposable.dispose();
                         Toast.makeText(this, R.string.http_server_access_failure, Toast.LENGTH_LONG)
                                 .show();
-                    } else if (result.authResult != null) {
+                    } else if (result.authResult != null && result.authResult.isSuccessful()) {
                         Bundle bundle = new Bundle();
                         bundle.putString(android.accounts.AccountManager.KEY_ACCOUNT_NAME,
                                 result.account.name);

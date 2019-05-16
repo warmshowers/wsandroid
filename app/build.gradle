@@ -116,6 +116,7 @@ ext {
     gsonVersion = '2.8.1'
     jsonVersion = '20170516'
     junitVersion = '4.12'
+    mockitoVersion = '2.27.0'
     okHttpVersion = '3.12.0'
     osmbonuspackVersion = '6.5.2'
     osmdroidVersion = '6.0.2'
@@ -162,6 +163,7 @@ dependencies {
     testImplementation "junit:junit:$junitVersion"
     testImplementation "org.assertj:assertj-core:$assertjVersion"
     testImplementation "org.json:json:$jsonVersion"
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "org.robolectric:robolectric:$robolectricVersion"
     testImplementation "org.robolectric:shadows-supportv4:$robolectricVersion"
 }

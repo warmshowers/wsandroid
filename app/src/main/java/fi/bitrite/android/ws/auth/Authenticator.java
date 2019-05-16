@@ -179,11 +179,11 @@ public class Authenticator extends AbstractAccountAuthenticator {
         public final AuthToken authToken;
         public final String errorMessage;
 
-        static AuthResult success(AuthToken authToken) {
+        public static AuthResult success(AuthToken authToken) {
             return new AuthResult(authToken, null);
         }
 
-        static AuthResult error(String errorMessage) {
+        public static AuthResult error(String errorMessage) {
             return new AuthResult(null, errorMessage);
         }
 

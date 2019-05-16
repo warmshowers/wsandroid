@@ -33,6 +33,7 @@ Without these libraries, our lives would be a whole lot more difficult. So thank
 * [Glide](https://bumptech.github.io/glide/)
 * [Gson](https://github.com/google/gson)
 * [JUnit](https://github.com/junit-team/junit4)
+* [Mockito](https://github.com/mockito/mockito)
 * [OSMBonusPack](https://github.com/MKergall/osmbonuspack)
 * [Osmdroid](https://osmdroid.github.io/osmdroid)
 * [Retrofit](https://github.com/square/retrofit)
