@@ -40,7 +40,17 @@ android {
         }
     }
     buildTypes {
+        all {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                'proguard-rules/dagger.pro',
+                'proguard-rules/gson.pro',
+                'proguard-rules/okhttp3.pro',
+                'proguard-rules/retrofit2.pro'
+        }
         debug {
+            debuggable true
             signingConfig signingConfigs.debug
             applicationIdSuffix '.debug'
             versionNameSuffix '-debug'
@@ -49,6 +59,7 @@ android {
         }
 
         release {
+            debuggable false
             if (doSignRelease) {
                 signingConfig signingConfigs.release
             }
