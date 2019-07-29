@@ -110,7 +110,7 @@ public class FeedbackRepository {
 
                             return new LoadResult<>(LoadResult.Source.NETWORK, feedbacks);
                         } else {
-                            throw new Error(apiFeedbackResponse.errorBody().toString());
+                            throw new Error(apiFeedbackResponse.errorBody().string());
                         }
                     });
         }
@@ -127,7 +127,7 @@ public class FeedbackRepository {
                             body, relation, rating, yearWeMet, monthWeMet))
                     .flatMapCompletable(apiResponse -> {
                         if (!apiResponse.isSuccessful()) {
-                            throw new Error(apiResponse.errorBody().toString());
+                            throw new Error(apiResponse.errorBody().string());
                         }
 
                         List<Feedback> feedbacks = getRaw(recipientId);

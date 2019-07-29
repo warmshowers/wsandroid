@@ -90,7 +90,7 @@ public class MessageRepository extends Repository<MessageThread> {
                 .observeOn(Schedulers.io())
                 .map(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
-                        throw new Error(apiResponse.errorBody().toString());
+                        throw new Error(apiResponse.errorBody().string());
                     }
 
                     MessageThreadListResponse responseBody = apiResponse.body();
@@ -122,7 +122,7 @@ public class MessageRepository extends Repository<MessageThread> {
                     .filter(response -> {
                         // Throwing errors is not allowed in onSuccess().
                         if (!response.isSuccessful()) {
-                            throw new Exception(response.errorBody().toString());
+                            throw new Exception(response.errorBody().string());
                         } else if (!response.body().isSuccessful) {
                             throw new Exception("Retreived an unsuccessful response.");
                         }
@@ -298,7 +298,7 @@ public class MessageRepository extends Repository<MessageThread> {
                 .subscribeOn(Schedulers.io())
                 .flatMap(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
-                        throw new Error(apiResponse.errorBody().toString());
+                        throw new Error(apiResponse.errorBody().string());
                     }
 
                     MessageThreadResponse apiThread = apiResponse.body();
@@ -521,7 +521,7 @@ public class MessageRepository extends Repository<MessageThread> {
                     .filter(response -> {
                         // Throwing errors is not allowed in onSuccess().
                         if (!response.isSuccessful()) {
-                            throw new Exception(response.errorBody().toString());
+                            throw new Exception(response.errorBody().string());
                         } else if (!response.body().isSuccessful) {
                             throw new Exception("Retreived an unsuccessful response.");
                         }

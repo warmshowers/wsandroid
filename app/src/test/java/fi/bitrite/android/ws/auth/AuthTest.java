@@ -148,7 +148,8 @@ public class AuthTest {
                             assertThat(request.getPath()).isEqualTo( "/services/rest/user/" + fetchUserId);
                             assertThat(request.getHeader("Cookie")).contains("SESStest=oldAuthTokenId");
                             return new MockResponse()
-                                    .setStatus("HTTP/1.1 403 : Access denied for user anonymous");
+                                    .setStatus("HTTP/1.1 403")
+                                    .setBody("[\"Access denied for user anonymous\"]");
                         }
 
                         case 1: {

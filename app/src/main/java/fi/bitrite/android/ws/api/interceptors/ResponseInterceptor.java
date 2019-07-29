@@ -10,6 +10,7 @@ import fi.bitrite.android.ws.di.account.AccountScope;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 @AccountScope
 public class ResponseInterceptor implements Interceptor {
@@ -81,8 +82,12 @@ public class ResponseInterceptor implements Interceptor {
 
             case 403:
                 // Access denied for user anonymous --> auth token timed out -> re-login
-                String reason = response.message();
-                if (!reason.startsWith(": Access denied for user anonymous")) {
+                String httpStatus = response.message();
+                ResponseBody body = response.body();
+                String httpBody = body != null ? body.string() : "";
+                String reloginRequiredErrorMsg = "Access denied for user anonymous";
+                if (!httpStatus.contains(reloginRequiredErrorMsg)
+                    && !httpBody.contains(reloginRequiredErrorMsg)) {
                     // We simply do not have access for the resource.
                     break;
                 }

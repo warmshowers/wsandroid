@@ -157,7 +157,11 @@ public class Authenticator extends AbstractAccountAuthenticator {
                         // continue.
                         return AuthResult.success(mAccountManager.peekAuthToken(account));
                     } else if (!response.isSuccessful()) {
-                        return AuthResult.error(response.errorBody().string());
+                        String errorMsg = response.errorBody().string();
+                        if (errorMsg.isEmpty()) {
+                            errorMsg = response.message();
+                        }
+                        return AuthResult.error(errorMsg);
                     }
 
                     // Creates a new or updates an existing account.

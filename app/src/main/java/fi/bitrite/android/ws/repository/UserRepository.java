@@ -125,7 +125,7 @@ public class UserRepository {
                     .subscribeOn(Schedulers.io())
                     .map(apiUserResponse -> {
                         if (!apiUserResponse.isSuccessful()) {
-                            throw new Error(apiUserResponse.errorBody().toString());
+                            throw new Error(apiUserResponse.errorBody().string());
                         }
 
                         return new LoadResult<>(
@@ -141,7 +141,7 @@ public class UserRepository {
                     .subscribeOn(Schedulers.io())
                     .map(apiResponse -> {
                         if (!apiResponse.isSuccessful()) {
-                            throw new Error(apiResponse.errorBody().toString());
+                            throw new Error(apiResponse.errorBody().string());
                         }
 
                         Collection<ApiUser> apiUsers = apiResponse.body().users.values();
@@ -170,7 +170,7 @@ public class UserRepository {
                     .subscribeOn(Schedulers.io())
                     .map(apiResponse -> {
                         if (!apiResponse.isSuccessful()) {
-                            throw new Error(apiResponse.errorBody().toString());
+                            throw new Error(apiResponse.errorBody().string());
                         }
 
                         return apiResponse.body().users;
