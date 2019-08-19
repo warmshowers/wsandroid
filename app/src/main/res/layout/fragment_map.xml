@@ -11,7 +11,11 @@
     <org.osmdroid.views.MapView
         android:id="@+id/map"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="fill_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/btn_filter"
@@ -19,9 +23,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@null"
-        app:srcCompat="@drawable/ic_filter_inactive"
         app:layout_constraintEnd_toEndOf="@id/map"
-        app:layout_constraintTop_toTopOf="@id/map" />
+        app:layout_constraintTop_toTopOf="@id/map"
+        app:srcCompat="@drawable/ic_filter_inactive" />
 
     <ProgressBar
         android:id="@+id/map_progress_loading_users"
