@@ -25,6 +25,11 @@ android:
     - extra-google-m2repository
     - extra-android-m2repository
 
+install:
+  # Installs the NDK.
+  - echo y | sdkmanager "ndk-bundle"
+  - echo y | sdkmanager "cmake;3.10.2.4988404"
+
 before_script:
   # Decrypts the keystore (if this is not a PR build).
   - 'if [ ${TRAVIS_SECURE_ENV_VARS} = "true" ]; then
@@ -36,6 +41,9 @@ before_script:
 
   # Sets the (public) keystore settings.
   - export ORG_GRADLE_PROJECT_keystoreKeyAlias="wsandroid"
+
+  # Sets the NDK path.
+  - export ANDROID_NDK_HOME="$ANDROID_HOME/ndk-bundle"
 
 before_cache:
   # Cleans up the cache.

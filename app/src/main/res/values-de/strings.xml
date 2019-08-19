@@ -260,4 +260,6 @@
     <string name="filter_diff_short_this_month">1 Mnt.</string>
     <string name="filter_diff_short_this_year">1 Jr.</string>
     <string name="filter_diff_short_any">&gt;1 Jr.</string>
+
+    <string name="invalid_api_key">Der Server hat die Anfrage abgewiesen. Bitte aktualisiere die App.</string>
 </resources>

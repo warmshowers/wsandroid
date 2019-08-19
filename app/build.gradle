@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 
+ext {
+    wsApiUserId = System.getenv("WS_API_USER_ID")
+    wsApiKey = System.getenv("WS_API_KEY")
+    if (!wsApiKey) {
+        wsApiUserId = "" // <---------------------------------- put your API userId here
+        wsApiKey = ""    // <---------------------------------- put your API key here
+    }
+}
+
 repositories {
     google()
     jcenter()
@@ -56,6 +65,7 @@ android {
             versionNameSuffix '-debug'
             resValue 'string', 'account_type', 'org.warmshowers.debug'
             buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers.debug"'
+            buildConfigField 'String', 'WS_BASE_URL', '"https://dev.warmshowers.org/"'
         }
 
         release {
@@ -65,9 +75,21 @@ android {
             }
             resValue 'string', 'account_type', 'org.warmshowers'
             buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers"'
+            buildConfigField 'String', 'WS_BASE_URL', '"https://www.warmshowers.org/"'
         }
     }
 
+    defaultConfig {
+        if(!wsApiUserId) {
+            throw new GradleException("No API userId specified! Add yours to app/build.gradle")
+        }
+        if(!wsApiKey) {
+            throw new GradleException("No API key specified! Add yours to app/build.gradle")
+        }
+
+        buildConfigField 'String', 'WS_API_USER_ID', "\"$wsApiUserId\""
+        buildConfigField 'String', 'WS_API_KEY', "\"$wsApiKey\""
+    }
     flavorDimensions "mode"
     productFlavors {
         floss {
@@ -136,6 +158,7 @@ ext {
     robolectricVersion = '4.1'
     rxAndroidVersion = '2.0.2'
     rxJavaVersion = '2.1.7'
+    securekeysVersion = '2.2.0' // Adjust the version in the project's build.gradle, too.
     supportLibVersion = '28.0.0'
 }
 
@@ -144,6 +167,8 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
+    annotationProcessor "com.saantiaguilera.securekeys:annotation:$securekeysVersion"
+    annotationProcessor "com.saantiaguilera.securekeys:processor:$securekeysVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:cardview-v7:$supportLibVersion"
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
@@ -157,6 +182,7 @@ dependencies {
     implementation "com.google.dagger:dagger-android:$daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
     implementation "com.jakewharton:butterknife:$butterknifeVersion"
+    implementation "com.saantiaguilera.securekeys:core:$securekeysVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
@@ -178,3 +204,6 @@ dependencies {
     testImplementation "org.robolectric:robolectric:$robolectricVersion"
     testImplementation "org.robolectric:shadows-supportv4:$robolectricVersion"
 }
+
+// Apply the securekeys plugin at the end
+apply plugin: 'saantiaguilera.securekeys'

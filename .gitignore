@@ -2,6 +2,7 @@ bin/
 gen/
 out/
 classes/
+app/.cxx/
 AndroidManifest.out.xml
 .settings
 *.iml

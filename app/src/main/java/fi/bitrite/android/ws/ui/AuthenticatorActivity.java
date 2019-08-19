@@ -6,10 +6,12 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -22,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.Authenticator;
 import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
@@ -130,7 +133,24 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                         finish();
                     } else {
                         mProgressDisposable.dispose();
-                        Toast.makeText(this, R.string.authentication_failed, Toast.LENGTH_LONG)
+
+                        int statusCode = 0;
+                        if (result.authResult != null) {
+                            statusCode = result.authResult.statusCode;
+                            Log.w(WSAndroidApplication.TAG, String.format(
+                                    "Auth failure. Code=%d, Message=%s",
+                                    statusCode,
+                                    result.authResult.errorMessage));
+                        }
+
+                        @StringRes int messageId;
+                        if (statusCode == 401 || statusCode == 404) {
+                            // Issues with the API key or the API itself.
+                            messageId = R.string.invalid_api_key;
+                        } else {
+                            messageId = R.string.authentication_failed;
+                        }
+                        Toast.makeText(this, messageId, Toast.LENGTH_LONG)
                                 .show();
                     }
                 });

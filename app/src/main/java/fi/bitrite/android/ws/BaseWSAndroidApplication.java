@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 
 import com.bumptech.glide.request.RequestOptions;
+import com.u.securekeys.SecureEnvironment;
 
 import javax.inject.Inject;
 
@@ -30,6 +31,7 @@ public abstract class BaseWSAndroidApplication extends Application implements Ha
     @Override
     public void onCreate() {
         super.onCreate();
+        SecureEnvironment.initialize(this);
 
         mAppInjector = inject();
         // Injected variables are available from this point.

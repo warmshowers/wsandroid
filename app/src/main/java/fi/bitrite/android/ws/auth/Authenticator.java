@@ -161,7 +161,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
                         if (errorMsg.isEmpty()) {
                             errorMsg = response.message();
                         }
-                        return AuthResult.error(errorMsg);
+                        return AuthResult.error(response.code(), errorMsg);
                     }
 
                     // Creates a new or updates an existing account.
@@ -180,24 +180,26 @@ public class Authenticator extends AbstractAccountAuthenticator {
     }
 
     public static class AuthResult {
+        public final int statusCode;
         public final AuthToken authToken;
         public final String errorMessage;
 
         public static AuthResult success(AuthToken authToken) {
-            return new AuthResult(authToken, null);
+            return new AuthResult(200, authToken, null);
         }
 
-        public static AuthResult error(String errorMessage) {
-            return new AuthResult(null, errorMessage);
+        public static AuthResult error(int statusCode, String errorMessage) {
+            return new AuthResult(statusCode, null, errorMessage);
         }
 
-        private AuthResult(AuthToken authToken, String errorMessage) {
+        private AuthResult(int statusCode, AuthToken authToken, String errorMessage) {
+            this.statusCode = statusCode;
             this.authToken = authToken;
             this.errorMessage = errorMessage;
         }
 
         public boolean isSuccessful() {
-            return TextUtils.isEmpty(errorMessage);
+            return statusCode >= 200 && statusCode < 300;
         }
     }
 }

@@ -252,4 +252,6 @@
     <string name="filter_diff_short_this_month">1 m.</string>
     <string name="filter_diff_short_this_year">1 a.</string>
     <string name="filter_diff_short_any">&gt; 1 a.</string>
+
+    <string name="invalid_api_key">Le serveur a rejeté la demande. STP mettre à jour l\'application.</string>
 </resources>

@@ -22,6 +22,22 @@ If you find something within the code you’d like to see changed for performanc
 
 * Tests of any kind—UI tests, unit tests, integration tests, you name it
 
+## How to build the app
+
+The Warmshowers API now requires an API key. Ask in the
+[Gitter chat](https://gitter.im/warmshowers-wsandroid/Lobby) for how you can get
+access to one.
+
+Then either edit the variables `wsApiUserId` and `wsApiKey` in `app/build.gradle`
+or set the environment variables `WS_API_USER_ID` and `WS_API_KEY`.
+
+Then you are ready to build the app:
+```
+export WS_API_USER_ID=<your_user_id>
+export WS_API_KEY=<your_api_key>
+./gradlew build
+```
+
 ## OSS libraries in use (aka, Thank You!)
 
 Without these libraries, our lives would be a whole lot more difficult. So thank you all for developing and maintaining those fine pieces of software!
