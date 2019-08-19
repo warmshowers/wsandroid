@@ -57,6 +57,10 @@ android {
                 'proguard-rules/gson.pro',
                 'proguard-rules/okhttp3.pro',
                 'proguard-rules/retrofit2.pro'
+
+            // We pin the intermediate as the WS SSL key-pair is rotated every three months.
+            // CN=Let's Encrypt Authority X3, Expires 2021-03-17
+            buildConfigField 'String', 'WS_CERTIFICATE_PIN', '"sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg="'
         }
         debug {
             debuggable true

@@ -18,6 +18,7 @@ public class ShadowSecureEnvironment {
         setSecureKey("ws_api_userId", "1234");
         setSecureKey("ws_api_key", "mock_api_key");
         setSecureKey("ws_base_url", "https://localhost/");
+        setSecureKey("ws_cert_pin", "sha256/dHJ5aW5nIHRvIGJlIHNuZWFreSwgaHVoPyA7KQo=");
     }
 
     private ShadowSecureEnvironment() throws IllegalAccessException {
