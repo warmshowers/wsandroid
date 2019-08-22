@@ -131,7 +131,10 @@ public class AuthenticatorActivityTest {
                 new Account(username, MOCK_ACCOUNT_TYPE),
                 password,
                 false))
-                .thenReturn(Observable.just(Authenticator.AuthResult.error(403, "Some error")));
+                .thenReturn(Observable.just(Authenticator.AuthResult.error(
+                        401,
+                        "[\"Wrong username or password.\"]",
+                        Authenticator.AuthResult.ErrorCause.WrongUsernameOrPassword)));
 
         authenticator.mTxtUsername.setText(username);
         authenticator.mTxtPassword.setText(password);

@@ -11,7 +11,6 @@ import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,7 +23,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.auth.Authenticator;
 import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
@@ -134,22 +132,17 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                     } else {
                         mProgressDisposable.dispose();
 
-                        int statusCode = 0;
-                        if (result.authResult != null) {
-                            statusCode = result.authResult.statusCode;
-                            Log.w(WSAndroidApplication.TAG, String.format(
-                                    "Auth failure. Code=%d, Message=%s",
-                                    statusCode,
-                                    result.authResult.errorMessage));
-                        }
+                        Authenticator.AuthResult.ErrorCause errorCause = result.authResult != null
+                                ? result.authResult.errorCause
+                                : Authenticator.AuthResult.ErrorCause.Unknown;
 
-                        @StringRes int messageId;
-                        if (statusCode == 401 || statusCode == 404) {
-                            // Issues with the API key or the API itself.
-                            messageId = R.string.invalid_api_key;
-                        } else {
-                            messageId = R.string.authentication_failed;
-                        }
+                        @StringRes final int messageId =
+                                errorCause == Authenticator.AuthResult.ErrorCause.WrongUsernameOrPassword
+                                ? R.string.authentication_failed
+                                // Wrong password provided by the user.
+                                : R.string.invalid_api_key;
+                                // Issues with the API key or the API itself.
+                                // Used to be in case of `statusCode \in {401,404}`.
                         Toast.makeText(this, messageId, Toast.LENGTH_LONG)
                                 .show();
                     }
