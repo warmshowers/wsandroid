@@ -2,7 +2,7 @@ package fi.bitrite.android.ws.persistence.schema.migrations.app;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;

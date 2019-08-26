@@ -1,6 +1,6 @@
 package fi.bitrite.android.ws.model;
 
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 import android.text.Html;
 
 import java.util.Date;

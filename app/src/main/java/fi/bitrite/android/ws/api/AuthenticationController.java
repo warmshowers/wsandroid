@@ -1,7 +1,7 @@
 package fi.bitrite.android.ws.api;
 
 import android.accounts.Account;
-import android.support.annotation.WorkerThread;
+import androidx.annotation.WorkerThread;
 
 import java.util.Iterator;
 

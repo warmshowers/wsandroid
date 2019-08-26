@@ -53,7 +53,7 @@
         android:paddingBottom="16dp"
         android:paddingTop="16dp" />
 
-    <android.support.v7.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/all_btn_submit"
         style="@style/button_dark"
         android:theme="@style/button_primary_raised"

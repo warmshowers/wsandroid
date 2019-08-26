@@ -144,7 +144,7 @@
 
             android:paddingTop="@dimen/activity_horizontal_margin">
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/all_btn_submit"
                 style="@style/button_dark"
                 android:theme="@style/button_primary_raised"

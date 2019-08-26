@@ -1,10 +1,10 @@
 package fi.bitrite.android.ws.ui.listadapter;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.MainThread;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.MainThread;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 

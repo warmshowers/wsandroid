@@ -1,7 +1,7 @@
 package fi.bitrite.android.ws.persistence.schema;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import java.util.Locale;

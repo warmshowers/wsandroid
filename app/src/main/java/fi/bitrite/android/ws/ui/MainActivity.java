@@ -6,16 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.SparseArray;
-import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,11 +21,19 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
+import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.android.HasAndroidInjector;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.di.account.AccountComponent;
@@ -57,7 +57,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 // AppScope
-public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+public class MainActivity extends AppCompatActivity implements HasAndroidInjector {
 
     private static final String KEY_MESSAGE_THREAD_ID = "thread_id";
 
@@ -273,7 +273,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     @Override
-    public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
+    public AndroidInjector<Object> androidInjector() {
         return mAccountHelper.mDispatchingAndroidInjector;
     }
 
@@ -299,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onBackPressed() {
-        if (mMainLayout.isDrawerOpen(Gravity.START)) {
+        if (mMainLayout.isDrawerOpen(GravityCompat.START)) {
             mMainLayout.closeDrawers();
             return;
         }
@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private final AccountHelper mAccountHelper = new AccountHelper();
     public class AccountHelper {
         @Inject Account mAccount;
-        @Inject DispatchingAndroidInjector<Fragment> mDispatchingAndroidInjector;
+        @Inject DispatchingAndroidInjector<Object> mDispatchingAndroidInjector;
         @Inject LoggedInUserHelper mLoggedInUserHelper;
         @Inject MessageRepository mMessageRepository;
 

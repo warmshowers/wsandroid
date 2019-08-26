@@ -1,6 +1,6 @@
 package fi.bitrite.android.ws.api.response;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
 
@@ -9,19 +8,20 @@ import com.u.securekeys.SecureEnvironment;
 
 import javax.inject.Inject;
 
+import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.HasActivityInjector;
+import dagger.android.HasAndroidInjector;
 import fi.bitrite.android.ws.di.AppComponent;
 import fi.bitrite.android.ws.di.AppInjector;
 import fi.bitrite.android.ws.repository.SettingsRepository;
 import fi.bitrite.android.ws.util.WSGlide;
 
-public abstract class BaseWSAndroidApplication extends Application implements HasActivityInjector {
+public abstract class BaseWSAndroidApplication extends Application implements HasAndroidInjector {
 
     public static final String TAG = "WSAndroidApplication";
     private static AppInjector mAppInjector;
 
-    @Inject DispatchingAndroidInjector<Activity> mDispatchingAndroidInjector;
+    @Inject DispatchingAndroidInjector<Object> mDispatchingAndroidInjector;
     @Inject SettingsRepository mSettingsRepository;
 
     public static AppComponent getAppComponent() {
@@ -48,7 +48,7 @@ public abstract class BaseWSAndroidApplication extends Application implements Ha
     protected abstract AppInjector inject();
 
     @Override
-    public DispatchingAndroidInjector<Activity> activityInjector() {
+    public AndroidInjector<Object> androidInjector() {
         return mDispatchingAndroidInjector;
     }
 

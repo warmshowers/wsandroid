@@ -1,6 +1,6 @@
 package fi.bitrite.android.ws.persistence.converters;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import fi.bitrite.android.ws.util.Pushable;
 

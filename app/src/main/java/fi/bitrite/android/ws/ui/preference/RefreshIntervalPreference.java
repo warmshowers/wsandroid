@@ -2,7 +2,7 @@ package fi.bitrite.android.ws.ui.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.preference.EditTextPreference;
+import androidx.preference.EditTextPreference;
 import android.util.AttributeSet;
 
 import fi.bitrite.android.ws.R;

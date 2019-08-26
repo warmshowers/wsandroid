@@ -2,7 +2,7 @@ package fi.bitrite.android.ws.persistence.schema;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import javax.inject.Inject;
 

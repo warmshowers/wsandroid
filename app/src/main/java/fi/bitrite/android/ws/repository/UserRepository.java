@@ -1,7 +1,5 @@
 package fi.bitrite.android.ws.repository;
 
-import android.support.annotation.NonNull;
-
 import org.osmdroid.util.BoundingBox;
 
 import java.util.ArrayList;
@@ -10,6 +8,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import fi.bitrite.android.ws.api.WarmshowersAccountWebservice;
 import fi.bitrite.android.ws.api.model.ApiUser;
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;

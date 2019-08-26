@@ -2,7 +2,7 @@ package fi.bitrite.android.ws.auth;
 
 import android.accounts.Account;
 import android.content.Intent;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import org.junit.Before;
 import org.junit.Test;
