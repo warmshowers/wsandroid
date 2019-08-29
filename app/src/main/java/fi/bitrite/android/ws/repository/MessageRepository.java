@@ -36,6 +36,7 @@ import io.reactivex.Completable;
 import io.reactivex.CompletableSource;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -468,7 +469,7 @@ public class MessageRepository extends Repository<MessageThread> {
         for (Message message : thread.messages) {
             if (!message.isPushed) {
                 // Sends the message.
-                completables.add(sendMessageToServerRx(thread, message, false));
+                completables.add(sendMessageToServerRx(thread, message));
             }
         }
 
@@ -486,8 +487,7 @@ public class MessageRepository extends Repository<MessageThread> {
     }
 
     @WorkerThread
-    private Completable sendMessageToServerRx(MessageThread thread, Message message,
-                                              boolean reloadThread) {
+    private Completable sendMessageToServerRx(MessageThread thread, Message message) {
         return Completable.create(emitter -> {
             ComparablePair<Integer, Integer> syncingKey =
                     new ComparablePair<>(thread.id, message.id);
@@ -517,7 +517,7 @@ public class MessageRepository extends Repository<MessageThread> {
                 return;
             }
 
-            mWebservice.sendMessage(thread.id, message.strippedRawBody)
+            Disposable ignore = mWebservice.sendMessage(thread.id, message.strippedRawBody)
                     .filter(response -> {
                         // Throwing errors is not allowed in onSuccess().
                         if (!response.isSuccessful()) {
@@ -530,17 +530,17 @@ public class MessageRepository extends Repository<MessageThread> {
                     .subscribe(response -> {
                         // Sending the message was successful.
                         // We mark the temporary db message as pushed.
+                        // Clone the thread s.t. we do not get any ConcurrentModificationException
+                        // when iterating `thread.messages` at the same time.
                         Message newMessage = message.cloneForIsPushed(true);
-                        Collections.replaceAll(thread.messages, message, newMessage);
-                        save(thread.id, thread);
+                        List<Message> newMessages = new ArrayList<>(thread.messages);
+                        Collections.replaceAll(newMessages, message, newMessage);
+                        MessageThread newThread = new MessageThread(
+                                thread.id, thread.subject, thread.started, thread.isRead,
+                                thread.participantIds, newMessages, thread.lastUpdated);
+                        save(thread.id, newThread);
 
                         mSyncingMessages.remove(syncingKey);
-
-                        if (reloadThread) {
-                            // Reloads the thread. Eventually, when the call is successful, all the
-                            // temporary messages that are pushed to the server are deleted.
-                            reloadThread(thread.id, thread);
-                        }
 
                         emitter.onComplete();
                     }, throwable -> {
