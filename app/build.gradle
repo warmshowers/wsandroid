@@ -7,6 +7,8 @@ ext {
         wsApiUserId = "" // <---------------------------------- put your API userId here
         wsApiKey = ""    // <---------------------------------- put your API key here
     }
+
+    useProduction = System.getenv("WS_USE_PRODUCTION") != null
 }
 
 repositories {
@@ -50,36 +52,41 @@ android {
     }
     buildTypes {
         all {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                'proguard-rules/dagger.pro',
-                'proguard-rules/gson.pro',
-                'proguard-rules/okhttp3.pro',
-                'proguard-rules/retrofit2.pro'
-
             // We pin the intermediate as the WS SSL key-pair is rotated every three months.
             // CN=Let's Encrypt Authority X3, Expires 2021-03-17
             buildConfigField 'String', 'WS_CERTIFICATE_PIN', '"sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg="'
+
+            if (useProduction) {
+                buildConfigField 'String', 'WS_BASE_URL', '"https://www.warmshowers.org/"'
+            } else {
+                buildConfigField 'String', 'WS_BASE_URL', '"https://dev.warmshowers.org/"'
+            }
         }
         debug {
             debuggable true
+            minifyEnabled false
+            shrinkResources false
             signingConfig signingConfigs.debug
             applicationIdSuffix '.debug'
             versionNameSuffix '-debug'
             resValue 'string', 'account_type', 'org.warmshowers.debug'
             buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers.debug"'
-            buildConfigField 'String', 'WS_BASE_URL', '"https://dev.warmshowers.org/"'
         }
-
         release {
             debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules/dagger.pro',
+                    'proguard-rules/gson.pro',
+                    'proguard-rules/okhttp3.pro',
+                    'proguard-rules/retrofit2.pro'
+
             if (doSignRelease) {
                 signingConfig signingConfigs.release
             }
             resValue 'string', 'account_type', 'org.warmshowers'
             buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers"'
-            buildConfigField 'String', 'WS_BASE_URL', '"https://www.warmshowers.org/"'
         }
     }
 

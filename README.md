@@ -38,6 +38,10 @@ export WS_API_KEY=<your_api_key>
 ./gradlew build
 ```
 
+The app runs against Warmshower's development API by default. To switch to the
+production servers set the environment variable `WS_USE_PRODUCTION`.
+
+
 ## OSS libraries in use (aka, Thank You!)
 
 Without these libraries, our lives would be a whole lot more difficult. So thank you all for developing and maintaining those fine pieces of software!
