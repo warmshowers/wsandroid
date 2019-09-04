@@ -32,6 +32,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -100,7 +101,6 @@ public class UserFragment extends BaseFragment {
     @BindColor(R.color.rating_negative) int mRatingColorNegative;
 
     private BehaviorSubject<UserInfoLoadResult> mLastUserInfoLoadResult = BehaviorSubject.create();
-    private Disposable mDownloadUserInfoProgressDisposable;
 
     private int mUserId;
 
@@ -140,9 +140,7 @@ public class UserFragment extends BaseFragment {
         mDbFavoriteStatus = mFavoriteRepository.isFavorite(mUserId);
         mFavorite.onNext(mDbFavoriteStatus);
 
-        if (!mLastUserInfoLoadResult.hasValue()) {
-            loadUserInformation();
-        }
+        loadUserInformation();
         mLayoutDetails.setVisibility(View.GONE);
 
         mFeedbackListAdapter = new FeedbackListAdapter(mUserRepository);
@@ -197,20 +195,27 @@ public class UserFragment extends BaseFragment {
                     mImgFavorite.setColorFilter(isFavorite ? mFavoritedColor : mNonFavoritedColor);
                 }));
 
+        final Disposable progressDisposable = ProgressDialog.create(R.string.user_info_in_progress)
+                .showDelayed(requireActivity(), 100, TimeUnit.MILLISECONDS);
         getResumePauseDisposable().add(mLastUserInfoLoadResult
-                .filter(result -> !result.isHandled)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
+                .firstElement()
+                .filter(result -> !result.isHandled)
+                .doOnSuccess(result -> {
                     result.isHandled = true;
 
-                    mDownloadUserInfoProgressDisposable.dispose();
                     if (result.throwable != null) {
                         HttpErrorHelper.showErrorToast(getContext(), result.throwable);
                         if (mUser.getValue() == null) {
                             getFragmentManager().popBackStack();
                         }
                     }
-                }));
+                })
+
+                // doFinally is also called at disposal time -> we do not need to register
+                // `progressDisposable` with the resumePause disposable.
+                .doFinally(progressDisposable::dispose)
+                .subscribe());
     }
 
     private void saveUserIfFavorite() {
@@ -363,10 +368,7 @@ public class UserFragment extends BaseFragment {
     }
 
     private void loadUserInformation() {
-        mDownloadUserInfoProgressDisposable = ProgressDialog.create(R.string.user_info_in_progress)
-                .show(getActivity());
-
-        // Structure for decoupling the message send callback that is processed upon arrival from
+        // Structure for decoupling the user load callback, that is processed upon arrival, from
         // its handler that can only be executed when the app is in the foreground. Callback.
         UserInfoLoadResult result = new UserInfoLoadResult();
         Disposable unused = Maybe.mergeDelayError(

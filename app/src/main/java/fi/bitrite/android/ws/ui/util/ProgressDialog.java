@@ -9,8 +9,11 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 public class ProgressDialog extends DialogFragment {
@@ -58,23 +61,21 @@ public class ProgressDialog extends DialogFragment {
     }
 
     public Disposable show(@NonNull FragmentActivity parent) {
-        String tag = "progressDialog-" + Integer.toString(mDialogId.getAndIncrement());
-        FragmentManager fragmentManager = parent.getSupportFragmentManager();
+        return showDelayed(parent, 0, TimeUnit.SECONDS);
+    }
 
-        show(fragmentManager, tag);
-
-        return new Disposable() {
-            private boolean mDisposed;
-
-            @Override
-            public void dispose() {
-                dismiss(); // Idempotent
-                mDisposed = true;
-            }
-            @Override
-            public boolean isDisposed() {
-                return mDisposed;
-            }
-        };
+    public Disposable showDelayed(@NonNull FragmentActivity parent, long delay, TimeUnit unit) {
+        return Completable
+                .timer(delay, unit) // Delays subscription
+                .doOnSubscribe(d -> {
+                    String tag = "progressDialog-" + mDialogId.getAndIncrement();
+                    FragmentManager fragmentManager = parent.getSupportFragmentManager();
+                    show(fragmentManager, tag);
+                })
+                .andThen(Completable.never()) // Wait until dispose.
+                .doOnDispose(this::dismiss)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
     }
 }
