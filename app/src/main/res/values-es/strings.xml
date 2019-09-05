@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Warmshowers</string>
     <string name="app_version">Versión %1$s</string>
     <string name="authenticating">Autenticando …</string>
     <string name="need_account">No puede ejecutarse sin las credenciales de WarmShowers</string>

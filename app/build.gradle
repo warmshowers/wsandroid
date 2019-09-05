@@ -29,24 +29,26 @@ repositories {
 android {
     buildToolsVersion "28.0.3" // also update in .travis.yml
 
-    def doSignRelease = false
     signingConfigs {
-        debug {
-            storeFile file("../keystores/debug.keystore")
+        dev {
+            storeFile file("../keystores/dev.keystore")
             storePassword "android"
             keyAlias "androiddebugkey"
             keyPassword "android"
         }
 
-        release {
-            if (project.hasProperty('keystoreFile')) {
-                doSignRelease = true
-
+        prod {
+            if (project.hasProperty('prodKeystoreFile')) {
                 // Set these values in local.properties.
-                storeFile file(keystoreFile)
-                storePassword keystorePassword
-                keyAlias keystoreKeyAlias
-                keyPassword keystoreKeyPassword
+                storeFile file(prodKeystoreFile)
+                storePassword prodKeystorePassword
+                keyAlias prodKeystoreKeyAlias
+                keyPassword prodKeystoreKeyPassword
+            } else {
+                storeFile file("../keystores/dev.keystore")
+                storePassword "android"
+                keyAlias "androiddebugkey"
+                keyPassword "android"
             }
         }
     }
@@ -58,19 +60,26 @@ android {
 
             if (useProduction) {
                 buildConfigField 'String', 'WS_BASE_URL', '"https://www.warmshowers.org/"'
+                resValue 'string', 'account_type', 'org.warmshowers'
+                buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers"'
+                resValue 'string', 'app_name', 'Warmshowers'
+                manifestPlaceholders = [applicationIcon: '@mipmap/ic_launcher']
+                signingConfig signingConfigs.prod
             } else {
                 buildConfigField 'String', 'WS_BASE_URL', '"https://dev.warmshowers.org/"'
+                applicationIdSuffix '.dev'
+                versionNameSuffix '-dev'
+                resValue 'string', 'account_type', 'org.warmshowers.dev'
+                buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers.dev"'
+                resValue 'string', 'app_name', 'Warmshowers (dev)'
+                manifestPlaceholders = [applicationIcon: '@mipmap/ic_launcher_dev']
+                signingConfig signingConfigs.dev
             }
         }
         debug {
             debuggable true
             minifyEnabled false
             shrinkResources false
-            signingConfig signingConfigs.debug
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-debug'
-            resValue 'string', 'account_type', 'org.warmshowers.debug'
-            buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers.debug"'
         }
         release {
             debuggable false
@@ -81,12 +90,6 @@ android {
                     'proguard-rules/gson.pro',
                     'proguard-rules/okhttp3.pro',
                     'proguard-rules/retrofit2.pro'
-
-            if (doSignRelease) {
-                signingConfig signingConfigs.release
-            }
-            resValue 'string', 'account_type', 'org.warmshowers'
-            buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers"'
         }
     }
 

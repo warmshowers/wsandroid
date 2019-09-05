@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Warmshowers</string>
     <string name="about">À propos</string>
     <string name="about_1">Développé par les volontaires de Warmshowers.org.\nTraducteur français: Jean-Francois Beaulieu </string>
     <string name="about_2">Cette application est en <i>open source</i> sous la license Apache 2.0. Contribuez en <i>forkant</i> le dépôt à github.com/warmshowers/wsandroid.\nVous pouvez signaler des problèmes à cet endroit.</string>
