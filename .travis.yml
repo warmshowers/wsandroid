@@ -1,12 +1,13 @@
 language: android
 
-env:
-  global:
-    # ORG_GRADLE_PROJECT_keystorePassword.
-    - secure: "TGGsl0Jdc6cKt0dHarl6/YobzOZTxtxGCSZiwDPZn2Qe2IAUb8JssvTviOkCtbXQesdjcHuvpVlG70Yz0sISxTanwJI6yRMmqAOm6mfr1bVvcaeFIXXEm1s8q8rQfHxOv0BTMxLQ2MdYkz6MteTOcn722e0NEs+lh73aSbCi0Os="
-
-    # ORG_GRADLE_PROJECT_keystoreKeyPassword.
-    - secure: "KbIFt5KMY6sMLsMtYQDbHUX8MtYQSY+6Lj9qc+jJdTAukc2qAtJLNyXKKQlG5pyoSN/F/hVBJKbmDDz2AY6ifMZkOpzVVKlN8E2MPG1BCln0BwMJactL1kLb+287oFg6tXDc6YoxImeKlpFMucy2RjeWwtZptmbsUiXT2UwhPn8="
+# Configure Travis CI to set the following environment variables for your builds:
+# - WS_USE_PRODUCTION
+# - WS_API_USER_ID
+# - WS_API_KEY
+# - WS_PROD_KEYSTORE_FILE
+# - WS_PROD_KEYSTORE_PASSWORD
+# - WS_PROD_KEYSTORE_KEY_ALIAS
+# - WS_PROD_KEYSTORE_KEY_PASSWORD
 
 android:
   components:
@@ -32,15 +33,14 @@ install:
 
 before_script:
   # Decrypts the keystore (if this is not a PR build).
-  - 'if [ ${TRAVIS_SECURE_ENV_VARS} = "true" ]; then
+  # The remaining keystore environment variables are configured to be directly
+  # set by Travis CI.
+  - 'if [ ${TRAVIS_SECURE_ENV_VARS} = "true" ] && [ -n "$encrypted_d213628fe2b0_key" ]; then
        openssl aes-256-cbc -d
          -K $encrypted_d213628fe2b0_key -iv $encrypted_d213628fe2b0_iv
          -in keystores/warmshowers.jks.enc -out "$HOME/warmshowers.jks" &&
-       export ORG_GRADLE_PROJECT_keystoreFile="$HOME/warmshowers.jks";
+       export WS_PROD_KEYSTORE_FILE="$HOME/warmshowers.jks";
      fi'
-
-  # Sets the (public) keystore settings.
-  - export ORG_GRADLE_PROJECT_keystoreKeyAlias="wsandroid"
 
   # Sets the NDK path.
   - export ANDROID_NDK_HOME="$ANDROID_HOME/ndk-bundle"

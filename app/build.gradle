@@ -38,12 +38,11 @@ android {
         }
 
         prod {
-            if (project.hasProperty('prodKeystoreFile')) {
-                // Set these values in local.properties.
-                storeFile file(prodKeystoreFile)
-                storePassword prodKeystorePassword
-                keyAlias prodKeystoreKeyAlias
-                keyPassword prodKeystoreKeyPassword
+            if (System.getenv("WS_PROD_KEYSTORE_FILE") != null) {
+                storeFile file(System.getenv("WS_PROD_KEYSTORE_FILE"))
+                storePassword System.getenv("WS_PROD_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("WS_PROD_KEYSTORE_KEY_ALIAS")
+                keyPassword System.getenv("WS_PROD_KEYSTORE_KEY_PASSWORD")
             } else {
                 storeFile file("../keystores/dev.keystore")
                 storePassword "android"
