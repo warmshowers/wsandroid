@@ -145,9 +145,15 @@ public class UserRepository {
 
                         Collection<ApiUser> apiUsers = apiResponse.body().users.values();
                         List<Integer> userIds = new ArrayList<>(apiUsers.size());
-                        for (ApiUser apiUser : apiUsers) {
-                            put(apiUser.id, Resource.success(apiUser.toUser()), Freshness.FRESH);
-                            userIds.add(apiUser.id);
+                        beginPutMany();
+                        try {
+                            for (ApiUser apiUser : apiUsers) {
+                                put(apiUser.id, Resource.success(apiUser.toUser()),
+                                        Freshness.FRESH);
+                                userIds.add(apiUser.id);
+                            }
+                        } finally {
+                            endPutMany();
                         }
 
                         return userIds;

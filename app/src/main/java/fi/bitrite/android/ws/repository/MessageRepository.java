@@ -2,9 +2,6 @@ package fi.bitrite.android.ws.repository;
 
 
 import android.annotation.SuppressLint;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -21,6 +18,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.WarmshowersAccountWebservice;
 import fi.bitrite.android.ws.api.response.MessageThreadListResponse;
@@ -67,8 +67,13 @@ public class MessageRepository extends Repository<MessageThread> {
         // Initializes the repository by loading the threads from the db.
         Completable.complete().observeOn(Schedulers.io()).subscribe(() -> {
             List<MessageThread> threads = mMessageDao.loadAll();
-            for (MessageThread thread : threads) {
-                put(thread.id, Resource.loading(thread), Freshness.FRESH);
+            beginPutMany();
+            try {
+                for (MessageThread thread : threads) {
+                    put(thread.id, Resource.loading(thread), Freshness.FRESH);
+                }
+            } finally {
+                endPutMany();
             }
         });
     }
