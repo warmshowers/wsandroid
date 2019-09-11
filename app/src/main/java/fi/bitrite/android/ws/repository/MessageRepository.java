@@ -216,6 +216,30 @@ public class MessageRepository extends Repository<MessageThread> {
         }).subscribeOn(Schedulers.io());
     }
 
+    /**
+     * Mark the given thread as "noticed" so that notifications are no longer to be shown.
+     */
+    public void markThreadAsNoticed(int threadId) {
+        MessageThread thread = getRaw(threadId);
+        if (thread == null) {
+            throw new RuntimeException("The thread must already be in the repository.");
+        }
+        if (!thread.hasNewMessages()) {
+            // All done already.
+            return;
+        }
+
+        // We mark all the new messages as seen.
+        List<Message> newMessages = new ArrayList<>(thread.messages.size());
+        for (Message message : thread.messages) {
+            newMessages.add(message.cloneForIsNew(false));
+        }
+
+        thread = new MessageThread(thread.id, thread.subject, thread.started, thread.isRead,
+                thread.participantIds, newMessages, thread.lastUpdated);
+        save(threadId, thread);
+    }
+
     public Completable markThreadAsUnread(int threadId) {
         return setThreadReadStatus(threadId, false);
     }
@@ -247,7 +271,7 @@ public class MessageRepository extends Repository<MessageThread> {
 
             List<Message> newMessages;
             if (isRead) {
-                // We mark all the new messages as read.
+                // We mark all the new messages as noticed.
                 newMessages = new ArrayList<>(thread.messages.size());
                 for (Message message : thread.messages) {
                     newMessages.add(message.cloneForIsNew(false));

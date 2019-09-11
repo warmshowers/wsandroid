@@ -3,12 +3,6 @@ package fi.bitrite.android.ws.ui;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +15,12 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;
@@ -130,6 +130,10 @@ public class MessageThreadsFragment extends BaseFragment {
                             .filter(Resource::hasData)
                             .map(threadResource -> threadResource.data)
                             .map(thread -> {
+                                // Mark the thread as noticed s.t. we no longer show notifications for
+                                // it.
+                                mMessageRepository.markThreadAsNoticed(thread.id);
+
                                 c.threads.put(thread.id, thread);
                                 return thread;
                             })

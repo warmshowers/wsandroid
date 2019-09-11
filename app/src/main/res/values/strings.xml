@@ -271,4 +271,6 @@
     <string name="filter_diff_short_any">&gt; 1y</string>
 
     <string name="invalid_api_key">The server rejected the request. Please update the app.</string>
+
+    <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
 </resources>

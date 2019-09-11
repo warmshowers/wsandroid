@@ -479,7 +479,7 @@ public class MainActivity extends AppCompatActivity implements HasAndroidInjecto
                                 .filter(Resource::hasData)
                                 .map(resource -> resource.data)
                                 // The next filter returns true if the new-status changed.
-                                .filter(thread -> thread.hasNewMessages()
+                                .filter(thread -> !thread.isRead()
                                         ? newThreads.add(thread.id)
                                         : newThreads.remove(thread.id))
                                 .observeOn(AndroidSchedulers.mainThread())

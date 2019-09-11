@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.ui;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -8,11 +9,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
@@ -29,6 +25,10 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.di.account.AccountScope;
@@ -51,7 +51,6 @@ import io.reactivex.schedulers.Schedulers;
 @AccountScope
 public class MessageNotificationController {
     private final static String CHANNEL_ID = "ws_messages";
-    private final static String NOTIFICATION_GROUP = CHANNEL_ID;
 
     private final Context mApplicationContext;
     private final LoggedInUserHelper mLoggedInUserHelper;
@@ -83,6 +82,7 @@ public class MessageNotificationController {
 
         mNotificationManager = (NotificationManager) mApplicationContext.getSystemService(
                 Context.NOTIFICATION_SERVICE);
+        createNotificationChannel();
 
         // Registers for updates from the message repository. We retrieve an observable list of
         // observables. As soon as the list changes, we no longer listen to changes of the old one
@@ -108,6 +108,18 @@ public class MessageNotificationController {
                 return mDisposed;
             }
         });
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O
+            || mNotificationManager.getNotificationChannel(CHANNEL_ID) != null) {
+            return;
+        }
+
+        String channelName = mApplicationContext.getString(R.string.notification_channel_messages_label);
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+        mNotificationManager.createNotificationChannel(channel);
     }
 
     private Disposable handleNewThreadList(List<Observable<Resource<MessageThread>>> observables) {
@@ -265,54 +277,6 @@ public class MessageNotificationController {
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
                 0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-                ? createNotification(entry, resultPendingIntent)
-                : createNotificationBeforeApi24(entry, resultPendingIntent);
-
-        if (!mMessagesAreComingFromDb) {
-            notification.defaults |= Notification.DEFAULT_ALL;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                notification.priority |= Notification.PRIORITY_HIGH;
-            }
-        }
-
-        mNotificationManager.notify(entry.notificationId(), notification);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private Notification createNotification(NotificationEntry entry, PendingIntent intent) {
-        User us = mLoggedInUserHelper.get();
-        if (us == null) {
-            return createNotificationBeforeApi24(entry, intent);
-        }
-
-        Notification.MessagingStyle style = new Notification.MessagingStyle(us.getName())
-                .setConversationTitle(entry.thread.subject);
-        for (Message message : entry.thread.messages) {
-            User participant = entry.participants.get(message.authorId);
-            String authorName = participant != null ? participant.getName() : "";
-            Notification.MessagingStyle.Message msg = new Notification.MessagingStyle.Message(
-                    message.body, message.date.getTime(), authorName);
-            if (message.isNew) {
-                style.addMessage(msg);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                style.addHistoricMessage(msg);
-            }
-        }
-
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                        ? new Notification.Builder(mApplicationContext, CHANNEL_ID)
-                        : new Notification.Builder(mApplicationContext))
-                .setSmallIcon(R.drawable.ic_bicycle_white_24dp)
-                .setLargeIcon(entry.partnerProfileBitmap)
-                .setStyle(style)
-                .setContentIntent(intent)
-                .setGroup(NOTIFICATION_GROUP)
-                .build();
-    }
-
-    private Notification createNotificationBeforeApi24(NotificationEntry entry,
-                                                       PendingIntent intent) {
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
         for (Message message : entry.thread.messages) {
             if (!message.isNew) {
@@ -320,19 +284,22 @@ public class MessageNotificationController {
             }
             style.addLine(message.body);
         }
-
-        assert entry.latestNewMessage != null;
         User participant = entry.participants.get(entry.latestNewMessage.authorId);
         String newestMessageAuthorName = participant != null ? participant.getName() : "";
-        return new NotificationCompat.Builder(mApplicationContext, CHANNEL_ID)
+
+        Notification notification = new NotificationCompat.Builder(mApplicationContext, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_bicycle_white_24dp)
                 .setLargeIcon(entry.partnerProfileBitmap)
                 .setStyle(style)
                 .setContentTitle(newestMessageAuthorName)
                 .setContentText(entry.latestNewMessage.body)
-                .setContentIntent(intent)
-                .setGroup(NOTIFICATION_GROUP)
+                .setContentIntent(resultPendingIntent)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(mMessagesAreComingFromDb
+                        ? Notification.PRIORITY_LOW
+                        : Notification.PRIORITY_HIGH)
                 .build();
+        mNotificationManager.notify(entry.notificationId(), notification);
     }
 
     private void dismissNotification(@NonNull NotificationEntry entry) {
