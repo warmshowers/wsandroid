@@ -126,6 +126,14 @@ android {
     testOptions {
         unitTests {
             includeAndroidResources = true
+            all {
+                testLogging {
+                    if (isTravisBuild) {
+                        events "started", "passed", "skipped", "failed", "standardError"
+                        exceptionFormat "full"
+                    }
+                }
+            }
         }
     }
 
