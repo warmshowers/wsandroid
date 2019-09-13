@@ -4,11 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -36,6 +31,11 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -162,7 +162,7 @@ public class UserFragment extends BaseFragment {
         getResumePauseDisposable().add(mFeedbacks
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(feedbacks -> {
-                    mFeedbackListAdapter.replace(feedbacks);
+                    mFeedbackListAdapter.replace(new ArrayList<>(feedbacks));
                     if (feedbacks.isEmpty()) {
                         mLblFeedback.setText(getString(R.string.no_feedback_yet));
                     } else {

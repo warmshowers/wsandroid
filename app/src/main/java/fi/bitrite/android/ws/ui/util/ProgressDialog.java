@@ -2,16 +2,16 @@ package fi.bitrite.android.ws.ui.util;
 
 import android.app.Dialog;
 import android.os.Bundle;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -72,6 +72,7 @@ public class ProgressDialog extends DialogFragment {
                     FragmentManager fragmentManager = parent.getSupportFragmentManager();
                     show(fragmentManager, tag);
                 })
+                .onErrorComplete()
                 .andThen(Completable.never()) // Wait until dispose.
                 .doOnDispose(this::dismiss)
                 .subscribeOn(AndroidSchedulers.mainThread())

@@ -65,17 +65,19 @@ public class MessageRepository extends Repository<MessageThread> {
         mWebservice = webservice;
 
         // Initializes the repository by loading the threads from the db.
-        Completable.complete().observeOn(Schedulers.io()).subscribe(() -> {
-            List<MessageThread> threads = mMessageDao.loadAll();
-            beginPutMany();
-            try {
-                for (MessageThread thread : threads) {
-                    put(thread.id, Resource.loading(thread), Freshness.FRESH);
-                }
-            } finally {
-                endPutMany();
-            }
-        });
+        Disposable unused = Completable.complete()
+                .observeOn(Schedulers.io())
+                .subscribe(() -> {
+                    List<MessageThread> threads = mMessageDao.loadAll();
+                    beginPutMany();
+                    try {
+                        for (MessageThread thread : threads) {
+                            put(thread.id, Resource.loading(thread), Freshness.FRESH);
+                        }
+                    } finally {
+                        endPutMany();
+                    }
+                });
     }
 
     // Makes it public.
@@ -94,15 +96,15 @@ public class MessageRepository extends Repository<MessageThread> {
         return mWebservice.fetchMessageThreads()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .map(apiResponse -> {
+                .flatMapCompletable(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
                         throw new Error(apiResponse.errorBody().string());
                     }
 
                     MessageThreadListResponse responseBody = apiResponse.body();
                     processMessageThreadsUpdate(responseBody.messageThreads);
-                    return 0; // Just return something
-                }).ignoreElements();
+                    return Completable.complete();
+                });
     }
 
     /**

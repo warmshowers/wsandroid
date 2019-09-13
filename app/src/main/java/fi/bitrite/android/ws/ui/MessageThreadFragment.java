@@ -1,10 +1,6 @@
 package fi.bitrite.android.ws.ui;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +9,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -83,7 +85,7 @@ public class MessageThreadFragment extends BaseFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(thread -> {
                     // Forwards the messages to the list adapter.
-                    mMessageListAdapter.replaceRx(thread.messages)
+                    mMessageListAdapter.replaceRx(new ArrayList<>(thread.messages))
                             .observeOn(AndroidSchedulers.mainThread())
                             .andThen((CompletableSource) emitter -> {
                                 mLstMessage.scrollToPosition(thread.messages.size() - 1);

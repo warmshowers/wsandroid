@@ -340,8 +340,8 @@ public class MapFragment extends BaseFragment {
                     // this delay the "location not known" toast was shown and just afterwards the
                     // map was moved to the current position. However, if indeed the current
                     // position is not yet known that toast is shown even after that delay.
-                    Disposable unused = Completable.complete()
-                            .delay(100, TimeUnit.MILLISECONDS)
+                    Disposable unused = Completable
+                            .timer(100, TimeUnit.MILLISECONDS)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(this::onGotoCurrentLocationClicked);
                 } else {
@@ -535,8 +535,8 @@ public class MapFragment extends BaseFragment {
         if (mDelayedUserFetchDisposable != null) {
             mDelayedUserFetchDisposable.dispose();
         }
-        mDelayedUserFetchDisposable = Completable.complete()
-                .delay(FETCH_USERS_DELAY_MS, TimeUnit.MILLISECONDS)
+        mDelayedUserFetchDisposable = Completable
+                .timer(FETCH_USERS_DELAY_MS, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::fetchUsersForCurrentMapPosition);
         getResumePauseDisposable().add(mDelayedUserFetchDisposable);
