@@ -132,7 +132,7 @@ public class MessageThreadsFragment extends BaseFragment {
                             .map(thread -> {
                                 // Mark the thread as noticed s.t. we no longer show notifications for
                                 // it.
-                                mMessageRepository.markThreadAsNoticed(thread.id);
+                                mMessageRepository.markThreadAsNoticed(thread);
 
                                 c.threads.put(thread.id, thread);
                                 return thread;

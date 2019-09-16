@@ -2,7 +2,6 @@ package fi.bitrite.android.ws.ui.listadapter;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
-import androidx.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;
@@ -229,8 +229,8 @@ public class MessageThreadListAdapter extends
                 }
 
                 (mThread.isRead()
-                         ? mMessageRepository.markThreadAsUnread(mThread.id)
-                         : mMessageRepository.markThreadAsRead(mThread.id))
+                         ? mMessageRepository.markThreadAsUnread(mThread)
+                         : mMessageRepository.markThreadAsRead(mThread))
                         .onErrorComplete() // TODO(saemy): Error handling.
                         .subscribe();
 

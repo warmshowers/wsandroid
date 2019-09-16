@@ -221,11 +221,7 @@ public class MessageRepository extends Repository<MessageThread> {
     /**
      * Mark the given thread as "noticed" so that notifications are no longer to be shown.
      */
-    public void markThreadAsNoticed(int threadId) {
-        MessageThread thread = getRaw(threadId);
-        if (thread == null) {
-            throw new RuntimeException("The thread must already be in the repository.");
-        }
+    public void markThreadAsNoticed(MessageThread thread) {
         if (!thread.hasNewMessages()) {
             // All done already.
             return;
@@ -239,14 +235,14 @@ public class MessageRepository extends Repository<MessageThread> {
 
         thread = new MessageThread(thread.id, thread.subject, thread.started, thread.isRead,
                 thread.participantIds, newMessages, thread.lastUpdated);
-        save(threadId, thread);
+        save(thread.id, thread);
     }
 
-    public Completable markThreadAsUnread(int threadId) {
-        return setThreadReadStatus(threadId, false);
+    public Completable markThreadAsUnread(MessageThread thread) {
+        return setThreadReadStatus(thread, false);
     }
-    public Completable markThreadAsRead(int threadId) {
-        return setThreadReadStatus(threadId, true);
+    public Completable markThreadAsRead(MessageThread thread) {
+        return setThreadReadStatus(thread, true);
     }
 
     /**
@@ -260,12 +256,8 @@ public class MessageRepository extends Repository<MessageThread> {
      * TODO(saemy): Test this.
      * TODO(saemy): Listen to network changes.
      */
-    private Completable setThreadReadStatus(int threadId, boolean isRead) {
+    private Completable setThreadReadStatus(final MessageThread thread, boolean isRead) {
         return Completable.create(emitter -> {
-            MessageThread thread = getRaw(threadId);
-            if (thread == null) {
-                throw new Exception("The thread must already be in the repository.");
-            }
             if (thread.isRead() == isRead) {
                 emitter.onComplete();
                 return;
@@ -282,13 +274,13 @@ public class MessageRepository extends Repository<MessageThread> {
                 newMessages = thread.messages;
             }
 
-            thread = new MessageThread(thread.id, thread.subject, thread.started,
+            MessageThread newThread = new MessageThread(thread.id, thread.subject, thread.started,
                     new Pushable<>(isRead, false), thread.participantIds,
                     newMessages, thread.lastUpdated);
 
-            save(thread.id, thread);
+            save(newThread.id, newThread);
 
-            setRemoteThreadReadStatus(threadId, isRead)
+            setRemoteThreadReadStatus(thread.id, isRead)
                     .subscribe(emitter::onComplete, emitter::onError);
         });
     }

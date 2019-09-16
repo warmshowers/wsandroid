@@ -70,11 +70,6 @@ public class MessageThreadFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_message_thread, container, false);
         ButterKnife.bind(this, view);
 
-        // Marks the thread as read.
-        mMessageRepository.markThreadAsRead(mThreadId)
-                .onErrorComplete() // TODO(saemy): Error handling.
-                .subscribe();
-
         mMessageListAdapter = new MessageListAdapter(mLoggedInUserHelper, mUserRepository);
         mLstMessage.setAdapter(mMessageListAdapter);
 
@@ -84,6 +79,11 @@ public class MessageThreadFragment extends BaseFragment {
                 .map(resource -> resource.data)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(thread -> {
+                    // Marks the thread as read.
+                    mMessageRepository.markThreadAsRead(thread)
+                            .onErrorComplete() // TODO(saemy): Error handling.
+                            .subscribe();
+
                     // Forwards the messages to the list adapter.
                     mMessageListAdapter.replaceRx(new ArrayList<>(thread.messages))
                             .observeOn(AndroidSchedulers.mainThread())
