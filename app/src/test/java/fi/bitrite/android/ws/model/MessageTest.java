@@ -123,6 +123,15 @@ public class MessageTest {
 
             assertThat(actual.toString(), is(equalTo(expected)));
         }
+
+        @Test
+        public void parseBody_empty() {
+            final String testString = "<p></p>";
+            final String expected = "";
+
+            final CharSequence actual = Message.parseBody(testString);
+            assertThat(actual.toString(), is(equalTo(expected)));
+        }
     }
 
     /**

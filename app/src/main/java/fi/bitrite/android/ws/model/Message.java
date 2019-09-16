@@ -1,9 +1,10 @@
 package fi.bitrite.android.ws.model;
 
-import androidx.annotation.VisibleForTesting;
 import android.text.Html;
 
 import java.util.Date;
+
+import androidx.annotation.VisibleForTesting;
 
 public class Message {
 
@@ -88,7 +89,7 @@ public class Message {
 
         // Strip the last two newline chars.
         final int len = body.length();
-        if (body.charAt(len-1) == '\n' && body.charAt(len-2) == '\n') {
+        if (len >= 2 && body.charAt(len-1) == '\n' && body.charAt(len-2) == '\n') {
             body = body.subSequence(0, len-2);
         }
         return body;
