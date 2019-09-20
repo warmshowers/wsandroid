@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="about">À propos</string>
-    <string name="about_1">Développé par les volontaires de Warmshowers.org.\nTraducteur français: Jean-Francois Beaulieu </string>
+    <string name="about_1">Développé par les volontaires de Warmshowers.org.\nTraducteur français: Jean-Francois Beaulieu</string>
     <string name="about_2">Cette application est en <i>open source</i> sous la license Apache 2.0. Contribuez en <i>forkant</i> le dépôt à github.com/warmshowers/wsandroid.\nVous pouvez signaler des problèmes à cet endroit.</string>
     <string name="account">Compte</string>
     <string name="alert_neutral_button">OK</string>
@@ -117,7 +117,7 @@
     <string name="feedback_hint">Décrivez votre expérience avec ce membre.</string>
     <string name="feedback_validation_error">Vous devez écrire au moins 10 mots pour le commentaire</string>
     <string name="feedback_sent">Votre commentaire pour %1$s a été envoyé</string>
-    <string name="leaving_feedback">"Envoi du commentaire pour %1$s"</string>
+    <string name="leaving_feedback">Envoi du commentaire pour %1$s</string>
     <string name="feedback_how_we_met_prompt">Comment avez vous rencontré ce membre? Il était votre:</string>
     <string name="feedback_date_we_met">Date de rencontre:</string>
     <string name="feedback_send">Envoyer le commentaire</string>

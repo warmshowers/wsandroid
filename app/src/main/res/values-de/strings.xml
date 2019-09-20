@@ -36,7 +36,7 @@
     <string name="account">Konto</string>
     <string name="settings">Einstellungen</string>
     <string name="about">Über</string>
-    <string name="last_updated">Zuletzt aktualisiert: </string>
+    <string name="last_updated">Zuletzt aktualisiert:</string>
     <string name="host_updated">Gastgeber-Informationen aktualisiert.</string>
     <string name="host_not_available">Dieses Mitglied ist als zurzeit nicht verfügbar markiert. Du kannst die Person dennoch kontaktieren, allerdings nicht für Beherbergung.</string>
     <string name="user_info_in_progress">Information zu dieser Person werden abgerufen …</string>
@@ -52,7 +52,7 @@
     <string name="sending_message">Nachricht wird gesendet …</string>
     <string name="error_sending_message">Konnte Nachricht nicht senden. Bitte überprüfe deine Kontodaten und Internetverbindung.</string>
     <string name="message_sent">Nachricht erfolgreich versandt.</string>
-    <string name="about_1">"Entwickelt von Warmshowers-Freiwilligen. \nÜbersetzung: Cyril Wendl und Patrick Geselbracht (Deutsch)</string>
+    <string name="about_1">Entwickelt von Warmshowers-Freiwilligen. \nÜbersetzung: Cyril Wendl und Patrick Geselbracht (Deutsch)</string>
     <string name="about_2">Dies ist eine Open-Source-App unter der Apache 2.0-Lizenz. Du kannst mithelfen, indem du unser Git-Repository auf github.com/warmshowers/wsandroid forkst.\nBitte melde Probleme dort.</string>
     <string name="feedback">Rückmeldung</string>
     <string name="error_retrieving_messages">Beim Abrufen der Nachrichten ist ein Problem aufgetreten.</string>
@@ -74,7 +74,7 @@
     </plurals>
     <string name="click_to_view_all"><strong>Klicken, um alle zu sehen</strong></string>
     <string name="alert_neutral_button">OK</string>
-    <string name="title_fragment_contact_user">"Nachricht an %1$s"</string>
+    <string name="title_fragment_contact_user">Nachricht an %1$s</string>
     <string name="users_dont_load">Um Datenvolumen zu sparen, werden Gastgeberorte in dieser Zoomstufe nicht geladen.\nBitte vergrößern.</string>
     <!-- Distance from current has 2 args, number and units -->
     <string name="distance_from_current">%1$d %2$s von der aktuellen Position</string>
