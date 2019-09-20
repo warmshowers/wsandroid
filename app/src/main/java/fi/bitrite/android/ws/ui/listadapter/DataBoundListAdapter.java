@@ -80,6 +80,13 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
      */
     @MainThread
     public Completable replaceRx(List<T> update) {
+        if (update == null || update.isEmpty()) {
+            int oldSize = mItems != null ? mItems.size() : 0;
+            mItems = update;
+            notifyItemRangeRemoved(0, oldSize);
+            return Completable.complete();
+        }
+
         final List<T> oldItems = mItems;
         final int dataVersion = mDataVersion.incrementAndGet();
         class DiffResultWrapper {
@@ -87,11 +94,9 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
         }
         final DiffResultWrapper diffResultWrapper = new DiffResultWrapper();
         return Completable.create(emitter -> {
-            if (update != null) {
-                sort(update);
-            }
+            sort(update);
 
-            if (oldItems != null && update != null) {
+            if (oldItems != null) {
                 diffResultWrapper.result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
                     @Override
                     public int getOldListSize() {
@@ -130,14 +135,8 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
 
             mReservedItemCount = -1;
             if (mItems == null) {
-                if (update != null) {
-                    mItems = update;
-                    notifyDataSetChanged();
-                }
-            } else if (update == null) {
-                int oldSize = mItems.size();
-                mItems = null;
-                notifyItemRangeRemoved(0, oldSize);
+                mItems = update;
+                notifyDataSetChanged();
             } else {
                 boolean diffIsValid = mItems == oldItems;
                 mItems = update;

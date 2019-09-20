@@ -5,6 +5,7 @@
     <string name="need_account">Starten der App ohne Warmshowers-Kontodaten nicht möglich</string>
     <string name="authentication_failed">Login fehlgeschlagen. Bitte gib deine Kontodaten erneut ein.</string>
     <string name="no_starred_hosts">Du hast derzeit keine offline gespeicherten Gastgeber. Du kannst Gastgeber im jeweiligen Profil über den Favoriten-Knopf hinzufügen.</string>
+    <string name="empty_inbox">Dein Posteingang ist leer.</string>
     <string name="list_search_hint">Name oder Stadt</string>
     <string name="no_results">Leider konnten zu deiner Suche keine Ergebnisse gefunden werden.</string>
     <string name="greeting">Hallo!</string>

@@ -5,6 +5,7 @@
     <string name="need_account">No puede ejecutarse sin las credenciales de WarmShowers</string>
     <string name="authentication_failed">Falla de autenticación. Ingresa nuevamente tus credenciales.</string>
     <string name="no_starred_hosts">No has agregado anfitriones a Favoritos (el perfil del anfitrión aparecerá sin conexión a internet). Puedes agregar anfitriones a Favoritos en la página de información del anfitrión presionando el botón «Favoritos».</string>
+    <string name="empty_inbox">La bandeja de entrada está vacía.</string>
     <string name="list_search_hint">Nombre o ciudad </string>
     <string name="no_results">Tu búsqueda no produjo resultados.</string>
     <string name="greeting">¡Hola!</string>

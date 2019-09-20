@@ -7,12 +7,56 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/threads_lists"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_message_thread" />
+        android:layout_height="match_parent">
 
+        <RelativeLayout
+            android:id="@+id/threads_rellayout_no_threads"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/backgroundLightGrey"
+            android:gravity="center_horizontal"
+            android:padding="24dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/threads_img_empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="96dp"
+                android:layout_marginTop="48dp"
+                android:importantForAccessibility="no"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:tint="#FF757575"
+                app:srcCompat="@drawable/ic_mail_white_24dp" />
+
+            <TextView
+                style="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/threads_img_empty_view"
+                android:layout_gravity="center"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.1"
+                android:padding="8dp"
+                android:text="@string/empty_inbox"
+                android:textColor="@color/primaryTextColorLight"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/threads_lists"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_message_thread" />
+    </RelativeLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

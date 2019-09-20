@@ -54,6 +54,7 @@
     <string name="need_account">L\'application ne peut fonctionner sans informations de connexion WarmShowers</string>
     <string name="no_results">Votre recherche n\'a donné aucun résultat.</string>
     <string name="no_starred_hosts">Vous n’avez présentement aucun hôte favori (Profils d’hôtes disponibles hors ligne). Vous pouvez ajouter des hôtes favoris en cliquant le bouton « Favori » sur leur page d’information.</string>
+    <string name="empty_inbox">La boîte de réception est vide.</string>
     <string name="no_unread_messages">Vous n\'avez aucun message non-lu.</string>
     <string name="ok">OK</string>
     <string name="password_hint">Mot de passe</string>

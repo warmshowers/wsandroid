@@ -33,7 +33,7 @@ import fi.bitrite.android.ws.ui.util.DividerItemDecoration;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.SerialDisposable;
 
 public class MessageThreadsFragment extends BaseFragment {
 
@@ -45,6 +45,7 @@ public class MessageThreadsFragment extends BaseFragment {
 
     @BindView(R.id.threads_swipe_refresh) SwipeRefreshLayout mSwipeRefresh;
     @BindView(R.id.threads_lists) RecyclerView mThreadList;
+    @BindView(R.id.threads_rellayout_no_threads) View mLayoutNoThreads;
 
     private boolean mDidReload = false;
     private MessageThreadListAdapter mThreadListAdapter;
@@ -103,21 +104,29 @@ public class MessageThreadsFragment extends BaseFragment {
     public void init() {
         class Container {
             private Map<Integer, MessageThread> threads;
-            private Disposable disposable;
+            private final SerialDisposable disposable = new SerialDisposable();
         }
         final Container c = new Container();
+        getCreateDestroyViewDisposable().add(c.disposable);
         getCreateDestroyViewDisposable().add(mMessageRepository
                 .getAll()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(threadObservables -> {
-                    if (c.disposable != null) {
-                        c.disposable.dispose();
-                    }
-
                     // Reserves the number of items that eventually are going to be populated in the
                     // list. Then it scrolls to the previously preserved position (after recreation
                     // of the fragment).
+                    c.disposable.set(null);
+
                     mThreadListAdapter.reserveItems(threadObservables.size());
+
+                    boolean hasThreads = !threadObservables.isEmpty();
+                    if (!hasThreads) {
+                        mThreadListAdapter.replace(new ArrayList<>());
+                        mLayoutNoThreads.setVisibility(View.VISIBLE);
+                        mThreadList.setVisibility(View.GONE);
+                        return;
+                    }
+
                     if (mThreadListState != null) {
                         LinearLayoutManager layoutManager =
                                 (LinearLayoutManager) mThreadList.getLayoutManager();
@@ -126,7 +135,7 @@ public class MessageThreadsFragment extends BaseFragment {
                     }
 
                     c.threads = new HashMap<>(threadObservables.size()); // No sparse. We need #values().
-                    c.disposable = Observable.merge(threadObservables)
+                    c.disposable.set(Observable.merge(threadObservables)
                             .filter(Resource::hasData)
                             .map(threadResource -> threadResource.data)
                             .map(thread -> {
@@ -137,12 +146,19 @@ public class MessageThreadsFragment extends BaseFragment {
                                 c.threads.put(thread.id, thread);
                                 return thread;
                             })
-                            .observeOn(AndroidSchedulers.mainThread())
                             // Buffers updates together to avoid flickering effect.
                             .debounce(100, TimeUnit.MILLISECONDS)
-                            .subscribe(thread ->
-                                    mThreadListAdapter.replace(new ArrayList<>(c.threads.values())));
-                    getCreateDestroyViewDisposable().add(c.disposable);
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .flatMapCompletable(thread -> mThreadListAdapter.replaceRx(
+                                    new ArrayList<>(c.threads.values()))
+                                    .onErrorComplete()
+                                    .doOnComplete(() -> {
+                                        mLayoutNoThreads.setVisibility(View.GONE);
+                                        mThreadList.setVisibility(View.VISIBLE);
+                                        // For some reason RecyclerView throws an exception if we show it
+                                        // before the items are updated after it was gone.
+                                    }))
+                            .subscribe());
                 }));
     }
 
