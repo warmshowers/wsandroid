@@ -60,3 +60,4 @@ Without these libraries, our lives would be a whole lot more difficult. So thank
 * [Robolectric](https://github.com/robolectric/robolectric)
 * [RxAndroid](https://github.com/ReactiveX/RxAndroid)
 * [RxJava 2](https://github.com/ReactiveX/RxJava)
+* [SecureKeys](https://github.com/saantiaguilera/android-api-SecureKeys)

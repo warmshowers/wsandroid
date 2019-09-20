@@ -27,7 +27,7 @@ repositories {
 //}
 
 android {
-    buildToolsVersion "28.0.3" // also update in .travis.yml
+    buildToolsVersion "29.0.2" // also update in .travis.yml
 
     signingConfigs {
         dev {
@@ -147,8 +147,8 @@ android {
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
 
         minSdkVersion 16
-        compileSdkVersion 28 // also update in .travis.yml
-        targetSdkVersion 28
+        compileSdkVersion 29 // also update in .travis.yml
+        targetSdkVersion 29
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -165,26 +165,25 @@ ext {
     androidxCardViewVersion = '1.0.0'
     androidxConstraintLayoutVersion = '1.1.3'
     androidxTestVersion = '1.0.0'
-    assertjVersion = '3.9.0'
+    assertjVersion = '3.13.2'
     autoServiceVersion = '1.0-rc4'
     bubbleSeekbarVersion = '3.20'
-    butterknifeVersion = '10.1.0'
+    butterknifeVersion = '10.2.0'
     daggerVersion = '2.24'
-    glideVersion = '4.8.0'
-    gsonVersion = '2.8.1'
-    jsonVersion = '20170516'
+    glideVersion = '4.9.0'
+    gsonVersion = '2.8.5'
+    jsonVersion = '20190722'
     junitVersion = '4.12'
-    mockitoVersion = '2.27.0'
+    mockitoVersion = '2.28.2'
     okHttpVersion = '3.12.0'
-    osmbonuspackVersion = '6.5.2'
-    osmdroidVersion = '6.0.2'
-    playServicesVersion = '11.6.2'
-    retrofitVersion = '2.5.0' // Dictates version of okhttp in their dependencies which clashes in tests.
+    osmbonuspackVersion = '6.6.0'
+    osmdroidVersion = '6.1.0'
+    playServicesVersion = '17.0.0'
+    retrofitVersion = '2.6.1' // Dictates version of okhttp in their dependencies which clashes in tests.
     robolectricVersion = '4.3'
-    rxAndroidVersion = '2.0.2'
-    rxJavaVersion = '2.1.7'
+    rxAndroidVersion = '2.1.1'
+    rxJavaVersion = '2.2.12'
     securekeysVersion = '2.2.0' // Adjust the version in the project's build.gradle, too.
-    supportLibVersion = '28.0.0'
 }
 
 dependencies {
