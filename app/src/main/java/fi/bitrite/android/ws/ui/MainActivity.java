@@ -54,6 +54,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.SerialDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 // AppScope
@@ -462,30 +463,35 @@ public class MainActivity extends AppCompatActivity implements HasAndroidInjecto
          * message navigation item up to date.
          */
         private Disposable handleNewMessageThreadCount() {
-            class Container {
-                // We need a final object.
-                Disposable disposable;
-            }
-            Container container = new Container();
-            Set<Integer> newThreads = new HashSet<>();
-            return mMessageRepository
+            final SerialDisposable threadDisposable = new SerialDisposable();
+            Disposable repositoryDisposable = mMessageRepository
                     .getAll()
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(messageThreadObservables -> {
-                        if (container.disposable != null) {
-                            container.disposable.dispose();
+                        threadDisposable.set(null);
+                        if (messageThreadObservables.isEmpty()) {
+                            mMessageNavigationItem.notificationCount.onNext(0);
+                            return;
                         }
-                        container.disposable = Observable.mergeDelayError(messageThreadObservables)
+
+                        Set<Integer> unreadThreads = new HashSet<>();
+                        threadDisposable.set(Observable.mergeDelayError(messageThreadObservables)
                                 .observeOn(Schedulers.computation())
                                 .filter(Resource::hasData)
                                 .map(resource -> resource.data)
                                 // The next filter returns true if the new-status changed.
                                 .filter(thread -> !thread.isRead()
-                                        ? newThreads.add(thread.id)
-                                        : newThreads.remove(thread.id))
+                                        ? unreadThreads.add(thread.id)
+                                        : unreadThreads.remove(thread.id))
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(thread -> mMessageNavigationItem.notificationCount.onNext(
-                                        newThreads.size()));
+                                        unreadThreads.size())));
                     });
+
+            CompositeDisposable disposable = new CompositeDisposable();
+            disposable.add(threadDisposable);
+            disposable.add(repositoryDisposable);
+            return disposable;
         }
     }
 }
