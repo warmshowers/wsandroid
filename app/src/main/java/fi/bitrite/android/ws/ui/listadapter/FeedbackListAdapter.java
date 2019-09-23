@@ -2,7 +2,6 @@ package fi.bitrite.android.ws.ui.listadapter;
 
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import androidx.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -18,6 +17,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import butterknife.BindColor;
 import butterknife.BindDrawable;
 import butterknife.BindString;
@@ -33,8 +34,18 @@ import io.reactivex.disposables.CompositeDisposable;
 public class FeedbackListAdapter extends
         DataBoundListAdapter<Feedback, FeedbackListAdapter.ItemBinding> {
 
+    private static <T extends Comparable<T>> int nullsFirstComparator(@Nullable T left,
+                                                                      @Nullable T right) {
+        if (left == null) {
+            return right == null ? 0 : -1;
+        } else if (right == null) {
+            return 1;
+        } else {
+            return left.compareTo(right);
+        }
+    }
     public final static Comparator<Feedback> DEFAULT_COMPARATOR =
-            (left, right) -> right.meetingDate.compareTo(left.meetingDate);
+            (left, right) -> nullsFirstComparator(right.meetingDate, left.meetingDate);
 
     private final UserRepository mUserRepository;
     private final Comparator<Feedback> mComparator;
@@ -77,7 +88,7 @@ public class FeedbackListAdapter extends
                && left.recipientId == right.recipientId
                && left.senderId == right.senderId
                && left.relation == right.relation
-               && left.meetingDate.equals(right.meetingDate)
+               && nullsFirstComparator(left.meetingDate, right.meetingDate) == 0
                && left.body.equals(right.body);
     }
 
@@ -169,7 +180,9 @@ public class FeedbackListAdapter extends
                         setRelationAndRating(feedback);
                     }));
 
-            mLblMeetingDate.setText(mMeetingDateFormat.format(feedback.meetingDate));
+            mLblMeetingDate.setText(feedback.meetingDate != null
+                    ? mMeetingDateFormat.format(feedback.meetingDate)
+                    : "-");
             mLblBody.setText(Html.fromHtml(feedback.body));
 
             setRelationAndRating(feedback);
