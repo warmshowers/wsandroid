@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -302,8 +303,8 @@ public class UserFragment extends BaseFragment {
         }
 
         // Profile/Comments section
-        // Allow such TextView html as it will; but Drupal's text assumes linefeeds break lines
-        mLblComments.setText(Tools.siteHtmlToHtml(user.comments));
+        // Convert text ("About me" == Comments from user data) to form to add to TextView
+        mLblComments.setText(Html.fromHtml(user.comments.replace("\n", "<br>")));
 
         // User Services
         String userServices = user.getUserServices(getContext());

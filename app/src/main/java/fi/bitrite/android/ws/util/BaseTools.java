@@ -11,10 +11,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import android.text.Html;
-import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -24,6 +20,8 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.repository.SettingsRepository;
 
@@ -31,11 +29,6 @@ import fi.bitrite.android.ws.repository.SettingsRepository;
  * General simple tools, mostly public methods.
  */
 public class BaseTools {
-
-    // Convert text ("About me" == Comments from user data) to form to add to TextView
-    public static Spanned siteHtmlToHtml(String text) {
-        return Html.fromHtml(text.replace("\n", "<br/>"));
-    }
 
     /**
      * Return distance between two points in km/miles

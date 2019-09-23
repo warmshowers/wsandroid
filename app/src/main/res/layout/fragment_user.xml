@@ -263,6 +263,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="56dp"
                     android:layout_marginLeft="56dp"
+                    android:autoLink="all"
                     tools:maxLines="5"
                     tools:text="@tools:sample/lorem/random" />
 
