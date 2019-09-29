@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
@@ -86,9 +85,8 @@ public class MessageThreadsFragment extends BaseFragment {
         mThreadList.setAdapter(mThreadListAdapter);
 
         // Add dividers between message threads in the recycler view.
-        LinearLayoutManager layoutManager = (LinearLayoutManager) mThreadList.getLayoutManager();
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(
-                mThreadList.getContext(), layoutManager.getOrientation(), false);
+                mThreadList.getContext(), DividerItemDecoration.VERTICAL, false);
         mThreadList.addItemDecoration(dividerItemDecoration);
 
         if (savedInstanceState != null) {
@@ -127,12 +125,11 @@ public class MessageThreadsFragment extends BaseFragment {
                         return;
                     }
 
-                    if (mThreadListState != null) {
-                        LinearLayoutManager layoutManager =
-                                (LinearLayoutManager) mThreadList.getLayoutManager();
+                    RecyclerView.LayoutManager layoutManager = mThreadList.getLayoutManager();
+                    if (mThreadListState != null && layoutManager != null) {
                         layoutManager.onRestoreInstanceState(mThreadListState);
-                        mThreadListState = null;
                     }
+                    mThreadListState = null;
 
                     c.threads = new HashMap<>(threadObservables.size()); // No sparse. We need #values().
                     c.disposable.set(Observable.merge(threadObservables)
@@ -178,9 +175,11 @@ public class MessageThreadsFragment extends BaseFragment {
         super.onSaveInstanceState(outState);
 
         // Saves the threadList's offset.
-        LinearLayoutManager layoutManager = (LinearLayoutManager) mThreadList.getLayoutManager();
-        Parcelable threadListState = layoutManager.onSaveInstanceState();
-        outState.putParcelable(ICICLE_KEY_THREADS_STATE, threadListState);
+        RecyclerView.LayoutManager layoutManager = mThreadList.getLayoutManager();
+        if (layoutManager != null) {
+            Parcelable threadListState = layoutManager.onSaveInstanceState();
+            outState.putParcelable(ICICLE_KEY_THREADS_STATE, threadListState);
+        }
     }
 
     @Override
