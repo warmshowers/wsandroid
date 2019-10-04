@@ -20,9 +20,11 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Device (please complete the following information):**
+
+**Please complete the following information**
  - Device: [e.g. Pixel 2 XL]
  - OS: [e.g. Android 8.1/LineageOS 15.1/…]
+ - App version: [e.g. 3.1.2]
 
 **Additional context**
 Add any other context about the problem here.
