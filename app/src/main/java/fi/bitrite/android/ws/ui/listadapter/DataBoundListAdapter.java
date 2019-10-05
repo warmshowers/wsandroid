@@ -1,18 +1,17 @@
 package fi.bitrite.android.ws.ui.listadapter;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.MainThread;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import androidx.annotation.MainThread;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import io.reactivex.Completable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -76,75 +75,79 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
                 .subscribe();
     }
 
+    /**
+     * `update` needs to be a modifiable list.
+     */
     @MainThread
     public Completable replaceRx(List<T> update) {
+        if (update == null || update.isEmpty()) {
+            int oldSize = mItems != null ? mItems.size() : 0;
+            mItems = update;
+            notifyItemRangeRemoved(0, oldSize);
+            return Completable.complete();
+        }
+
+        final List<T> oldItems = mItems;
         final int dataVersion = mDataVersion.incrementAndGet();
+        class DiffResultWrapper {
+            private DiffUtil.DiffResult result;
+        }
+        final DiffResultWrapper diffResultWrapper = new DiffResultWrapper();
         return Completable.create(emitter -> {
+            sort(update);
+
+            if (oldItems != null) {
+                diffResultWrapper.result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                    @Override
+                    public int getOldListSize() {
+                        return oldItems.size();
+                    }
+
+                    @Override
+                    public int getNewListSize() {
+                        return update.size();
+                    }
+
+                    @Override
+                    public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                        T oldItem = oldItems.get(oldItemPosition);
+                        T newItem = update.get(newItemPosition);
+                        return DataBoundListAdapter.this.areItemsTheSame(oldItem, newItem);
+                    }
+
+                    @Override
+                    public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                        T oldItem = oldItems.get(oldItemPosition);
+                        T newItem = update.get(newItemPosition);
+                        return DataBoundListAdapter.this.areContentsTheSame(oldItem, newItem);
+                    }
+                });
+            }
+            emitter.onComplete();
+        })
+        .subscribeOn(Schedulers.computation())
+        .observeOn(AndroidSchedulers.mainThread())
+        .doOnComplete(() -> {
+            if (dataVersion != mDataVersion.get()) {
+                // ignore update
+                return;
+            }
+
             mReservedItemCount = -1;
-
-            if (update != null) {
-                sort(update);
-            }
-
             if (mItems == null) {
-                if (update != null) {
-                    mItems = update;
-                    notifyDataSetChanged();
-                }
-                emitter.onComplete();
-            } else if (update == null) {
-                int oldSize = mItems.size();
-                mItems = null;
-                notifyItemRangeRemoved(0, oldSize);
-                emitter.onComplete();
+                mItems = update;
+                notifyDataSetChanged();
             } else {
-                final List<T> oldItems = mItems;
-
-                // FIXME(saemy): Detach at some point?
-                Single.<DiffUtil.DiffResult>create(emitter2 -> emitter2.onSuccess(
-                        DiffUtil.calculateDiff(new DiffUtil.Callback() {
-                            @Override
-                            public int getOldListSize() {
-                                return oldItems.size();
-                            }
-
-                            @Override
-                            public int getNewListSize() {
-                                return update.size();
-                            }
-
-                            @Override
-                            public boolean areItemsTheSame(int oldItemPosition,
-                                                           int newItemPosition) {
-                                T oldItem = oldItems.get(oldItemPosition);
-                                T newItem = update.get(newItemPosition);
-                                return DataBoundListAdapter.this.areItemsTheSame(oldItem, newItem);
-                            }
-
-                            @Override
-                            public boolean areContentsTheSame(int oldItemPosition,
-                                                              int newItemPosition) {
-                                T oldItem = oldItems.get(oldItemPosition);
-                                T newItem = update.get(newItemPosition);
-                                return DataBoundListAdapter.this.areContentsTheSame(oldItem,
-                                        newItem);
-                            }
-                        })))
-                        .subscribeOn(Schedulers.computation())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .map(diffResult -> {
-                            if (dataVersion != mDataVersion.get()) {
-                                // ignore update
-                                return 0;
-                            }
-                            mItems = update;
-                            diffResult.dispatchUpdatesTo(DataBoundListAdapter.this);
-                            return 0;
-                        })
-                        .toCompletable()
-                        .subscribe(emitter::onComplete, emitter::onError);
+                boolean diffIsValid = mItems == oldItems;
+                mItems = update;
+                if (diffIsValid) {
+                    diffResultWrapper.result.dispatchUpdatesTo(this);
+                } else {
+                    notifyDataSetChanged();
+                    // The items changed between us calculating the diff and now.
+                }
             }
-        }).subscribeOn(AndroidSchedulers.mainThread());
+        });
     }
 
 

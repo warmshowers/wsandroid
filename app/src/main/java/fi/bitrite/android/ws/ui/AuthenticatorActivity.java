@@ -5,13 +5,15 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -21,8 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
-import fi.bitrite.android.ws.auth.AccountManager;
-import fi.bitrite.android.ws.auth.AuthToken;
+import fi.bitrite.android.ws.auth.Authenticator;
 import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.ui.view.AccountAuthenticatorFragmentActivity;
@@ -38,10 +39,11 @@ import io.reactivex.subjects.BehaviorSubject;
 public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
         implements Injectable {
 
-    @Inject AccountManager mAuthenticationManager;
+    @Inject Authenticator mAuthenticator;
 
     @BindView(R.id.auth_txt_username) EditText mTxtUsername;
     @BindView(R.id.auth_txt_password) EditText mTxtPassword;
+    @BindView(R.id.auth_ckb_remember_password) CheckBox mCkbRememberPassword;
     @BindView(R.id.auth_btn_login) Button mBtnLogin;
 
     private final TextWatcher mTextWatcher = new TextWatcher() {
@@ -106,16 +108,42 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                         mProgressDisposable.dispose();
                         Toast.makeText(this, R.string.http_server_access_failure, Toast.LENGTH_LONG)
                                 .show();
-                    } else if (result.response != null) {
+                    } else if (result.authResult != null && result.authResult.isSuccessful()) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString(android.accounts.AccountManager.KEY_ACCOUNT_NAME,
+                                result.account.name);
+                        bundle.putString(android.accounts.AccountManager.KEY_ACCOUNT_TYPE,
+                                result.account.type);
+
+                        // Required if this activity was shown in getAuthToken but the authToken was
+                        // previously invalidated.
+                        String authTokenStr = result.authResult.authToken == null
+                                ? null
+                                : result.authResult.authToken.toString();
+                        bundle.putString(android.accounts.AccountManager.KEY_AUTHTOKEN,
+                                authTokenStr);
+
                         // The following we add for usage in MainActivity::onActivityResult().
                         Intent intent = new Intent();
-                        intent.putExtras(result.response);
+                        intent.putExtras(bundle);
                         setResult(0, intent);
-                        setAccountAuthenticatorResult(result.response);
+                        setAccountAuthenticatorResult(bundle);
                         finish();
                     } else {
                         mProgressDisposable.dispose();
-                        Toast.makeText(this, R.string.authentication_failed, Toast.LENGTH_LONG)
+
+                        Authenticator.AuthResult.ErrorCause errorCause = result.authResult != null
+                                ? result.authResult.errorCause
+                                : Authenticator.AuthResult.ErrorCause.Unknown;
+
+                        @StringRes final int messageId =
+                                errorCause == Authenticator.AuthResult.ErrorCause.WrongUsernameOrPassword
+                                ? R.string.authentication_failed
+                                // Wrong password provided by the user.
+                                : R.string.invalid_api_key;
+                                // Issues with the API key or the API itself.
+                                // Used to be in case of `statusCode \in {401,404}`.
+                        Toast.makeText(this, messageId, Toast.LENGTH_LONG)
                                 .show();
                     }
                 });
@@ -174,42 +202,12 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
         // The following callback can be happening when the app is pushed to the background. We
         // update the {@link mLoginResult} observable, s.t. we only react on the change when the app
         // is in the foreground.
-        Disposable unused = mAuthenticationManager.login(username, password)
-                .subscribe(result -> {
-                    Bundle response = new Bundle();
-                    response.putString(android.accounts.AccountManager.KEY_ACCOUNT_NAME, username);
-
-                    String accountType = getIntent().getStringExtra(
-                            android.accounts.AccountManager.KEY_ACCOUNT_TYPE);
-                    response.putString(
-                            android.accounts.AccountManager.KEY_ACCOUNT_TYPE, accountType);
-
-                    boolean isAlreadyLoggedIn = 406 == result.response().code();
-                    if (result.isSuccessful() || isAlreadyLoggedIn) {
-                        AuthToken authToken;
-                        if (isAlreadyLoggedIn) {
-                            // 406 Not Acceptable : Already logged in as [xxx]. ()
-                            // This error can occur if an additional account is added, which in fact
-                            // is already logged in. We just mark the login as successful and
-                            // continue.
-                            Account account = new Account(username, accountType);
-                            authToken = mAuthenticationManager.peekAuthToken(account);
-                        } else {
-                            // 200 OK - The login was successful.
-                            authToken = result.authData().authToken;
-                        }
-
-                        // Required if this activity was shown in getAuthToken but the authToken was
-                        // previously invalidated.
-                        String authTokenStr = authToken == null ? null : authToken.toString();
-                        response.putString(
-                                android.accounts.AccountManager.KEY_AUTHTOKEN, authTokenStr);
-
-                        mLoginResult.onNext(new LoginResult(response));
-                    } else {
-                        mLoginResult.onNext(new LoginResult());
-                    }
-                }, error -> mLoginResult.onNext(new LoginResult(error)));
+        String accountType = getIntent().getStringExtra(
+                android.accounts.AccountManager.KEY_ACCOUNT_TYPE);
+        Account account = new Account(username, accountType);
+        Disposable unused = mAuthenticator.login(account, password, mCkbRememberPassword.isChecked())
+                .subscribe(result -> mLoginResult.onNext(new LoginResult(account, result)),
+                        error -> mLoginResult.onNext(new LoginResult(account, error)));
     }
 
     /**
@@ -228,20 +226,19 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
     }
 
     private class LoginResult {
-        final Bundle response;
+        @NonNull final Account account;
+        final Authenticator.AuthResult authResult;
         final Throwable throwable;
         boolean isHandled = false;
 
-        private LoginResult() {
-            response = null;
-            throwable = null;
-        }
-        private LoginResult(@NonNull Bundle response) {
-            this.response = response;
+        LoginResult(@NonNull Account account, @NonNull Authenticator.AuthResult authResult) {
+            this.account = account;
+            this.authResult = authResult;
             this.throwable = null;
         }
-        private LoginResult(@NonNull Throwable throwable) {
-            this.response = null;
+        LoginResult(@NonNull Account account, @NonNull Throwable throwable) {
+            this.account = account;
+            this.authResult = null;
             this.throwable = throwable;
         }
     }

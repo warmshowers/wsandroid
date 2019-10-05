@@ -10,6 +10,7 @@ import fi.bitrite.android.ws.di.account.AccountScope;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 @AccountScope
 public class ResponseInterceptor implements Interceptor {
@@ -50,6 +51,13 @@ public class ResponseInterceptor implements Interceptor {
         return handleResponse(chain, response, 0);
     }
 
+    private static String parseBodyStr(String rawBody) throws IOException {
+        if (rawBody.startsWith("[\"") && rawBody.endsWith("\"]")) {
+            return rawBody.substring(2, rawBody.length()-2);
+        }
+        return rawBody;
+    }
+
     private Response handleResponse(Chain chain, Response response, int lastResponseCode)
             throws IOException {
         // No handler, no error resolving.
@@ -64,13 +72,18 @@ public class ResponseInterceptor implements Interceptor {
 
         boolean errorResolvingAttemptDone = false;
 
+        final ResponseBody body = response.body();
+        String rawBodyStr = null;
+
         // Listen for auth-related error responses.
         switch (response.code()) {
-            case 401:
-                // Unauthorized : Wrong username or password --> Happens only during login -> ignore.
-                // Unauthorized : CSRF validation failed     --> Request a new CSRF token from API endpoint.
-                String[] reasonParts = response.message().split(" : ", 2);
-                if (reasonParts.length != 2 || !"CSRF validation failed".equals(reasonParts[1])) {
+            case 401: {
+                // Wrong username or password. --> Happens only during login -> ignore.
+                // CSRF validation failed      --> Request a new CSRF token from API endpoint.
+                // API key related errors      --> Don't handle here.
+                rawBodyStr = body != null ? body.string() : "";
+                String parsedBodyStr = parseBodyStr(rawBodyStr);
+                if (!"CSRF validation failed".equals(parsedBodyStr)) {
                     break;
                 }
 
@@ -78,11 +91,13 @@ public class ResponseInterceptor implements Interceptor {
                 errorResolvingAttemptDone = handler.handleCsrfValidationError();
 
                 break;
+            }
 
-            case 403:
+            case 403: {
                 // Access denied for user anonymous --> auth token timed out -> re-login
-                String reason = response.message();
-                if (!reason.startsWith(": Access denied for user anonymous")) {
+                rawBodyStr = body != null ? body.string() : "";
+                String parsedBodyStr = parseBodyStr(rawBodyStr);
+                if (!parsedBodyStr.startsWith("Access denied for user anonymous")) {
                     // We simply do not have access for the resource.
                     break;
                 }
@@ -106,9 +121,15 @@ public class ResponseInterceptor implements Interceptor {
                 }
 
                 break;
+            }
         }
 
         if (!errorResolvingAttemptDone) {
+            if (body != null && rawBodyStr != null) {
+                response = response.newBuilder()
+                        .body(ResponseBody.create(body.contentType(), rawBodyStr))
+                        .build();
+            }
             return response;
         }
 

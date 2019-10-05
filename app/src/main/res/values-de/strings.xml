@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Warmshowers</string>
     <string name="app_version">Version %1$s</string>
     <string name="authenticating">Authentifizieren …</string>
     <string name="need_account">Starten der App ohne Warmshowers-Kontodaten nicht möglich</string>
     <string name="authentication_failed">Login fehlgeschlagen. Bitte gib deine Kontodaten erneut ein.</string>
     <string name="no_starred_hosts">Du hast derzeit keine offline gespeicherten Gastgeber. Du kannst Gastgeber im jeweiligen Profil über den Favoriten-Knopf hinzufügen.</string>
+    <string name="empty_inbox">Dein Posteingang ist leer.</string>
     <string name="list_search_hint">Name oder Stadt</string>
     <string name="no_results">Leider konnten zu deiner Suche keine Ergebnisse gefunden werden.</string>
     <string name="greeting">Hallo!</string>
@@ -36,7 +36,7 @@
     <string name="account">Konto</string>
     <string name="settings">Einstellungen</string>
     <string name="about">Über</string>
-    <string name="last_updated">Zuletzt aktualisiert: </string>
+    <string name="last_updated">Zuletzt aktualisiert:</string>
     <string name="host_updated">Gastgeber-Informationen aktualisiert.</string>
     <string name="host_not_available">Dieses Mitglied ist als zurzeit nicht verfügbar markiert. Du kannst die Person dennoch kontaktieren, allerdings nicht für Beherbergung.</string>
     <string name="user_info_in_progress">Information zu dieser Person werden abgerufen …</string>
@@ -52,9 +52,9 @@
     <string name="sending_message">Nachricht wird gesendet …</string>
     <string name="error_sending_message">Konnte Nachricht nicht senden. Bitte überprüfe deine Kontodaten und Internetverbindung.</string>
     <string name="message_sent">Nachricht erfolgreich versandt.</string>
-    <string name="about_1">"Entwickelt von Warmshowers-Freiwilligen. \nÜbersetzung: Cyril Wendl und Patrick Geselbracht (Deutsch)</string>
-    <string name="about_2">Dies ist eine Open-Source-App unter der Apache 2.0-Lizenz. Du kannst mithelfen, indem du unser Git-Repository auf github.com/warmshowers/wsandroid forkst.\nMelde Probleme über das Warmshowers-Kontaktformular, de.warmshowers.org/contact</string>
-    <string name="feedback">Rückmeldung (%1$d)</string>
+    <string name="about_1">Entwickelt von Warmshowers-Freiwilligen. \nÜbersetzung: Cyril Wendl und Patrick Geselbracht (Deutsch)</string>
+    <string name="about_2">Dies ist eine Open-Source-App unter der Apache 2.0-Lizenz. Du kannst mithelfen, indem du unser Git-Repository auf github.com/warmshowers/wsandroid forkst.\nBitte melde Probleme dort.</string>
+    <string name="feedback">Rückmeldung</string>
     <string name="error_retrieving_messages">Beim Abrufen der Nachrichten ist ein Problem aufgetreten.</string>
     <string name="messages_in_progress">Nachrichten werden abgerufen …</string>
     <string name="no_unread_messages">Sie haben keine ungelesenen Nachrichten.</string>
@@ -63,7 +63,6 @@
         <item quantity="other">Du hast %d ungelesene Nachrichten.</item>
     </plurals>
     <string name="updateMessages">Aktualisieren</string>
-    <string name="loading_users">Gastgeber werden geladen …</string>
     <plurals name="users_at_location">
         <item quantity="one">%1$d Gastgeber bei %2$s</item>
         <item quantity="other">%1$d Gastgeber bei %2$s</item>
@@ -75,7 +74,7 @@
     </plurals>
     <string name="click_to_view_all"><strong>Klicken, um alle zu sehen</strong></string>
     <string name="alert_neutral_button">OK</string>
-    <string name="title_fragment_contact_user">"Nachricht an %1$s"</string>
+    <string name="title_fragment_contact_user">Nachricht an %1$s</string>
     <string name="users_dont_load">Um Datenvolumen zu sparen, werden Gastgeberorte in dieser Zoomstufe nicht geladen.\nBitte vergrößern.</string>
     <!-- Distance from current has 2 args, number and units -->
     <string name="distance_from_current">%1$d %2$s von der aktuellen Position</string>
@@ -111,6 +110,9 @@
     <string name="prefs_message_refresh_interval_min_summary_disabled">Deaktiviert</string>
     <string name="prefs_message_refresh_interval_min_dialog_message">Wähle aus, wie häufig deine Mitteilungen automatisch vom Server geladen werden sollen.</string>
     <string name="prefs_message_refresh_interval_min_hint">Intervall (in Minuten)</string>
+
+    <string name="prefs_data_saver_mode_title">Datenspar-Modus</string>
+    <string name="prefs_data_saver_mode_summary">Lade keine daten-intensive Inhalte wie Bilder.</string>
 
     <string name="prefscat_dev_title">Entwicklereinstellungen</string>
     <string name="prefs_dev_simulate_no_network_title">Simuliere Kein Netz</string>
@@ -167,7 +169,7 @@
     <string name="contact_host">Mitglied kontaktieren</string>
     <string name="search_user_summary">Dabei seit %1$s, zuletzt aktiv am %2$s</string>
     <string name="user_limitations">Maximale Gäste %1$d, gesprochene Sprachen %2$s</string>
-    <string name="favorite_host">Favoriten</string>
+    <string name="favorite_user">Favoriten</string>
     <string name="no_feedback_yet">Noch kein Feedback</string>
     <string name="mobile_phone_abbrev">Mobil: %1$s</string>
     <string name="home_phone_abbrev">Privat: %1$s</string>
@@ -198,6 +200,11 @@
     <string name="feedback_relation_guest">Gast</string>
     <string name="feedback_relation_met_while_traveling">Beim Reisen getroffen</string>
     <string name="feedback_relation_other">Andere</string>
+    <string name="feedback_relation_long_host">%1$s war Gastgeber von %2$s</string>
+    <string name="feedback_relation_long_guest">%1$s war Gast von %2$s</string>
+    <string name="feedback_relation_long_met_while_traveling">%1$s und %2$s haben sich beim Reisen getroffen</string>
+    <string name="feedback_relation_long_other">Andere</string>
+
     <string name="feedback_rating_positive">Positiv</string>
     <string name="feedback_rating_neutral">Neutral</string>
     <string name="feedback_rating_negative">Negativ</string>
@@ -214,6 +221,7 @@
     <string name="title_fragment_messages">Mitteilungen</string>
     <string name="title_fragment_settings">Einstellungen</string>
     <string name="title_fragment_users">Gastgeber</string>
+    <string name="title_fragment_filter_list">Gastgeber-Filter</string>
 
     <string name="message_thread_create_failed">Fehler beim Erstellen eines neuen Chats.</string>
     <string name="messages_reload_failed">Fehler beim Abrufen der Nachrichten.</string>
@@ -223,6 +231,7 @@
     <string name="message_mark_read">Als gelesen markieren</string>
     <string name="message_send_failed">Fehler beim Senden der Nachricht.</string>
 
+    <string name="remember_password">Passwort speichern?</string>
     <string name="button_text_forgot_password">Passwort vergessen?</string>
     <string name="url_target_forgot_password">https://de.warmshowers.org/user/password</string>
 
@@ -238,4 +247,19 @@
     <string name="content_description_member_marker_map">Mitglied</string>
 
     <string name="unknown_location">Position noch nicht bekannt</string>
+
+    <string name="button_clear_filters">Filter zurücksetzen</string>
+    <string name="filter_last_access">Letzte Aktivität</string>
+    <string name="filter_diff_today">Heute</string>
+    <string name="filter_diff_this_week">Diese Woche</string>
+    <string name="filter_diff_this_month">Diesen Monat</string>
+    <string name="filter_diff_this_year">Dieses Jahr</string>
+    <string name="filter_diff_any">Irgendwann</string>
+    <string name="filter_diff_short_today">1 Tg.</string>
+    <string name="filter_diff_short_this_week">1 Wo.</string>
+    <string name="filter_diff_short_this_month">1 Mnt.</string>
+    <string name="filter_diff_short_this_year">1 Jr.</string>
+    <string name="filter_diff_short_any">&gt;1 Jr.</string>
+
+    <string name="invalid_api_key">Der Server hat die Anfrage abgewiesen. Bitte aktualisiere die App.</string>
 </resources>

@@ -10,9 +10,9 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.bonuspack.clustering.RadiusMarkerClusterer;
@@ -117,7 +117,7 @@ public class UserMarkerClusterer extends RadiusMarkerClusterer {
             if (useBuckets) {
                 int bucket = getBucket(clusterSize);
                 iconDrawable = mIconDrawable.getConstantState().newDrawable().mutate();
-                iconDrawable.setColorFilter(getClusterColor(bucket), PorterDuff.Mode.SRC);
+                iconDrawable.setColorFilter(getClusterColor(bucket), PorterDuff.Mode.SRC_ATOP);
                 iconText = getClusterText(bucket);
             } else {
                 iconText = Integer.toString(clusterSize);

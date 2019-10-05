@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.util;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -27,8 +28,11 @@ public class LocationManager {
         startProvider(android.location.LocationManager.GPS_PROVIDER);
     }
     public void stop() {
-        mAndroidLocationManager.removeUpdates(mLocationListener);
-        mAndroidLocationManager = null;
+        // Guard against NPE when GPS is switched off between start and stop
+        if (mAndroidLocationManager != null) {
+            mAndroidLocationManager.removeUpdates(mLocationListener);
+            mAndroidLocationManager = null;
+        }
     }
 
     public BehaviorSubject<Location> getBestLocation() {
@@ -37,10 +41,15 @@ public class LocationManager {
     public BehaviorSubject<Boolean> getHasEnabledProviders() {
         return mHasEnabledProviders;
     }
+
+    @SuppressLint("MissingPermission")
     private void startProvider(String provider) {
+        if (mAndroidLocationManager.getProvider(provider) == null) {
+            return;
+        }
         updateLocationIfBetter(mAndroidLocationManager.getLastKnownLocation(provider));
-        mAndroidLocationManager.requestLocationUpdates(
-                provider, MIN_TIME_BETWEEN_LOCATION_UPDATES_MS, 0, mLocationListener);
+        mAndroidLocationManager.requestLocationUpdates(provider,
+                MIN_TIME_BETWEEN_LOCATION_UPDATES_MS, 0, mLocationListener);
         boolean isEnabled = mAndroidLocationManager.isProviderEnabled(provider);
         if (isEnabled) {
             mLocationListener.onProviderEnabled(provider);
@@ -89,7 +98,7 @@ public class LocationManager {
      * @param currentBestLocation  The current Location fix, to which you want to compare the new one
      */
     private static boolean isBetterLocation(Location location, Location currentBestLocation) {
-        if (location == null) {
+        if (location == null || (location.getLatitude() == 0 && location.getLongitude() == 0)) {
             return false;
         }
         if (currentBestLocation == null) {

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Warmshowers</string>
     <string name="about">À propos</string>
-    <string name="about_1">Développé par les volontaires de Warmshowers.org.\nTraducteur français: Jean-Francois Beaulieu </string>
-    <string name="about_2">Cette application est en <i>open source</i> sous la license Apache 2.0. Contribuez en <i>forkant</i> le dépôt à github.com/warmshowers/wsandroid.\nVous pouvez signaler des problèmes à cet endroit ou en utilisant la feuille de contact sur le site web de Warmshowers au fr.warmshowers.org/contact</string>
+    <string name="about_1">Développé par les volontaires de Warmshowers.org.\nTraducteur français: Jean-Francois Beaulieu</string>
+    <string name="about_2">Cette application est en <i>open source</i> sous la license Apache 2.0. Contribuez en <i>forkant</i> le dépôt à github.com/warmshowers/wsandroid.\nVous pouvez signaler des problèmes à cet endroit.</string>
     <string name="account">Compte</string>
     <string name="alert_neutral_button">OK</string>
     <string name="app_version">Version %1$s</string>
@@ -22,7 +21,7 @@
     <string name="enter_credentials">Veuillez entrer votre nom d\'utilisateur et mot de passe</string>
     <string name="error_retrieving_messages">Une erreur s\'est produite lors de la récupération des messages.</string>
     <string name="error_sending_message">Le message n\'a pu être envoyé. Vérifiez vos informations de connexion et votre connexion internet</string>
-    <string name="feedback">Recommandation(s) (%1$d)</string>
+    <string name="feedback">Recommandations</string>
     <string name="home_phone"><u>Téléphone fixe:</u></string>
     <string name="mobile_phone"><u>Téléphone mobile:</u></string>
     <plurals name="user_count">
@@ -44,7 +43,6 @@
     <string name="last_login"><u>Dernière connexion:</u></string>
     <string name="last_updated">Dernière mise à jour:</string>
     <string name="list_search_hint">Nom du membre ou de la ville</string>
-    <string name="loading_users">Chargement des hôtes…</string>
     <string name="location"><u>Localisation:</u></string>
     <string name="max_guests"><u>Invités max.:</u></string>
     <string name="member_since"><u>Membre depuis:</u></string>
@@ -56,6 +54,7 @@
     <string name="need_account">L\'application ne peut fonctionner sans informations de connexion WarmShowers</string>
     <string name="no_results">Votre recherche n\'a donné aucun résultat.</string>
     <string name="no_starred_hosts">Vous n’avez présentement aucun hôte favori (Profils d’hôtes disponibles hors ligne). Vous pouvez ajouter des hôtes favoris en cliquant le bouton « Favori » sur leur page d’information.</string>
+    <string name="empty_inbox">La boîte de réception est vide.</string>
     <string name="no_unread_messages">Vous n\'avez aucun message non-lu.</string>
     <string name="ok">OK</string>
     <string name="password_hint">Mot de passe</string>
@@ -118,7 +117,7 @@
     <string name="feedback_hint">Décrivez votre expérience avec ce membre.</string>
     <string name="feedback_validation_error">Vous devez écrire au moins 10 mots pour le commentaire</string>
     <string name="feedback_sent">Votre commentaire pour %1$s a été envoyé</string>
-    <string name="leaving_feedback">"Envoi du commentaire pour %1$s"</string>
+    <string name="leaving_feedback">Envoi du commentaire pour %1$s</string>
     <string name="feedback_how_we_met_prompt">Comment avez vous rencontré ce membre? Il était votre:</string>
     <string name="feedback_date_we_met">Date de rencontre:</string>
     <string name="feedback_send">Envoyer le commentaire</string>
@@ -155,7 +154,7 @@
     <string name="contact_host">Contacter le membre</string>
     <string name="search_user_summary">Membre depuis %1$s, actif le %2$s</string>
     <string name="user_limitations">Nmb. d\'invités max. %1$d, Langues parlées %2$s</string>
-    <string name="favorite_host">Hôte favori</string>
+    <string name="favorite_user">Hôte favori</string>
     <string name="no_feedback_yet">Pas de recommandation pour l\'instant</string>
     <string name="mobile_phone_abbrev">Mobile: %1$s</string>
     <string name="home_phone_abbrev">Fixe: %1$s</string>
@@ -182,6 +181,10 @@
     <string name="feedback_relation_guest">Invité</string>
     <string name="feedback_relation_met_while_traveling">Rencontré en voyage</string>
     <string name="feedback_relation_other">Autre</string>
+    <string name="feedback_relation_long_host">%1$s a accueilli %2$s</string>
+    <string name="feedback_relation_long_guest">%1$s était un invité de %2$s</string>
+    <string name="feedback_relation_long_met_while_traveling">%1$s et %2$s se sont rencontrés en voyageant</string>
+    <string name="feedback_relation_long_other">Autre</string>
 
     <string name="feedback_rating_positive">Positif</string>
     <string name="feedback_rating_neutral">Neutre</string>
@@ -198,7 +201,9 @@
     <string name="title_fragment_messages">Messages</string>
     <string name="title_fragment_settings">Paramètres</string>
     <string name="title_fragment_users">Hôtes</string>
+    <string name="title_fragment_filter_list">Host Filters</string>
 
+    <string name="remember_password">Enregistrer le mot de passe?</string>
     <string name="button_text_forgot_password">Mot de passe oublié?</string>
     <string name="url_target_forgot_password">https://fr.warmshowers.org/user/password</string>
 
@@ -217,6 +222,10 @@
     <string name="prefs_message_refresh_interval_min_summary_disabled">Désactivé</string>
     <string name="prefs_message_refresh_interval_min_dialog_message">Spécifiez la fréquence de rafraîchissement de vos messages à partir du serveur.</string>
     <string name="prefs_message_refresh_interval_min_hint">Intervalle (minutes)</string>
+
+    <string name="prefs_data_saver_mode_title">Mode économiseur de données</string>
+    <string name="prefs_data_saver_mode_summary">Empêcher le chargement d\'informations à forte intensité de données telles que des images.</string>
+
     <string name="prefscat_dev_title">Paramètres de développement</string>
     <string name="prefs_dev_simulate_no_network_title">Simuler une absence de service</string>
     <string name="message_mark_read">Marque comme lue</string>
@@ -230,4 +239,19 @@
     <string name="feedback_error_sending">L’envoi du commentaire a échoué.</string>
 
     <string name="unknown_location">Position inconnue</string>
+
+    <string name="button_clear_filters">Effacer les filtres</string>
+    <string name="filter_last_access">Dernière activité</string>
+    <string name="filter_diff_today">Aujourd\'hui</string>
+    <string name="filter_diff_this_week">Dernière semaine</string>
+    <string name="filter_diff_this_month">Dernier mois</string>
+    <string name="filter_diff_this_year">Année dernière</string>
+    <string name="filter_diff_any">Égal</string>
+    <string name="filter_diff_short_today">auj.</string>
+    <string name="filter_diff_short_this_week">1 sem.</string>
+    <string name="filter_diff_short_this_month">1 m.</string>
+    <string name="filter_diff_short_this_year">1 a.</string>
+    <string name="filter_diff_short_any">&gt; 1 a.</string>
+
+    <string name="invalid_api_key">Le serveur a rejeté la demande. STP mettre à jour l\'application.</string>
 </resources>

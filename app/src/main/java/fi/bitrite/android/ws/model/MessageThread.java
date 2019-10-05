@@ -1,5 +1,6 @@
 package fi.bitrite.android.ws.model;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -23,8 +24,8 @@ public class MessageThread {
         this.subject = subject;
         this.started = started;
         this.isRead = isRead;
-        this.participantIds = participantIds;
-        this.messages = messages;
+        this.participantIds = Collections.unmodifiableList(participantIds);
+        this.messages = Collections.unmodifiableList(messages);
         this.lastUpdated = lastUpdated;
     }
 

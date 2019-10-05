@@ -3,7 +3,7 @@ package fi.bitrite.android.ws.persistence;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -115,7 +115,7 @@ public class UserDao extends Dao {
     public void save(SQLiteDatabase db, User user) {
         ContentValues cv = new ContentValues();
         cv.put("id", user.id);
-        cv.put("name", user.name);
+        cv.put("name", user.username);
         cv.put("fullname", user.fullname);
         cv.put("street", user.street);
         cv.put("additional_address", user.additionalAddress);

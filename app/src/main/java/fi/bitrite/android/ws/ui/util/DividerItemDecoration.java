@@ -5,8 +5,9 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -15,7 +16,7 @@ import android.widget.LinearLayout;
  * Forked from android.support.v7.widget.DividerItemDecoration.
  *
  * DividerItemDecoration is a {@link RecyclerView.ItemDecoration} that can be used as a divider
- * between items of a {@link android.support.v7.widget.LinearLayoutManager}. It supports both
+ * between items of a {@link LinearLayoutManager}. It supports both
  * {@link #HORIZONTAL} and {@link #VERTICAL} orientations.
  *
  * This allows to have the last divider removed which is impossible in the version in the Android
@@ -47,7 +48,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     /**
      * Creates a divider {@link RecyclerView.ItemDecoration} that can be used with a
-     * {@link android.support.v7.widget.LinearLayoutManager}.
+     * {@link LinearLayoutManager}.
      *
      * @param context Current context, it will be used to access resources.
      * @param orientation Divider orientation. Should be {@link #HORIZONTAL} or {@link #VERTICAL}.

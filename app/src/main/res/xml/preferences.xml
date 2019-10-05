@@ -39,6 +39,12 @@
         android:key="@string/prefs_message_refresh_interval_min_key"
         android:title="@string/prefs_message_refresh_interval_min_title" />
 
+    <SwitchPreference
+        android:defaultValue="@bool/prefs_data_saver_mode_default"
+        android:key="@string/prefs_data_saver_mode_key"
+        android:title="@string/prefs_data_saver_mode_title"
+        android:summary="@string/prefs_data_saver_mode_summary"/>
+
     </PreferenceCategory>
 
     <ListPreference

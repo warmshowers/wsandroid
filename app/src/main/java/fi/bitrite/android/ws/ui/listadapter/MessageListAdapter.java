@@ -4,10 +4,9 @@ package fi.bitrite.android.ws.ui.listadapter;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
-import android.text.TextUtils;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import android.text.format.DateUtils;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -90,7 +89,7 @@ public class MessageListAdapter extends
                && left.authorId == right.authorId
                && left.isPushed == right.isPushed
                && left.date.equals(right.date)
-               && left.rawBody.equals(right.rawBody);
+               && left.strippedRawBody.equals(right.strippedRawBody);
     }
 
     class ItemBinding implements
@@ -100,8 +99,6 @@ public class MessageListAdapter extends
         @BindView(R.id.message_lbl_body) TextView mLblBody;
         @BindView(R.id.message_lbl_date) TextView mLblDate;
 
-        @BindDimen(R.dimen.message_bubble_padding_big) int mPaddingBubbleBig;
-        @BindDimen(R.dimen.message_bubble_padding_small) int mPaddingBubbleSmall;
         @BindDimen(R.dimen.message_bubble_margin_big) int mMarginBubbleBig;
         @BindDimen(R.dimen.message_bubble_margin_small) int mMarginBubbleSmall;
         @BindDrawable(R.drawable.message_incoming_bubble) Drawable mDrawableBubbleIncoming;
@@ -143,13 +140,6 @@ public class MessageListAdapter extends
             final int loggedInUserId = loggedInUser == null ? -1 : loggedInUser.id;
             final boolean isIncoming = message.authorId != loggedInUserId;
 
-            // Sets the padding of the bubble.
-            mRoot.setPadding(
-                    isIncoming ? mPaddingBubbleBig : mPaddingBubbleSmall,
-                    mRoot.getPaddingTop(),
-                    isIncoming ? mPaddingBubbleSmall : mPaddingBubbleBig,
-                    mRoot.getPaddingBottom());
-
             // Sets the margin of the bubble.
             ViewGroup.MarginLayoutParams lp =
                     (ViewGroup.MarginLayoutParams) mRoot.getLayoutParams();
@@ -172,12 +162,7 @@ public class MessageListAdapter extends
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(userResource -> {
                             User user = userResource.data;
-                            mLblSender.setText(user == null
-                                    ? ""
-                                    // TODO(saemy): Eventually, put accessor performing this null-check into User.
-                                    : TextUtils.isEmpty(user.name)
-                                            ? user.fullname
-                                            : user.name);
+                            mLblSender.setText(user == null ? "" : user.getName());
                         }));
             }
 

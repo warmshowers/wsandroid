@@ -1,13 +1,13 @@
 package fi.bitrite.android.ws.di.account;
 
 import android.accounts.Account;
+import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import fi.bitrite.android.ws.auth.AccountManager;

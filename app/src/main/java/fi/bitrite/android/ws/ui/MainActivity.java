@@ -6,21 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.SparseArray;
-import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,11 +21,19 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.AndroidInjection;
+import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
-import dagger.android.support.HasSupportFragmentInjector;
+import dagger.android.HasAndroidInjector;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.di.account.AccountComponent;
@@ -47,16 +47,18 @@ import fi.bitrite.android.ws.ui.util.ActionBarTitleHelper;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
 import fi.bitrite.android.ws.util.SerialCompositeDisposable;
+import fi.bitrite.android.ws.util.WSGlide;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.SerialDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 // AppScope
-public class MainActivity extends AppCompatActivity implements HasSupportFragmentInjector {
+public class MainActivity extends AppCompatActivity implements HasAndroidInjector {
 
     private static final String KEY_MESSAGE_THREAD_ID = "thread_id";
 
@@ -205,6 +207,12 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
         mResumePauseDisposables.add(mAccountManager.getCurrentAccount()
                 .subscribe(nullableAccount -> {
                     Account previousAccount = mAccountHelper.mAccount;
+
+                    if (previousAccount != null && previousAccount.equals(nullableAccount.data)) {
+                        // Account did not change, do nothing.
+                        return;
+                    }
+
                     mAccountHelper.switchAccount(nullableAccount.data);
 
                     if (nullableAccount.isNull() ||
@@ -266,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     }
 
     @Override
-    public DispatchingAndroidInjector<Fragment> supportFragmentInjector() {
+    public AndroidInjector<Object> androidInjector() {
         return mAccountHelper.mDispatchingAndroidInjector;
     }
 
@@ -292,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onBackPressed() {
-        if (mMainLayout.isDrawerOpen(Gravity.START)) {
+        if (mMainLayout.isDrawerOpen(GravityCompat.START)) {
             mMainLayout.closeDrawers();
             return;
         }
@@ -367,7 +375,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     private final AccountHelper mAccountHelper = new AccountHelper();
     public class AccountHelper {
         @Inject Account mAccount;
-        @Inject DispatchingAndroidInjector<Fragment> mDispatchingAndroidInjector;
+        @Inject DispatchingAndroidInjector<Object> mDispatchingAndroidInjector;
         @Inject LoggedInUserHelper mLoggedInUserHelper;
         @Inject MessageRepository mMessageRepository;
 
@@ -431,15 +439,17 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
                             SimpleUser loggedInUser = maybeUser.data;
 
                             mLblFullname.setText(loggedInUser.fullname);
-                            mLblUsername.setText(loggedInUser.name);
+                            mLblUsername.setText(loggedInUser.username);
 
                             String profilePhotoUrl = loggedInUser.profilePicture.getSmallUrl();
                             if (TextUtils.isEmpty(profilePhotoUrl)) {
                                 mImgUserPhoto.setImageResource(
                                         R.drawable.default_userinfo_profile);
                             } else {
-                                Picasso.with(MainActivity.this)
+                                WSGlide.with(MainActivity.this)
                                         .load(profilePhotoUrl)
+                                        .apply(new RequestOptions()
+                                                .placeholder(R.drawable.default_userinfo_profile))
                                         .into(mImgUserPhoto); // largeUrl
                             }
                         } else {
@@ -453,30 +463,35 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
          * message navigation item up to date.
          */
         private Disposable handleNewMessageThreadCount() {
-            class Container {
-                // We need a final object.
-                Disposable disposable;
-            }
-            Container container = new Container();
-            Set<Integer> newThreads = new HashSet<>();
-            return mMessageRepository
+            final SerialDisposable threadDisposable = new SerialDisposable();
+            Disposable repositoryDisposable = mMessageRepository
                     .getAll()
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(messageThreadObservables -> {
-                        if (container.disposable != null) {
-                            container.disposable.dispose();
+                        threadDisposable.set(null);
+                        if (messageThreadObservables.isEmpty()) {
+                            mMessageNavigationItem.notificationCount.onNext(0);
+                            return;
                         }
-                        container.disposable = Observable.mergeDelayError(messageThreadObservables)
+
+                        Set<Integer> unreadThreads = new HashSet<>();
+                        threadDisposable.set(Observable.mergeDelayError(messageThreadObservables)
                                 .observeOn(Schedulers.computation())
                                 .filter(Resource::hasData)
                                 .map(resource -> resource.data)
                                 // The next filter returns true if the new-status changed.
-                                .filter(thread -> thread.hasNewMessages()
-                                        ? newThreads.add(thread.id)
-                                        : newThreads.remove(thread.id))
+                                .filter(thread -> !thread.isRead()
+                                        ? unreadThreads.add(thread.id)
+                                        : unreadThreads.remove(thread.id))
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(thread -> mMessageNavigationItem.notificationCount.onNext(
-                                        newThreads.size()));
+                                        unreadThreads.size())));
                     });
+
+            CompositeDisposable disposable = new CompositeDisposable();
+            disposable.add(threadDisposable);
+            disposable.add(repositoryDisposable);
+            return disposable;
         }
     }
 }

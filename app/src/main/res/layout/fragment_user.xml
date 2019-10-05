@@ -2,6 +2,7 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -13,7 +14,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="20dp" >
+        android:paddingBottom="20dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -27,7 +28,8 @@
                 android:baselineAlignBottom="true"
                 android:contentDescription="@string/content_description_avatar_of_var"
                 android:scaleType="centerCrop"
-                android:src="@drawable/default_userinfo_profile" />
+                android:src="@drawable/default_userinfo_profile"
+                tools:src="@tools:sample/backgrounds/scenic" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,11 +42,13 @@
                     android:id="@+id/user_lbl_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="72dp"
                     android:layout_marginLeft="72dp"
+                    android:layout_marginEnd="20dp"
                     android:layout_marginRight="20dp"
                     android:shadowColor="@android:color/black"
                     android:shadowRadius="8"
-                    android:text="Member Name bla bla bla bla"
+                    tools:text="@tools:sample/full_names"
                     android:textColor="@android:color/white"
                     android:textSize="36sp" />
 
@@ -54,6 +58,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
             android:orientation="vertical">
@@ -61,6 +66,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical"
                 android:paddingTop="8dp">
@@ -73,6 +79,7 @@
                     <ImageView
                         android:id="@+id/user_img_favorite"
                         style="@style/WsListIcon"
+                        android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:importantForAccessibility="no"
@@ -83,13 +90,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
+                        android:layout_marginStart="56dp"
                         android:layout_marginLeft="56dp"
-                        android:text="@string/favorite_host" />
+                        android:text="@string/favorite_user" />
 
                     <CheckBox
                         android:id="@+id/user_ckb_favorite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:checked="false" />
@@ -101,6 +110,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginStart="72dp"
                 android:layout_marginLeft="72dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="8dp"
@@ -110,6 +120,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical"
                 android:paddingBottom="8dp"
@@ -133,8 +144,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginStart="32dp"
                         android:layout_marginLeft="32dp"
-                        android:text="Currently Available" />
+                        android:text="@string/currently_available" />
                 </LinearLayout>
 
                 <TextView
@@ -142,8 +154,9 @@
                     style="@style/WsText.caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="56dp"
                     android:layout_marginLeft="56dp"
-                    android:text="Member since 2005, Last login January 1, 2015" />
+                    tools:text="Member since 2005, Last login January 1, 2015" />
 
 
                 <TextView
@@ -151,8 +164,9 @@
                     style="@style/WsText.caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="56dp"
                     android:layout_marginLeft="56dp"
-                    android:text="Max guests: 3, Languages: English, Spanish" />
+                    tools:text="Max guests: 3, Languages: English, Spanish" />
 
             </LinearLayout>
 
@@ -160,6 +174,7 @@
                 android:id="@+id/user_lbl_address"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical"
                 android:paddingBottom="8dp"
@@ -183,8 +198,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
+                        android:layout_marginStart="32dp"
                         android:layout_marginLeft="32dp"
-                        android:text="848 Montclair Drive\nPalisade, CO 81526 USA" />
+                        tools:text="848 Montclair Drive\nPalisade, CO 81526 USA" />
 
                 </LinearLayout>
 
@@ -192,6 +208,7 @@
                     android:id="@+id/user_lbl_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="56dp"
                     android:layout_marginLeft="56dp"
                     android:visibility="gone" />
 
@@ -201,8 +218,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginStart="72dp"
                 android:layout_marginLeft="72dp"
                 android:layout_marginRight="0dp"
+                android:layout_marginEnd="0dp"
                 android:layout_marginTop="8dp"
                 android:alpha="0.2"
                 android:background="@color/primaryTextColorLight" />
@@ -210,6 +229,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical"
                 android:paddingTop="8dp">
@@ -231,6 +251,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginStart="32dp"
                         android:layout_marginLeft="32dp"
                         android:text="@string/hostinfo_profile" />
                 </LinearLayout>
@@ -240,8 +261,11 @@
                     style="@style/WsText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="56dp"
                     android:layout_marginLeft="56dp"
-                    android:text="Dummy about me text" />
+                    tools:maxLines="5"
+                    tools:text="@tools:sample/lorem/random" />
+
 
             </LinearLayout>
 
@@ -249,7 +273,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginStart="72dp"
                 android:layout_marginLeft="72dp"
+                android:layout_marginEnd="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="8dp"
                 android:alpha="0.2"
@@ -258,6 +284,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical"
                 android:paddingBottom="8dp"
@@ -280,6 +307,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginStart="32dp"
                         android:layout_marginLeft="32dp"
                         android:text="@string/hostinfo_details" />
 
@@ -290,16 +318,18 @@
                     style="@style/WsText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="56dp"
                     android:layout_marginLeft="56dp"
-                    android:text="Services this user may offer: " />
+                    tools:text="Services this user may offer: " />
 
                 <TextView
                     android:id="@+id/user_lbl_nearby_services"
                     style="@style/WsText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="56dp"
                     android:layout_marginLeft="56dp"
-                    android:text="Nearby services" />
+                    tools:text="Nearby services" />
 
             </LinearLayout>
 
@@ -307,7 +337,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="8dp"
+                android:layout_marginStart="72dp"
                 android:layout_marginLeft="72dp"
+                android:layout_marginEnd="0dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="8dp"
                 android:alpha="0.2"
@@ -316,6 +348,7 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical"
                 android:paddingBottom="8dp"
@@ -338,17 +371,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginStart="32dp"
                         android:layout_marginLeft="32dp"
-                        android:text="Feedback" />
+                        tools:text="Feedback" />
                 </LinearLayout>
 
-                <fi.bitrite.android.ws.ui.view.FeedbackTable
-                    android:id="@+id/user_tbl_feedback"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/user_lst_feedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="56dp"
                     android:layout_marginLeft="56dp"
-                    android:paddingTop="4dp"
-                    android:shrinkColumns="0" />
+                    android:layout_weight="1"
+                    android:scrollbars="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:stackFromEnd="true"
+                    tools:listitem="@layout/item_feedback" />
 
             </LinearLayout>
         </LinearLayout>

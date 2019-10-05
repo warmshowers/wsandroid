@@ -5,24 +5,20 @@ import android.accounts.AccountManagerCallback;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import android.util.Log;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import fi.bitrite.android.ws.BuildConfig;
 import fi.bitrite.android.ws.WSAndroidApplication;
-import fi.bitrite.android.ws.api.WarmshowersWebservice;
-import fi.bitrite.android.ws.api.response.LoginResponse;
 import fi.bitrite.android.ws.di.AppScope;
-import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.MainActivity;
 import fi.bitrite.android.ws.util.MaybeNull;
 import io.reactivex.Maybe;
@@ -30,10 +26,7 @@ import io.reactivex.MaybeObserver;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
-import retrofit2.Response;
 
 @AppScope
 public class AccountManager {
@@ -44,11 +37,8 @@ public class AccountManager {
     private final static String KEY_USER_ID = "user_id";
     private final static String KEY_CSRF_TOKEN = "csrf_token";
 
-    private final WarmshowersWebservice mGeneralWebservice;
     private final android.accounts.AccountManager mAndroidAccountManager;
-    private final UserRepository.AppUserRepository mAppUserRepository;
 
-    private final ReentrantReadWriteLock mLock = new ReentrantReadWriteLock();
     private final BehaviorSubject<Account[]> mAccounts = BehaviorSubject.create();
     private final BehaviorSubject<MaybeNull<Account>> mCurrentAccount = BehaviorSubject.create();
     private final Observable<Integer> mCurrentUserId;
@@ -57,12 +47,8 @@ public class AccountManager {
     private EventuallyCreateOrAuth mEventuallyCreateOrAuth = null;
 
     @Inject
-    AccountManager(WarmshowersWebservice generalWebservice,
-                   android.accounts.AccountManager androidAccountManager,
-                   UserRepository.AppUserRepository appUserRepository) {
-        mGeneralWebservice = generalWebservice;
+    AccountManager(android.accounts.AccountManager androidAccountManager) {
         mAndroidAccountManager = androidAccountManager;
-        mAppUserRepository = appUserRepository;
 
         mAndroidAccountManager.addOnAccountsUpdatedListener(
                 accounts_unused -> handleAccountUpdate(), null, false);
@@ -94,10 +80,16 @@ public class AccountManager {
     }
 
     private void handleAccountUpdate() {
-        Account[] newAccounts = mAndroidAccountManager.getAccountsByType(BuildConfig.ACCOUNT_TYPE);
+        Account[] newAccounts;
+        synchronized (this) {
+            // Synchronize the access with the code in {@link #updateOrCreateAccount()} that might
+            // trigger this handler before any options of the new account are set.
+            newAccounts = mAndroidAccountManager.getAccountsByType(BuildConfig.ACCOUNT_TYPE);
+        }
+
         // Ensure that we do not consider any accounts without an account userId.
         List<Account> newAccountsFiltered = new LinkedList<>();
-        for(Account account : newAccounts) {
+        for (Account account : newAccounts) {
             int accountUserId = getUserId(account);
             if (accountUserId == UNKNOWN_USER_ID) {
                 // Ignore this account.
@@ -203,12 +195,15 @@ public class AccountManager {
      */
     @Nullable
     public AuthToken peekAuthToken(@NonNull Account account) {
-        return executeWithReadLock(v -> {
-            String authTokenStr = mAndroidAccountManager.peekAuthToken(account, AUTH_TOKEN_TYPE);
-            return authTokenStr == null
-                    ? null
-                    : AuthToken.fromString(authTokenStr);
-        });
+        String authTokenStr = mAndroidAccountManager.peekAuthToken(account, AUTH_TOKEN_TYPE);
+        return authTokenStr == null
+                ? null
+                : AuthToken.fromString(authTokenStr);
+    }
+
+    @Nullable
+    public String getPassword(@NonNull Account account) {
+        return mAndroidAccountManager.getPassword(account);
     }
 
     /**
@@ -238,17 +233,14 @@ public class AccountManager {
                 }
             };
 
-            executeWithReadLock(v -> {
-                if (mMainActivity != null) {
-                    mAndroidAccountManager.getAuthToken(
-                            account, AUTH_TOKEN_TYPE, null, mMainActivity, accountManagerCallback,
-                            null);
-                } else {
-                    mAndroidAccountManager.getAuthToken(
-                            account, AUTH_TOKEN_TYPE, null, true, accountManagerCallback, null);
-                }
-                return null;
-            });
+            if (mMainActivity != null) {
+                mAndroidAccountManager.getAuthToken(
+                        account, AUTH_TOKEN_TYPE, null, mMainActivity, accountManagerCallback,
+                        null);
+            } else {
+                mAndroidAccountManager.getAuthToken(
+                        account, AUTH_TOKEN_TYPE, null, true, accountManagerCallback, null);
+            }
         });
     }
 
@@ -300,99 +292,61 @@ public class AccountManager {
     }
 
     /**
-     * Tries to log the given user in. On success, the account information is put into the Android
-     * account service. Any account with the same username is updated or, if none found, a new one
-     * is created.
-     *
-     * @return The login result
+     * Creates a new account or updates an existing one with the given authData and userId.
+     * The given password is stored along the account.
      */
-    public Observable<LoginResult> login(String username, String password) {
-        return mGeneralWebservice.login(username, password)
-                .subscribeOn(Schedulers.io())
-                .flatMap(response -> {
-                    if (response.isSuccessful()) {
-                        // Stores the account in the repository. With this it is already available
-                        // without the need of any further network accesses.
-                        return mAppUserRepository.save(response.body().user.toUser())
-                                .toSingle(() -> response)
-                                .toObservable();
+    @VisibleForTesting
+    void updateOrCreateAccount(AuthData authData, int userId, @Nullable String password) {
+        // (@link AccountManager#addAccountExplicitly} triggers notifications which in
+        // turn try to access e.g. the userId of that account. We therefore synchronize
+        // access to the AccountManager to avoid that race.
+        synchronized (this) {
+            boolean isExistingAccount =
+                    Arrays.asList(mAndroidAccountManager.getAccountsByType(
+                            BuildConfig.ACCOUNT_TYPE))
+                            .contains(authData.account);
+            if (!isExistingAccount) {
+                // This explicitly does not save any password as it is stored in
+                // plaintext on the device. On rooted devices this is an issue! Instead,
+                // the auth token is stored along the account to avoid re-logins.
+                mAndroidAccountManager.addAccountExplicitly(authData.account, password, null);
+            } else {
+                mAndroidAccountManager.setPassword(authData.account, password);
+            }
 
-                    } else {
-                        return Observable.just(response);
-                    }
-                })
-                .map(response -> {
-                    if (!response.isSuccessful()) {
-                        return new LoginResult(response);
-                    }
-                    LoginResponse loginResponse = response.body();
+            mAndroidAccountManager.setUserData(
+                    authData.account, KEY_USER_ID, Integer.toString(userId));
+            mAndroidAccountManager.setUserData(
+                    authData.account, KEY_CSRF_TOKEN, authData.csrfToken);
+            mAndroidAccountManager.setAuthToken(
+                    authData.account, AUTH_TOKEN_TYPE, authData.authToken.toString());
 
-                    Account account = new Account(username, BuildConfig.ACCOUNT_TYPE);
-
-                    // (@link AccountManager#addAccountExplicitly} triggers notifications which in
-                    // turn try to access e.g. the userId of that account. We therefore synchronize
-                    // access to the AccountManager to avoid that race.
-                    return executeWithWriteLock(v -> {
-                        boolean isExistingAccount =
-                                Arrays.asList(mAndroidAccountManager.getAccountsByType(
-                                        BuildConfig.ACCOUNT_TYPE))
-                                        .contains(account);
-                        if (!isExistingAccount) {
-                            // This explicitly does not save any password as it is stored in
-                            // plaintext on the device. On rooted devices this is an issue! Instead,
-                            // the auth token is stored along the account to avoid re-logins.
-                            mAndroidAccountManager.addAccountExplicitly(account, null, null);
-                        }
-
-                        // Sets the user id.
-                        int userId = loginResponse.user.id;
-                        mAndroidAccountManager.setUserData(
-                                account, KEY_USER_ID, Integer.toString(userId));
-
-                        // Updates the CSRF token.
-                        String csrfToken = loginResponse.csrfToken;
-                        mAndroidAccountManager.setUserData(account, KEY_CSRF_TOKEN, csrfToken);
-
-                        // Fetches the auth token from the login response.
-                        AuthToken authToken =
-                                new AuthToken(loginResponse.sessionName, loginResponse.sessionId);
-                        mAndroidAccountManager.setAuthToken(
-                                account, AUTH_TOKEN_TYPE, authToken.toString());
-
-                        if (isExistingAccount) {
-                            // The account might have been previously filtered due to a missing
-                            // userId. When the data becomes available no update is triggered as the
-                            // account list does not change. Therefore, we trigger the update
-                            // manually.
-                            handleAccountUpdate();
-                        }
-
-                        // Fires the callback.
-                        AuthData authData = new AuthData(account, authToken, csrfToken);
-                        return new LoginResult(response, authData);
-                    });
-                });
+            if (isExistingAccount) {
+                // The account might have been previously filtered due to a missing
+                // userId. When the data becomes available no update is triggered as the
+                // account list does not change. Therefore, we trigger the update
+                // manually.
+                handleAccountUpdate();
+            }
+        }
     }
 
     public int getUserId(@NonNull Account account) {
-        return executeWithReadLock(v -> {
-            // Migration from version <2.0.0.
-            String oldUserIdStr = mAndroidAccountManager.getUserData(account,"userid");
-            if (oldUserIdStr != null) {
-                mAndroidAccountManager.setUserData(account, KEY_USER_ID, oldUserIdStr);
-                mAndroidAccountManager.setUserData(account, "userid", null);
-            }
+        // Migration from version <2.0.0.
+        String oldUserIdStr = mAndroidAccountManager.getUserData(account,"userid");
+        if (oldUserIdStr != null) {
+            mAndroidAccountManager.setUserData(account, KEY_USER_ID, oldUserIdStr);
+            mAndroidAccountManager.setUserData(account, "userid", null);
+        }
 
-            String userIdStr = mAndroidAccountManager.getUserData(account, KEY_USER_ID);
-            return userIdStr != null
-                    ? Integer.parseInt(userIdStr)
-                    : fi.bitrite.android.ws.auth.AccountManager.UNKNOWN_USER_ID;
-        });
+        String userIdStr = mAndroidAccountManager.getUserData(account, KEY_USER_ID);
+        return userIdStr != null
+                ? Integer.parseInt(userIdStr)
+                : fi.bitrite.android.ws.auth.AccountManager.UNKNOWN_USER_ID;
     }
 
     public String getCsrfToken(@NonNull Account account) {
-        return executeWithReadLock(
-                v -> mAndroidAccountManager.getUserData(account, KEY_CSRF_TOKEN));
+        return mAndroidAccountManager.getUserData(account, KEY_CSRF_TOKEN);
     }
 
     /**
@@ -403,74 +357,12 @@ public class AccountManager {
      * @param csrfToken The new token.
      */
     public void updateCsrfToken(@NonNull Account account, @NonNull String csrfToken) {
-        executeWithWriteLock(v -> {
-            mAndroidAccountManager.setUserData(account, KEY_CSRF_TOKEN, csrfToken);
-            return null;
-        });
+        mAndroidAccountManager.setUserData(account, KEY_CSRF_TOKEN, csrfToken);
     }
 
     public void invalidateAuthToken(@NonNull AuthToken authToken) {
-        executeWithWriteLock(v -> {
-            mAndroidAccountManager.invalidateAuthToken(BuildConfig.ACCOUNT_TYPE,
-                    authToken.toString());
-            return null;
-        });
-    }
-
-    public void removeAccount(@NonNull String username) {
-        Account account = new Account(username, BuildConfig.ACCOUNT_TYPE);
-        removeAccount(account);
-    }
-    public void removeAccount(@NonNull Account account) {
-        executeWithWriteLock(v -> {
-            mAndroidAccountManager.removeAccount(account, null, null);
-            return null;
-        });
-    }
-
-    private <R> R executeWithReadLock(Function < Void, R > f) {
-        return executeWithLock(mLock.readLock(), f);
-    }
-    private <R> R executeWithWriteLock(Function<Void, R> f) {
-        return executeWithLock(mLock.writeLock(), f);
-    }
-    private static <R> R executeWithLock(Lock lock, Function<Void, R> f) {
-        try {
-            lock.lock();
-            return f.apply(null);
-        } catch (Exception e) {
-            // Ignore.
-            return null;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public class LoginResult {
-        private final Response<LoginResponse> mResponse;
-        private final AuthData mAuthData;
-
-        LoginResult(Response<LoginResponse> response) {
-            this(response, null);
-        }
-
-        LoginResult(Response<LoginResponse> response, AuthData authData) {
-            mAuthData = authData;
-            mResponse = response;
-        }
-
-        public boolean isSuccessful() {
-            return mResponse.isSuccessful();
-        }
-
-        public Response<LoginResponse> response() {
-            return mResponse;
-        }
-
-        @Nullable
-        public AuthData authData() {
-            return mAuthData;
-        }
+        mAndroidAccountManager.invalidateAuthToken(BuildConfig.ACCOUNT_TYPE,
+                authToken.toString());
     }
 
     class EventuallyCreateOrAuth {

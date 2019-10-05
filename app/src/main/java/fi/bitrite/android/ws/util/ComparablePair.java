@@ -1,6 +1,6 @@
 package fi.bitrite.android.ws.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Pair;
 
 public class ComparablePair<F extends Comparable<? super F>, S extends Comparable<? super S>>

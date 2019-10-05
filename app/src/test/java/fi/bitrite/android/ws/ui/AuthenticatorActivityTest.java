@@ -1,9 +1,8 @@
 package fi.bitrite.android.ws.ui;
 
+import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Intent;
-import android.widget.Button;
-import android.widget.EditText;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,98 +10,140 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.android.controller.ActivityController;
+import org.robolectric.annotation.Config;
 
-import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.auth.AuthToken;
+import fi.bitrite.android.ws.auth.Authenticator;
+import io.reactivex.Observable;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 public class AuthenticatorActivityTest {
 
-    private ActivityController<AuthenticatorActivity> controller;
+    private final static String MOCK_ACCOUNT_TYPE = "mockAccountType";
+    private Intent intent;
     private AuthenticatorActivity authenticator;
 
-    private EditText username;
-    private EditText password;
-    private Button login;
-
-
     @Before
-    public void setUp() throws Exception {
-        authenticator = Robolectric.setupActivity(AuthenticatorActivity.class);
-
-        login = authenticator.findViewById(R.id.auth_btn_login);
-        username = authenticator.findViewById(R.id.auth_txt_username);
-        password = authenticator.findViewById(R.id.auth_txt_password);
+    public void setUp() {
+        intent = new Intent(RuntimeEnvironment.application, AuthenticatorActivity.class);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, MOCK_ACCOUNT_TYPE);
+        authenticator = Robolectric.buildActivity(AuthenticatorActivity.class, intent)
+                .setup()
+                .get();
     }
 
     @Test
-    public void areInputsNotEmpty_empty_returnsEmpty() throws Exception {
-        username.setText("");
-        password.setText("");
+    public void areInputsNotEmpty_empty_returnsEmpty() {
+        authenticator.mTxtUsername.setText("");
+        authenticator.mTxtPassword.setText("");
 
         assertThat(authenticator.areAllInputsNotEmpty()).isFalse();
     }
 
     @Test
-    public void areInputsNotEmpty_notEmpty_returnsNotEmpty() throws Exception {
-        username.setText("username");
-        password.setText("password");
+    public void areInputsNotEmpty_notEmpty_returnsNotEmpty() {
+        authenticator.mTxtUsername.setText("username");
+        authenticator.mTxtPassword.setText("password");
 
         assertThat(authenticator.areAllInputsNotEmpty()).isTrue();
     }
 
     @Test
-    public void areInputsNotEmpty_null_returnsEmpty() throws Exception {
-        username.setText(null);
-        password.setText(null);
+    public void areInputsNotEmpty_null_returnsEmpty() {
+        authenticator.mTxtUsername.setText(null);
+        authenticator.mTxtPassword.setText(null);
 
         assertThat(authenticator.areAllInputsNotEmpty()).isFalse();
     }
 
     @Test
-    public void areInputsNotEmpty_oneEmpty_returnsEmpty() throws Exception {
-        username.setText("username");
-        password.setText("");
+    public void areInputsNotEmpty_oneEmpty_returnsEmpty() {
+        authenticator.mTxtUsername.setText("username");
+        authenticator.mTxtPassword.setText("");
 
         assertThat(authenticator.areAllInputsNotEmpty()).isFalse();
     }
 
     @Test
-    public void loginButtonEnabledState_emptyInputs_isDisabled() throws Exception {
-        username.setText("");
-        password.setText("");
+    public void loginButtonEnabledState_emptyInputs_isDisabled() {
+        authenticator.mTxtUsername.setText("");
+        authenticator.mTxtPassword.setText("");
 
-        assertThat(login.isEnabled()).isFalse();
+        assertThat(authenticator.mBtnLogin.isEnabled()).isFalse();
     }
 
     @Test
-    public void loginButtonEnabledState_nonEmptyInputs_isEnabled() throws Exception {
-        username.setText("username");
-        password.setText("password");
+    public void loginButtonEnabledState_nonEmptyInputs_isEnabled() {
+        authenticator.mTxtUsername.setText("edtUsername");
+        authenticator.mTxtPassword.setText("password");
 
-        assertThat(login.isEnabled()).isTrue();
+        assertThat(authenticator.mBtnLogin.isEnabled()).isTrue();
     }
 
     @Test
-    public void onCreate_withPresetUsername_disablesUsernameInput() throws Exception {
-        final Intent intent =
-                new Intent(RuntimeEnvironment.application, AuthenticatorActivity.class);
+    @Config(sdk = 27)
+    public void onCreate_withPresetUsername_disablesUsernameInput() {
         intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, "username123");
+        authenticator = Robolectric.buildActivity(AuthenticatorActivity.class, intent)
+                .setup()
+                .get();
 
-        final AuthenticatorActivity activity =
-                Robolectric.buildActivity(AuthenticatorActivity.class, intent)
-                        .create()
-                        .visible()
-                        .get();
-
-        final EditText intentActivityUsername = activity.findViewById(R.id.auth_txt_username);
-        final EditText intentActivityPassword = activity.findViewById(R.id.auth_txt_password);
-
-        assertThat(intentActivityUsername.getText().toString()).isEqualTo("username123");
-        assertThat(intentActivityUsername.isEnabled()).isFalse();
-        assertThat(intentActivityPassword.hasFocus()).isTrue();
+        assertThat(authenticator.mTxtUsername.getText().toString()).isEqualTo("username123");
+        assertThat(authenticator.mTxtUsername.isEnabled()).isFalse();
+        assertThat(authenticator.mTxtPassword.hasFocus()).isTrue();
     }
 
+    @Test
+    public void testSuccessfulLogin() {
+        final String username = "username";
+        final String password = "password";
+        final AuthToken authToken = new AuthToken("authTokenName", "authTokenId");
+
+        authenticator.mAuthenticator = mock(fi.bitrite.android.ws.auth.Authenticator.class);
+        when(authenticator.mAuthenticator.login(
+                new Account(username, MOCK_ACCOUNT_TYPE),
+                password,
+                false))
+                .thenReturn(Observable.just(Authenticator.AuthResult.success(authToken)));
+
+        authenticator.mTxtUsername.setText(username);
+        authenticator.mTxtPassword.setText(password);
+        authenticator.mCkbRememberPassword.setChecked(false);
+        authenticator.mBtnLogin.performClick();
+
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+
+        assertThat(authenticator.isFinishing()).isTrue();
+    }
+    
+    @Test
+    public void testFailedLogin() {
+        final String username = "username";
+        final String password = "password";
+
+        authenticator.mAuthenticator = mock(fi.bitrite.android.ws.auth.Authenticator.class);
+        when(authenticator.mAuthenticator.login(
+                new Account(username, MOCK_ACCOUNT_TYPE),
+                password,
+                false))
+                .thenReturn(Observable.just(Authenticator.AuthResult.error(
+                        401,
+                        "[\"Wrong username or password.\"]",
+                        Authenticator.AuthResult.ErrorCause.WrongUsernameOrPassword)));
+
+        authenticator.mTxtUsername.setText(username);
+        authenticator.mTxtPassword.setText(password);
+        authenticator.mCkbRememberPassword.setChecked(false);
+        authenticator.mBtnLogin.performClick();
+
+        Robolectric.flushBackgroundThreadScheduler();
+        Robolectric.flushForegroundThreadScheduler();
+
+        assertThat(authenticator.isFinishing()).isFalse();
+    }
 }

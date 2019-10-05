@@ -99,7 +99,7 @@ public interface WarmshowersAccountWebservice {
     @FormUrlEncoded
     Single<Response<PostFeedbackResponse>> giveFeedback(
             @Field("node[type]") String nodeType /* must be FEEDBACK_NODE_TYPE */,
-            @Field("node[field_member_i_trust][0][uid][uid]") String recipientName,
+            @Field("node[field_member_i_trust][0][uid][uid]") String recipientUsername,
             @Field("node[body]") String body,
             @Field("node[field_guest_or_host][value]") Feedback.Relation relation,
             @Field("node[field_rating][value]") Feedback.Rating rating,

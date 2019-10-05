@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Warmshowers</string>
     <string name="app_version">Versión %1$s</string>
     <string name="authenticating">Autenticando …</string>
     <string name="need_account">No puede ejecutarse sin las credenciales de WarmShowers</string>
     <string name="authentication_failed">Falla de autenticación. Ingresa nuevamente tus credenciales.</string>
     <string name="no_starred_hosts">No has agregado anfitriones a Favoritos (el perfil del anfitrión aparecerá sin conexión a internet). Puedes agregar anfitriones a Favoritos en la página de información del anfitrión presionando el botón «Favoritos».</string>
-    <string name="list_search_hint">Nombre o ciudad </string>
+    <string name="empty_inbox">La bandeja de entrada está vacía.</string>
+    <string name="list_search_hint">Nombre o ciudad</string>
     <string name="no_results">Tu búsqueda no produjo resultados.</string>
     <string name="greeting">¡Hola!</string>
     <string name="enter_credentials">Por favor, ingresa tu nombre de usuario (o email) y contraseña:</string>
-    <string name="view_details">Ver detalles </string>
+    <string name="view_details">Ver detalles</string>
     <string name="star">Favoritos</string>
     <string name="close">Cerrar</string>
     <string name="username_hint">Usuario o Email</string>
@@ -36,7 +36,7 @@
     <string name="account">Cuenta</string>
     <string name="settings">Configuraciones</string>
     <string name="about">Acerca de</string>
-    <string name="last_updated">Última actualización: </string>
+    <string name="last_updated">Última actualización:</string>
     <string name="host_updated">Información de anfitrión actualizada.</string>
     <string name="host_not_available">Este usuario no está disponible actualmente. Puedes contactar al usuario pero no como anfitrión.</string>
     <string name="user_info_in_progress">Recibiendo información del anfitrión …</string>
@@ -46,15 +46,15 @@
     <string name="performing_search">Buscando …</string>
     <string name="io_error">Error de acceso a internet, por favor revisa tu conexión.</string>
     <string name="http_unexpected_failure">Error inesperado al acceder al servidor. Revisa tus credenciales y la conexión a internet.</string>
-    <string name="subject_hint">Ingresa el asunto aquí </string>
+    <string name="subject_hint">Ingresa el asunto aquí</string>
     <string name="message_hint">Escribe el mensaje aquí</string>
     <string name="message_validation_error">Se requieren ambos, el asunto y el mensaje para continuar.</string>
     <string name="sending_message">Enviando mensaje …</string>
     <string name="error_sending_message">No se pudo enviar tu mensaje. Verifica tus credenciales y la conexión a internet.</string>
     <string name="message_sent">Mensaje enviado.</string>
-    <string name="about_1">"Desarrollado por voluntarios de Warmshowers.org. Traductora al español: lejuliaf@gmail.com</string>
-    <string name="about_2">Esta aplicación es de código abierto bajo la licencia Apache 2.0. Contribuye multiplicando nuestro repositorio en github.com/warmshowers/wsandroid.\nReporta problemas allí o en el formulario de contacto de Warmshowers, warmshowers.org/contact</string>
-    <string name="feedback">Comentarios (%1$d)</string>
+    <string name="about_1">Desarrollado por voluntarios de Warmshowers.org. Traductora al español: lejuliaf@gmail.com</string>
+    <string name="about_2">Esta aplicación es de código abierto bajo la licencia Apache 2.0. Contribuye multiplicando nuestro repositorio en github.com/warmshowers/wsandroid.\nReporta problemas allí.</string>
+    <string name="feedback">Comentarios</string>
     <string name="error_retrieving_messages">Ocurrió un error al cargar los mensajes.</string>
     <string name="messages_in_progress">Cargando mensajes …</string>
     <string name="no_unread_messages">No tienes mensajes sin leer.</string>
@@ -63,7 +63,6 @@
         <item quantity="other">Tienes %d mensajes sin leer.</item>
     </plurals>
     <string name="updateMessages">Actualizar</string>
-    <string name="loading_users">Cargando anfitriones …</string>
     <plurals name="users_at_location">
         <item quantity="one">%1$d anfitrion en %2$s</item>
         <item quantity="other">%1$d anfitriones en %2$s</item>
@@ -75,10 +74,10 @@
     </plurals>
     <string name="click_to_view_all"><strong>Clic para verlos todos</strong></string>
     <string name="alert_neutral_button">OK</string>
-    <string name="title_fragment_contact_user">"Mensaje para %1$s"</string>
+    <string name="title_fragment_contact_user">Mensaje para %1$s</string>
     <string name="users_dont_load">Las ubicaciones de los anfitriones no cargan en este nivel de zoom\nZoom in…</string>
     <!-- Distance from current has 2 args, number and units -->
-    <string name="distance_from_current">"%1$d %2$s de la ubicación actual"</string>
+    <string name="distance_from_current">%1$d %2$s de la ubicación actual</string>
     <string name="host_not_currently_available">(No disponible actualmente)</string>
     <string name="host_currently_available">(Disponible para hospedar)</string>
     <string name="parsing_error">Error analizando la respuesta del servidor. Por favor reporta esta búsqueda usando el formulario de contacto de warmshowers.org.</string>
@@ -112,23 +111,23 @@
     <string name="star_this_host">Añadir este anfitrión a Favoritos</string>
     <string name="unstar_this_host">Remover de Favoritos</string>
     <string name="no_account">La información de la cuenta no ha sido configurada. Configuraciones -> Cuenta</string>
-    <string name="http_server_access_failure">Falla al comunicarnos con el servidor, por favor revisa tu conexión de internet </string>
+    <string name="http_server_access_failure">Falla al comunicarnos con el servidor, por favor revisa tu conexión de internet</string>
     <string name="host_info_basic_information">Información básica</string>
-    <string name="json_error">Falla al analizar la cadena json respondida por el servidor </string>
+    <string name="json_error">Falla al analizar la cadena json respondida por el servidor</string>
     <string name="sending_feedback">Enviando comentario</string>
     <string name="feedback_hint">Describe tu experiencia con este usuario.</string>
     <string name="feedback_validation_error">Debes escribir por lo menos 10 palabras en la sección de comentarios.</string>
-    <string name="feedback_sent">Tu comentario para %1$s ha sido enviado </string>
-    <string name="leaving_feedback">"Dejando comentario para %1$s"</string>
+    <string name="feedback_sent">Tu comentario para %1$s ha sido enviado</string>
+    <string name="leaving_feedback">Dejando comentario para %1$s</string>
     <string name="feedback_how_we_met_prompt">¿Cómo conociste a este miembro? Fue:</string>
     <string name="feedback_date_we_met">Fecha en que nos conocimos:</string>
-    <string name="feedback_send">Enviar comentario </string>
+    <string name="feedback_send">Enviar comentario</string>
     <string name="lbl_feedback_overall_experience">¿Cómo fue tu experiencia general con %1$s?</string>
     <string name="feedback_how_we_met_error">Debes seleccionar cómo conociste a este usuario.</string>
     <string name="feedback_overall_experience_error">Debes escoger un valor para la experiencia general con este usuario</string>
     <string name="embedded_browser_warning">Has salido de la aplicación usando un navegador para ver Warmshowers.org. Usa el botón “Regresar” para volver a la aplicación.</string>
     <string name="not_connected_to_network">No estás conectado a la red actualmente.</string>
-    <string name="title_fragment_user">Perfil de usuario </string>
+    <string name="title_fragment_user">Perfil de usuario</string>
     <string name="user_service_shower">Ducha</string>
     <string name="user_services_food">Comida</string>
     <string name="user_services_bed">Sitio para dormir</string>
@@ -146,7 +145,7 @@
     <string name="contact_host">Contactar a este miembro</string>
     <string name="search_user_summary">Miembro desde hace %1$s, última actividad %2$s</string>
     <string name="user_limitations">Nº máximo de huéspedes %1$d, Idiomas %2$s</string>
-    <string name="favorite_host">Agregar Anfitrión a Favoritos</string>
+    <string name="favorite_user">Agregar Anfitrión a Favoritos</string>
     <string name="no_feedback_yet">Sin comentarios aún</string>
     <string name="mobile_phone_abbrev">Teléfono Móvil: %1$s</string>
     <string name="home_phone_abbrev">Casa: %1$s</string>
@@ -161,7 +160,7 @@
     <string name="current_login_status">Has iniciado sesión como %1$s</string>
     <string name="title_fragment_about">Sobre Warmshowers</string>
     <string name="open_source_licenses">Licencias de Código Abierto</string>
-    <string name="title_fragment_feedback">Dejando Comentario </string>
+    <string name="title_fragment_feedback">Dejando Comentario</string>
 
     <!-- new strings from 1.5.0beta5+ -->
     <string name="login_logout">Cerrar sesión en este dispositivo</string>
@@ -173,8 +172,12 @@
     <!-- new strings from 2.0 -->
     <string name="feedback_relation_host">Anfitrión</string>
     <string name="feedback_relation_guest">Huesped</string>
-    <string name="feedback_relation_met_while_traveling">Viajando</string>
+    <string name="feedback_relation_met_while_traveling">Conocieron mientras viajaban</string>
     <string name="feedback_relation_other">Otro</string>
+    <string name="feedback_relation_long_host">%1$s estaba hospedando %2$s</string>
+    <string name="feedback_relation_long_guest">%1$s fue un invitado de %2$s</string>
+    <string name="feedback_relation_long_met_while_traveling">%1$s y %2$s se conocieron mientras viajaba</string>
+    <string name="feedback_relation_long_other">Otro, %3$s</string>
 
     <string name="feedback_rating_positive">Positiva</string>
     <string name="feedback_rating_neutral">Neutral</string>
@@ -191,7 +194,9 @@
     <string name="title_fragment_messages">Mensajes</string>
     <string name="title_fragment_settings">Configuraciones</string>
     <string name="title_fragment_users">Anfitrións</string>
+    <string name="title_fragment_filter_list">Host Filters</string>
 
+    <string name="remember_password">¿Guardar la contraseña?</string>
     <string name="button_text_forgot_password">¿Has olvidado la contraseña?</string>
     <string name="url_target_forgot_password">https://es.warmshowers.org/user/password</string>
 
@@ -208,8 +213,13 @@
     </plurals>
     <string name="prefs_message_refresh_interval_min_summary_disabled">Desactivado</string>
     <string name="enabled">Activado</string>
+
     <string name="prefs_message_refresh_interval_min_dialog_message">Especifique con qué frecuencia deben actualizarse los mensajes desde el servidor.</string>
     <string name="prefs_message_refresh_interval_min_hint">Intervalo (minutos)</string>
+
+    <string name="prefs_data_saver_mode_title">Modo de ahorro de datos</string>
+    <string name="prefs_data_saver_mode_summary">Evitar la carga de datos de información intensiva como imágenes.</string>
+
     <string name="prefscat_dev_title">Parámetros de desarrollo</string>
     <string name="prefs_dev_simulate_no_network_title">Simular Sin Servicio</string>
     <string name="message_mark_read">Marcar como leído</string>
@@ -223,4 +233,19 @@
     <string name="feedback_error_sending">El comentario no fue enviado.</string>
 
     <string name="unknown_location">Ubicación desconocida</string>
+
+    <string name="button_clear_filters">Restablecer filtros</string>
+    <string name="filter_last_access">Última actividad</string>
+    <string name="filter_diff_today">Hoy</string>
+    <string name="filter_diff_this_week">Semana pasada</string>
+    <string name="filter_diff_this_month">Mes pasado</string>
+    <string name="filter_diff_this_year">Año pasado</string>
+    <string name="filter_diff_any">Algún día</string>
+    <string name="filter_diff_short_today">1 d.</string>
+    <string name="filter_diff_short_this_week">1 s.</string>
+    <string name="filter_diff_short_this_month">1 m.</string>
+    <string name="filter_diff_short_this_year">1 a.</string>
+    <string name="filter_diff_short_any">&gt; 1 a.</string>
+
+    <string name="invalid_api_key">El servidor rechazó la solicitud. Por favor actualice la aplicación.</string>
 </resources>

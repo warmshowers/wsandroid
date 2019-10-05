@@ -2,14 +2,11 @@ package fi.bitrite.android.ws.ui.widget;
 
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import fi.bitrite.android.ws.model.SimpleUser;
+import fi.bitrite.android.ws.util.WSGlide;
 
 public class UserCircleImageView extends CircleImageView {
     private String mUrl;
@@ -74,9 +72,7 @@ public class UserCircleImageView extends CircleImageView {
             url = null;
             StringBuilder labelSB = new StringBuilder();
             for (SimpleUser user : users) {
-                final String name = TextUtils.isEmpty(user.fullname)
-                        ? user.name
-                        : user.fullname;
+                final String name = user.getName();
                 colorHash ^= name.hashCode();
 
                 if (labelSB.length() < 2) {
@@ -95,29 +91,15 @@ public class UserCircleImageView extends CircleImageView {
             color = colors.get(Math.abs(colorHash) % colors.size());
         }
 
+        // Cancel any previous calls.
+        WSGlide.with(getContext()).clear(this);
         setImageDrawable(null);
         mUrl = url;
         if (!TextUtils.isEmpty(url)) {
-            final String imageUrl = url;
-            Picasso.with(getContext()).load(url).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    // Check that we are still interested in this image (the user might have changed
-                    // in the meantime).
-                    if (TextUtils.equals(imageUrl, mUrl)) {
-                        setImageBitmap(bitmap);
-                    }
-                }
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-                    // TODO(saemy): Error handling.
-                    setImageDrawable(errorDrawable);
-                }
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    setImageDrawable(placeHolderDrawable);
-                }
-            });
+            WSGlide.with(getContext())
+                    .load(url)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(this);
         }
         setText(text);
         setCircleBackgroundColor(color);

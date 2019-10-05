@@ -1,9 +1,9 @@
 package fi.bitrite.android.ws.ui.preference;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.RestrictTo;
-import android.support.v7.preference.PreferenceDialogFragmentCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.RestrictTo;
+import androidx.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;

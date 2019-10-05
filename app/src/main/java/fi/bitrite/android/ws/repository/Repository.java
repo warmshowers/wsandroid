@@ -1,8 +1,5 @@
 package fi.bitrite.android.ws.repository;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
@@ -195,7 +194,36 @@ public abstract class Repository<T> {
         }
     }
 
+    /**
+     * Next: `beginPutMany()` and `endPutMany()` can be used to disable `notifyAllChanged()` if
+     * multiple entries are put one after another.
+     * `notifyAllChanged()` is called in `endPutMany()` if there was a call to it that was
+     * suppressed.
+     */
+    private int mIsPuttingManyCounter = 0;
+    private boolean mShouldNotifyAllChanged = false;
+    void beginPutMany() {
+        synchronized (this) {
+            ++mIsPuttingManyCounter;
+        }
+    }
+    void endPutMany() {
+        synchronized (this) {
+            --mIsPuttingManyCounter;
+            if (mIsPuttingManyCounter == 0 && mShouldNotifyAllChanged) {
+                mShouldNotifyAllChanged = false;
+                notifyAllChanged();
+            }
+        }
+    }
+
     private void notifyAllChanged() {
+        synchronized (this) {
+            if (mIsPuttingManyCounter > 0) {
+                mShouldNotifyAllChanged = true;
+                return;
+            }
+        }
         List<Observable<Resource<T>>> all = new ArrayList<>(mCache.size());
         for (CacheEntry cacheEntry : mCache.values()) {
             all.add(cacheEntry.data);

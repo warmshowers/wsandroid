@@ -1,8 +1,8 @@
 package fi.bitrite.android.ws.di.account;
 
 import android.accounts.Account;
+import androidx.annotation.Nullable;
 
-import javax.annotation.Nullable;
 import javax.inject.Named;
 
 import dagger.BindsInstance;
@@ -15,7 +15,7 @@ import io.reactivex.disposables.CompositeDisposable;
 @AccountScope
 @Subcomponent(modules = {
         AccountModule.class,
-        ActivitesModule.class,
+        ActivitiesModule.class,
         AndroidInjectionModule.class,
         WebserviceModule.class,
 })

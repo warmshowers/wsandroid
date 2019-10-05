@@ -1,0 +1,120 @@
+{
+  "sessid": "newAuthTokenId",
+  "session_name": "SSESStest",
+  "token": "newCsrfToken",
+  "user": {
+    "uid": "${userId}",
+    "name": "test",
+    "theme": "",
+    "signature_format": "8",
+    "created": "1514000000",
+    "access": "1544000000",
+    "login": 1544000000,
+    "status": "1",
+    "timezone": "Europe/Rome",
+    "language": "en-working",
+    "picture": {
+      "fid": "312914",
+      "uid": "${userId}",
+      "filename": "picture-${userId}-1524306870.gif",
+      "uri": "s3://pictures/picture-${userId}-1524306870.gif",
+      "filemime": "image/gif",
+      "filesize": "39569",
+      "status": "1",
+      "timestamp": "1524306870",
+      "url": "https://warmshowers-files.s3-us-west-2.amazonaws.com/pictures/picture-${userId}-1524306870.gif"
+    },
+    "field_profile_images": [],
+    "field_food": [],
+    "field_hope_use": [],
+    "field_host_amenities": [],
+    "field_how_hear": [],
+    "field_how_tour": [],
+    "field_languages_speak": [],
+    "field_local_services": [],
+    "field_lodging": [],
+    "field_networking": {
+      "und": [
+        {
+          "value": "no"
+        }
+      ]
+    },
+    "field_other_logistics": [],
+    "field_preferred_notice": [],
+    "field_type_member": {
+      "und": [
+        {
+          "value": "other"
+        }
+      ]
+    },
+    "field_why_host": [],
+    "field_why_tour": [],
+    "field_name": [],
+    "field_phone": [],
+    "field_email": [],
+    "field_blocked_by": [],
+    "field_reason_for_blocking": [],
+    "field_date_blocked_popup": [],
+    "fullname": "Test account",
+    "notcurrentlyavailable": "1",
+    "fax_number": "",
+    "mobilephone": "",
+    "workphone": "",
+    "homephone": "",
+    "preferred_notice": null,
+    "maxcyclists": "1",
+    "storage": null,
+    "motel": null,
+    "campground": null,
+    "bikeshop": null,
+    "comments": "This is just a test account, please do not send any requests.",
+    "shower": null,
+    "kitchenuse": null,
+    "lawnspace": null,
+    "sag": null,
+    "bed": null,
+    "laundry": null,
+    "food": null,
+    "languagesspoken": null,
+    "URL": "",
+    "becomeavailable": "2555000000",
+    "set_unavailable_timestamp": "0",
+    "set_available_timestamp": "0",
+    "last_unavailability_pester": "0",
+    "hide_donation_status": "0",
+    "email_opt_out": "1",
+    "street": "",
+    "additional": "",
+    "city": "Zurich",
+    "province": "zh",
+    "postal_code": "",
+    "country": "ch",
+    "latitude": "47.000000",
+    "longitude": "7.000000",
+    "source": "5",
+    "password_history": [
+      {
+        "uid": "${userId}",
+        "pass": "$S$DvesDm.YmFzAsadu20eeinweisdfbweusdwg/T4923jsdvwevsdj",
+        "created": "1517100000"
+      },
+      {
+        "uid": "${userId}",
+        "pass": "$S$DcTChcisad02kweEsoidNDSFadsoifnwERlasdS.Lweidbwwwesb",
+        "created": "1514300000"
+      }
+    ],
+    "comment_notify_settings": {
+      "uid": "${userId}",
+      "node_notify": "0",
+      "comment_notify": "1"
+    },
+    "privatemsg_disabled": false,
+    "profile_image_mobile_profile_photo_std": "https://warmshowers-files.s3-us-west-2.amazonaws.com/styles/mobile_profile_photo_std/s3/pictures/picture-${userId}-1524306870.gif?itok=8rhNxCh7",
+    "profile_image_profile_picture": "https://warmshowers-files.s3-us-west-2.amazonaws.com/styles/profile_picture/s3/pictures/picture-${userId}-1524306870.gif?itok=Y1A8fpgz",
+    "profile_image_mobile_photo_456": "https://www.warmshowers.org/s3/files/styles/mobile_photo_456/s3/pictures/picture-${userId}-1524306870.gif?itok=dXrVN3bR",
+    "profile_image_map_infoWindow": "https://www.warmshowers.org/s3/files/styles/map_infoWindow/s3/pictures/picture-${userId}-1524306870.gif?itok=wJ71lKMK"
+  }
+}

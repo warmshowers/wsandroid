@@ -1,12 +1,12 @@
 package fi.bitrite.android.ws.repository;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import fi.bitrite.android.ws.api.WarmshowersAccountWebservice;
 import fi.bitrite.android.ws.api.model.ApiFeedback;
 import fi.bitrite.android.ws.di.AppScope;
@@ -88,9 +88,9 @@ public class FeedbackRepository {
         Observable<LoadResult<List<Feedback>>> loadFromDb(int recipientId) {
             return Single.<LoadResult<List<Feedback>>>create(emitter -> {
                 List<Feedback> feedbacks = mFeedbackDao.loadByRecipient(recipientId);
-                if (feedbacks == null) {
-                    feedbacks = new ArrayList<>();
-                }
+                feedbacks = feedbacks == null
+                        ? Collections.emptyList()
+                        : Collections.unmodifiableList(feedbacks);
                 emitter.onSuccess(new LoadResult<>(LoadResult.Source.DB, feedbacks));
             }).toObservable();
         }
@@ -107,10 +107,11 @@ public class FeedbackRepository {
                             for (ApiFeedback apiFeedback : apiFeedbacks) {
                                 feedbacks.add(apiFeedback.toFeedback());
                             }
+                            feedbacks = Collections.unmodifiableList(feedbacks);
 
                             return new LoadResult<>(LoadResult.Source.NETWORK, feedbacks);
                         } else {
-                            throw new Error(apiFeedbackResponse.errorBody().toString());
+                            throw new Error(apiFeedbackResponse.errorBody().string());
                         }
                     });
         }
@@ -123,23 +124,14 @@ public class FeedbackRepository {
                     .map(userResource -> userResource.data)
                     .firstOrError()
                     .flatMap(recipient -> mLastAccountFeedbackRepository.mWebservice.giveFeedback(
-                            WarmshowersAccountWebservice.FEEDBACK_NODE_TYPE, recipient.name,
+                            WarmshowersAccountWebservice.FEEDBACK_NODE_TYPE, recipient.username,
                             body, relation, rating, yearWeMet, monthWeMet))
                     .flatMapCompletable(apiResponse -> {
                         if (!apiResponse.isSuccessful()) {
-                            throw new Error(apiResponse.errorBody().toString());
+                            throw new Error(apiResponse.errorBody().string());
                         }
 
-                        List<Feedback> feedbacks = getRaw(recipientId);
-                        if (feedbacks != null) {
-                            // We reload the feedbacks for this recipient as we already have them in
-                            // our cache.
-                            reload(recipientId, feedbacks, ShouldSaveInDb.IF_ALREADY_IN_DB)
-                                    .firstOrError()
-                                    .doOnError(t -> {})
-                                    .subscribe();
-                        }
-
+                        markAsOld(recipientId);
                         return Completable.complete();
                     });
         }

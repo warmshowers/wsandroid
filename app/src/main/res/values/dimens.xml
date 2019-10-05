@@ -5,8 +5,7 @@
 
     <dimen name="message_bubble_margin_big">72dp</dimen>
     <dimen name="message_bubble_margin_small">12dp</dimen>
-    <dimen name="message_bubble_padding_big">12dp</dimen>
-    <dimen name="message_bubble_padding_small">8dp</dimen>
+    <dimen name="message_bubble_padding">12dp</dimen>
 
     <dimen name="minimum_height_touch_target">48dp</dimen>
 

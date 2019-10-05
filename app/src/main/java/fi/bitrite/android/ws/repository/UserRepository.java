@@ -1,7 +1,5 @@
 package fi.bitrite.android.ws.repository;
 
-import android.support.annotation.NonNull;
-
 import org.osmdroid.util.BoundingBox;
 
 import java.util.ArrayList;
@@ -10,6 +8,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import fi.bitrite.android.ws.api.WarmshowersAccountWebservice;
 import fi.bitrite.android.ws.api.model.ApiUser;
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
@@ -125,7 +124,7 @@ public class UserRepository {
                     .subscribeOn(Schedulers.io())
                     .map(apiUserResponse -> {
                         if (!apiUserResponse.isSuccessful()) {
-                            throw new Error(apiUserResponse.errorBody().toString());
+                            throw new Error(apiUserResponse.errorBody().string());
                         }
 
                         return new LoadResult<>(
@@ -141,14 +140,20 @@ public class UserRepository {
                     .subscribeOn(Schedulers.io())
                     .map(apiResponse -> {
                         if (!apiResponse.isSuccessful()) {
-                            throw new Error(apiResponse.errorBody().toString());
+                            throw new Error(apiResponse.errorBody().string());
                         }
 
                         Collection<ApiUser> apiUsers = apiResponse.body().users.values();
                         List<Integer> userIds = new ArrayList<>(apiUsers.size());
-                        for (ApiUser apiUser : apiUsers) {
-                            put(apiUser.id, Resource.success(apiUser.toUser()), Freshness.FRESH);
-                            userIds.add(apiUser.id);
+                        beginPutMany();
+                        try {
+                            for (ApiUser apiUser : apiUsers) {
+                                put(apiUser.id, Resource.success(apiUser.toUser()),
+                                        Freshness.FRESH);
+                                userIds.add(apiUser.id);
+                            }
+                        } finally {
+                            endPutMany();
                         }
 
                         return userIds;
@@ -170,7 +175,7 @@ public class UserRepository {
                     .subscribeOn(Schedulers.io())
                     .map(apiResponse -> {
                         if (!apiResponse.isSuccessful()) {
-                            throw new Error(apiResponse.errorBody().toString());
+                            throw new Error(apiResponse.errorBody().string());
                         }
 
                         return apiResponse.body().users;

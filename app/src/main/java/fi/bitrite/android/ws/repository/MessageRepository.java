@@ -2,9 +2,6 @@ package fi.bitrite.android.ws.repository;
 
 
 import android.annotation.SuppressLint;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -21,6 +18,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.WarmshowersAccountWebservice;
 import fi.bitrite.android.ws.api.response.MessageThreadListResponse;
@@ -36,6 +36,7 @@ import io.reactivex.Completable;
 import io.reactivex.CompletableSource;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -64,12 +65,19 @@ public class MessageRepository extends Repository<MessageThread> {
         mWebservice = webservice;
 
         // Initializes the repository by loading the threads from the db.
-        Completable.complete().observeOn(Schedulers.io()).subscribe(() -> {
-            List<MessageThread> threads = mMessageDao.loadAll();
-            for (MessageThread thread : threads) {
-                put(thread.id, Resource.loading(thread), Freshness.FRESH);
-            }
-        });
+        Disposable unused = Completable.complete()
+                .observeOn(Schedulers.io())
+                .subscribe(() -> {
+                    List<MessageThread> threads = mMessageDao.loadAll();
+                    beginPutMany();
+                    try {
+                        for (MessageThread thread : threads) {
+                            put(thread.id, Resource.loading(thread), Freshness.FRESH);
+                        }
+                    } finally {
+                        endPutMany();
+                    }
+                });
     }
 
     // Makes it public.
@@ -88,15 +96,15 @@ public class MessageRepository extends Repository<MessageThread> {
         return mWebservice.fetchMessageThreads()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .map(apiResponse -> {
+                .flatMapCompletable(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
-                        throw new Error(apiResponse.errorBody().toString());
+                        throw new Error(apiResponse.errorBody().string());
                     }
 
                     MessageThreadListResponse responseBody = apiResponse.body();
                     processMessageThreadsUpdate(responseBody.messageThreads);
-                    return 0; // Just return something
-                }).ignoreElements();
+                    return Completable.complete();
+                });
     }
 
     /**
@@ -122,7 +130,7 @@ public class MessageRepository extends Repository<MessageThread> {
                     .filter(response -> {
                         // Throwing errors is not allowed in onSuccess().
                         if (!response.isSuccessful()) {
-                            throw new Exception(response.errorBody().toString());
+                            throw new Exception(response.errorBody().string());
                         } else if (!response.body().isSuccessful) {
                             throw new Exception("Retreived an unsuccessful response.");
                         }
@@ -165,6 +173,11 @@ public class MessageRepository extends Repository<MessageThread> {
         }).subscribeOn(Schedulers.io());
     }
     public Completable sendMessage(int threadId, String body) {
+        // Format the message as if it was sent from the website.
+        body = "<p>" + body + "</p>";
+        body = body.replace("\n", "<br>");
+        String finalBody = body;
+
         return Completable.create(emitter -> {
             // Creates and saves a new message.
             MessageThread thread = getRaw(threadId);
@@ -182,7 +195,8 @@ public class MessageRepository extends Repository<MessageThread> {
             // thread to make it distinguishable when it is compared to stored instances (which end
             // up to be the same instance in case we do no clone). We also set the lastUpdated field
             // to now.
-            Message message = new Message(id, threadId, authorId, new Date(), body, false, false);
+            Message message = new Message(id, threadId, authorId, new Date(), finalBody, false,
+                    false);
             List<Message> messages = new ArrayList<>(thread.messages);
             messages.add(message);
 
@@ -204,11 +218,31 @@ public class MessageRepository extends Repository<MessageThread> {
         }).subscribeOn(Schedulers.io());
     }
 
-    public Completable markThreadAsUnread(int threadId) {
-        return setThreadReadStatus(threadId, false);
+    /**
+     * Mark the given thread as "noticed" so that notifications are no longer to be shown.
+     */
+    public void markThreadAsNoticed(MessageThread thread) {
+        if (!thread.hasNewMessages()) {
+            // All done already.
+            return;
+        }
+
+        // We mark all the new messages as seen.
+        List<Message> newMessages = new ArrayList<>(thread.messages.size());
+        for (Message message : thread.messages) {
+            newMessages.add(message.cloneForIsNew(false));
+        }
+
+        thread = new MessageThread(thread.id, thread.subject, thread.started, thread.isRead,
+                thread.participantIds, newMessages, thread.lastUpdated);
+        save(thread.id, thread);
     }
-    public Completable markThreadAsRead(int threadId) {
-        return setThreadReadStatus(threadId, true);
+
+    public Completable markThreadAsUnread(MessageThread thread) {
+        return setThreadReadStatus(thread, false);
+    }
+    public Completable markThreadAsRead(MessageThread thread) {
+        return setThreadReadStatus(thread, true);
     }
 
     /**
@@ -222,12 +256,8 @@ public class MessageRepository extends Repository<MessageThread> {
      * TODO(saemy): Test this.
      * TODO(saemy): Listen to network changes.
      */
-    private Completable setThreadReadStatus(int threadId, boolean isRead) {
+    private Completable setThreadReadStatus(final MessageThread thread, boolean isRead) {
         return Completable.create(emitter -> {
-            MessageThread thread = getRaw(threadId);
-            if (thread == null) {
-                throw new Exception("The thread must already be in the repository.");
-            }
             if (thread.isRead() == isRead) {
                 emitter.onComplete();
                 return;
@@ -235,7 +265,7 @@ public class MessageRepository extends Repository<MessageThread> {
 
             List<Message> newMessages;
             if (isRead) {
-                // We mark all the new messages as read.
+                // We mark all the new messages as noticed.
                 newMessages = new ArrayList<>(thread.messages.size());
                 for (Message message : thread.messages) {
                     newMessages.add(message.cloneForIsNew(false));
@@ -244,13 +274,13 @@ public class MessageRepository extends Repository<MessageThread> {
                 newMessages = thread.messages;
             }
 
-            thread = new MessageThread(thread.id, thread.subject, thread.started,
+            MessageThread newThread = new MessageThread(thread.id, thread.subject, thread.started,
                     new Pushable<>(isRead, false), thread.participantIds,
                     newMessages, thread.lastUpdated);
 
-            save(thread.id, thread);
+            save(newThread.id, newThread);
 
-            setRemoteThreadReadStatus(threadId, isRead)
+            setRemoteThreadReadStatus(thread.id, isRead)
                     .subscribe(emitter::onComplete, emitter::onError);
         });
     }
@@ -292,7 +322,7 @@ public class MessageRepository extends Repository<MessageThread> {
                 .subscribeOn(Schedulers.io())
                 .flatMap(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
-                        throw new Error(apiResponse.errorBody().toString());
+                        throw new Error(apiResponse.errorBody().string());
                     }
 
                     MessageThreadResponse apiThread = apiResponse.body();
@@ -462,7 +492,7 @@ public class MessageRepository extends Repository<MessageThread> {
         for (Message message : thread.messages) {
             if (!message.isPushed) {
                 // Sends the message.
-                completables.add(sendMessageToServerRx(thread, message, false));
+                completables.add(sendMessageToServerRx(thread, message));
             }
         }
 
@@ -480,8 +510,7 @@ public class MessageRepository extends Repository<MessageThread> {
     }
 
     @WorkerThread
-    private Completable sendMessageToServerRx(MessageThread thread, Message message,
-                                              boolean reloadThread) {
+    private Completable sendMessageToServerRx(MessageThread thread, Message message) {
         return Completable.create(emitter -> {
             ComparablePair<Integer, Integer> syncingKey =
                     new ComparablePair<>(thread.id, message.id);
@@ -511,11 +540,11 @@ public class MessageRepository extends Repository<MessageThread> {
                 return;
             }
 
-            mWebservice.sendMessage(thread.id, message.rawBody)
+            Disposable ignore = mWebservice.sendMessage(thread.id, message.strippedRawBody)
                     .filter(response -> {
                         // Throwing errors is not allowed in onSuccess().
                         if (!response.isSuccessful()) {
-                            throw new Exception(response.errorBody().toString());
+                            throw new Exception(response.errorBody().string());
                         } else if (!response.body().isSuccessful) {
                             throw new Exception("Retreived an unsuccessful response.");
                         }
@@ -524,17 +553,17 @@ public class MessageRepository extends Repository<MessageThread> {
                     .subscribe(response -> {
                         // Sending the message was successful.
                         // We mark the temporary db message as pushed.
+                        // Clone the thread s.t. we do not get any ConcurrentModificationException
+                        // when iterating `thread.messages` at the same time.
                         Message newMessage = message.cloneForIsPushed(true);
-                        Collections.replaceAll(thread.messages, message, newMessage);
-                        save(thread.id, thread);
+                        List<Message> newMessages = new ArrayList<>(thread.messages);
+                        Collections.replaceAll(newMessages, message, newMessage);
+                        MessageThread newThread = new MessageThread(
+                                thread.id, thread.subject, thread.started, thread.isRead,
+                                thread.participantIds, newMessages, thread.lastUpdated);
+                        save(thread.id, newThread);
 
                         mSyncingMessages.remove(syncingKey);
-
-                        if (reloadThread) {
-                            // Reloads the thread. Eventually, when the call is successful, all the
-                            // temporary messages that are pushed to the server are deleted.
-                            reloadThread(thread.id, thread);
-                        }
 
                         emitter.onComplete();
                     }, throwable -> {

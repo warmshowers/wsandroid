@@ -1,10 +1,6 @@
 package fi.bitrite.android.ws.ui;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +9,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -68,11 +70,6 @@ public class MessageThreadFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_message_thread, container, false);
         ButterKnife.bind(this, view);
 
-        // Marks the thread as read.
-        mMessageRepository.markThreadAsRead(mThreadId)
-                .onErrorComplete() // TODO(saemy): Error handling.
-                .subscribe();
-
         mMessageListAdapter = new MessageListAdapter(mLoggedInUserHelper, mUserRepository);
         mLstMessage.setAdapter(mMessageListAdapter);
 
@@ -82,8 +79,13 @@ public class MessageThreadFragment extends BaseFragment {
                 .map(resource -> resource.data)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(thread -> {
+                    // Marks the thread as read.
+                    mMessageRepository.markThreadAsRead(thread)
+                            .onErrorComplete() // TODO(saemy): Error handling.
+                            .subscribe();
+
                     // Forwards the messages to the list adapter.
-                    mMessageListAdapter.replaceRx(thread.messages)
+                    mMessageListAdapter.replaceRx(new ArrayList<>(thread.messages))
                             .observeOn(AndroidSchedulers.mainThread())
                             .andThen((CompletableSource) emitter -> {
                                 mLstMessage.scrollToPosition(thread.messages.size() - 1);

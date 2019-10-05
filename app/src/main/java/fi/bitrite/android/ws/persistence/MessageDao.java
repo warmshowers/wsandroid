@@ -3,7 +3,7 @@ package fi.bitrite.android.ws.persistence;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
@@ -125,6 +125,8 @@ public class MessageDao extends Dao {
             deleteParticipantsExcept(db, thread.id, thread.participantIds);
 
             List<Integer> messageIds = new ArrayList<>(thread.messages.size());
+            // FIXME (#311): Got java.util.ConcurrentModificationException, coming from
+            //               MessageRepository.java:278
             for (Message message : thread.messages) {
                 messageIds.add(message.id);
                 saveMessage(db, message);

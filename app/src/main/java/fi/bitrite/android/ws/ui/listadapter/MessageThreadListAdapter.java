@@ -2,7 +2,6 @@ package fi.bitrite.android.ws.ui.listadapter;
 
 import android.annotation.SuppressLint;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;
@@ -147,10 +147,7 @@ public class MessageThreadListAdapter extends
 
                         List<String> names = new ArrayList<>(participants.size());
                         for (User participant : participants.values()) {
-                            // TODO(saemy): Eventually, put accessor performing this null-check into User.
-                            names.add(TextUtils.isEmpty(participant.fullname)
-                                    ? participant.name
-                                    : participant.fullname);
+                            names.add(participant.getName());
                         }
                         mLblParticipants.setText(TextUtils.join(", ", names));
 
@@ -162,7 +159,17 @@ public class MessageThreadListAdapter extends
                 // TODO(saemy): Show oldest unread message?
                 Message newestMessage =
                         Collections.max(thread.messages, MessageListAdapter.COMPARATOR);
-                String body = newestMessage.rawBody.replace('\n', ' ');
+                String body = newestMessage.body.toString();
+
+                // Recursively removes all "\n\n" by "\n". Therefore, "\n\n\n" becomes "\n", too.
+                int lastLength;
+                do {
+                    lastLength = body.length();
+                    body = body.replace("\n\n", "\n");
+                } while (lastLength != body.length());
+
+                // Replaces all remaining newlines by a single space.
+                body = body.trim().replace("\n", " ");
                 mLblPreview.setText(Html.fromHtml(body));
 
                 if (!newestMessage.isPushed) {
@@ -222,8 +229,8 @@ public class MessageThreadListAdapter extends
                 }
 
                 (mThread.isRead()
-                         ? mMessageRepository.markThreadAsUnread(mThread.id)
-                         : mMessageRepository.markThreadAsRead(mThread.id))
+                         ? mMessageRepository.markThreadAsUnread(mThread)
+                         : mMessageRepository.markThreadAsRead(mThread))
                         .onErrorComplete() // TODO(saemy): Error handling.
                         .subscribe();
 

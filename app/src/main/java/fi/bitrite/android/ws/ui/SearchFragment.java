@@ -1,10 +1,10 @@
 package fi.bitrite.android.ws.ui;
 
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -182,7 +182,7 @@ public class SearchFragment extends BaseFragment {
 
         return caLeft != caRight
                 ? caRight - caLeft
-                : left.fullname.compareTo(right.fullname); // TODO(saemy): Something smarter?
+                : left.getName().compareTo(right.getName()); // TODO(saemy): Something smarter?
     };
 
     private static class Decorator implements UserListAdapter.Decorator {

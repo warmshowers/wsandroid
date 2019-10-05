@@ -2,7 +2,7 @@ package fi.bitrite.android.ws.persistence.schema;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import javax.inject.Inject;
 
@@ -13,7 +13,7 @@ import io.reactivex.disposables.Disposable;
 
 @AccountScope
 public class AccountSchemaDefinition extends SchemaDefinition {
-    private final static int VERSION = 3;
+    private final static int VERSION = 4;
 
     @Inject
     AccountSchemaDefinition(AccountMigrations accountMigrations) {

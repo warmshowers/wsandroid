@@ -24,4 +24,8 @@
     <color name="backgroundLightGrey">#EFEFEF</color>
     <color name="textWarning">#B40D12</color>
     <color name="dividerColor">#CCC</color>
+
+    <color name="rating_positive">#009900</color>
+    <color name="rating_neutral">#737373</color>
+    <color name="rating_negative">#CC0000</color>
 </resources>

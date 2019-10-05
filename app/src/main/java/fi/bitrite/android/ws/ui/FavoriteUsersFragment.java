@@ -1,9 +1,9 @@
 package fi.bitrite.android.ws.ui;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -85,7 +85,7 @@ public class FavoriteUsersFragment extends BaseFragment {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             SimpleUser user = mUserListAdapter.getUser(info.position);
 
-            menu.setHeaderTitle(user.fullname);
+            menu.setHeaderTitle(user.getName());
             menu.add(Menu.NONE, CONTEXT_MENU_DELETE, 0, R.string.delete);
         }
     }
