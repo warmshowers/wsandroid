@@ -42,6 +42,13 @@ before_script:
        export WS_PROD_KEYSTORE_FILE="$HOME/warmshowers.jks";
      fi'
 
+  # Sets a dummy API key for builds for PRs from forks as encrypted variables
+  # are not available there.
+  - 'if [ "${TRAVIS_SECURE_ENV_VARS}" != "true" ] && [ -z "$WS_API_KEY" ]; then
+       export WS_API_KEY="dummy_api_key";
+       export WS_API_USER_ID="dummy_api_user_id";
+     fi'
+
   # Sets the NDK path.
   - export ANDROID_NDK_HOME="$ANDROID_HOME/ndk-bundle"
 
