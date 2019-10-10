@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
-import androidx.annotation.VisibleForTesting;
 import android.text.TextUtils;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
+import androidx.annotation.VisibleForTesting;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.ZoomedLocation;
 
@@ -34,7 +34,7 @@ public abstract class BaseSettingsRepository {
     private final String mKeyDevSimulateNoNetwork;
 
     private final String mDefaultDistanceUnit;
-    private final String mDefaultTileSource = TileSourceFactory.DEFAULT_TILE_SOURCE.name();
+    private final String mDefaultTileSource = TileSourceFactory.OpenTopo.name();
     private final int mDefaultMessageRefreshInterval;
     private final boolean mDefaultDataSaverMode;
     private final boolean mDefaultDevSimulateNoNetwork;
