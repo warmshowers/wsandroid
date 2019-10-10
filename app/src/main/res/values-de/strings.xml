@@ -261,5 +261,6 @@
     <string name="filter_diff_short_this_year">1 Jr.</string>
     <string name="filter_diff_short_any">&gt;1 Jr.</string>
 
-    <string name="invalid_api_key">Der Server hat die Anfrage abgewiesen. Bitte aktualisiere die App.</string>
+    <string name="invalid_api_key">Der Server hat die Anfrage abgewiesen. Bitte aktualisiere die App.\n(%1$s)</string>
+    <string name="login_error_account_ip_temp_blocked">Zu viele Loginversuche. Dieses Konto ist zur Zeit gesperrt. Bitte versuche es später noch einmal.</string>
 </resources>

@@ -253,5 +253,6 @@
     <string name="filter_diff_short_this_year">1 a.</string>
     <string name="filter_diff_short_any">&gt; 1 a.</string>
 
-    <string name="invalid_api_key">Le serveur a rejeté la demande. STP mettre à jour l\'application.</string>
+    <string name="invalid_api_key">Le serveur a rejeté la demande. STP mettre à jour l\'application.\n(%1$s)</string>
+    <string name="login_error_account_ip_temp_blocked">Trop de tentatives de connexion. Votre compte est temporairement bloqué. Veuillez réessayer plus tard.</string>
 </resources>

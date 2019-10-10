@@ -6,12 +6,12 @@ import android.accounts.AccountAuthenticatorResponse;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
 import fi.bitrite.android.ws.WSAndroidApplication;
 import fi.bitrite.android.ws.api.WarmshowersWebservice;
 import fi.bitrite.android.ws.api.response.LoginResponse;
@@ -151,14 +151,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
                             .toObservable();
                 })
                 .map(response -> {
-                    boolean isAlreadyLoggedIn = 406 == response.code();
-                    if (isAlreadyLoggedIn) {
-                        // 406; ["Already logged in as xxx."]
-                        // This error can occur if an additional account is added, which in fact
-                        // is already logged in. We just mark the login as successful and
-                        // continue.
-                        return AuthResult.success(mAccountManager.peekAuthToken(account));
-                    } else if (!response.isSuccessful()) {
+                    if (!response.isSuccessful()) {
                         String errorMsgRaw = response.errorBody().string();
                         Log.w(WSAndroidApplication.TAG, String.format(
                                 "Auth failure. Code=%d, Message=%s",
@@ -180,9 +173,23 @@ public class Authenticator extends AbstractAccountAuthenticator {
                                        || errorMsg.equals("HTTP Authorization failure, developer UID user load not found")) {
                                 errorCause = AuthResult.ErrorCause.WrongAPIKey;
                             }
+                        } else if (response.code() == 406) {
+                            // 406: ["Already logged in as xxx."]
+                            // 406: ["Account is temporarily blocked."]
+                            // 406: ["This IP address is temporarily blocked."]
+                            if (errorMsg.startsWith("Already logged in as ")) {
+                                // This error can occur if an additional account is added, which in fact
+                                // is already logged in. We just mark the login as successful and
+                                // continue.
+                                return AuthResult.success(mAccountManager.peekAuthToken(account));
+                            } else if (errorMsg.equals("Account is temporarily blocked.")) {
+                                errorCause = AuthResult.ErrorCause.AccountTemporarilyBlocked;
+                            } else if (errorMsg.equals("This IP address is temporarily blocked.")) {
+                                errorCause = AuthResult.ErrorCause.IpTemporarilyBlocked;
+                            }
                         }
 
-                        return AuthResult.error(response.code(), errorMsgRaw, errorCause);
+                        return AuthResult.error(response.code(), errorMsg, errorCause);
                     }
 
                     // Creates a new or updates an existing account.
@@ -209,6 +216,8 @@ public class Authenticator extends AbstractAccountAuthenticator {
             NoError,
             WrongUsernameOrPassword,
             WrongAPIKey,
+            AccountTemporarilyBlocked,
+            IpTemporarilyBlocked,
             Unknown;
         }
         public final ErrorCause errorCause;

@@ -247,5 +247,6 @@
     <string name="filter_diff_short_this_year">1 a.</string>
     <string name="filter_diff_short_any">&gt; 1 a.</string>
 
-    <string name="invalid_api_key">El servidor rechazó la solicitud. Por favor actualice la aplicación.</string>
+    <string name="invalid_api_key">El servidor rechazó la solicitud. Por favor actualice la aplicación.\n(%1$s)</string>
+    <string name="login_error_account_ip_temp_blocked">Demasiados intentos de inicio de sesión. Su cuenta está temporalmente bloqueada. Por favor, inténtelo de nuevo más tarde.</string>
 </resources>

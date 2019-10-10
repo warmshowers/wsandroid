@@ -271,7 +271,8 @@
     <string name="filter_diff_short_this_year">1y</string>
     <string name="filter_diff_short_any">&gt; 1y</string>
 
-    <string name="invalid_api_key">The server rejected the request. Please update the app.</string>
+    <string name="invalid_api_key">The server rejected the request. Please update the app.\n(%1$s)</string>
+    <string name="login_error_account_ip_temp_blocked">Too many login attempts. Your account is temporarily blocked. Please try again later.</string>
 
     <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
 </resources>

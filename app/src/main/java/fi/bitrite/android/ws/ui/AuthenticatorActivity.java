@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -19,6 +16,8 @@ import android.widget.Toast;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -136,14 +135,35 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
                                 ? result.authResult.errorCause
                                 : Authenticator.AuthResult.ErrorCause.Unknown;
 
-                        @StringRes final int messageId =
-                                errorCause == Authenticator.AuthResult.ErrorCause.WrongUsernameOrPassword
-                                ? R.string.authentication_failed
+                        final String message;
+                        switch (errorCause) {
+                            case WrongUsernameOrPassword:
                                 // Wrong password provided by the user.
-                                : R.string.invalid_api_key;
+                                message = getResources().getString(R.string.authentication_failed);
+                                break;
+
+                            case AccountTemporarilyBlocked:
+                            case IpTemporarilyBlocked:
+                                message = getResources().getString(
+                                        R.string.login_error_account_ip_temp_blocked);
+                                break;
+
+                            case WrongAPIKey:
+                            case Unknown:
                                 // Issues with the API key or the API itself.
-                                // Used to be in case of `statusCode \in {401,404}`.
-                        Toast.makeText(this, messageId, Toast.LENGTH_LONG)
+                                String detailMessage = result.authResult != null
+                                        ? result.authResult.errorMessage
+                                        : "Unknown reason";
+                                message = getResources().getString(
+                                        R.string.invalid_api_key,
+                                        detailMessage);
+                                break;
+
+                            case NoError:
+                            default:
+                                message = "Unexpected error";
+                        }
+                        Toast.makeText(this, message, Toast.LENGTH_LONG)
                                 .show();
                     }
                 });
