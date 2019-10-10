@@ -7,9 +7,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -54,11 +52,14 @@ class OkHttpClientProvider {
             }
             X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
 
-            client.sslSocketFactory(new TLSSocketFactory(), trustManager);
+            SSLContext sslContext = SSLContext.getInstance(TlsVersion.TLS_1_2.javaName());
+            sslContext.init(null, new TrustManager[] { trustManager }, null);
+            client.sslSocketFactory(
+                    new TLSSocketFactory(sslContext.getSocketFactory()), trustManager);
 
             ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                    .tlsVersions(TlsVersion.TLS_1_2).build();
-
+                    .tlsVersions(TlsVersion.TLS_1_2)
+                    .build();
             client.connectionSpecs(Collections.singletonList(cs));
         } catch (Exception exc) {
             Log.e("OkHttpClientProvider", "Error while enabling TLS 1.2", exc);
@@ -68,12 +69,10 @@ class OkHttpClientProvider {
     }
 
     private static class TLSSocketFactory extends SSLSocketFactory {
-        private SSLSocketFactory delegate;
+        private final SSLSocketFactory delegate;
 
-        TLSSocketFactory() throws KeyManagementException, NoSuchAlgorithmException {
-            SSLContext context = SSLContext.getInstance("TLS");
-            context.init(null, null, null);
-            delegate = context.getSocketFactory();
+        TLSSocketFactory(SSLSocketFactory sslSocketFactory) {
+            delegate = sslSocketFactory;
         }
 
         @Override
@@ -117,7 +116,7 @@ class OkHttpClientProvider {
         private Socket enableTLSOnSocket(Socket socket) {
             if (socket instanceof SSLSocket) {
                 ((SSLSocket) socket).setEnabledProtocols(
-                        new String[]{ "TLSv1", "TLSv1.1", "TLSv1.2" });
+                        new String[]{ TlsVersion.TLS_1_2.javaName() });
             }
             return socket;
         }

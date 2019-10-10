@@ -1,7 +1,13 @@
 package fi.bitrite.android.ws;
 
+import android.os.Build;
+
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 
 import java.util.HashMap;
 
@@ -34,6 +40,22 @@ public class WSAndroidApplication extends BaseWSAndroidApplication {
 
     public void onCreate() {
         super.onCreate();
+
+        if (Build.VERSION.SDK_INT <= 20) {
+            // Ensure that the latest security provider is installed on <= Android 4.4 devices to
+            // enable TLS1.2.
+            try {
+                ProviderInstaller.installIfNeeded(this);
+            } catch (GooglePlayServicesRepairableException e) {
+                // Indicates that Google Play services is out of date, disabled, etc.
+                // Prompt the user to install/update/enable Google Play services.
+                GoogleApiAvailability.getInstance()
+                        .showErrorNotification(this, e.getConnectionStatusCode());
+            } catch (GooglePlayServicesNotAvailableException e) {
+                // Ignore.
+            }
+        }
+
 
         // Set automatic activity reports, per http://stackoverflow.com/a/24983778/215713
         GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
