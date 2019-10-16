@@ -39,7 +39,6 @@
     <string name="last_updated">Last updated:</string>
     <string name="host_updated">Host information updated.</string>
     <string name="host_not_available">This member is marked as not currently available. You may still contact the member, but not for hosting.</string>
-    <string name="user_info_in_progress">Retrieving user information …</string>
     <string name="unstar_host">Un-favorite this user?</string>
     <string name="user_starred">Member favorited. You can now access this information offline.</string>
     <string name="user_unstarred">Member un-favorited.</string>

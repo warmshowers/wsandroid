@@ -28,7 +28,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -37,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,7 +49,6 @@ import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.FeedbackRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.FeedbackListAdapter;
-import fi.bitrite.android.ws.ui.util.ProgressDialog;
 import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.WSGlide;
@@ -74,6 +73,7 @@ public class UserFragment extends BaseFragment {
     @Inject FeedbackRepository mFeedbackRepository;
     @Inject UserRepository mUserRepository;
 
+    @BindView(R.id.user_swipe_refresh) SwipeRefreshLayout mSwipeRefresh;
     @BindView(R.id.user_layout_details) LinearLayout mLayoutDetails;
     @BindView(R.id.user_img_photo) ImageView mImgPhoto;
     @BindView(R.id.user_lbl_name) TextView mLblName;
@@ -138,6 +138,8 @@ public class UserFragment extends BaseFragment {
 
         mUserId = arguments.getInt(KEY_USER_ID);
 
+        mSwipeRefresh.setOnRefreshListener(this::reloadUserInformation);
+
         mDbFavoriteStatus = mFavoriteRepository.isFavorite(mUserId);
         mFavorite.onNext(mDbFavoriteStatus);
 
@@ -196,14 +198,13 @@ public class UserFragment extends BaseFragment {
                     mImgFavorite.setColorFilter(isFavorite ? mFavoritedColor : mNonFavoritedColor);
                 }));
 
-        final Disposable progressDisposable = ProgressDialog.create(R.string.user_info_in_progress)
-                .showDelayed(requireActivity(), 100, TimeUnit.MILLISECONDS);
         getResumePauseDisposable().add(mLastUserInfoLoadResult
                 .observeOn(AndroidSchedulers.mainThread())
-                .firstElement()
                 .filter(result -> !result.isHandled)
-                .doOnSuccess(result -> {
+                .doOnNext(result -> {
                     result.isHandled = true;
+
+                    mSwipeRefresh.setRefreshing(false);
 
                     if (result.throwable != null) {
                         HttpErrorHelper.showErrorToast(getContext(), result.throwable);
@@ -212,10 +213,6 @@ public class UserFragment extends BaseFragment {
                         }
                     }
                 })
-
-                // doFinally is also called at disposal time -> we do not need to register
-                // `progressDisposable` with the resumePause disposable.
-                .doFinally(progressDisposable::dispose)
                 .subscribe());
     }
 
@@ -371,6 +368,7 @@ public class UserFragment extends BaseFragment {
     private void loadUserInformation() {
         // Structure for decoupling the user load callback, that is processed upon arrival, from
         // its handler that can only be executed when the app is in the foreground. Callback.
+        mSwipeRefresh.setRefreshing(true);
         UserInfoLoadResult result = new UserInfoLoadResult();
         Disposable unused = Maybe.mergeDelayError(
                 mUserRepository.get(mUserId)
@@ -403,6 +401,12 @@ public class UserFragment extends BaseFragment {
                     mLastUserInfoLoadResult.onNext(result);
                 })
                 .subscribe();
+    }
+
+    private void reloadUserInformation() {
+        mUserRepository.markAsOld(mUserId);
+        mFeedbackRepository.markAsOldForRecipient(mUserId);
+        loadUserInformation();
     }
 
     @Override

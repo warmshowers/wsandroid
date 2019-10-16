@@ -63,6 +63,9 @@ public class UserRepository {
             BoundingBox boundingBox) {
         return getAppUserRepository().searchByLocation(boundingBox);
     }
+    public void markAsOld(int id) {
+        getAppUserRepository().markAsOld(id);
+    }
 
     /**
      * Sets the last webservice in the app-scoped User repository and returns it.

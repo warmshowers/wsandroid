@@ -42,6 +42,9 @@ public class FeedbackRepository {
 
         return getAppFeedbackRepository().get(recipientId, shouldSaveInDb);
     }
+    public void markAsOldForRecipient(int feedbackId) {
+        getAppFeedbackRepository().markAsOld(feedbackId);
+    }
 
     public Completable saveForRecipient(int recipientId, @NonNull List<Feedback> feedbacks) {
         return getAppFeedbackRepository().saveRx(recipientId, feedbacks);

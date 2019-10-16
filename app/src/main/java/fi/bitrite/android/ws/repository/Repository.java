@@ -187,7 +187,7 @@ public abstract class Repository<T> {
         notifyAllChanged();
     }
 
-    void markAsOld(int id) {
+    public void markAsOld(int id) {
         CacheEntry cacheEntry = mCache.get(id);
         if (cacheEntry != null) {
             cacheEntry.freshness = Freshness.OLD;

@@ -39,7 +39,6 @@
     <string name="last_updated">Zuletzt aktualisiert:</string>
     <string name="host_updated">Gastgeber-Informationen aktualisiert.</string>
     <string name="host_not_available">Dieses Mitglied ist als zurzeit nicht verfügbar markiert. Du kannst die Person dennoch kontaktieren, allerdings nicht für Beherbergung.</string>
-    <string name="user_info_in_progress">Information zu dieser Person werden abgerufen …</string>
     <string name="unstar_host">Markierung entfernen?</string>
     <string name="user_starred">Gastgeber als Favorit markiert. Du kannst nun offline auf dessen Kontoinformationen zugreifen.</string>
     <string name="user_unstarred">Gastgeber-Favorisierung entfernt und Informationen vom Gerät entfernt.</string>

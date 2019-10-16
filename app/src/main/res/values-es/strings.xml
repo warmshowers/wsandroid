@@ -39,7 +39,6 @@
     <string name="last_updated">Última actualización:</string>
     <string name="host_updated">Información de anfitrión actualizada.</string>
     <string name="host_not_available">Este usuario no está disponible actualmente. Puedes contactar al usuario pero no como anfitrión.</string>
-    <string name="user_info_in_progress">Recibiendo información del anfitrión …</string>
     <string name="unstar_host">Remover de Favoritos</string>
     <string name="user_starred">Anfitrión en Favoritos. Ahora puedes acceder a la información sin conexión a internet.</string>
     <string name="user_unstarred">La información del anfitrión fue eliminada del dispositivo.</string>
