@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.ui.util;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -8,6 +9,7 @@ import javax.inject.Inject;
 import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
+import fi.bitrite.android.ws.repository.SettingsRepository;
 
 
 /**
@@ -21,13 +23,20 @@ public class UserFilterManager {
 
     private final HashMap<String, UserFilter> mFilters = new HashMap<>();
 
-    @Inject FavoriteRepository mFavoriteRepository;
+    private SettingsRepository mSettingsRepository;
+    private FavoriteRepository mFavoriteRepository;
 
     @Inject
-    UserFilterManager() {
+    UserFilterManager(SettingsRepository settingsRepository, FavoriteRepository favoriteRepository) {
+        mSettingsRepository = settingsRepository;
+        mFavoriteRepository = favoriteRepository;
+
         mFilters.put(RECENT_ACTIVITY_FILTER_KEY, new RecentActivityFilter());
         mFilters.put(CURRENTLY_AVAILABLE_FILTER_KEY, new CurrentlyAvailableFilter());
         mFilters.put(FAVORITE_USER_FILTER_KEY, new FavoriteUserFilter());
+
+        // Restore the filters from the last run.
+        load();
     }
 
     public boolean filterUser(SimpleUser user) {
@@ -51,27 +60,19 @@ public class UserFilterManager {
     public class InvalidFilterException extends RuntimeException { }
 
     public void setFilterActivated(String filterKey, boolean activated) {
-        if (activated) {
-            activateFilter(filterKey);
-        } else {
-            deactivateFilter(filterKey);
+        try {
+            mFilters.get(filterKey).setActive(activated);
+        } catch (NullPointerException e) {
+            throw new InvalidFilterException();
         }
     }
 
     public void activateFilter(String filterKey) {
-        try {
-            mFilters.get(filterKey).activateFilter();
-        } catch (NullPointerException e) {
-            throw new InvalidFilterException();
-        }
+        setFilterActivated(filterKey, true);
     }
 
     public void deactivateFilter(String filterKey) {
-        try {
-            mFilters.get(filterKey).deactivateFilter();
-        } catch (NullPointerException e) {
-            throw new InvalidFilterException();
-        }
+        setFilterActivated(filterKey, false);
     }
 
     public boolean isFilterActive(String filterKey) {
@@ -98,14 +99,48 @@ public class UserFilterManager {
         } // UnsupportedOperationException is passed through
     }
 
+    /**
+     * Loads the previously saved filters.
+     */
+    private void load() {
+        for (Map.Entry<String, UserFilter> entry : mFilters.entrySet()) {
+            final String name = entry.getKey();
+            final UserFilter filter = entry.getValue();
+
+            filter.setActive(mSettingsRepository.isUserFilterActive(name));
+            try {
+                final int defaultValue = filter.getFilterValue();
+                filter.updateFilterValue(
+                        mSettingsRepository.getUserFilterValue(name, defaultValue));
+            } catch (UnsupportedOperationException e) {
+                // Ignore.
+            }
+        }
+    }
+
+    /**
+     * Persists the filters and their values s.t. they can be restored when the app is restarted the
+     * next time.
+     */
+    public void save() {
+        for (Map.Entry<String, UserFilter> entry : mFilters.entrySet()) {
+            final String name = entry.getKey();
+            final UserFilter filter = entry.getValue();
+
+            mSettingsRepository.setUserFilterActive(name, filter.isActive);
+            try {
+                mSettingsRepository.setUserFilterValue(name, filter.getFilterValue());
+            } catch (UnsupportedOperationException e) {
+                // Ignore.
+            }
+        }
+    }
+
     abstract class UserFilter {
         boolean isActive = false;
 
-        void activateFilter() {
-            isActive = true;
-        }
-        void deactivateFilter() {
-            isActive = false;
+        void setActive(boolean isActive) {
+            this.isActive = isActive;
         }
         boolean isActive() {
             return isActive;
