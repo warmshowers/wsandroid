@@ -26,6 +26,8 @@ public abstract class BaseSettingsRepository {
     private final static String KEYSUFFIX_LOCATION_LONGITUDE = "_longitude";
     private final static String KEYSUFFIX_LOCATION_ZOOM = "_zoom";
     private final static String HIDE_CURRENT_LOCATION_BTN = "hide_current_location_button";
+    private final static String KEYPREFIX_USERFILTER_ACTIVE = "userfilter-active-";
+    private final static String KEYPREFIX_USERFILTER_VALUE = "userfilter-value-";
 
     private final String mKeyDistanceUnit;
     private final String mKeyTileSource;
@@ -170,6 +172,31 @@ public abstract class BaseSettingsRepository {
     public boolean getHideLocationButton() {
         return mSharedPreferences.getBoolean(HIDE_CURRENT_LOCATION_BTN, false);
     }
+
+
+    public void setUserFilterActive(String filterName, boolean isActive) {
+        mSharedPreferences
+                .edit()
+                .putBoolean(KEYPREFIX_USERFILTER_ACTIVE + filterName, isActive)
+                .apply();
+    }
+
+    public void setUserFilterValue(String filterName, int value) {
+        mSharedPreferences
+                .edit()
+                .putInt(KEYPREFIX_USERFILTER_VALUE + filterName, value)
+                .apply();
+
+    }
+
+    public boolean isUserFilterActive(String filterName) {
+        return mSharedPreferences.getBoolean(KEYPREFIX_USERFILTER_ACTIVE + filterName, false);
+    }
+
+    public int getUserFilterValue(String filterName, int defaultValue) {
+        return mSharedPreferences.getInt(KEYPREFIX_USERFILTER_VALUE + filterName, defaultValue);
+    }
+
 
     public void registerOnChangeListener(
             SharedPreferences.OnSharedPreferenceChangeListener listener) {
