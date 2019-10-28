@@ -1,12 +1,15 @@
 package fi.bitrite.android.ws.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import org.osmdroid.api.IGeoPoint;
+import org.osmdroid.util.GeoPoint;
 
 import java.util.Date;
 
-public class SimpleUser {
+public class SimpleUser implements Parcelable {
     public static class Picture {
         private final String smallUrl;
         private final String largeUrl;
@@ -94,4 +97,57 @@ public class SimpleUser {
 
         return location.toString();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeInt(id);
+        parcel.writeString(username);
+        parcel.writeString(fullname);
+        parcel.writeString(street);
+        parcel.writeString(city);
+        parcel.writeString(province);
+        parcel.writeString(postalCode);
+        parcel.writeString(countryCode);
+
+        parcel.writeDouble(location.getLatitude());
+        parcel.writeDouble(location.getLongitude());
+
+        parcel.writeInt(isCurrentlyAvailable ? 1 : 0);
+
+        parcel.writeString(profilePicture.smallUrl);
+        parcel.writeString(profilePicture.largeUrl);
+
+        parcel.writeSerializable(created);
+        parcel.writeSerializable(lastAccess);
+    }
+
+    public static final Parcelable.Creator<SimpleUser> CREATOR =
+            new Parcelable.Creator<SimpleUser>() {
+                @Override
+                public SimpleUser createFromParcel(Parcel parcel) {
+                    return new SimpleUser(
+                            parcel.readInt(),
+                            parcel.readString(),
+                            parcel.readString(),
+                            parcel.readString(),
+                            parcel.readString(),
+                            parcel.readString(),
+                            parcel.readString(),
+                            parcel.readString(),
+                            new GeoPoint(parcel.readDouble(), parcel.readDouble()),
+                            parcel.readInt() != 0,
+                            new Picture(parcel.readString(), parcel.readString()),
+                            (Date) parcel.readSerializable(),
+                            (Date) parcel.readSerializable());
+                }
+
+                @Override
+                public SimpleUser[] newArray(int count) {
+                    return new SimpleUser[count];
+                }
+            };
 }

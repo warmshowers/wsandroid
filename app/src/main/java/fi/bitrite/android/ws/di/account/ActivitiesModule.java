@@ -10,6 +10,7 @@ import fi.bitrite.android.ws.ui.FilterListFragment;
 import fi.bitrite.android.ws.ui.MapFragment;
 import fi.bitrite.android.ws.ui.MessageThreadFragment;
 import fi.bitrite.android.ws.ui.MessageThreadsFragment;
+import fi.bitrite.android.ws.ui.UserSelectDialogFragment;
 import fi.bitrite.android.ws.ui.SearchFragment;
 import fi.bitrite.android.ws.ui.SettingsFragment;
 import fi.bitrite.android.ws.ui.UserFragment;
@@ -36,6 +37,9 @@ abstract class ActivitiesModule {
 
     @ContributesAndroidInjector
     abstract MessageThreadsFragment contributeMessageThreadsFragment();
+
+    @ContributesAndroidInjector
+    abstract UserSelectDialogFragment contributeUserSelectDialogFragment();
 
     @ContributesAndroidInjector
     abstract SearchFragment contributeSearchFragment();
