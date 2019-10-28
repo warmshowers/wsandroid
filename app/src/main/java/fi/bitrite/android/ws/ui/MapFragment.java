@@ -1,7 +1,6 @@
 package fi.bitrite.android.ws.ui;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,7 +9,6 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -53,8 +51,10 @@ import javax.inject.Inject;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import butterknife.BindColor;
 import butterknife.BindDrawable;
@@ -115,6 +115,7 @@ public class MapFragment extends BaseFragment {
     private final SparseArray<Marker> mClusteredUsers = new SparseArray<>();
     private UserMarkerClusterer mMarkerClusterer;
 
+    private AlertDialog mUserDialog = null;
     private Toast mLastToast = null;
 
     private SettingsRepository.DistanceUnit mDistanceUnit;
@@ -186,7 +187,7 @@ public class MapFragment extends BaseFragment {
                              @Nullable Bundle savedInstanceState) {
         Context context = getContext();
         Configuration.getInstance().load(
-                context, PreferenceManager.getDefaultSharedPreferences(context));
+                context, PreferenceManager.getDefaultSharedPreferences(requireContext()));
         // setting this before the layout is inflated is a good idea
         // it 'should' ensure that the map has a writable location for the map cache, even without
         // permissions. if no tiles are displayed, you can try overriding the cache path using
@@ -321,6 +322,9 @@ public class MapFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mUserDialog != null) {
+            mUserDialog.dismiss();
+        }
         mUnbinder.unbind();
     }
 
@@ -622,7 +626,8 @@ public class MapFragment extends BaseFragment {
         marker.setOnMarkerClickListener((m, mapView) -> {
             // We need a new ArrayList here, as it gets sorted in {@link UserListAdapter} and
             // Collections.singletonList() provides a non-mutable list.
-            new MultiUserSelectDialog().show(new ArrayList<>(Collections.singletonList(user)));
+            mUserDialog = new MultiUserSelectDialog().create(new ArrayList<>(Collections.singletonList(user)));
+            mUserDialog.show();
             return true;
         });
         mMarkerClusterer.add(marker);
@@ -672,7 +677,8 @@ public class MapFragment extends BaseFragment {
             int padding = Math.min(mapView.getHeight(), mapView.getWidth()) * padding_percent / 100;
             mapView.zoomToBoundingBox(bounds, true, padding);
         } else {
-            new MultiUserSelectDialog().show(users);
+            mUserDialog = new MultiUserSelectDialog().create(users);
+            mUserDialog.show();
         }
 
         return true;
@@ -719,7 +725,7 @@ public class MapFragment extends BaseFragment {
         @BindView(R.id.title) TextView mTxtTitle;
         @BindView(R.id.distance_from_current) TextView mTxtDistanceFromCurrent;
 
-        void show(final List<? extends SimpleUser> users) {
+        AlertDialog create (final List<? extends SimpleUser> users) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
             Context dialogContext = dialogBuilder.getContext();
 
@@ -746,15 +752,13 @@ public class MapFragment extends BaseFragment {
             // Remember the navigationController here as sometimes the activity is no longer set
             // in the listener.
             final NavigationController navigationController = getNavigationController();
-            dialogBuilder
+            return dialogBuilder
                     .setCustomTitle(titleView)
                     .setNegativeButton(R.string.ok, (dialog, which) -> {})
                     .setAdapter(userListAdapter, (dialog, index) -> {
                         SimpleUser user = users.get(index);
                         navigationController.navigateToUser(user.id);
-                    })
-                    .create()
-                    .show();
+                    }).create();
         }
     }
 
