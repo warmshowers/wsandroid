@@ -70,7 +70,6 @@
         <activity
             android:name=".ui.AuthenticatorActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.MainActivity"
