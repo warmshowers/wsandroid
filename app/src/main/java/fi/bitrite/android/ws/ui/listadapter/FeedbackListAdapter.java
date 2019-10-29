@@ -28,8 +28,8 @@ import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.model.Feedback;
 import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.UserRepository;
+import fi.bitrite.android.ws.util.SerialCompositeDisposable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 
 public class FeedbackListAdapter extends
         DataBoundListAdapter<Feedback, FeedbackListAdapter.ItemBinding> {
@@ -122,7 +122,7 @@ public class FeedbackListAdapter extends
         private final SimpleDateFormat mMeetingDateFormat = new SimpleDateFormat("MMM ''yy", Locale.US);
 
         private final View mRoot;
-        private CompositeDisposable mDisposables = new CompositeDisposable();
+        private final SerialCompositeDisposable mDisposables = new SerialCompositeDisposable();
 
         private String mSenderName;
         private String mRecipientName;
@@ -139,10 +139,12 @@ public class FeedbackListAdapter extends
         }
 
         @Override
-        public void bind(@NonNull Feedback feedback) {
-            mDisposables.dispose();
-            mDisposables = new CompositeDisposable();
+        public void unbind() {
+            mDisposables.reset();
+        }
 
+        @Override
+        public void bind(@NonNull Feedback feedback) {
             // Sets the sender.
             mSenderName = null;
             mRecipientName = null;

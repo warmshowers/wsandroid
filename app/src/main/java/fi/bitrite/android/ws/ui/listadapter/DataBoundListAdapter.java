@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,6 +29,11 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
         View getRoot();
 
         void bind(T item);
+
+        /**
+         * Called after a previous call to bind() and the next one for a new item.
+         */
+        void unbind();
     }
 
     /**
@@ -65,6 +71,11 @@ public abstract class DataBoundListAdapter<T, V extends DataBoundListAdapter.Vie
         if (mItems != null && position < mItems.size()) {
             holder.binding.bind(mItems.get(position));
         }
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull ViewHolder holder) {
+        holder.binding.unbind();
     }
 
     @SuppressLint("StaticFieldLeak")

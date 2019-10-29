@@ -4,9 +4,6 @@ package fi.bitrite.android.ws.ui.listadapter;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
 import android.text.format.DateUtils;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -21,6 +18,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import butterknife.BindDimen;
 import butterknife.BindDrawable;
 import butterknife.BindView;
@@ -30,9 +30,9 @@ import fi.bitrite.android.ws.model.Message;
 import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
+import fi.bitrite.android.ws.util.SerialCompositeDisposable;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 
 public class MessageListAdapter extends
         DataBoundListAdapter<Message, MessageListAdapter.ItemBinding> {
@@ -105,7 +105,7 @@ public class MessageListAdapter extends
         @BindDrawable(R.drawable.message_outgoing_bubble) Drawable mDrawableBubbleOutgoing;
 
         private final View mRoot;
-        private CompositeDisposable mDisposables = new CompositeDisposable();
+        private final SerialCompositeDisposable mDisposables = new SerialCompositeDisposable();
 
         private final int[] mParticipantColors;
         private int mNextParticipantColorIdx = 0;
@@ -132,10 +132,12 @@ public class MessageListAdapter extends
         }
 
         @Override
-        public void bind(@NonNull Message message) {
-            mDisposables.dispose();
-            mDisposables = new CompositeDisposable();
+        public void unbind() {
+            mDisposables.reset();
+        }
 
+        @Override
+        public void bind(@NonNull Message message) {
             final User loggedInUser = mLoggedInUserHelper.get();
             final int loggedInUserId = loggedInUser == null ? -1 : loggedInUser.id;
             final boolean isIncoming = message.authorId != loggedInUserId;
