@@ -35,9 +35,9 @@ import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.widget.UserCircleImageView;
 import fi.bitrite.android.ws.util.LoggedInUserHelper;
+import fi.bitrite.android.ws.util.SerialCompositeDisposable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 
 public class MessageThreadListAdapter extends
         DataBoundListAdapter<MessageThread, MessageThreadListAdapter.ItemBinding> {
@@ -91,7 +91,7 @@ public class MessageThreadListAdapter extends
 
         private final View mRoot;
         private MessageThread mThread;
-        private CompositeDisposable mDisposables = new CompositeDisposable();
+        private final SerialCompositeDisposable mDisposables = new SerialCompositeDisposable();
 
         ItemBinding(ViewGroup parent) {
             mRoot = LayoutInflater.from(parent.getContext())
@@ -107,11 +107,13 @@ public class MessageThreadListAdapter extends
         }
 
         @Override
+        public void unbind() {
+            mDisposables.reset();
+        }
+
+        @Override
         public void bind(@NonNull MessageThread thread) {
             mThread = thread;
-
-            mDisposables.dispose();
-            mDisposables = new CompositeDisposable();
 
             mRoot.setVisibility(View.GONE);
 

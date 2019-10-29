@@ -1,7 +1,6 @@
 package fi.bitrite.android.ws.ui;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -72,8 +70,6 @@ import fi.bitrite.android.ws.repository.BaseSettingsRepository;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.SettingsRepository;
-import fi.bitrite.android.ws.ui.listadapter.UserListAdapter;
-import fi.bitrite.android.ws.ui.util.NavigationController;
 import fi.bitrite.android.ws.ui.util.UserFilterManager;
 import fi.bitrite.android.ws.ui.util.UserMarker;
 import fi.bitrite.android.ws.ui.util.UserMarkerClusterer;
@@ -622,7 +618,7 @@ public class MapFragment extends BaseFragment {
         marker.setOnMarkerClickListener((m, mapView) -> {
             // We need a new ArrayList here, as it gets sorted in {@link UserListAdapter} and
             // Collections.singletonList() provides a non-mutable list.
-            new MultiUserSelectDialog().show(new ArrayList<>(Collections.singletonList(user)));
+            showUserSelectDialog(new ArrayList<>(Collections.singletonList(user)));
             return true;
         });
         mMarkerClusterer.add(marker);
@@ -645,6 +641,12 @@ public class MapFragment extends BaseFragment {
 
     private Drawable getMarkerIconForHost(boolean isFavoriteHost) {
         return isFavoriteHost ? mMapMarkersFavorite : mMapMarkersSingle;
+    }
+
+    private void showUserSelectDialog(List<? extends SimpleUser> users) {
+        UserSelectDialogFragment dialogFragment =
+                UserSelectDialogFragment.create(users, mLastDeviceLocation.getValue());
+        dialogFragment.show(requireFragmentManager(), dialogFragment.getClass().getCanonicalName());
     }
 
     /**
@@ -672,21 +674,12 @@ public class MapFragment extends BaseFragment {
             int padding = Math.min(mapView.getHeight(), mapView.getWidth()) * padding_percent / 100;
             mapView.zoomToBoundingBox(bounds, true, padding);
         } else {
-            new MultiUserSelectDialog().show(users);
+            showUserSelectDialog(users);
         }
 
         return true;
     }
 
-    /**
-     * Returns the distance to given point or -1 if the current position is unknown.
-     */
-    private double calculateDistanceTo(IGeoPoint latLng) {
-        return mLastDeviceLocation.getValue() != null
-                ? Tools.calculateDistanceBetween(
-                Tools.latLngToLocation(latLng), mLastDeviceLocation.getValue(), mDistanceUnit)
-                : -1;
-    }
     private void sendMessage(@StringRes final int messageId) {
         if (mLastToast != null) {
             mLastToast.cancel();
@@ -713,49 +706,6 @@ public class MapFragment extends BaseFragment {
     @Override
     protected CharSequence getTitle() {
         return getString(R.string.app_name);
-    }
-
-    class MultiUserSelectDialog {
-        @BindView(R.id.title) TextView mTxtTitle;
-        @BindView(R.id.distance_from_current) TextView mTxtDistanceFromCurrent;
-
-        void show(final List<? extends SimpleUser> users) {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-            Context dialogContext = dialogBuilder.getContext();
-
-            View titleView = null;
-            if (users.size() > 1) {
-                titleView = LayoutInflater.from(dialogContext).inflate(
-                        R.layout.view_multiuser_dialog_header, null, false);
-                ButterKnife.bind(this, titleView);
-
-                final SimpleUser representative = users.get(0);
-                mTxtTitle.setText(getResources().getQuantityString(R.plurals.users_at_location,
-                        users.size(), users.size(), representative.getStreetCityAddress()));
-
-                double distance = calculateDistanceTo(representative.location);
-                String distanceSummary = getString(
-                        R.string.distance_from_current, (int) distance, mDistanceUnitShort);
-                mTxtDistanceFromCurrent.setText(distanceSummary);
-                mTxtDistanceFromCurrent.setVisibility(distance >= 0 ? View.VISIBLE : View.GONE);
-            }
-
-            UserListAdapter userListAdapter = new UserListAdapter(
-                    dialogContext, UserListAdapter.COMPERATOR_FULLNAME_ASC, null);
-            userListAdapter.resetDataset(users);
-            // Remember the navigationController here as sometimes the activity is no longer set
-            // in the listener.
-            final NavigationController navigationController = getNavigationController();
-            dialogBuilder
-                    .setCustomTitle(titleView)
-                    .setNegativeButton(R.string.ok, (dialog, which) -> {})
-                    .setAdapter(userListAdapter, (dialog, index) -> {
-                        SimpleUser user = users.get(index);
-                        navigationController.navigateToUser(user.id);
-                    })
-                    .create()
-                    .show();
-        }
     }
 
     private final IMyLocationProvider mLocationProvider = new IMyLocationProvider() {

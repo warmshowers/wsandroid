@@ -2,8 +2,6 @@ package fi.bitrite.android.ws.ui.listadapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;

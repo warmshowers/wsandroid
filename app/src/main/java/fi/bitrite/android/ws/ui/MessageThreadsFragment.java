@@ -175,7 +175,9 @@ public class MessageThreadsFragment extends BaseFragment {
         super.onSaveInstanceState(outState);
 
         // Saves the threadList's offset.
-        RecyclerView.LayoutManager layoutManager = mThreadList.getLayoutManager();
+        RecyclerView.LayoutManager layoutManager = mThreadList != null
+                ? mThreadList.getLayoutManager()
+                : null;
         if (layoutManager != null) {
             Parcelable threadListState = layoutManager.onSaveInstanceState();
             outState.putParcelable(ICICLE_KEY_THREADS_STATE, threadListState);
