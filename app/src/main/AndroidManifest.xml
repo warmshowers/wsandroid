@@ -13,7 +13,7 @@
 
     <!-- for offline maps and to cache on sdcard -->
     <!-- WRITE_EXTERNAL_STORAGE includes READ_EXTERNAL_STORAGE -->
-    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!-- Account Manager -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
