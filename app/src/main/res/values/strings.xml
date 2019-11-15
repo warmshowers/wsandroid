@@ -102,10 +102,15 @@
     <string name="distance_unit_kilometers_short_raw" translatable="false">km</string>
     <string name="distance_unit_miles_short_raw" translatable="false">mi</string>
 
-    <string name="prefs_tile_source_key" translatable="false">tile_source</string>
-    <string name="prefs_tile_source_title">Map style</string>
+    <string name="prefs_online_map_source_title">Online map source</string>
     <string name="prefs_tile_source_summary" translatable="false">%1$s</string>
     <string name="prefs_tile_source_us_only">%1$s (US only)</string>
+
+    <string name="prefs_offline_map_enabled" translatable="false">offline_map_enabled</string>
+    <string name="prefs_offline_map_selection" translatable="false">offline_map_selection</string>
+    <string name="prefs_offline_map_source_files" translatable="false">offline_map_source_files</string>
+    <string name="prefs_offline_theme_selection" translatable="false">offline_theme_selection</string>
+    <string name="prefs_offline_theme_source_files" translatable="false">offline_theme_source_files</string>
 
     <string name="prefs_message_refresh_interval_min_key" translatable="false">message_reload_interval_min</string>
     <string name="prefs_message_refresh_interval_min_title">Messages poll frequency</string>
@@ -274,4 +279,14 @@
     <string name="login_error_account_ip_temp_blocked">Too many login attempts. Your account is temporarily blocked. Please try again later.</string>
 
     <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
+    <string name="prefs_online_map_source" translatable="false">prefs_online_map_source</string>
+    <string name="prefs_offline_maps_prefs_help_text" translatable="false">prefs_offline_maps_prefs_help_text</string>
+    <string name="prefs_offline_map_search" translatable="false">prefs_offline_map_search</string>
+    <string name="prefs_offline_map_prefer_installed_locales" translatable="false">prefs_offline_map_prefer_installed_locales</string>
+    <string name="map_search_in_progress">Searching for offline maps</string>
+    <string name="prefs_offline_map_theme_sources" translatable="false">prefs_offline_map_theme_sources</string>
+    <string name="prefs_offline_map_search_scope" translatable="false">prefs_offline_map_search_scope</string>
+    <string name="no_offline_maps_found_title">No offline maps found</string>
+    <string name="no_offline_maps_found_message">Copy unzipped offline map data to <i>%1$s</i> and try again.</string>
+    <string name="open_map_provider_overview">List of offline map providers</string>
 </resources>

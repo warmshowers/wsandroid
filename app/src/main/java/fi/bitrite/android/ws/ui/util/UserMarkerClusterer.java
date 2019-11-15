@@ -159,7 +159,7 @@ public class UserMarkerClusterer extends RadiusMarkerClusterer {
             if (bucket < BUCKETS[0]) {
                 return String.valueOf(bucket);
             }
-            return String.valueOf(bucket) + "+";
+            return bucket + "+";
         }
 
         private class TextDrawable extends Drawable {

@@ -218,7 +218,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
             WrongAPIKey,
             AccountTemporarilyBlocked,
             IpTemporarilyBlocked,
-            Unknown;
+            Unknown
         }
         public final ErrorCause errorCause;
 
