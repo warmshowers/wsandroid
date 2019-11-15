@@ -97,7 +97,7 @@
     <string name="distance_unit_kilometers_short">km</string>
     <string name="distance_unit_miles_short">mi</string>
 
-    <string name="prefs_tile_source_title">Style de la carte</string>
+    <string name="prefs_online_map_source_title">Source de la carte en ligne</string>
     <string name="prefs_tile_source_us_only">%1$s (É.-U. seulement)</string>
 
     <!-- Non-english speakers might prefer the default location to be over Africa, Europe & Central Asia. -->
@@ -254,4 +254,8 @@
 
     <string name="invalid_api_key">Le serveur a rejeté la demande. STP mettre à jour l\'application.\n(%1$s)</string>
     <string name="login_error_account_ip_temp_blocked">Trop de tentatives de connexion. Votre compte est temporairement bloqué. Veuillez réessayer plus tard.</string>
+    <string name="no_offline_maps_found_message">Copiez la carte hors ligne dans <i>%1$s</i> et réessayez.</string>
+    <string name="map_search_in_progress">Recherche de cartes hors ligne</string>
+    <string name="no_offline_maps_found_title">Aucune carte hors-ligne trouvée</string>
+    <string name="open_map_provider_overview">Liste des fournisseurs de cartes hors ligne</string>
 </resources>

@@ -92,7 +92,7 @@
 
     <string name="prefs_distance_unit_title">Unidad de distancia</string>
     <string name="prefs_distance_unit_summary">Denunciar distancias en %1$s</string>
-    <string name="prefs_tile_source_title">Estilo de mapa</string>
+    <string name="prefs_online_map_source_title">Origen de mapa en línea</string>
     <string name="prefs_tile_source_us_only">%1$s (sólo EE.UU.)</string>
     <string name="distance_unit_kilometers_long">Kilómetros</string>
     <string name="distance_unit_miles_long">Millas</string>
@@ -248,4 +248,8 @@
 
     <string name="invalid_api_key">El servidor rechazó la solicitud. Por favor actualice la aplicación.\n(%1$s)</string>
     <string name="login_error_account_ip_temp_blocked">Demasiados intentos de inicio de sesión. Su cuenta está temporalmente bloqueada. Por favor, inténtelo de nuevo más tarde.</string>
+    <string name="open_map_provider_overview">Lista de proveedores de mapas fuera de línea</string>
+    <string name="no_offline_maps_found_title">No se han encontrado mapas fuera de línea</string>
+    <string name="no_offline_maps_found_message">Copie los datos del mapa fuera de línea descomprimidos en <i>%1$s</i> e inténtelo de nuevo.</string>
+    <string name="map_search_in_progress">Búsqueda de mapas fuera de línea</string>
 </resources>

@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.mapsforge.map.rendertheme.ExternalRenderTheme;
+import org.mapsforge.map.rendertheme.XmlRenderTheme;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.clustering.StaticCluster;
@@ -31,9 +33,13 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
+import org.osmdroid.mapsforge.MapsForgeTileProvider;
+import org.osmdroid.mapsforge.MapsForgeTileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.ScaleBarOverlay;
@@ -41,6 +47,8 @@ import org.osmdroid.views.overlay.mylocation.IMyLocationConsumer;
 import org.osmdroid.views.overlay.mylocation.IMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -63,6 +71,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
+import fi.bitrite.android.ws.model.MapsForgeTheme;
 import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.model.ZoomedLocation;
@@ -70,6 +79,7 @@ import fi.bitrite.android.ws.repository.BaseSettingsRepository;
 import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.Resource;
 import fi.bitrite.android.ws.repository.SettingsRepository;
+import fi.bitrite.android.ws.ui.util.OfflineMapHelper;
 import fi.bitrite.android.ws.ui.util.UserFilterManager;
 import fi.bitrite.android.ws.ui.util.UserMarker;
 import fi.bitrite.android.ws.ui.util.UserMarkerClusterer;
@@ -174,6 +184,10 @@ public class MapFragment extends BaseFragment {
         mMarkerClusterer.setOnClusterClickListener(this::onClusterClick);
 
         mHideLocationBtn = mSettingsRepository.getHideLocationButton();
+
+        if (mSettingsRepository.isOfflineMapEnabled()) {
+            MapsForgeTileSource.createInstance(requireActivity().getApplication());
+        }
     }
 
     @Nullable
@@ -182,7 +196,7 @@ public class MapFragment extends BaseFragment {
                              @Nullable Bundle savedInstanceState) {
         Context context = getContext();
         Configuration.getInstance().load(
-                context, PreferenceManager.getDefaultSharedPreferences(context));
+                context, PreferenceManager.getDefaultSharedPreferences(requireContext()));
         // setting this before the layout is inflated is a good idea
         // it 'should' ensure that the map has a writable location for the map cache, even without
         // permissions. if no tiles are displayed, you can try overriding the cache path using
@@ -209,14 +223,45 @@ public class MapFragment extends BaseFragment {
         mLastPosition = null;
 
         mMap.setVerticalMapRepetitionEnabled(false);
-        mMap.setBuiltInZoomControls(false);
+        mMap.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         mMap.setMultiTouchControls(true);
 
-        String tileSourceStr = mSettingsRepository.getTileSourceStr();
-        if (!TileSourceFactory.containsTileSource(tileSourceStr)) {
-            tileSourceStr = TileSourceFactory.DEFAULT_TILE_SOURCE.name();
+        if (mSettingsRepository.isOfflineMapEnabled() &&
+            OfflineMapHelper.containsExistingFile(mSettingsRepository.getOfflineMapSourceFiles())) {
+            // use offline map
+            MapsForgeTheme mapsForgeTheme = mSettingsRepository.getSelectedOfflineMapTheme();
+            if (mapsForgeTheme == null) {
+                // create empty default theme
+                mapsForgeTheme = new MapsForgeTheme("Default", "default_theme_id", "");
+            }
+
+            File style = new File(mapsForgeTheme.getFilePath());
+            XmlRenderTheme theme = null;
+
+            try {
+                theme = new ExternalRenderTheme(style);
+                OfflineMapHelper.setThemeStyle(theme, mapsForgeTheme.getId());
+            } catch (FileNotFoundException ignored) {
+                // if theme == null, default rendering theme is used.
+            }
+
+            // TODO: set map language when osmdroid updated to v6.0.3
+            MapsForgeTileSource fromFiles = MapsForgeTileSource.createFromFiles(
+                    mSettingsRepository.getOfflineMapSourceFiles(), theme, style.getName());
+
+            MapsForgeTileProvider forge = new MapsForgeTileProvider(
+                    new SimpleRegisterReceiver(getContext()),
+                    fromFiles, null
+            );
+            mMap.setTileProvider(forge);
+        } else {
+            // use online map
+            String tileSourceStr = mSettingsRepository.getOnlineMapSourceStr();
+            if (!TileSourceFactory.containsTileSource(tileSourceStr)) {
+                tileSourceStr = TileSourceFactory.DEFAULT_TILE_SOURCE.name();
+            }
+            mMap.setTileSource(TileSourceFactory.getTileSource(tileSourceStr));
         }
-        mMap.setTileSource(TileSourceFactory.getTileSource(tileSourceStr));
 
         if (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             addMyLocationOverlay();
@@ -332,33 +377,32 @@ public class MapFragment extends BaseFragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_FINE_LOCATION:
-                if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    addMyLocationOverlay();
-                    startLocationManager();
-
-                    // Delays moving to the current location by a tiny bit as the location manager
-                    // was just started and the current location is therefore not yet known. Without
-                    // this delay the "location not known" toast was shown and just afterwards the
-                    // map was moved to the current position. However, if indeed the current
-                    // position is not yet known that toast is shown even after that delay.
-                    Disposable unused = Completable
-                            .timer(100, TimeUnit.MILLISECONDS)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(this::onGotoCurrentLocationClicked);
-                } else {
-                    // if the permission for location is denied with checked "Never ask again",
-                    // the current location button will be hidden.
-                    mHideLocationBtn = !shouldShowRequestPermissionRationale(permissions[0]);
-                }
-
-                setGotoCurrentLocationStatus();
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != REQUEST_CODE_FINE_LOCATION) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            return;
         }
+
+        if (grantResults.length > 0
+            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            addMyLocationOverlay();
+            startLocationManager();
+
+            // Delays moving to the current location by a tiny bit as the location manager
+            // was just started and the current location is therefore not yet known. Without
+            // this delay the "location not known" toast was shown and just afterwards the
+            // map was moved to the current position. However, if indeed the current
+            // position is not yet known that toast is shown even after that delay.
+            Disposable unused = Completable
+                    .timer(100, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::onGotoCurrentLocationClicked);
+        } else {
+            // if the permission for location is denied with checked "Never ask again",
+            // the current location button will be hidden.
+            mHideLocationBtn = !shouldShowRequestPermissionRationale(permissions[0]);
+        }
+
+        setGotoCurrentLocationStatus();
     }
 
     private void startLocationManager() {
@@ -633,10 +677,7 @@ public class MapFragment extends BaseFragment {
         if (!existingMarker.getPosition().equals(user.location)) {
             return true;
         }
-        if (!existingMarker.getIcon().equals(getMarkerIconForHost(isFavoriteHost))) {
-            return true;
-        }
-        return false;
+        return !existingMarker.getIcon().equals(getMarkerIconForHost(isFavoriteHost));
     }
 
     private Drawable getMarkerIconForHost(boolean isFavoriteHost) {

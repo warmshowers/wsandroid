@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws;
 
-import android.app.Application;
 import android.content.SharedPreferences;
 
 import com.bumptech.glide.request.RequestOptions;
@@ -8,6 +7,7 @@ import com.u.securekeys.SecureEnvironment;
 
 import javax.inject.Inject;
 
+import androidx.multidex.MultiDexApplication;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasAndroidInjector;
@@ -16,7 +16,7 @@ import fi.bitrite.android.ws.di.AppInjector;
 import fi.bitrite.android.ws.repository.SettingsRepository;
 import fi.bitrite.android.ws.util.WSGlide;
 
-public abstract class BaseWSAndroidApplication extends Application implements HasAndroidInjector {
+public abstract class BaseWSAndroidApplication extends MultiDexApplication implements HasAndroidInjector {
 
     public static final String TAG = "WSAndroidApplication";
     private static AppInjector mAppInjector;

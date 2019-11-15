@@ -3,13 +3,23 @@ package fi.bitrite.android.ws.repository;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import androidx.annotation.VisibleForTesting;
+import androidx.preference.PreferenceManager;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.model.MapsForgeTheme;
 import fi.bitrite.android.ws.model.ZoomedLocation;
 
 public abstract class BaseSettingsRepository {
@@ -30,13 +40,21 @@ public abstract class BaseSettingsRepository {
     private final static String KEYPREFIX_USERFILTER_VALUE = "userfilter-value-";
 
     private final String mKeyDistanceUnit;
-    private final String mKeyTileSource;
+
+    private final String mOnlineMapSource;
+
+    private final String mOfflineMapEnabled;
+    private final String mOfflineMapSelection;
+    private final String mOfflineMapSourceFiles;
+    private final String mOfflineThemeSourceFiles;
+    private final String mOfflineThemeSelection;
+
     private final String mKeyMessageRefreshInterval;
     private final String mKeyDataSaverMode;
     private final String mKeyDevSimulateNoNetwork;
 
     private final String mDefaultDistanceUnit;
-    private final String mDefaultTileSource = TileSourceFactory.OpenTopo.name();
+    private final String mDefaultOnlineMapSource = TileSourceFactory.OpenTopo.name();
     private final int mDefaultMessageRefreshInterval;
     private final boolean mDefaultDataSaverMode;
     private final boolean mDefaultDevSimulateNoNetwork;
@@ -52,12 +70,22 @@ public abstract class BaseSettingsRepository {
     private final String mDistanceUnitKilometerLong;
     private final String mDistanceUnitMilesLong;
 
+    private final Gson gson;
+
     BaseSettingsRepository(Context context) {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         final Resources res = context.getResources();
         mKeyDistanceUnit = res.getString(R.string.prefs_distance_unit_key);
-        mKeyTileSource = res.getString(R.string.prefs_tile_source_key);
+
+        mOnlineMapSource = res.getString(R.string.prefs_online_map_source);
+
+        mOfflineMapEnabled= res.getString(R.string.prefs_offline_map_enabled);
+        mOfflineMapSelection = res.getString(R.string.prefs_offline_map_selection);
+        mOfflineMapSourceFiles = res.getString(R.string.prefs_offline_map_source_files);
+        mOfflineThemeSelection = res.getString(R.string.prefs_offline_theme_selection);
+        mOfflineThemeSourceFiles = res.getString(R.string.prefs_offline_theme_source_files);
+
         mKeyMessageRefreshInterval = res.getString(R.string.prefs_message_refresh_interval_min_key);
         mKeyDataSaverMode = res.getString(R.string.prefs_data_saver_mode_key);
         mKeyDevSimulateNoNetwork = res.getString(R.string.prefs_dev_simulate_no_network_key);
@@ -80,44 +108,41 @@ public abstract class BaseSettingsRepository {
         mDistanceUnitMilesShort = res.getString(R.string.distance_unit_miles_short);
         mDistanceUnitKilometerLong = res.getString(R.string.distance_unit_kilometers_long);
         mDistanceUnitMilesLong = res.getString(R.string.distance_unit_miles_long);
+
+        gson = new Gson();
     }
 
     public DistanceUnit getDistanceUnit() {
         String distanceUnitStr =
                 mSharedPreferences.getString(mKeyDistanceUnit, mDefaultDistanceUnit);
 
-        if (TextUtils.equals(distanceUnitStr, mDistanceUnitKilometerRaw)) {
-            return DistanceUnit.KILOMETER;
-        } else if (TextUtils.equals(distanceUnitStr, mDistanceUnitMilesRaw)) {
+        if (TextUtils.equals(distanceUnitStr, mDistanceUnitMilesRaw)) {
             return DistanceUnit.MILES;
-        } else {
-            assert false;
-            return null;
         }
+        return DistanceUnit.KILOMETER;
     }
+
     public String getDistanceUnitLong() {
         DistanceUnit distanceUnit = getDistanceUnit();
         switch (distanceUnit) {
-            case KILOMETER: return mDistanceUnitKilometerLong;
             case MILES: return mDistanceUnitMilesLong;
+            case KILOMETER:
             default:
-                assert false;
-                return null;
+                return mDistanceUnitKilometerLong;
         }
     }
     public String getDistanceUnitShort() {
         DistanceUnit distanceUnit = getDistanceUnit();
         switch (distanceUnit) {
-            case KILOMETER: return mDistanceUnitKilometerShort;
             case MILES: return mDistanceUnitMilesShort;
+            case KILOMETER:
             default:
-                assert false;
-                return null;
+                return mDistanceUnitKilometerShort;
         }
     }
 
-    public String getTileSourceStr() {
-        return mSharedPreferences.getString(mKeyTileSource, mDefaultTileSource);
+    public String getOnlineMapSourceStr() {
+        return mSharedPreferences.getString(mOnlineMapSource, mDefaultOnlineMapSource);
     }
 
     private void setLocation(String key, ZoomedLocation position) {
@@ -128,6 +153,59 @@ public abstract class BaseSettingsRepository {
                 .putFloat(key + KEYSUFFIX_LOCATION_ZOOM, (float) position.zoom)
                 .apply();
 
+    }
+
+    public boolean isOfflineMapEnabled() {
+        return mSharedPreferences.getBoolean(mOfflineMapEnabled, false);
+    }
+
+    public void setAvailableOfflineMapSources(Set<String> sources) {
+        mSharedPreferences.edit().putString(mOfflineMapSourceFiles, gson.toJson(sources)).apply();
+    }
+
+    public Set<String> getAvailableOfflineMapSources() {
+        return new HashSet<>(
+                gson.fromJson(mSharedPreferences.getString(mOfflineMapSourceFiles, ""),
+                        new TypeToken<Set<String>>() {}.getType()));
+    }
+
+    public Set<String> getAvailableOfflineMapSelection() {
+        return mSharedPreferences.getStringSet(mOfflineMapSelection, new HashSet<>());
+    }
+
+    public File[] getOfflineMapSourceFiles() {
+        Set<String> sources = getAvailableOfflineMapSources();
+        Set<File> sourceFiles = new HashSet<>();
+        for (String source : sources) {
+            File f = new File(source);
+            if (f.exists()) {
+                sourceFiles.add(new File(source));
+            }
+        }
+        return sourceFiles.toArray(new File[0]);
+    }
+
+    public void setAvailableOfflineThemeSources(List<MapsForgeTheme> sources) {
+        mSharedPreferences.edit().putString(mOfflineThemeSourceFiles, gson.toJson(sources)).apply();
+    }
+
+    public List<MapsForgeTheme> getAvailableOfflineThemeSources() {
+        List<MapsForgeTheme> themes = gson.fromJson(mSharedPreferences.getString(mOfflineThemeSourceFiles, ""),
+                new TypeToken<List<MapsForgeTheme>>(){}.getType());
+        if (themes == null) {
+            themes = new ArrayList<>();
+        }
+        themes.add(new MapsForgeTheme("Default theme", "default_theme", ""));
+        return themes;
+    }
+
+    public void setSelectedOfflineMapTheme(MapsForgeTheme theme) {
+        mSharedPreferences.edit().putString(mOfflineThemeSelection, gson.toJson(theme)).apply();
+    }
+
+    public MapsForgeTheme getSelectedOfflineMapTheme() {
+        return gson.fromJson(mSharedPreferences.getString(mOfflineThemeSelection, ""),
+                new TypeToken<MapsForgeTheme>(){}.getType());
     }
 
     public ZoomedLocation getLastMapLocation(boolean defaultIfNone) {
@@ -222,4 +300,5 @@ public abstract class BaseSettingsRepository {
     public String getDevSimulateNoNetworkKey() {
         return mKeyDevSimulateNoNetwork;
     }
+
 }

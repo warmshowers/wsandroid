@@ -98,7 +98,7 @@
     <string name="distance_unit_kilometers_short">km</string>
     <string name="distance_unit_miles_short">mi</string>
 
-    <string name="prefs_tile_source_title">Kartenstil</string>
+    <string name="prefs_online_map_source_title">Online-Kartenstil</string>
     <string name="prefs_tile_source_us_only">%1$s (nur USA)</string>
 
     <string name="prefs_message_refresh_interval_min_title">Aktualisierungsintervall für Nachrichten</string>
@@ -262,4 +262,8 @@
 
     <string name="invalid_api_key">Der Server hat die Anfrage abgewiesen. Bitte aktualisiere die App.\n(%1$s)</string>
     <string name="login_error_account_ip_temp_blocked">Zu viele Loginversuche. Dieses Konto ist zur Zeit gesperrt. Bitte versuche es später noch einmal.</string>
+    <string name="map_search_in_progress">Suche nach Offline-Karten</string>
+    <string name="no_offline_maps_found_title">Keine Offline-Karten gefunden</string>
+    <string name="open_map_provider_overview">Liste von Offline-Kartenanbietern</string>
+    <string name="no_offline_maps_found_message">Kopiere entpackte Offline-Karten nach <i>%1$s</i> und versuche es erneut.</string>
 </resources>
