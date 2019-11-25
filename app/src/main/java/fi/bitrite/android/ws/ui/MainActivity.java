@@ -441,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements HasAndroidInjecto
                             mLblFullname.setText(loggedInUser.fullname);
                             mLblUsername.setText(loggedInUser.username);
 
-                            String profilePhotoUrl = loggedInUser.profilePicture.getSmallUrl();
+                            String profilePhotoUrl = loggedInUser.profilePicture.getLargeUrl();
                             if (TextUtils.isEmpty(profilePhotoUrl)) {
                                 mImgUserPhoto.setImageResource(
                                         R.drawable.default_userinfo_profile);
