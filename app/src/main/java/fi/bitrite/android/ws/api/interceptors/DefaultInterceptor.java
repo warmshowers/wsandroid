@@ -1,6 +1,7 @@
 package fi.bitrite.android.ws.api.interceptors;
 
 import android.os.Build;
+import android.text.TextUtils;
 
 import com.u.securekeys.SecureEnvironment;
 import com.u.securekeys.annotation.SecureKey;
@@ -35,17 +36,18 @@ public class DefaultInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request original = chain.request();
 
-        // Construct the API key credential.
-        String credential = Credentials.basic(
-                SecureEnvironment.getString("ws_api_userId"),
-                SecureEnvironment.getString("ws_api_key"));
-
-        Request request = original.newBuilder()
+        Request.Builder requestBuilder = original.newBuilder()
                 .header("User-Agent", USER_AGENT)
-                .header("Accept", "application/json")
-                .header("Authorization", credential)
-                .build();
+                .header("Accept", "application/json");
 
-        return chain.proceed(request);
+        // Construct the API key credential.
+        final String apiUserId = SecureEnvironment.getString("ws_api_userId");
+        final String apiKey = SecureEnvironment.getString("ws_api_key");
+        if (!TextUtils.isEmpty(apiUserId)) {
+            // The apiUserId is unset in case the dev proxy server is used.
+            requestBuilder.header("Authorization", Credentials.basic(apiUserId,apiKey));
+        }
+
+        return chain.proceed(requestBuilder.build());
     }
 }

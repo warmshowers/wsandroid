@@ -1,14 +1,26 @@
 apply plugin: 'com.android.application'
 
 ext {
+    useProduction = System.getenv("WS_USE_PRODUCTION") != null
+
+    // Credentials for the Warmshowers API.
     wsApiUserId = System.getenv("WS_API_USER_ID")
     wsApiKey = System.getenv("WS_API_KEY")
     if (!wsApiKey) {
-        wsApiUserId = "" // <---------------------------------- put your API userId here
-        wsApiKey = ""    // <---------------------------------- put your API key here
+        wsApiUserId = ""       // <---------------------------------- put your API userId here
+        wsApiKey = ""          // <---------------------------------- put your API key here
     }
 
-    useProduction = System.getenv("WS_USE_PRODUCTION") != null
+    // File name for the keystore in PKCS12 format containing the client certificate and key for the
+    // development proxy server.
+    wsDevKeyStoreFile = System.getenv("WS_DEV_KEYSTORE")
+    if(!wsDevKeyStoreFile) {
+        wsDevKeyStoreFile = "" // <---------------------------------- put your client certificate bundle filename here
+    }
+    wsDevKeyStore = 'null'
+    if (wsDevKeyStoreFile) {
+        wsDevKeyStore = '"' + file(wsDevKeyStoreFile).bytes.encodeBase64() + '"'
+    }
 }
 
 repositories {
@@ -65,7 +77,11 @@ android {
                 manifestPlaceholders = [applicationIcon: '@mipmap/ic_launcher']
                 signingConfig signingConfigs.prod
             } else {
-                buildConfigField 'String', 'WS_BASE_URL', '"https://dev.warmshowers.org/"'
+                if (wsDevKeyStoreFile) {
+                    buildConfigField 'String', 'WS_BASE_URL', '"https://ws-dev.gorrion.ch/"'
+                } else {
+                    buildConfigField 'String', 'WS_BASE_URL', '"https://dev.warmshowers.org/"'
+                }
                 applicationIdSuffix '.dev'
                 versionNameSuffix '-dev'
                 resValue 'string', 'account_type', 'org.warmshowers.dev'
@@ -93,15 +109,25 @@ android {
     }
 
     defaultConfig {
-        if(!wsApiUserId) {
-            throw new GradleException("No API userId specified! Add yours to app/build.gradle")
-        }
-        if(!wsApiKey) {
-            throw new GradleException("No API key specified! Add yours to app/build.gradle")
+        if (wsDevKeyStoreFile) {
+            if (wsApiKey) {
+                throw new GradleException("Both WS_API_KEY and WS_DEV_KEYSTORE provided.");
+            }
+            if (useProduction) {
+                throw new GradleException("Both WS_USE_PRODUCTION and WS_DEV_KEYSTORE provided");
+            }
+        } else {
+            if (!wsApiUserId) {
+                throw new GradleException("No API userId specified! Add yours to app/build.gradle")
+            }
+            if (!wsApiKey) {
+                throw new GradleException("No API key specified! Add yours to app/build.gradle")
+            }
         }
 
-        buildConfigField 'String', 'WS_API_USER_ID', "\"$wsApiUserId\""
-        buildConfigField 'String', 'WS_API_KEY', "\"$wsApiKey\""
+        buildConfigField 'String', 'WS_DEV_KEYSTORE', wsDevKeyStore
+        buildConfigField 'String', 'WS_API_USER_ID', '"$wsApiUserId"'
+        buildConfigField 'String', 'WS_API_KEY', '"$wsApiKey"'
     }
     flavorDimensions "mode"
     productFlavors {

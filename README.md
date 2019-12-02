@@ -22,12 +22,31 @@ If you find something within the code you’d like to see changed for performanc
 
 ## How to build the app
 
-The Warmshowers API now requires an API key. Ask in the
-[Gitter chat](https://gitter.im/warmshowers-wsandroid/Lobby) for how you can get
-access to one.
+The Warmshowers API now requires an API key.
 
-Then either edit the variables `wsApiUserId` and `wsApiKey` in `app/build.gradle`
-or set the environment variables `WS_API_USER_ID` and `WS_API_KEY`.
+### Use the development proxy server
+Head over [here](https://github.com/warmshowers/wsandroid/tree/dev-certs) and
+get yourself a client certificate for the development proxy server.
+Then either set `wsDevKeyStoreFile` in `app/build.gradle` or set the environment 
+variable `WS_DEV_KEYSTORE`.
+
+Then you are ready to build the app:
+```
+export WS_DEV_KEYSTORE=<path_to_your_keystore_file.p12>
+./gradlew build
+```
+
+The development proxy accesses the Warmshowers development site at
+https://dev.warmshowers.org.
+
+Important: You are not allowed to distribute any app that uses the development
+proxy server!
+
+
+### Use an API key
+If you happen to have an API key then either edit the variables `wsApiUserId`
+and `wsApiKey` in `app/build.gradle` or set the environment variables
+`WS_API_USER_ID` and `WS_API_KEY`.
 
 Then you are ready to build the app:
 ```
