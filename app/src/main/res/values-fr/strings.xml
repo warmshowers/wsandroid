@@ -204,7 +204,7 @@
 
     <string name="remember_password">Enregistrer le mot de passe?</string>
     <string name="button_text_forgot_password">Mot de passe oublié?</string>
-    <string name="url_target_forgot_password">https://fr.warmshowers.org/user/password</string>
+    <string name="url_website_base">https://fr.warmshowers.org</string>
 
     <string name="content_description_your_avatar">Votre photo de profil</string>
     <string name="content_description_avatar_of_var">Photo du profil de %s</string>

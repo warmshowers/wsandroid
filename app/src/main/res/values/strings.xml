@@ -242,7 +242,7 @@
 
     <string name="remember_password">Remember password?</string>
     <string name="button_text_forgot_password">Forgot your password?</string>
-    <string name="url_target_forgot_password">https://www.warmshowers.org/user/password</string>
+    <string name="url_website_base">https://www.warmshowers.org</string>
 
     <string name="content_description_your_avatar">Your avatar</string>
     <string name="content_description_avatar_of_var">%s’s avatar</string>

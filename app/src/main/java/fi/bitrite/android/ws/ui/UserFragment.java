@@ -49,7 +49,6 @@ import fi.bitrite.android.ws.repository.FavoriteRepository;
 import fi.bitrite.android.ws.repository.FeedbackRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.FeedbackListAdapter;
-import fi.bitrite.android.ws.util.GlobalInfo;
 import fi.bitrite.android.ws.util.Tools;
 import fi.bitrite.android.ws.util.WSGlide;
 import io.reactivex.Maybe;
@@ -358,8 +357,8 @@ public class UserFragment extends BaseFragment {
         }
     }
 
-    public void viewOnSite(@NonNull User user) {
-        String url = GlobalInfo.warmshowersBaseUrl + "/user/" + user.id;
+    private void viewOnSite(@NonNull User user) {
+        String url = getString(R.string.url_website_base) + "/user/" + user.id;
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);

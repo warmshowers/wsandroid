@@ -236,7 +236,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
      */
     @OnClick(R.id.auth_btn_forgot_password)
     public void forgotPassword() {
-        final String passwordResetPageUrl = getString(R.string.url_target_forgot_password);
+        final String passwordResetPageUrl = getString(R.string.url_website_base) + "/user/password";
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(passwordResetPageUrl)));
     }
 

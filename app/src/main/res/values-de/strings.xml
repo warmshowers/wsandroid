@@ -232,7 +232,7 @@
 
     <string name="remember_password">Passwort speichern?</string>
     <string name="button_text_forgot_password">Passwort vergessen?</string>
-    <string name="url_target_forgot_password">https://de.warmshowers.org/user/password</string>
+    <string name="url_website_base">https://de.warmshowers.org</string>
 
     <string name="content_description_your_avatar">Dein Avatar</string>
     <string name="content_description_avatar_of_var">Avatar von %s</string>
