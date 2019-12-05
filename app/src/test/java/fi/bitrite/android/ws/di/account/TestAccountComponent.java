@@ -6,6 +6,7 @@ import dagger.BindsInstance;
 import dagger.Subcomponent;
 import dagger.android.AndroidInjectionModule;
 import fi.bitrite.android.ws.auth.AuthTest;
+import fi.bitrite.android.ws.util.UserRegionalCacheTest;
 
 @AccountScope
 @Subcomponent(modules = {
@@ -26,4 +27,5 @@ public interface TestAccountComponent extends AccountComponent {
     }
 
     void inject(AuthTest authTest);
+    void inject(UserRegionalCacheTest test);
 }

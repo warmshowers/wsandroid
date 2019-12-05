@@ -14,6 +14,7 @@ import fi.bitrite.android.ws.di.AppScope;
 import fi.bitrite.android.ws.di.account.AccountScope;
 import fi.bitrite.android.ws.repository.UserRepository;
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -64,7 +65,7 @@ public class UserRegionalCache {
                             }));
                 }
 
-                Observable.mergeDelayError(observables)
+                Disposable d = Observable.mergeDelayError(observables)
                         .doOnComplete(() -> {
                             // We add one big (possibly overlapping) rather than several small
                             // unloaded areas.
@@ -79,6 +80,7 @@ public class UserRegionalCache {
                             }
                         })
                         .subscribe(emitter::onNext, emitter::onError, emitter::onComplete);
+                emitter.setDisposable(d);
             }).subscribeOn(Schedulers.computation());
         }
     }
