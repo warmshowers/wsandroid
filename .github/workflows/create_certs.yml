@@ -1,0 +1,23 @@
+name: Create certificates
+
+on:
+  push:
+    branches: dev-certs
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v1
+
+        - name: Create certs
+          run: ./create_certs.sh
+          env:
+              WS_DEV_CA_KEY: ${{ secrets.WS_DEV_CA_KEY }}
+
+        - name: Push changes
+          uses: ad-m/github-push-action@master
+          with:
+              branch: dev-certs
+              github_token: ${{ secrets.GITHUB_TOKEN }}
