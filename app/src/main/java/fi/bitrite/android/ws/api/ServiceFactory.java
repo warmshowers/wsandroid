@@ -54,11 +54,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceFactory {
 
-    private ServiceFactory() {}
+    final String baseUrl;
+    final DefaultInterceptor defaultInterceptor;
 
-    public static WarmshowersWebservice createWarmshowersWebservice(
-            String baseUrl, DefaultInterceptor defaultInterceptor) {
-        OkHttpClient client = createDefaultClientBuilder(baseUrl, defaultInterceptor).build();
+    public ServiceFactory(String baseUrl,
+                          DefaultInterceptor defaultInterceptor) {
+        this.baseUrl = baseUrl;
+        this.defaultInterceptor = defaultInterceptor;
+    }
+
+    public WarmshowersWebservice createWarmshowersWebservice() {
+        OkHttpClient client = createDefaultClientBuilder().build();
         Gson gson = createDefaultGsonBuilder().create();
 
         return createDefaultRetrofitBuilder(baseUrl, client, gson)
@@ -66,10 +72,9 @@ public class ServiceFactory {
                 .create(WarmshowersWebservice.class);
     }
 
-    public static WarmshowersAccountWebservice createWarmshowersAccountWebservice(
-            String baseUrl, DefaultInterceptor defaultInterceptor,
+    public WarmshowersAccountWebservice createWarmshowersAccountWebservice(
             HeaderInterceptor headerInterceptor, ResponseInterceptor responseInterceptor) {
-        OkHttpClient client = createDefaultClientBuilder(baseUrl, defaultInterceptor)
+        OkHttpClient client = createDefaultClientBuilder()
                 // They must be in correct order.
                 .addInterceptor(responseInterceptor)
                 .addInterceptor(headerInterceptor)
@@ -85,8 +90,7 @@ public class ServiceFactory {
                 .create(WarmshowersAccountWebservice.class);
     }
 
-    private static OkHttpClient.Builder createDefaultClientBuilder(
-            String baseUrl, DefaultInterceptor defaultInterceptor) {
+    OkHttpClient.Builder createDefaultClientBuilder() {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .addInterceptor(defaultInterceptor);
         setSslSocketFactory(clientBuilder);
@@ -94,7 +98,7 @@ public class ServiceFactory {
         setConnectionSpec(clientBuilder);
         return clientBuilder;
     }
-    private static GsonBuilder createDefaultGsonBuilder() {
+    GsonBuilder createDefaultGsonBuilder() {
         final BooleanDeserializer booleanDeserializer = new BooleanDeserializer();
         return new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -102,9 +106,9 @@ public class ServiceFactory {
                 .registerTypeAdapter(Boolean.class, booleanDeserializer)
                 .registerTypeAdapter(boolean.class, booleanDeserializer);
     }
-    private static Retrofit.Builder createDefaultRetrofitBuilder(String baseUrl,
-                                                                 OkHttpClient client,
-                                                                 Gson gson) {
+    Retrofit.Builder createDefaultRetrofitBuilder(String baseUrl,
+                                                  OkHttpClient client,
+                                                  Gson gson) {
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -113,7 +117,7 @@ public class ServiceFactory {
                 .client(client);
     }
 
-    private static void setSslSocketFactory(@NonNull OkHttpClient.Builder clientBuilder) {
+    void setSslSocketFactory(@NonNull OkHttpClient.Builder clientBuilder) {
         try {
             final X509TrustManager trustManager = getTrustManager();
             final SSLContext sslContext = Platform.get().getSSLContext();
@@ -127,7 +131,7 @@ public class ServiceFactory {
         }
     }
 
-    private static X509TrustManager getTrustManager() throws Exception {
+    X509TrustManager getTrustManager() throws Exception {
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
                 TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init((KeyStore) null);
@@ -139,7 +143,7 @@ public class ServiceFactory {
         return (X509TrustManager) trustManagers[0];
     }
 
-    private static KeyManager[] getKeyManagers() throws Exception {
+    KeyManager[] getKeyManagers() throws Exception {
         if (TextUtils.isEmpty(BuildConfig.WS_DEV_KEYSTORE)) {
             return null;
         }
@@ -156,7 +160,7 @@ public class ServiceFactory {
         return keyManagerFactory.getKeyManagers();
     }
 
-    private static void setConnectionSpec(@NonNull OkHttpClient.Builder clientBuilder) {
+    void setConnectionSpec(@NonNull OkHttpClient.Builder clientBuilder) {
         ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
                 .tlsVersions(TlsVersion.TLS_1_2)
                 .build();
@@ -164,8 +168,7 @@ public class ServiceFactory {
     }
 
     @SecureKey(key = "ws_cert_pin", value = BuildConfig.WS_CERTIFICATE_PIN)
-    private static void pinCertificates(@NonNull OkHttpClient.Builder clientBuilder,
-                                        @NonNull String baseUrl) {
+    void pinCertificates(@NonNull OkHttpClient.Builder clientBuilder, @NonNull String baseUrl) {
         CertificatePinner.Builder certificatePinnerBuilder = new CertificatePinner.Builder();
         try {
             final String wsHost = new URL(baseUrl).getHost();
@@ -188,7 +191,7 @@ public class ServiceFactory {
      * See http://blog.dev-area.net/2015/08/13/android-4-1-enable-tls-1-1-and-tls-1-2/ and
      * https://github.com/square/okhttp/issues/2372
      */
-    private static class TLSSocketFactory extends SSLSocketFactory {
+    static class TLSSocketFactory extends SSLSocketFactory {
         private final SSLSocketFactory delegate;
 
         TLSSocketFactory(SSLSocketFactory sslSocketFactory) {

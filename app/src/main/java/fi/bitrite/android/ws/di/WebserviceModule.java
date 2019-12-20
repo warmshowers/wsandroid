@@ -22,8 +22,13 @@ public class WebserviceModule {
     }
 
     @Provides
-    WarmshowersWebservice provideWarmshowersWebservice(@Named("WSBaseUrl") String baseUrl,
-                                                       DefaultInterceptor defaultInterceptor) {
-        return ServiceFactory.createWarmshowersWebservice(baseUrl, defaultInterceptor);
+    ServiceFactory provideServiceFactory(@Named("WSBaseUrl") String baseUrl,
+                                         DefaultInterceptor defaultInterceptor) {
+        return new ServiceFactory(baseUrl, defaultInterceptor);
+    }
+
+    @Provides
+    WarmshowersWebservice provideWarmshowersWebservice(ServiceFactory serviceFactory) {
+        return serviceFactory.createWarmshowersWebservice();
     }
 }

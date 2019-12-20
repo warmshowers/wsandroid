@@ -24,7 +24,7 @@ public class HeaderInterceptor implements Interceptor {
     @Inject
     public HeaderInterceptor(@Named("WSBaseUrl") String wsBaseUrl) {
         try {
-            wsDomainName = new URL(wsBaseUrl).getAuthority();
+            wsDomainName = new URL(wsBaseUrl).getHost();
         } catch (Exception e) {
             throw new RuntimeException("Invalid WSBaseUrl: " + e.getMessage());
         }

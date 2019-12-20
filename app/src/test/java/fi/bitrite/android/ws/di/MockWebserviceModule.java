@@ -4,6 +4,7 @@ import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
+import fi.bitrite.android.ws.api.MockServiceFactory;
 import fi.bitrite.android.ws.api.ServiceFactory;
 import fi.bitrite.android.ws.api.WarmshowersWebservice;
 import fi.bitrite.android.ws.api.interceptors.DefaultInterceptor;
@@ -19,15 +20,20 @@ public class MockWebserviceModule {
     }
 
     @Provides
-    @Named("WSBaseUrl")
-    String provideWSBaseUrl() {
-        return mMockWebServer.url("/").toString();
+    ServiceFactory provideServiceFactory(@Named("WSBaseUrl") String baseUrl,
+                                         DefaultInterceptor defaultInterceptor) {
+        return new MockServiceFactory(baseUrl, defaultInterceptor);
     }
 
     @Provides
-    WarmshowersWebservice provideWarmshowersWebservice(@Named("WSBaseUrl") String baseUrl,
-                                                       DefaultInterceptor defaultInterceptor) {
-        return ServiceFactory.createWarmshowersWebservice(baseUrl, defaultInterceptor);
+    @Named("WSBaseUrl")
+    String provideWSBaseUrl(MockWebServer mockWebServer) {
+        return mockWebServer.url("/").toString();
+    }
+
+    @Provides
+    WarmshowersWebservice provideWarmshowersWebservice(ServiceFactory serviceFactory) {
+        return serviceFactory.createWarmshowersWebservice();
     }
 
     @Provides
