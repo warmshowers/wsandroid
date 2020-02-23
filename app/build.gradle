@@ -126,8 +126,8 @@ android {
         }
 
         buildConfigField 'String', 'WS_DEV_KEYSTORE', wsDevKeyStore
-        buildConfigField 'String', 'WS_API_USER_ID', '"$wsApiUserId"'
-        buildConfigField 'String', 'WS_API_KEY', '"$wsApiKey"'
+        buildConfigField 'String', 'WS_API_USER_ID', "\"$wsApiUserId\""
+        buildConfigField 'String', 'WS_API_KEY', "\"$wsApiKey\""
     }
     flavorDimensions "mode"
     productFlavors {
