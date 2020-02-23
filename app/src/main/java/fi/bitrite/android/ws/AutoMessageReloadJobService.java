@@ -7,11 +7,17 @@ import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Build;
-import androidx.annotation.RequiresApi;
 import android.util.Log;
+
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -27,7 +33,10 @@ public class AutoMessageReloadJobService extends JobService {
 
     private Disposable mDisposable;
 
-    public static void reschedule(Context context, long messageReloadIntervalMs) {
+    public static void reschedule(Context context,
+                                  long messageReloadIntervalMs,
+                                  AutoMessageReloadScheduler autoMessageReloadScheduler) {
+        Log.d(TAG, String.format("reschedule: %dms", messageReloadIntervalMs));
         JobScheduler jobScheduler =
                 (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         if (jobScheduler == null) {
@@ -35,20 +44,57 @@ public class AutoMessageReloadJobService extends JobService {
         }
 
         if (messageReloadIntervalMs > 0) {
+            // Create the job description.
             ComponentName componentName =
                     new ComponentName(context, AutoMessageReloadJobService.class);
-            JobInfo jobInfo = new JobInfo.Builder(JOB_ID_RELOAD_MESSAGES, componentName)
-                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                    .setMinimumLatency(messageReloadIntervalMs)
-                    .build();
+            JobInfo.Builder jobInfoBuilder = new JobInfo.Builder(JOB_ID_RELOAD_MESSAGES, componentName)
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                jobInfoBuilder.setPeriodic(messageReloadIntervalMs, 0);
+            } else {
+                jobInfoBuilder.setPeriodic(messageReloadIntervalMs);
+            }
+            JobInfo newReloadMessagesJob = jobInfoBuilder.build();
 
-            int resultCode = jobScheduler.schedule(jobInfo);
+            // Check whether a job with the correct periodicity is already scheduled.
+            JobInfo reloadMessagesJob = findScheduledReloadMessagesJob(jobScheduler);
+            if (reloadMessagesJob != null
+                && reloadMessagesJob.getIntervalMillis() == newReloadMessagesJob.getIntervalMillis()) {
+                return;
+            }
+
+            // Immediately trigger a reload.
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    autoMessageReloadScheduler.reloadMessagesInAllAccounts()
+                            .onErrorComplete()
+                            .subscribe(() -> {
+                                Log.d(TAG, "Initial auto-reloading messages completed");
+                            });
+                }
+            }, 100);
+            // We might be on the DI stack. Trigger the initial loading after completing that.
+
+            Log.d(TAG, "Scheduling message reload job");
+            int resultCode = jobScheduler.schedule(jobInfoBuilder.build());
             if (resultCode != JobScheduler.RESULT_SUCCESS) {
                 Log.e(TAG, "Message reload job failed to be scheduled.");
             }
         } else {
             jobScheduler.cancel(JOB_ID_RELOAD_MESSAGES);
         }
+    }
+
+    @Nullable
+    private static JobInfo findScheduledReloadMessagesJob(@NonNull JobScheduler jobScheduler) {
+        List<JobInfo> scheduledJobs = jobScheduler.getAllPendingJobs();
+        for (JobInfo jobInfo : scheduledJobs) {
+            if (jobInfo.getId() == JOB_ID_RELOAD_MESSAGES) {
+                return jobInfo;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -68,10 +114,6 @@ public class AutoMessageReloadJobService extends JobService {
                     // take place in case of an error and has nothing to do with repeated job
                     // execution. It would apply back-off policy for the job.
                     jobFinished(jobParameters, false);
-
-                    // Reschedule the job.
-                    reschedule(getApplicationContext(),
-                            mAutoMessageReloadScheduler.getMessageReloadIntervalMs());
                 });
 
         return true;

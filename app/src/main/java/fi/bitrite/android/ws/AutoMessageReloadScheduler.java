@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +22,8 @@ import io.reactivex.Completable;
 @AppScope
 public class AutoMessageReloadScheduler
         implements SharedPreferences.OnSharedPreferenceChangeListener {
+    private final static String TAG = AutoMessageReloadScheduler.class.getCanonicalName();
+
     private final AccountComponentManager mAccountComponentManager;
     private final AccountManager mAccountManager;
     private final Context mContext;
@@ -52,10 +55,6 @@ public class AutoMessageReloadScheduler
         mSettingsRepository.registerOnChangeListener(this);
     }
 
-    public long getMessageReloadIntervalMs() {
-        return mHasAccounts ? mMessageReloadIntervalMs : 0;
-    }
-
     public static class AccountHelper {
         @Inject MessageRepository messageRepository;
     }
@@ -80,10 +79,13 @@ public class AutoMessageReloadScheduler
     }
 
     private void reschedule() {
+        long messageReloadIntervalMs = mHasAccounts ? mMessageReloadIntervalMs : 0;
+        Log.d(TAG, String.format("reschedule: %dms (%b)", mMessageReloadIntervalMs, mHasAccounts));
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            AutoMessageReloadJobService.reschedule(mContext, getMessageReloadIntervalMs());
+            AutoMessageReloadJobService.reschedule(mContext, messageReloadIntervalMs, this);
         } else {
-            AutoMessageReloadService.reschedule(mContext, getMessageReloadIntervalMs());
+            AutoMessageReloadService.reschedule(mContext, messageReloadIntervalMs);
         }
 
     }

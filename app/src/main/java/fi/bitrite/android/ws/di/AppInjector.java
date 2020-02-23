@@ -21,6 +21,7 @@ public class AppInjector {
         mAppComponent = DaggerAppComponent.builder()
                 .application(wsApp)
                 .build();
+        mAppComponent.init();
         mAppComponent.inject(wsApp);
     }
 
