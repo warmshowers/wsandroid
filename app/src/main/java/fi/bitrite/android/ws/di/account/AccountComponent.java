@@ -1,10 +1,10 @@
 package fi.bitrite.android.ws.di.account;
 
 import android.accounts.Account;
-import androidx.annotation.Nullable;
 
 import javax.inject.Named;
 
+import androidx.annotation.Nullable;
 import dagger.BindsInstance;
 import dagger.Subcomponent;
 import dagger.android.AndroidInjectionModule;
@@ -32,7 +32,7 @@ public interface AccountComponent {
      * This initializes the eager instances in {@link AccountModule}.
      */
     @Nullable
-    Void init();
+    @Named("eager-account") Void init();
 
     @Named("accountDestructor")
     CompositeDisposable getAccountDestructor();

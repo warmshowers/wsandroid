@@ -2,6 +2,9 @@ package fi.bitrite.android.ws.di;
 
 import android.app.Application;
 
+import javax.inject.Named;
+
+import androidx.annotation.Nullable;
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjectionModule;
@@ -27,6 +30,12 @@ public interface AppComponent {
 
         AppComponent build();
     }
+
+    /**
+     * This initializes the eager instances in {@link AppModule}.
+     */
+    @Nullable
+    @Named("eager-app") Void init();
 
     AccountComponent.Builder getAccountComponentBuilder();
 

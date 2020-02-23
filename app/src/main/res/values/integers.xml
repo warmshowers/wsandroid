@@ -22,7 +22,7 @@
     <!-- The AVD cannot work/stay connected if no network, so this is a workaround for debugging -->
     <bool name="simulate_network_disconnected">false</bool>
 
-    <integer name="prefs_message_refresh_interval_min_default">5</integer>
+    <integer name="prefs_message_refresh_interval_min_default">15</integer>
     <bool name="prefs_data_saver_mode_default">false</bool>
     <bool name="prefs_dev_simulate_no_network_default">false</bool>
 </resources>

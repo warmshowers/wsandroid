@@ -1,13 +1,12 @@
 package fi.bitrite.android.ws.di.account;
 
 import android.accounts.Account;
-import androidx.annotation.Nullable;
 
 import javax.inject.Named;
 
+import androidx.annotation.Nullable;
 import dagger.Module;
 import dagger.Provides;
-import fi.bitrite.android.ws.AutoMessageReloadScheduler;
 import fi.bitrite.android.ws.api.AuthenticationController;
 import fi.bitrite.android.ws.auth.AccountManager;
 import fi.bitrite.android.ws.ui.MessageNotificationController;
@@ -28,9 +27,9 @@ public class AccountModule {
      * creation).
      */
     @Provides
+    @Named("eager-account")
     @Nullable
     Void provideEager(AuthenticationController authenticationController,
-                      AutoMessageReloadScheduler autoMessageReloadScheduler,
                       MessageNotificationController messageNotificationController) {
         // This eagerly builds any parameters specified and returns nothing.
         return null;
