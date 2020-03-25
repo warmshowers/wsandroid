@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="prefs_ga_collect_stats_title">Invia statistiche anonime</string>
-    <string name="prefs_ga_collect_stats_summary_on">L'invio di statistiche a Google Analytics aiuta gli sviluppatori a comprendere l'utilizzo e migliorare l'app, ma puoi annullare l'iscrizione</string>
+    <string name="prefs_ga_collect_stats_summary_on">L\'invio di statistiche a Google Analytics aiuta gli sviluppatori a comprendere l\'utilizzo e migliorare l\'app, ma puoi annullare l\'iscrizione</string>
     <string name="prefs_ga_collect_stats_summary_off">Attualmente, il tuo utilizzo non viene monitorato per essere inviato a Google Analytics per aiutare gli sviluppatori nei loro sforzi di miglioramento</string>
 </resources>
