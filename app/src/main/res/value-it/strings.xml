@@ -4,7 +4,7 @@
     <string name="authenticating">Autenticazione …</string>
     <string name="need_account">Non può funzionare senza le credenziali WarmShowers</string>
     <string name="authentication_failed">Autenticazione fallita. Prego, reinserire le credenziali.</string>
-    <string name="no_starred_hosts">Non hai ancora degli hosts favoriti (hosts i cui profili sono disponibili offline). Puoi aggiungere gli hosts favoriti nella pagina delle informazioni personali dell'utente.</string>
+    <string name="no_starred_hosts">Non hai ancora degli ospiti favoriti (ospiti i cui profili sono disponibili offline). Puoi aggiungere gli ospiti favoriti nella pagina delle informazioni personali dell'utente.</string>
     <string name="empty_inbox">La tua posta in arrivo è vuota.</string>
     <string name="list_search_hint">Nome o città</string>
     <string name="no_results">La tua ricerca non ha fornito risultati.</string>
@@ -71,17 +71,17 @@
         <item quantity="one">%1$d utente in questo posto</item>
         <item quantity="other">%1$d utenti in questo posto</item>
     </plurals>
-	<!-- QUI -->
-    <string name="click_to_view_all"><strong>Click to view all</strong></string>
+    <string name="click_to_view_all"><strong>Clicca qui per ingrandire</strong></string>
     <string name="alert_neutral_button">OK</string>
-    <string name="title_fragment_contact_user">Message to %1$s</string>
-    <string name="users_dont_load">Host locations don\'t load at this zoom level\nZoom in</string>
+    <string name="title_fragment_contact_user">Messaggio a %1$s</string>
+    <string name="users_dont_load">Le posizioni degli ospiti non vengono caricate a questo livello \nIngrandisci</string>
     <!-- Distance from current has 2 args, number and units -->
-    <string name="distance_from_current">%1$d %2$s from current location</string>
-    <string name="host_not_currently_available">(Not currently available)</string>
-    <string name="host_currently_available">(Available for hosting)</string>
-    <string name="parsing_error">Error parsing response from server. Please report this search using the contact form at warmshowers.org.</string>
-    <string name="unknown_exception">Unknown error, please report to warmshowers.org contact form: %1$s</string>
+    <string name="distance_from_current">%1$d %2$s da questa posizione</string>
+    <string name="host_not_currently_available">(Non ancora disponibile)</string>
+    <string name="host_currently_available">(Disponibile per l'ospite)</string>
+    <string name="parsing_error">Errore durante l'analisi della risposta dal server. Si prega di segnalarla utilizzando il modulo di contatto all'indirizzo warmshowers.org.</string>
+    <string name="unknown_exception">Errore sconosciuto, segnalarlo a warmshowers.org tramite il form: %1$s</string>
+	<!-- QUI -->
     <string name="send_message">Send message</string>
     <string name="view_on_map">View on map</string>
     <string name="view_in_maps_app">View in map application</string>
