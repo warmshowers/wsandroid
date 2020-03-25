@@ -39,6 +39,7 @@
     <string name="last_updated">Ultimo aggiornamento:</string>
     <string name="host_updated">Informazioni sull'ospite aggiornate.</string>
     <string name="host_not_available">Questo membro non è momentaneamente disponibile. Puoi comunque contattarlo, ma non per l'ospitalità.</string>
+	<!-- QUI -->
     <string name="unstar_host">Un-favorite this user?</string>
     <string name="user_starred">Member favorited. You can now access this information offline.</string>
     <string name="user_unstarred">Member un-favorited.</string>
