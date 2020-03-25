@@ -91,23 +91,16 @@
     <string name="messages_on_site">Messaggio sul sito</string>
 
     <!-- Preferences -->
-    <string name="prefs_distance_unit_key" translatable="false">distance_unit</string>
-    <string name="prefs_distance_unit_default" translatable="false">@string/distance_unit_kilometers_short_raw</string>
     <string name="prefs_distance_unit_title">Unità di misura della distanza</string>
     <string name="prefs_distance_unit_summary">Esprimi la distanza in %1$s</string>
     <string name="distance_unit_kilometers_long">Chilometri</string>
     <string name="distance_unit_miles_long">Miglia</string>
     <string name="distance_unit_kilometers_short">km</string>
     <string name="distance_unit_miles_short">mi</string>
-    <string name="distance_unit_kilometers_short_raw" translatable="false">km</string>
-    <string name="distance_unit_miles_short_raw" translatable="false">mi</string>
 
-    <string name="prefs_tile_source_key" translatable="false">tile_source</string>
 	<string name="prefs_tile_source_title">Stile della mappa</string>
-    <string name="prefs_tile_source_summary" translatable="false">%1$s</string>
     <string name="prefs_tile_source_us_only">%1$s (US only)</string>
 
-    <string name="prefs_message_refresh_interval_min_key" translatable="false">message_reload_interval_min</string>
     <string name="prefs_message_refresh_interval_min_title">Frequenza di aggiornamento dei messaggi</string>
     <plurals name="prefs_message_refresh_interval_min_summary">
         <item quantity="one">Ogni minuto</item>
@@ -117,12 +110,10 @@
     <string name="prefs_message_refresh_interval_min_dialog_message">Specifica la frequenza con cui i tuoi messaggi devono essere aggiornati dal server.</string>
     <string name="prefs_message_refresh_interval_min_hint">Intervallo (minuti)</string>
 
-    <string name="prefs_data_saver_mode_key" translatable="false">data_saver</string>
     <string name="prefs_data_saver_mode_title">Modalità di risparmio dati</string>
     <string name="prefs_data_saver_mode_summary">Prevenire il caricamento di file di grandi dimensioni (come le immagini).</string>
 
     <string name="prefscat_dev_title">Impostazioni sviluppatore</string>
-    <string name="prefs_dev_simulate_no_network_key" translatable="false">dev_simulate_no_network</string>
     <string name="prefs_dev_simulate_no_network_title">Simula nessun servizio</string>
 
     <!-- Rome localization. -->
@@ -201,9 +192,6 @@
     <string name="hostinfo_details">Dettagli</string>
     <string name="view_licenses">Vedi la Licenza Open Source</string>
 
-    <!-- new strings from 1.5.1 -->
-    <string name="sent_from_android" translatable="false">Sent from the <a href='https://play.google.com/store/apps/details?id=fi.bitrite.android.ws'>Warmshowers App for Android</a></string>
-
     <!-- new strings from 2.0 -->
     <string name="feedback_relation_host">Ospite</string>
     <string name="feedback_relation_guest">Ospite</string>
@@ -272,6 +260,4 @@
 
     <string name="invalid_api_key">Il server ha rifiutato la richiesta. Aggiornare l'app.\n(%1$s)</string>
     <string name="login_error_account_ip_temp_blocked">Troppi tentativi di accesso. Il tuo account è temporaneamente bloccato. Riprova più tardi.</string>
-
-    <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
 </resources>
