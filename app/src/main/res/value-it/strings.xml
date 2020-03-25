@@ -39,39 +39,39 @@
     <string name="last_updated">Ultimo aggiornamento:</string>
     <string name="host_updated">Informazioni sull'ospite aggiornate.</string>
     <string name="host_not_available">Questo membro non è momentaneamente disponibile. Puoi comunque contattarlo, ma non per l'ospitalità.</string>
-	<!-- QUI -->
-    <string name="unstar_host">Un-favorite this user?</string>
-    <string name="user_starred">Member favorited. You can now access this information offline.</string>
-    <string name="user_unstarred">Member un-favorited.</string>
-    <string name="performing_search">Performing search …</string>
-    <string name="io_error">Internet access failure, please check your Internet connection.</string>
-    <string name="http_unexpected_failure">Unexpected error accessing server. Check your credentials and Internet connection.</string>
-    <string name="subject_hint">Enter subject here</string>
-    <string name="message_hint">Enter message here</string>
-    <string name="message_validation_error">Both subject and message are required.</string>
-    <string name="sending_message">Sending message …</string>
-    <string name="error_sending_message">Could not send message. Check your credentials and internet connection.</string>
-    <string name="message_sent">Message sent successfully.</string>
-    <string name="about_1">Developed by Warmshowers.org volunteers.</string>
-    <string name="about_2">This application is open source under the Apache 2.0 license. Contribute by forking our repository at github.com/warmshowers/wsandroid.\nPlease, report problems there.</string>
+    <string name="unstar_host">Eliminare dai favoriti questo utente?</string>
+    <string name="user_starred">Membro favorito. Ora puoi accedere a queste informazioni offline.</string>
+    <string name="user_unstarred">Membro eliminato dai favoriti.</string>
+    <string name="performing_search">Cercando …</string>
+    <string name="io_error">Accesso ad internet fallito, controllare la connessione.</string>
+    <string name="http_unexpected_failure">Errore inaspettato di accesso al server. Controlla le tue credenziali e la connessione ad internet.</string>
+    <string name="subject_hint">Inserire qui il soggetto</string>
+    <string name="message_hint">Inserire qui il messaggio</string>
+    <string name="message_validation_error">Sono richiesti sia soggetto che messaggio.</string>
+    <string name="sending_message">Invio messaggio …</string>
+    <string name="error_sending_message">Non posso inviare il messaggio. Controlla le tue credenziali e la connessione ad internet.</string>
+    <string name="message_sent">Messaggio inviato correttamente.</string>
+    <string name="about_1">Sviluppato da volontari di Warmshowers.org.</string>
+    <string name="about_2">Questa applicazione è open source sotto la licenza Apache 2.0. Contribuisi alla nostra repository github.com/warmshowers/wsandroid.\nRiporta qui eventuali problemi, grazie.</string>
     <string name="feedback">Feedback</string>
-    <string name="error_retrieving_messages">An error occurred while retrieving messages.</string>
-    <string name="messages_in_progress">Retrieving messages …</string>
-    <string name="no_unread_messages">You have no unread messages.</string>
+    <string name="error_retrieving_messages">Si è verificato un errore durante il recupero dei messaggi.</string>
+    <string name="messages_in_progress">Recupero i messaggi …</string>
+    <string name="no_unread_messages">Non hai messaggi da leggere.</string>
     <plurals name="unread_messages">
-        <item quantity="one">You have %d unread message.</item>
-        <item quantity="other">You have %d unread messages.</item>
+        <item quantity="one">Hai %d messaggio non letto.</item>
+        <item quantity="other">Hai %d messaggi non letti.</item>
     </plurals>
-    <string name="updateMessages">Update</string>
+    <string name="updateMessages">Aggiorna</string>
     <plurals name="users_at_location">
-        <item quantity="one">%1$d user at %2$s</item>
-        <item quantity="other">%1$d hosts at %2$s</item>
+        <item quantity="one">%1$d utente a %2$s</item>
+        <item quantity="other">%1$d utenti a %2$s</item>
     </plurals>
-    <string name="view_on_site">View on website</string>
+    <string name="view_on_site">Visualizza sul browser</string>
     <plurals name="user_count">
-        <item quantity="one">%1$d user at this location</item>
-        <item quantity="other">%1$d hosts at this location</item>
+        <item quantity="one">%1$d utente in questo posto</item>
+        <item quantity="other">%1$d utenti in questo posto</item>
     </plurals>
+	<!-- QUI -->
     <string name="click_to_view_all"><strong>Click to view all</strong></string>
     <string name="alert_neutral_button">OK</string>
     <string name="title_fragment_contact_user">Message to %1$s</string>
