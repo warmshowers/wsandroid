@@ -2,7 +2,7 @@
 <resources>
     <string name="app_version">Versione %1$s</string>
     <string name="authenticating">Autenticazione …</string>
-    <string name="need_account">Non può funzionare senza le credenziali Wa                         rmShowers</string>
+    <string name="need_account">Non può funzionare senza le credenziali WarmShowers</string>
     <string name="authentication_failed">Autenticazione fallita. Prego, reinserire le credenziali.</string>
     <string name="no_starred_hosts">Non hai ancora degli ospiti favoriti (ospiti i cui profili sono disponibili offline). Puoi aggiungere gli ospiti favoriti nella pagina delle tue informazioni personali.</string>
     <string name="empty_inbox">La tua posta in arrivo è vuota.</string>
