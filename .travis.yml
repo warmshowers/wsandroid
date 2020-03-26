@@ -67,8 +67,8 @@ cache:
 before_deploy:
   - mv app/build/outputs/apk/floss/release/app-floss-release.apk wsandroid-${TRAVIS_TAG}-floss.apk
   - mv app/build/outputs/apk/google/release/app-google-release.apk wsandroid-${TRAVIS_TAG}-google.apk
-  - mv app/build/outputs/mapping/floss/release/mapping.txt wsandroid-${TRAVIS_TAG}-floss-mapping.txt
-  - mv app/build/outputs/mapping/google/release/mapping.txt wsandroid-${TRAVIS_TAG}-google-mapping.txt
+  - mv app/build/outputs/mapping/flossRelease/mapping.txt wsandroid-${TRAVIS_TAG}-floss-mapping.txt
+  - mv app/build/outputs/mapping/googleRelease/mapping.txt wsandroid-${TRAVIS_TAG}-google-mapping.txt
 
 deploy:
   # Deploys the release APK for tagged revisions to GitHub.
