@@ -38,6 +38,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 /**
  * Acts as a intermediate to return messages from the database and in the background re-fetching
@@ -98,7 +99,7 @@ public class MessageRepository extends Repository<MessageThread> {
                 .observeOn(Schedulers.io())
                 .flatMapCompletable(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
-                        throw new Error(apiResponse.errorBody().string());
+                        return Completable.error(new HttpException(apiResponse));
                     }
 
                     MessageThreadListResponse responseBody = apiResponse.body();
@@ -322,7 +323,7 @@ public class MessageRepository extends Repository<MessageThread> {
                 .subscribeOn(Schedulers.io())
                 .flatMap(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
-                        throw new Error(apiResponse.errorBody().string());
+                        throw new HttpException(apiResponse);
                     }
 
                     MessageThreadResponse apiThread = apiResponse.body();
