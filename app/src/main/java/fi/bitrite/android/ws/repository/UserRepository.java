@@ -20,6 +20,7 @@ import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 /**
  * This repository is split into two parts. One lives in the account scope as we need access to its
@@ -178,7 +179,7 @@ public class UserRepository {
                     .subscribeOn(Schedulers.io())
                     .map(apiResponse -> {
                         if (!apiResponse.isSuccessful()) {
-                            throw new Error(apiResponse.errorBody().string());
+                            throw new HttpException(apiResponse);
                         }
 
                         return apiResponse.body().users;

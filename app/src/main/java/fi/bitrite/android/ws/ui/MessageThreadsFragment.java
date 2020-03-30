@@ -23,6 +23,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.model.MessageThread;
 import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.repository.Resource;
@@ -165,9 +166,9 @@ public class MessageThreadsFragment extends BaseFragment {
                 mMessageRepository.reloadThreads()
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnEvent(t -> mSwipeRefresh.setRefreshing(false))
-                        .subscribe(() -> {}, throwable -> Toast.makeText(
-                                getContext(), R.string.messages_reload_failed, Toast.LENGTH_LONG)
-                                .show()));
+                        .subscribe(() -> {},
+                                throwable -> HttpErrorHelper.showErrorToast(getContext(),
+                                        throwable)));
     }
 
     @Override
