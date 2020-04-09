@@ -144,7 +144,7 @@ public class UserRepository {
                     .subscribeOn(Schedulers.io())
                     .map(apiResponse -> {
                         if (!apiResponse.isSuccessful()) {
-                            throw new Error(apiResponse.errorBody().string());
+                            throw new HttpException(apiResponse);
                         }
 
                         Collection<ApiUser> apiUsers = apiResponse.body().users.values();
