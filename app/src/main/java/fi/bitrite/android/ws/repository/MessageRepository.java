@@ -131,7 +131,7 @@ public class MessageRepository extends Repository<MessageThread> {
                     .filter(response -> {
                         // Throwing errors is not allowed in onSuccess().
                         if (!response.isSuccessful()) {
-                            throw new Exception(response.errorBody().string());
+                            throw new HttpException(response);
                         } else if (!response.body().isSuccessful) {
                             throw new Exception("Retreived an unsuccessful response.");
                         }
@@ -168,7 +168,7 @@ public class MessageRepository extends Repository<MessageThread> {
                                 });
                     }, throwable -> {
                         Log.e(WSAndroidApplication.TAG,
-                                "Could not chreate the thread: " + throwable.toString());
+                                "Could not create the thread: " + throwable.toString());
                         emitter.onError(throwable);
                     });
         }).subscribeOn(Schedulers.io());
@@ -183,13 +183,13 @@ public class MessageRepository extends Repository<MessageThread> {
             // Creates and saves a new message.
             MessageThread thread = getRaw(threadId);
             if (thread == null) {
-                throw new Error("The thread needs to already be in the cache.");
+                throw new Exception("The thread needs to already be in the cache.");
             }
 
             int id = getNextPendingMessageId(thread);
             int authorId = mLoggedInUserHelper.getId();
             if (authorId == -1) {
-                throw new Error("No currently logged in user.");
+                throw new Exception("No currently logged in user.");
             }
 
             // Creates a temporary message and saves it into the database. We need to clone the

@@ -233,8 +233,6 @@
     <string name="menu_goto_profile">Montre le profile</string>
     <string name="menu_goto_profiles">Afficher les profils</string>
     <string name="message_new_hint">Tapez un message</string>
-    <string name="messages_reload_failed">Erreur lors de l\'obtention de messages.</string>
-    <string name="message_thread_create_failed">Erreur lors de la création d’une nouvelle conversation.</string>
     <string name="feedback_error_sending">L’envoi du commentaire a échoué.</string>
 
     <string name="unknown_location">Position inconnue</string>

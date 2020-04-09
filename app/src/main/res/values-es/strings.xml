@@ -227,8 +227,6 @@
     <string name="menu_goto_profile">Mostrar perfil</string>
     <string name="menu_goto_profiles">Mostrar perfiles</string>
     <string name="message_new_hint">Escriba un mensaje</string>
-    <string name="messages_reload_failed">Error al obtener mensajes.</string>
-    <string name="message_thread_create_failed">Error al crear una nueva conversación.</string>
     <string name="feedback_error_sending">El comentario no fue enviado.</string>
 
     <string name="unknown_location">Ubicación desconocida</string>

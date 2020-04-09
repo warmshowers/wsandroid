@@ -1,9 +1,6 @@
 package fi.bitrite.android.ws.ui;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,18 +9,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.ui.util.DialogHelper;
@@ -109,8 +109,10 @@ public class ContactUserFragment extends BaseFragment {
                             navigationController.navigateToMessageThreads();
                         }
                     } else {
-                        Toast.makeText(getContext(), R.string.message_thread_create_failed,
-                                Toast.LENGTH_LONG).show();
+                        Log.d(WSAndroidApplication.TAG,
+                                "Failed to create a new message thread: "
+                                + result.throwable.getMessage());
+                        HttpErrorHelper.showErrorToast(getContext(), result.throwable);
                     }
                 }));
     }
@@ -135,13 +137,12 @@ public class ContactUserFragment extends BaseFragment {
                 .createThread(subject, message, recipients)
                 // We wait for the threadId to become available.
                 .filter(threadId -> threadId != MessageRepository.STATUS_NEW_THREAD_ID_NOT_YET_KNOWN)
-                .subscribe(threadId -> mLastMessageSendResult.onNext(new MessageSendResult(threadId)),
+                .subscribe(
+                        threadId -> mLastMessageSendResult.onNext(new MessageSendResult(threadId)),
                         throwable -> {
-                            Log.e(WSAndroidApplication.TAG,
-                                    "Failed to create a new message thread: "
-                                    + throwable.getMessage());
                             mLastMessageSendResult.onNext(new MessageSendResult(throwable));
-                        });
+                        }
+                );
     }
 
     @Override
