@@ -28,6 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.Resource;
@@ -125,8 +126,8 @@ public class SearchFragment extends BaseFragment {
                     }
 
                     if (result.throwable != null) {
-                        // TODO(saemy): Better error message.
-                        DialogHelper.alert(getContext(), R.string.http_server_access_failure);
+                        DialogHelper.alert(getContext(),
+                                HttpErrorHelper.getErrorStringRes(result.throwable));
                     } else {
                         if (result.userIds.isEmpty()) {
                             DialogHelper.alert(getContext(), R.string.no_results);
