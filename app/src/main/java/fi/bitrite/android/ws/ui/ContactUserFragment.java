@@ -1,6 +1,9 @@
 package fi.bitrite.android.ws.ui;
 
 import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,9 +18,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -134,15 +134,13 @@ public class ContactUserFragment extends BaseFragment {
                 .createThread(subject, message, recipients)
                 // We wait for the threadId to become available.
                 .filter(threadId -> threadId != MessageRepository.STATUS_NEW_THREAD_ID_NOT_YET_KNOWN)
-                .subscribe(
-                        threadId -> mLastMessageSendResult.onNext(new MessageSendResult(threadId)),
+                .subscribe(threadId -> mLastMessageSendResult.onNext(new MessageSendResult(threadId)),
                         throwable -> {
-                            Log.d(WSAndroidApplication.TAG,
+                            Log.e(WSAndroidApplication.TAG,
                                     "Failed to create a new message thread: "
                                     + throwable.getMessage());
                             mLastMessageSendResult.onNext(new MessageSendResult(throwable));
-                        }
-                );
+                        });
     }
 
     @Override
