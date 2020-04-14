@@ -128,7 +128,7 @@ public class UserRepository {
                     .subscribeOn(Schedulers.io())
                     .map(apiUserResponse -> {
                         if (!apiUserResponse.isSuccessful()) {
-                            throw new Error(apiUserResponse.errorBody().string());
+                            throw new HttpException(apiUserResponse);
                         }
 
                         return new LoadResult<>(
