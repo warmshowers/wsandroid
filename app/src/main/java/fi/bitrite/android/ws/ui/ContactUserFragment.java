@@ -109,9 +109,6 @@ public class ContactUserFragment extends BaseFragment {
                             navigationController.navigateToMessageThreads();
                         }
                     } else {
-                        Log.d(WSAndroidApplication.TAG,
-                                "Failed to create a new message thread: "
-                                + result.throwable.getMessage());
                         HttpErrorHelper.showErrorToast(getContext(), result.throwable);
                     }
                 }));
@@ -140,6 +137,9 @@ public class ContactUserFragment extends BaseFragment {
                 .subscribe(
                         threadId -> mLastMessageSendResult.onNext(new MessageSendResult(threadId)),
                         throwable -> {
+                            Log.d(WSAndroidApplication.TAG,
+                                    "Failed to create a new message thread: "
+                                    + throwable.getMessage());
                             mLastMessageSendResult.onNext(new MessageSendResult(throwable));
                         }
                 );

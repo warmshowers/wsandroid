@@ -17,6 +17,7 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 /**
  * This repository is split into two parts. One lives in the account scope as we need access to its
@@ -114,7 +115,7 @@ public class FeedbackRepository {
 
                             return new LoadResult<>(LoadResult.Source.NETWORK, feedbacks);
                         } else {
-                            throw new Error(apiFeedbackResponse.errorBody().string());
+                            throw new HttpException(apiFeedbackResponse);
                         }
                     });
         }
@@ -131,7 +132,7 @@ public class FeedbackRepository {
                             body, relation, rating, yearWeMet, monthWeMet))
                     .flatMapCompletable(apiResponse -> {
                         if (!apiResponse.isSuccessful()) {
-                            throw new Error(apiResponse.errorBody().string());
+                            throw new HttpException(apiResponse);
                         }
 
                         markAsOld(recipientId);
