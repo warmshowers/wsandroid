@@ -220,9 +220,6 @@
     <string name="title_fragment_users">Utenti</string>
     <string name="title_fragment_filter_list">Filtro Utenti</string>
 
-    <string name="message_thread_create_failed">Impossibile creare un nuovo thread di messaggi.</string>
-    <string name="messages_reload_failed">Impossibile ricaricare i messaggi.</string>
-
     <string name="message_new_hint">Scrivi un messaggio</string>
     <string name="message_mark_unread">Segna come non letto</string>
     <string name="message_mark_read">Segna come letto</string>
