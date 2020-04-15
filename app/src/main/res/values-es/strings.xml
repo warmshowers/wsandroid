@@ -223,7 +223,6 @@
     <string name="prefs_dev_simulate_no_network_title">Simular Sin Servicio</string>
     <string name="message_mark_read">Marcar como leído</string>
     <string name="message_mark_unread">Marcar como no leído</string>
-    <string name="message_send_failed">Fallo al enviar el mensaje.</string>
     <string name="menu_goto_profile">Mostrar perfil</string>
     <string name="menu_goto_profiles">Mostrar perfiles</string>
     <string name="message_new_hint">Escriba un mensaje</string>

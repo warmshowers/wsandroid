@@ -229,7 +229,6 @@
     <string name="prefs_dev_simulate_no_network_title">Simuler une absence de service</string>
     <string name="message_mark_read">Marque comme lue</string>
     <string name="message_mark_unread">Marquer comme non lu</string>
-    <string name="message_send_failed">Échec de l’envoi du message.</string>
     <string name="menu_goto_profile">Montre le profile</string>
     <string name="menu_goto_profiles">Afficher les profils</string>
     <string name="message_new_hint">Tapez un message</string>
