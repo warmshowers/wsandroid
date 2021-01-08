@@ -165,7 +165,7 @@ android {
 
     def versionMajor = 3
     def versionMinor = 1
-    def versionPatch = 6
+    def versionPatch = 7
     def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 
     defaultConfig {
