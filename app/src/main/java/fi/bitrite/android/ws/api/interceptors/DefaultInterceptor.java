@@ -1,6 +1,5 @@
 package fi.bitrite.android.ws.api.interceptors;
 
-import android.os.Build;
 import android.text.TextUtils;
 
 import com.u.securekeys.SecureEnvironment;
@@ -21,8 +20,7 @@ import okhttp3.Response;
 @AppScope
 public class DefaultInterceptor implements Interceptor {
 
-    private static final String USER_AGENT = String.format("WSAndroid %s %s %s Android v%s",
-            BuildConfig.VERSION_NAME, Build.MANUFACTURER, Build.MODEL, Build.VERSION.RELEASE);
+    private static final String USER_AGENT = "WarmshowersApp";
 
     @Inject
     public DefaultInterceptor() {
