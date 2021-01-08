@@ -4,10 +4,10 @@ language: android
 # - WS_USE_PRODUCTION
 # - WS_API_USER_ID
 # - WS_API_KEY
-# - WS_PROD_KEYSTORE_FILE
 # - WS_PROD_KEYSTORE_PASSWORD
 # - WS_PROD_KEYSTORE_KEY_ALIAS
 # - WS_PROD_KEYSTORE_KEY_PASSWORD
+# - GITHUB_OAUTH_TOKEN (for pushing release APKs)
 
 android:
   components:
@@ -35,9 +35,9 @@ before_script:
   # Decrypts the keystore (if this is not a PR build).
   # The remaining keystore environment variables are configured to be directly
   # set by Travis CI.
-  - 'if [ ${TRAVIS_SECURE_ENV_VARS} = "true" ] && [ -n "$encrypted_d213628fe2b0_key" ]; then
+  - 'if [ ${TRAVIS_SECURE_ENV_VARS} = "true" ] && [ -n "$encrypted_31175506456e_key" ]; then
        openssl aes-256-cbc -d
-         -K $encrypted_d213628fe2b0_key -iv $encrypted_d213628fe2b0_iv
+         -K $encrypted_31175506456e_key -iv $encrypted_31175506456e_iv
          -in keystores/warmshowers.jks.enc -out "$HOME/warmshowers.jks" &&
        export WS_PROD_KEYSTORE_FILE="$HOME/warmshowers.jks";
      fi'
@@ -73,8 +73,7 @@ before_deploy:
 deploy:
   # Deploys the release APK for tagged revisions to GitHub.
   provider: releases
-  api_key:
-    secure: "dIzw4tJxXLPlA7wDdcgwLop6qcAU9lPTD4Z322APx6430Pevx93o6u8H6vnNMPytbpL4kpsxQjsqe+gz3DLB5vSUmftn0UF5GrjJTxNCeSj0wxW5kgeb2iuw4UsjpoI1FOroN0FxOg+CJUoD27MRwjjl4S9NnEVYmbcj9+8O8f4="
+  api_key: "$GITHUB_OAUTH_TOKEN"
   file:
     - "wsandroid-${TRAVIS_TAG}-floss.apk"
     - "wsandroid-${TRAVIS_TAG}-google.apk"
