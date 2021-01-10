@@ -5,6 +5,15 @@
      alt="Get it on Google Play"
      height="80">](https://play.google.com/store/apps/details?id=fi.bitrite.android.ws)
 
+## Disclaimer
+This is an unofficial app created by volunteers and in no way related to
+WarmShowers LLC.
+
+We are **not** reachable by the WarmShowers web page!
+Please, use the [Gitter chat](https://gitter.im/warmshowers-wsandroid/Lobby) to
+discuss and [Github issues](https://github.com/warmshowers/wsandroid/issues) to
+report issues. 
+
 ## How may I help the project?
 
 We’re very happy that you are thinking about helping us!

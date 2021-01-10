@@ -51,7 +51,7 @@
     <string name="sending_message">Invio messaggio …</string>
     <string name="error_sending_message">Non posso inviare il messaggio. Controlla le tue credenziali e la connessione ad internet.</string>
     <string name="message_sent">Messaggio inviato correttamente.</string>
-    <string name="about_1">Sviluppato da volontari di Warmshowers.org. \nTradotto da: Simone Ciocca, Jakob Janatka (Ita)</string>
+    <string name="about_1">App non ufficiale creata da volontari e in alcun modo correlata a WarmShowers LLC.\nTradotto da: Simone Ciocca, Jakob Janatka (Ita)</string>
     <string name="about_2">Questa applicazione è open source sotto la licenza Apache 2.0. Contribuisi alla nostra repository github.com/warmshowers/wsandroid.\nRiporta qui eventuali problemi, grazie.</string>
     <string name="feedback">Feedback</string>
     <string name="error_retrieving_messages">Si è verificato un errore durante il recupero dei messaggi.</string>
