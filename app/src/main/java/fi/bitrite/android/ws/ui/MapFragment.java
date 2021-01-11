@@ -488,9 +488,14 @@ public class MapFragment extends BaseFragment {
         float showUserZoom = getResources().getInteger(R.integer.map_showuser_zoom);
 
         // If we were launched with an intent asking us to zoom to a member
-        if (getArguments() != null && getArguments().containsKey(KEY_MAP_TARGET_LAT_LNG)) {
-            IGeoPoint targetLatLng = getArguments().getParcelable(KEY_MAP_TARGET_LAT_LNG);
+        final Bundle args = getArguments();
+        if (args != null && args.containsKey(KEY_MAP_TARGET_LAT_LNG)) {
+            IGeoPoint targetLatLng = args.getParcelable(KEY_MAP_TARGET_LAT_LNG);
             moveMapToLocation(targetLatLng, showUserZoom, POSITION_PRIORITY_FORCED);
+
+            args.remove(KEY_MAP_TARGET_LAT_LNG);
+            // Remove the target from the args s.t. we do not center back to that position after
+            // the user moves the map, opens a different fragment and then returns to the map.
             return;
         }
 
