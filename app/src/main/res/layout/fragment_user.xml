@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/primaryWhite"
@@ -388,7 +388,6 @@
                         android:layout_marginStart="56dp"
                         android:layout_marginLeft="56dp"
                         android:layout_weight="1"
-                        android:scrollbars="vertical"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:stackFromEnd="true"
                         tools:listitem="@layout/item_feedback" />
@@ -396,5 +395,5 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
