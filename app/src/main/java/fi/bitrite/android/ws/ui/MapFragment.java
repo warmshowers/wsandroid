@@ -62,6 +62,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.model.User;
@@ -566,7 +567,7 @@ public class MapFragment extends BaseFragment {
                             }, throwable -> {
                                 // TODO(saemy): Error handling.
                                 Log.e(TAG, throwable.getMessage());
-                                sendMessage(R.string.http_server_access_failure);
+                                HttpErrorHelper.showErrorToast(getContext(), throwable);
                             }));
         }
 

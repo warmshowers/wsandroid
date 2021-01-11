@@ -38,6 +38,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.HttpException;
 
 /**
  * Acts as a intermediate to return messages from the database and in the background re-fetching
@@ -98,7 +99,7 @@ public class MessageRepository extends Repository<MessageThread> {
                 .observeOn(Schedulers.io())
                 .flatMapCompletable(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
-                        throw new Error(apiResponse.errorBody().string());
+                        return Completable.error(new HttpException(apiResponse));
                     }
 
                     MessageThreadListResponse responseBody = apiResponse.body();
@@ -130,7 +131,7 @@ public class MessageRepository extends Repository<MessageThread> {
                     .filter(response -> {
                         // Throwing errors is not allowed in onSuccess().
                         if (!response.isSuccessful()) {
-                            throw new Exception(response.errorBody().string());
+                            throw new HttpException(response);
                         } else if (!response.body().isSuccessful) {
                             throw new Exception("Retreived an unsuccessful response.");
                         }
@@ -167,7 +168,7 @@ public class MessageRepository extends Repository<MessageThread> {
                                 });
                     }, throwable -> {
                         Log.e(WSAndroidApplication.TAG,
-                                "Could not chreate the thread: " + throwable.toString());
+                                "Could not create the thread: " + throwable.toString());
                         emitter.onError(throwable);
                     });
         }).subscribeOn(Schedulers.io());
@@ -182,13 +183,13 @@ public class MessageRepository extends Repository<MessageThread> {
             // Creates and saves a new message.
             MessageThread thread = getRaw(threadId);
             if (thread == null) {
-                throw new Error("The thread needs to already be in the cache.");
+                throw new Exception("The thread needs to already be in the cache.");
             }
 
             int id = getNextPendingMessageId(thread);
             int authorId = mLoggedInUserHelper.getId();
             if (authorId == -1) {
-                throw new Error("No currently logged in user.");
+                throw new Exception("No currently logged in user.");
             }
 
             // Creates a temporary message and saves it into the database. We need to clone the
@@ -322,7 +323,7 @@ public class MessageRepository extends Repository<MessageThread> {
                 .subscribeOn(Schedulers.io())
                 .flatMap(apiResponse -> {
                     if (!apiResponse.isSuccessful()) {
-                        throw new Error(apiResponse.errorBody().string());
+                        throw new HttpException(apiResponse);
                     }
 
                     MessageThreadResponse apiThread = apiResponse.body();

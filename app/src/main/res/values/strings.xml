@@ -232,13 +232,9 @@
     <string name="title_fragment_users">Users</string>
     <string name="title_fragment_filter_list">User Filters</string>
 
-    <string name="message_thread_create_failed">Failed to create a new message thread.</string>
-    <string name="messages_reload_failed">Failed to reload the messages.</string>
-
     <string name="message_new_hint">Type a message</string>
     <string name="message_mark_unread">Mark unread</string>
     <string name="message_mark_read">Mark read</string>
-    <string name="message_send_failed">Failed to send the message.</string>
 
     <string name="remember_password">Remember password?</string>
     <string name="button_text_forgot_password">Forgot your password?</string>
@@ -272,6 +268,8 @@
 
     <string name="invalid_api_key">The server rejected the request. Please update the app.\n(%1$s)</string>
     <string name="login_error_account_ip_temp_blocked">Too many login attempts. Your account is temporarily blocked. Please try again later.</string>
+    <string name="access_denied">Access denied. Please check your email for account confirmation message.</string>
+    <string name="internal_server_error">Oops... This is on us, sorry! Something has gone wrong on the server side. Please try again later.</string>
 
     <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
 </resources>

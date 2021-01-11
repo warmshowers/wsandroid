@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.ui.util.DialogHelper;
@@ -109,8 +109,7 @@ public class ContactUserFragment extends BaseFragment {
                             navigationController.navigateToMessageThreads();
                         }
                     } else {
-                        Toast.makeText(getContext(), R.string.message_thread_create_failed,
-                                Toast.LENGTH_LONG).show();
+                        HttpErrorHelper.showErrorToast(getContext(), result.throwable);
                     }
                 }));
     }

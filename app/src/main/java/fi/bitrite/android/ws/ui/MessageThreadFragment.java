@@ -21,6 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.repository.MessageRepository;
 import fi.bitrite.android.ws.repository.UserRepository;
 import fi.bitrite.android.ws.ui.listadapter.MessageListAdapter;
@@ -117,9 +118,7 @@ public class MessageThreadFragment extends BaseFragment {
                     if (result.throwable != null) {
                         // This should not happen, if there is no network connection we schedule
                         // sending the message for when it is back.
-                        Toast.makeText(getContext(), R.string.message_send_failed,
-                                Toast.LENGTH_LONG)
-                                .show();
+                        HttpErrorHelper.showErrorToast(getContext(), result.throwable);
                     } else {
                         mEdtNewMessage.setText("");
                     }

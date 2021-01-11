@@ -222,13 +222,9 @@
     <string name="title_fragment_users">Gastgeber</string>
     <string name="title_fragment_filter_list">Gastgeber-Filter</string>
 
-    <string name="message_thread_create_failed">Fehler beim Erstellen eines neuen Chats.</string>
-    <string name="messages_reload_failed">Fehler beim Abrufen der Nachrichten.</string>
-
     <string name="message_new_hint">Gib eine Nachricht ein</string>
     <string name="message_mark_unread">Als ungelesen markieren</string>
     <string name="message_mark_read">Als gelesen markieren</string>
-    <string name="message_send_failed">Fehler beim Senden der Nachricht.</string>
 
     <string name="remember_password">Passwort speichern?</string>
     <string name="button_text_forgot_password">Passwort vergessen?</string>
