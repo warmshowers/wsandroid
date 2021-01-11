@@ -1,10 +1,6 @@
 package fi.bitrite.android.ws.ui;
 
 import android.os.Bundle;
-import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -22,12 +18,17 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import butterknife.BindColor;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 import fi.bitrite.android.ws.R;
 import fi.bitrite.android.ws.WSAndroidApplication;
+import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.model.User;
 import fi.bitrite.android.ws.repository.Resource;
@@ -126,6 +127,7 @@ public class SearchFragment extends BaseFragment {
 
                     if (result.throwable != null) {
                         // TODO(saemy): Better error message.
+                        HttpErrorHelper.logError(getContext(), result.throwable);
                         DialogHelper.alert(getContext(), R.string.http_server_access_failure);
                     } else {
                         if (result.userIds.isEmpty()) {

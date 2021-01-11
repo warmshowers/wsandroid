@@ -10,7 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -62,6 +61,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.api.response.UserSearchByLocationResponse;
 import fi.bitrite.android.ws.model.SimpleUser;
 import fi.bitrite.android.ws.model.User;
@@ -85,7 +85,6 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class MapFragment extends BaseFragment {
     private static final String KEY_MAP_TARGET_LAT_LNG = "map_target_lat_lng";
-    private static final String TAG = "MapFragment";
     private static final int REQUEST_CODE_FINE_LOCATION = 124;
 
     @Inject LoggedInUserHelper mLoggedInUserHelper;
@@ -530,7 +529,7 @@ public class MapFragment extends BaseFragment {
 
         // If not connected, we'll switch to offline/starred users mode
         if (!Tools.isNetworkConnected(requireContext())) {
-            sendMessage(R.string.map_network_not_connected);
+            showToast(R.string.map_network_not_connected);
             return;
         }
 
@@ -548,7 +547,7 @@ public class MapFragment extends BaseFragment {
 
     private void fetchUsersForCurrentMapPosition() {
         if (mLastPosition.zoom < mMapZoomMinLoad) {
-            sendMessage(R.string.users_dont_load);
+            showToast(R.string.users_dont_load);
         } else {
             mProgressLoadingUsers.setVisibility(View.VISIBLE);
             getResumePauseDisposable().add(
@@ -565,8 +564,8 @@ public class MapFragment extends BaseFragment {
                                 mMap.invalidate();
                             }, throwable -> {
                                 // TODO(saemy): Error handling.
-                                Log.e(TAG, throwable.getMessage());
-                                sendMessage(R.string.http_server_access_failure);
+                                HttpErrorHelper.logError(requireContext(), throwable);
+                                showToast(HttpErrorHelper.getErrorStringRes(throwable));
                             }));
         }
 
@@ -680,12 +679,12 @@ public class MapFragment extends BaseFragment {
         return true;
     }
 
-    private void sendMessage(@StringRes final int messageId) {
+    private void showToast(@StringRes final int messageId) {
         if (mLastToast != null) {
             mLastToast.cancel();
         }
 
-        mLastToast = Toast.makeText(getContext(), messageId, Toast.LENGTH_SHORT);
+        mLastToast = Toast.makeText(getContext(), messageId, Toast.LENGTH_LONG);
         mLastToast.show();
     }
 

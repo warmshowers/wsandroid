@@ -169,6 +169,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
                             if (errorMsg.equals("Wrong username or password.")) {
                                 errorCause = AuthResult.ErrorCause.WrongUsernameOrPassword;
                             } else if (errorMsg.equals("HTTP Authorization failure credentials not present")
+                                       || errorMsg.equals("HTTP Authorization developer account does not have API key")
                                        || errorMsg.equals("HTTP Authorization developer account API key does not match HTTP_AUTHORIZATION API key")
                                        || errorMsg.equals("HTTP Authorization failure, developer UID user load not found")) {
                                 errorCause = AuthResult.ErrorCause.WrongAPIKey;

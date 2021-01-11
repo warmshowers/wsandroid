@@ -22,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import fi.bitrite.android.ws.R;
+import fi.bitrite.android.ws.api.helper.HttpErrorHelper;
 import fi.bitrite.android.ws.auth.Authenticator;
 import fi.bitrite.android.ws.di.Injectable;
 import fi.bitrite.android.ws.ui.util.ProgressDialog;
@@ -105,8 +106,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorFragmentActivity
 
                     if (result.throwable != null) {
                         mProgressDisposable.dispose();
-                        Toast.makeText(this, R.string.http_server_access_failure, Toast.LENGTH_LONG)
-                                .show();
+                        HttpErrorHelper.showErrorToast(this, result.throwable);
                     } else if (result.authResult != null && result.authResult.isSuccessful()) {
                         Bundle bundle = new Bundle();
                         bundle.putString(android.accounts.AccountManager.KEY_ACCOUNT_NAME,
