@@ -1,7 +1,6 @@
 package fi.bitrite.android.ws.shadow;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 
 import com.u.securekeys.SecureEnvironment;
 
@@ -9,6 +8,8 @@ import org.robolectric.annotation.Implements;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 @Implements(SecureEnvironment.class)
 public class ShadowSecureEnvironment {
@@ -18,7 +19,6 @@ public class ShadowSecureEnvironment {
         setSecureKey("ws_api_userId", "1234");
         setSecureKey("ws_api_key", "mock_api_key");
         setSecureKey("ws_base_url", "https://localhost/");
-        setSecureKey("ws_cert_pin", "sha256/dHJ5aW5nIHRvIGJlIHNuZWFreSwgaHVoPyA7KQo=");
     }
 
     private ShadowSecureEnvironment() throws IllegalAccessException {

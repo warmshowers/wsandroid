@@ -18,8 +18,5 @@ public class MockServiceFactory extends ServiceFactory {
     void setSslSocketFactory(@NonNull OkHttpClient.Builder clientBuilder) {}
 
     @Override
-    void pinCertificates(@NonNull OkHttpClient.Builder clientBuilder, @NonNull String baseUrl) {}
-
-    @Override
     void setConnectionSpec(@NonNull OkHttpClient.Builder clientBuilder) {}
 }

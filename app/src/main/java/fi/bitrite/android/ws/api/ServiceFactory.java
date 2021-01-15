@@ -8,15 +8,11 @@ import android.util.Log;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.u.securekeys.SecureEnvironment;
-import com.u.securekeys.annotation.SecureKey;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.URL;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -43,7 +39,6 @@ import fi.bitrite.android.ws.api.typeadapter.DateDeserializer;
 import fi.bitrite.android.ws.api.typeadapter.RatingTypeAdapter;
 import fi.bitrite.android.ws.api.typeadapter.RelationTypeAdapter;
 import fi.bitrite.android.ws.model.Feedback;
-import okhttp3.CertificatePinner;
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
@@ -93,9 +88,10 @@ public class ServiceFactory {
     OkHttpClient.Builder createDefaultClientBuilder() {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .addInterceptor(defaultInterceptor);
-        setSslSocketFactory(clientBuilder);
-        pinCertificates(clientBuilder, baseUrl);
-        setConnectionSpec(clientBuilder);
+        if (!TextUtils.isEmpty(BuildConfig.WS_DEV_KEYSTORE)) {
+            setSslSocketFactory(clientBuilder);
+            setConnectionSpec(clientBuilder);
+        }
         return clientBuilder;
     }
     GsonBuilder createDefaultGsonBuilder() {
@@ -165,22 +161,6 @@ public class ServiceFactory {
                 .tlsVersions(TlsVersion.TLS_1_2)
                 .build();
         clientBuilder.connectionSpecs(Collections.singletonList(cs));
-    }
-
-    @SecureKey(key = "ws_cert_pin", value = BuildConfig.WS_CERTIFICATE_PIN)
-    void pinCertificates(@NonNull OkHttpClient.Builder clientBuilder, @NonNull String baseUrl) {
-        CertificatePinner.Builder certificatePinnerBuilder = new CertificatePinner.Builder();
-        try {
-            final String wsHost = new URL(baseUrl).getHost();
-            final String wsPin = SecureEnvironment.getString("ws_cert_pin");
-            certificatePinnerBuilder.add(wsHost, wsPin);
-            certificatePinnerBuilder.add("warmshowers.org", wsPin);
-            certificatePinnerBuilder.add("*.warmshowers.org", wsPin);
-
-            clientBuilder.certificatePinner(certificatePinnerBuilder.build());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 

@@ -65,10 +65,6 @@ android {
     }
     buildTypes {
         all {
-            // We pin the intermediate as the WS SSL key-pair is rotated every three months.
-            // CN=Let's Encrypt Authority X3, Expires 2021-03-17
-            buildConfigField 'String', 'WS_CERTIFICATE_PIN', '"sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg="'
-
             if (useProduction) {
                 buildConfigField 'String', 'WS_BASE_URL', '"https://www.warmshowers.org/"'
                 resValue 'string', 'account_type', 'org.warmshowers'
