@@ -9,6 +9,7 @@
     <string name="list_search_hint">Name or city</string>
     <string name="no_results">Your search yielded no results.</string>
     <string name="greeting">Hi there!</string>
+    <string name="moving_out_greeting" translatable="false">The community is forking!</string>
     <string name="enter_credentials">Please log in using your Warmshowers.org credentials</string>
     <string name="view_details">View details</string>
     <string name="star">Star</string>
@@ -274,4 +275,23 @@
     <string name="login_error_account_ip_temp_blocked">Too many login attempts. Your account is temporarily blocked. Please try again later.</string>
 
     <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
+
+    <string name="moving_out_message" translatable="false">
+        \nDear fellow WS community members,
+        \n
+        \nWarmShowers used to be an open, free and welcoming platform, reflecting values which drive people to open their homes for bicycle travelers.
+        \n
+        \nWe are a group of bike tourers and developers, former WS.org volunteers. We created this app for you as much as for ourselves.
+        Since 2015 it\'s been a struggle to maintain the app, as new WS board has been dismissive or even hostile to us. It\'s time to move on.
+        \n
+        \nWe are thinking about creating a new platform dedicated for bicycle touring travelers and those who want to host them. Open, free and transparent.
+        You can help us better understand the needs by filling out <a href="https://docs.google.com/forms/d/e/1FAIpQLSdDrYb8AjccK2vRRTwt11YWpjawLTxiDMvhmyZjYZblVuNLcw/viewform">this short survey</a>.
+        \n
+        \nUntil we get something new working, we hope to meet you in the <a href="https://www.trustroots.org/circles/cyclists">Cyclists Circle at trustroots.org</a>.
+        \n
+        \nSee you on the road!
+        \n
+        \nYours,
+        \nWS Android developers
+    </string>
 </resources>

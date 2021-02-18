@@ -17,9 +17,15 @@
 
     <!-- Account Manager -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" android:maxSdkVersion="22" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" android:maxSdkVersion="22" />
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" android:maxSdkVersion="22" />
+    <uses-permission
+        android:name="android.permission.MANAGE_ACCOUNTS"
+        android:maxSdkVersion="22" />
+    <uses-permission
+        android:name="android.permission.USE_CREDENTIALS"
+        android:maxSdkVersion="22" />
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS"
+        android:maxSdkVersion="22" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -73,20 +79,12 @@
             android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.MainActivity"
-            android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize">
-
+            android:name=".ui.ActivityMovingOut"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-
-                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
         </activity>
 
         <meta-data
