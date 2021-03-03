@@ -9,7 +9,7 @@
     <string name="list_search_hint">Name or city</string>
     <string name="no_results">Your search yielded no results.</string>
     <string name="greeting">Hi there!</string>
-    <string name="moving_out_greeting" translatable="false">The community is forking!</string>
+    <string name="moving_out_greeting" translatable="false">Volunteers rejected, the app has to shut down</string>
     <string name="enter_credentials">Please log in using your Warmshowers.org credentials</string>
     <string name="view_details">View details</string>
     <string name="star">Star</string>
@@ -279,13 +279,13 @@
     <string name="moving_out_message" translatable="false">
         Dear fellow WS community member,\n
         \n
-        We are a group of bike tourers and developers, former WS.org volunteers. We created this app for you as much as for ourselves. For years, this was the official WS app, trusted by thousands of people.\n
+        We are a group of bike tourers and developers, former WS.org volunteers. We created this app for you as much as for ourselves. For years, this was the official WS app, trusted by tens of thousands of people.\n
         \n
-        Back in 2012 when this app was created, WarmShowers was an open, free and welcoming platform. Since 2015, under the new board, WS has been slowly but steadily moving in the direction that we can\'t agree with any more. It\'s time for us to go our own way. [Read more below]\n
+        Back in 2012 when this app was created, WarmShowers was an open, free and welcoming community. Since 2015, under the new board, WS has been slowly but steadily moving in the direction that we can’t agree with any more. It’s time for us to go our own way. [Read more below]\n
         \n
         We are thinking about creating a new platform dedicated for a worldwide community of bicycle touring travelers and those who want to host them. One that is again built on trust and openness, that reflects values which drive people to open doors to their homes and welcome strangers traveling the world by bicycle. One that helps to build lifelong, cross-cultural friendships. Free and transparent for everyone and forever.\n
         \n
-        Please help us by filling out <a href="https://warmshowers.github.io/wsandroid/">this short survey</a>.\n
+        Please help us by <a href="https://warmshowers.github.io/wsandroid/">filling out the survey</a>.\n
         \n
         Until we get something new working, we hope to meet you in the <a href="https://www.trustroots.org/?circle=cyclists">Cyclists Circle at trustroots.org</a>.\n
         \n
@@ -300,9 +300,9 @@
         \n
         Warmshowers started life as an openly available contact list of cyclists committed to sharing their love of bicycle touring and their hospitality.\n
         \n
-        In 2001 this list was moved online by Randy Fay to help expand its reach and welcome more people into the bicycle touring family. And for almost 15 years he maintained this service with an open and welcoming attitude that made Warmshowers what it is today. Volunteers helped to create an iphone app and, in 2012, an android app so that cyclists could benefit from warmshowers on the move.\n
+        In 2001 this list was moved online by Randy Fay to help expand its reach and welcome more people into the bicycle touring family. And for almost 15 years he maintained this service with an open and welcoming attitude that made Warmshowers what it is today. Volunteers helped create an iPhone app and, in 2012, an android app so that cyclists could benefit from Warmshowers on the move.\n
         \n
-        In 2015 the Warmshowers Foundation was created to help manage the growing service and secure its future in light of Randy’s retirement. Sadly the board from the outset did not share the open and inclusive attitude of Randy and the volunteers that made Warmshowers so well loved.\n
+        In 2015 the Warmshowers Foundation was created to help manage the growing service and secure its future in light of Randy’s retirement. Sadly, the board from the outset did not share the volunteers’ open and inclusive attitude that made Warmshowers so well-loved.\n
         \n
         Decisions that had previously been made with community support were removed from the public forum. Volunteers that helped grow Warmshowers were pushed out and unable to contribute. And donations that used to support the operating costs were funnelled into private software companies who haven\’t published or made any significant upgrades in over 5 years.\n
         \n
