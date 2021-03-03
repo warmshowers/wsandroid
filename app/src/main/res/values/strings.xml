@@ -277,21 +277,37 @@
     <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
 
     <string name="moving_out_message" translatable="false">
-        \nDear fellow WS community members,
+        Dear fellow WS community member,\n
         \n
-        \nWarmShowers used to be an open, free and welcoming platform, reflecting values which drive people to open their homes for bicycle travelers.
+        We are a group of bike tourers and developers, former WS.org volunteers. We created this app for you as much as for ourselves. For years, this was the official WS app, trusted by thousands of people.\n
         \n
-        \nWe are a group of bike tourers and developers, former WS.org volunteers. We created this app for you as much as for ourselves.
-        Since 2015 it\'s been a struggle to maintain the app, as new WS board has been dismissive or even hostile to us. It\'s time to move on.
+        Back in 2012 when this app was created, WarmShowers was an open, free and welcoming platform. Since 2015, under the new board, WS has been slowly but steadily moving in the direction that we can\'t agree with any more. It\'s time for us to go our own way. [Read more below]\n
         \n
-        \nWe are thinking about creating a new platform dedicated for bicycle touring travelers and those who want to host them. Open, free and transparent.
-        You can help us better understand the needs by filling out <a href="https://docs.google.com/forms/d/e/1FAIpQLSdDrYb8AjccK2vRRTwt11YWpjawLTxiDMvhmyZjYZblVuNLcw/viewform">this short survey</a>.
+        We are thinking about creating a new platform dedicated for a worldwide community of bicycle touring travelers and those who want to host them. One that is again built on trust and openness, that reflects values which drive people to open doors to their homes and welcome strangers traveling the world by bicycle. One that helps to build lifelong, cross-cultural friendships. Free and transparent for everyone and forever.\n
         \n
-        \nUntil we get something new working, we hope to meet you in the <a href="https://www.trustroots.org/circles/cyclists">Cyclists Circle at trustroots.org</a>.
+        Please help us by filling out <a href="https://warmshowers.github.io/wsandroid/">this short survey</a>.\n
         \n
-        \nSee you on the road!
+        Until we get something new working, we hope to meet you in the <a href="https://www.trustroots.org/?circle=cyclists">Cyclists Circle at trustroots.org</a>.\n
         \n
-        \nYours,
-        \nWS Android developers
+        See you on the road!\n
+        \n
+        Yours,\n
+        Former WS Android developers\n
+        \n
+        ------\n
+        \n
+        Backstory ...\n
+        \n
+        Warmshowers started life as an openly available contact list of cyclists committed to sharing their love of bicycle touring and their hospitality.\n
+        \n
+        In 2001 this list was moved online by Randy Fay to help expand its reach and welcome more people into the bicycle touring family. And for almost 15 years he maintained this service with an open and welcoming attitude that made Warmshowers what it is today. Volunteers helped to create an iphone app and, in 2012, an android app so that cyclists could benefit from warmshowers on the move.\n
+        \n
+        In 2015 the Warmshowers Foundation was created to help manage the growing service and secure its future in light of Randy’s retirement. Sadly the board from the outset did not share the open and inclusive attitude of Randy and the volunteers that made Warmshowers so well loved.\n
+        \n
+        Decisions that had previously been made with community support were removed from the public forum. Volunteers that helped grow Warmshowers were pushed out and unable to contribute. And donations that used to support the operating costs were funnelled into private software companies who haven\’t published or made any significant upgrades in over 5 years.\n
+        \n
+        In 2021 the Warmshowers board finally declared the old community driven apps a security hazard. Instead of helping them upgrade it has withdrawn their access and blocked the developer’s accounts, favouring the monetised apps built by the aforementioned software companies with a $20 a year subscription model.\n
+        \n
+        So here we are, with the story of how a once welcoming and open platform has become a closed subscription service, locking out the very community it supports.\n
     </string>
 </resources>
