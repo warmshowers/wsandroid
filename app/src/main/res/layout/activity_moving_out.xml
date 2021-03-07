@@ -39,11 +39,8 @@
                     android:text="@string/moving_out_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
                     android:gravity="center_horizontal"
                     android:textColor="@color/primaryColorAccent"
-                    android:textSize="28sp"
-                    android:lineSpacingExtra="10dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -54,22 +51,18 @@
                     android:text="@string/moving_out_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
                     android:gravity="center_horizontal"
                     android:textColor="@color/primaryColorAccent"
-                    android:textSize="16sp"
-                    android:lineSpacingExtra="10dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/moving_out_title" />
 
                 <TextView
                     android:id="@+id/moving_out_message"
-                    style="@style/TextAppearance.AppCompat.Subhead"
+                    style="@style/TextAppearance.AppCompat.Body2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:fontFamily="sans-serif-light"
                     android:lineSpacingExtra="2dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -77,11 +70,10 @@
 
                 <TextView
                     android:id="@+id/moving_out_backstory"
-                    style="@style/TextAppearance.AppCompat.Subhead"
+                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="50dp"
-                    android:fontFamily="sans-serif-light"
                     android:lineSpacingExtra="2dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
