@@ -36,14 +36,12 @@
                 <TextView
                     android:id="@+id/moving_out_title"
                     android:text="@string/moving_out_title"
-                    style="@style/TextAppearance.AppCompat.Title"
+                    style="@style/TextAppearance.AppCompat.Headline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:fontFamily="sans-serif-medium"
                     android:textColor="@color/primaryColorAccent"
-                    android:textSize="28sp"
-                    android:lineSpacingExtra="10dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -51,47 +49,39 @@
                 <TextView
                     android:id="@+id/moving_out_greetings"
                     android:text="@string/moving_out_greetings"
-                    style="@style/TextAppearance.AppCompat.Subhead"
+                    style="@style/TextAppearance.AppCompat.Body2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:fontFamily="sans-serif-light"
-                    android:lineSpacingExtra="2dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/moving_out_title" />
 
                 <TextView
                     android:id="@+id/moving_out_did_you_know"
-                    style="@style/TextAppearance.AppCompat.Subhead"
+                    style="@style/TextAppearance.AppCompat.Body2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:fontFamily="sans-serif-light"
-                    android:lineSpacingExtra="2dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/moving_out_greetings" />
 
                 <TextView
                     android:id="@+id/moving_out_did_you_know_details"
-                    style="@style/TextAppearance.AppCompat.Subhead"
+                    style="@style/TextAppearance.AppCompat.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="sans-serif-light"
-                    android:lineSpacingExtra="2dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/moving_out_did_you_know" />
 
                 <TextView
                     android:id="@+id/moving_out_message"
-                    style="@style/TextAppearance.AppCompat.Subhead"
+                    style="@style/TextAppearance.AppCompat.Body2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:fontFamily="sans-serif-light"
                     android:lineSpacingExtra="2dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
