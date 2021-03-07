@@ -18,9 +18,14 @@ public class ActivityMovingOut extends AppCompatActivity {
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_moving_out);
+
         TextView message = findViewById(R.id.moving_out_message);
         message.setText(getFormattedText(getString(R.string.moving_out_message)));
         message.setMovementMethod(LinkMovementMethod.getInstance());
+
+        TextView backstory = findViewById(R.id.moving_out_backstory);
+        backstory.setText(getFormattedText(getString(R.string.moving_out_backstory)));
+        backstory.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private Spanned getFormattedText(String text) {

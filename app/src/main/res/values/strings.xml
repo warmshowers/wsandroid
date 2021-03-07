@@ -276,15 +276,16 @@
     <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
 
     <string name="moving_out_title" translatable="false">Goodbye WarmShowers!</string>
+    <string name="moving_out_subtitle" translatable="false">message from developers</string>
     <string name="moving_out_message" translatable="false"><![CDATA[
         <br/>
         Dear Fellow WS Community Member,<br/>
         <br/>
         We are a group of bike tourers and developers, former WS.org volunteers. We created this app for you as much as for ourselves. For years, this was the official WS app, trusted by thousands of people.<br/>
         <br/>
-        Back in 2012 when this app was created, WarmShowers was an open, free and welcoming community. Since 2015, under the new board, WS has been slowly but steadily moving in the direction that we can’t agree with any more. It’s time for us to go our own way. [Read more below]<br/>
+        Back in 2012 when this app was created, WarmShowers was an open, free and welcoming community. Since 2015, under the new board, WS has been slowly but steadily moving in the direction that <b>we can’t agree with any more</b>. It’s time for us to go our own way. [Read more below]<br/>
         <br/>
-        We are thinking about creating a new platform dedicated for the worldwide community of bicycle touring travelers and those who want to host them. One that is again built on trust and openness, that reflects values which drive people to open doors to their homes and welcome strangers traveling the world by bicycle. One that helps to build lifelong friendships which cross boundaries. Free and transparent for everyone and forever.<br/>
+        We are thinking about creating <b>a new platform</b> dedicated for the worldwide community of bicycle touring travelers and those who want to host them. One that is again built on trust and openness, that reflects values which drive people to open doors to their homes and welcome strangers traveling the world by bicycle. One that helps to build lifelong friendships which cross boundaries. Free and transparent for everyone and forever.<br/>
         <br/>
         Please <b>help us by <a href="https://warmshowers.github.io/wsandroid/">filling out this short survey</a></b>. We would like to understand which aspects are important to you for a bicycle touring platform.<br/>
         <br/>
@@ -293,10 +294,11 @@
         See you on the road!<br/>
         <br/>
         Yours,<br/>
-        Former WS Android volunteers<br/>
-        <br/>
-        <br/>
-        <br/>
+        Former WS Android volunteers
+        ]]>
+    </string>
+    <string name="moving_out_backstory" translatable="false">
+        <![CDATA[
         <b>Backstory ...</b><br/>
         <br/>
         Warmshowers started life as an openly available contact list of cyclists committed to sharing their love of bicycle touring and their hospitality.<br/>
