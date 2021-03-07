@@ -275,14 +275,15 @@
 
     <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
 
-    <string name="moving_out_title" translatable="false">We need change!\nGoodbye WarmShowers</string>
+    <string name="moving_out_title" translatable="false">We need change!</string>
+    <string name="moving_out_subtitle" translatable="false">(message from developers)</string>
     <string name="moving_out_greetings" translatable="false">Dear Fellow WS Community Member,</string>
     <string name="moving_out_did_you_know_more" translatable="false"><![CDATA[<b>&gt; Did you know?</b> (show more...)]]></string>
     <string name="moving_out_did_you_know_less" translatable="false"><![CDATA[<b>&gt; Did you know?</b> (show less...)]]></string>
     <string name="moving_out_did_you_know_details" translatable="false"><![CDATA[TODO]]></string>
     <string name="moving_out_message" translatable="false">
         <![CDATA[
-        We are writing to you as the developers and volunteers of the old WarmShowers community app and bicycle touring enthusiasts. As much as we love this community, we can no longer stand behind the current WarmShowers board and their decisions.<br/>
+        We are writing to you as the developers and volunteers of the old WarmShowers community built app and bicycle touring enthusiasts. As much as we love this community, we can no longer stand behind the current WarmShowers board and their decisions.<br/>
         <br/>
         This is why <b>we are moving on</b>.<br/>
         <br/>
@@ -300,8 +301,8 @@
         <br/>
         <ul>
             <li> Spread the word. The WarmShowers community needs to know this. Contact your WS friends, share this on social media, ...</li><br/>
-            <li> Join <a href="https://www.trustroots.org/?circle=cyclists">Cyclists circle in trustroots.org</a>. Until we get something dedicated for bicycle travelers, let’s try to establish touring community within Trustroots.org.</li><br/>
-            <li> Join our <a href="https://www.facebook.com/groups/243374777243989">Facebook group</a>.</li><br/>
+            <li> Join <a href="https://www.trustroots.org/?circle=cyclists">Cyclists circle in trustroots.org</a>, a befriended community with focus on cultural exchange. We\'ll let you know once we get something dedicated for bicycle travelers.</li><br/>
+            <li> Join <a href="https://www.facebook.com/groups/243374777243989">Open alternative to WarmShowers.org</a> Facebook group.</li><br/>
         </ul>
         ]]>
     </string>

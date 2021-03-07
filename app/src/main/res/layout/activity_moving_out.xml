@@ -47,6 +47,18 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:id="@+id/moving_out_subtitle"
+                    android:text="@string/moving_out_subtitle"
+                    style="@style/TextAppearance.AppCompat.Subhead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/primaryColorAccent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/moving_out_title" />
+
+                <TextView
                     android:id="@+id/moving_out_greetings"
                     android:text="@string/moving_out_greetings"
                     style="@style/TextAppearance.AppCompat.Body2"
@@ -55,7 +67,7 @@
                     android:layout_marginTop="20dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/moving_out_title" />
+                    app:layout_constraintTop_toBottomOf="@id/moving_out_subtitle" />
 
                 <TextView
                     android:id="@+id/moving_out_did_you_know"
