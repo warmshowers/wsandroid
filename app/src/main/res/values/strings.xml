@@ -275,9 +275,9 @@
 
     <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
 
-    <string name="moving_out_title" translatable="false">Goodbye WarmShowers!</string>
-    <string name="moving_out_subtitle" translatable="false">message from developers</string>
-    <string name="moving_out_message" translatable="false"><![CDATA[
+    <string name="moving_out_title">Goodbye WarmShowers!</string>
+    <string name="moving_out_subtitle">message from developers</string>
+    <string name="moving_out_message"><![CDATA[
         <br/>
         Dear Fellow WS Community Member,<br/>
         <br/>
@@ -299,9 +299,8 @@
         <i>A last shoutout to all the people who <a href="https://github.com/warmshowers/wsandroid">contributed to this app</a> in the past 9 years:
         @jstaffans, @rfay, @jeanfrancoisbeaulieu, @CyrilWendl, @kirbycool, @saemy, @siavash1986, @LaurentSouchet-Orange, @PattaFeuFeu, @sgelb, @dproctor, @Poussinou, @noSim, @mariha, @cioccasimone97, @jakobhanna.<br/>
         Thank you!</i>
-        ]]>
-    </string>
-    <string name="moving_out_backstory" translatable="false"><![CDATA[
+    ]]></string>
+    <string name="moving_out_backstory"><![CDATA[
         <b>Backstory…</b><br/>
         <br/>
         Warmshowers started life as an openly available contact list of cyclists committed to sharing their love of bicycle touring and their hospitality.<br/>
