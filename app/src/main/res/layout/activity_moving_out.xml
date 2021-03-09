@@ -69,6 +69,13 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/moving_out_subtitle" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:layout_height="2dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintTop_toBottomOf="@id/moving_out_message" />
+
                 <TextView
                     android:id="@+id/moving_out_backstory"
                     style="@style/TextAppearance.AppCompat.Body1"
