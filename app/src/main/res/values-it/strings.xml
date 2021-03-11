@@ -264,12 +264,11 @@
     <string name="moving_out_title">Arrivederci WarmShowers!</string>
     <string name="moving_out_subtitle">messaggio dagli sviluppatori</string>
     <string name="moving_out_message"><![CDATA[
-        <br/>
         Caro membro della comunità WS,<br/>
         <br/>
         Siamo un gruppo di cicloturisti e sviluppatori, ex volontari di WS.org. Abbiamo creato questa app per te e per noi. Per anni questa è stata l\'app ufficiale WS, su cui migliaia di persone hanno fatto affidamento.<br/>
         <br/>
-        Quando quest\'app è stata creata nel 2012, WarmShowers era una piattaforma aperta, gratuita e accogliente. Dal 2015, sotto il nuovo consiglio, WS si è mossa lentamente ma costantemente in una direzione con cui <b>non possiamo più essere d\'accordo</b>. È tempo per noi di proseguire per la nostra strada. [Leggi di più sotto]<br/>
+        Quando quest\'app è stata creata nel 2012, WarmShowers era una piattaforma aperta, gratuita e accogliente. Dal 2015, sotto il nuovo consiglio, WS si è mossa lentamente ma costantemente in una direzione con cui <b>non possiamo più essere d\'accordo</b>. (*) È tempo per noi di proseguire per la nostra strada.<br/>
         <br/>
         Stiamo pensando di creare <b>una nuova piattaforma</b> dedicata alla comunità di cicloturisti e a coloro che vogliono ospitarli. Una piattaforma <b>fondata su fiducia e apertura</b>, che rifletta i valori che spingono le persone ad aprire le porte delle loro case e a dare il benvenuto a sconosciuti che viaggiano per il mondo con le loro biciclette. Una che aiuti a costruire amicizie che durano una vita, che oltrepassano i confini. Gratuita e trasparente per tutti, e per sempre.<br/>
         <br/>
@@ -282,13 +281,16 @@
         Cordialmente,<br/>
         Gli ex volontari WS Android<br/>
         <br/>
-        <i>Un ultimo ringraziamento a tutte le persone che <a href="https://github.com/warmshowers/wsandroid">hanno contribuito a questa app</a> negli ultimi nove anni:
-        @jstaffans, @rfay, @jeanfrancoisbeaulieu, @CyrilWendl, @kirbycool, @saemy, @siavash1986, @LaurentSouchet-Orange, @PattaFeuFeu, @sgelb, @dproctor, @Poussinou, @noSim, @mariha, @cioccasimone97, @jakobhanna.<br/>
+        <br/>
+        ----<br/>
+        <br/>
+        <br/>
+        <i>Un ultimo ringraziamento a tutte le persone che <a href="https://github.com/warmshowers/wsandroid">hanno contribuito a questa app</a> negli ultimi nove anni:<br/>
+        @jstaffans, @rfay, @jeanfrancoisbeaulieu, @CyrilWendl, @kirbycool, @saemy, @siavash1986, @LaurentSouchet-Orange, @PattaFeuFeu, @sgelb, @dproctor, @Poussinou, @noSim, @mariha, @cioccasimone97, @jakobhanna, @nonno.<br/>
         Grazie!</i>
     ]]></string>
-    <string name="moving_out_backstory"><![CDATA[
-        <b>Un po\' di storia…</b><br/>
-        <br/>
+    <string name="moving_out_backstory_title">(*) Un po\' di storia</string>
+    <string name="moving_out_backstory_body"><![CDATA[
         Warmshowers è nato come elenco di contatti apertamente disponibile di ciclisti impegnati a condividere il loro amore per il cicloturismo e la loro ospitalità.<br/>
         <br/>
         Nel 2001 questo elenco è stato spostato in rete da Randy Fay, per espandere la sua portata e accogliere più persone nella famiglia dei cicloturisti. E per quasi 15 anni ha mantenuto questo servizio con un atteggiamento aperto e accogliente che ha reso Warmshowers quello che è oggi. I volontari hanno contribuito a creare un\'app per iPhone e per Android nel 2012, in modo che i ciclisti potessero beneficiare di Warmshowers viaggiando.<br/>
