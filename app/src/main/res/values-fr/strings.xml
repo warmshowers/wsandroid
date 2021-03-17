@@ -252,14 +252,14 @@
     <string name="filter_diff_short_this_year">1 a.</string>
     <string name="filter_diff_short_any">&gt; 1 a.</string>
 
-    <string name="moving_out_title">Adieu WarmShowers !</string>
+    <string name="moving_out_title">Adieu WarmShowers!</string>
     <string name="moving_out_subtitle">message des développeurs</string>
     <string name="moving_out_message"><![CDATA[
         Cher membre de la communauté WS,<br/>
         <br/>
         Nous sommes un groupe de cyclotouristes et de développeurs, anciens volontaires de WS.org. Nous avons créé cette application autant pour vous que pour nous-mêmes. Pendant des années, cette application a été l’application officielle de WS, à laquelle des milliers de personnes ont fait confiance.<br/>
         <br/>
-        En 2012, lorsque cette application a été créée*, WarmShowers était une plateforme ouverte, gratuite et accueillante. Depuis 2015, sous le nouveau conseil d’administration, WS a lentement mais sûrement évolué dans une direction avec laquelle <b>nous ne pouvons plus être d’accord</b>. Il est temps pour nous de suivre notre propre voie.<br/>
+        En 2012, lorsque cette application a été créée, WarmShowers était une plateforme ouverte, gratuite et accueillante. Depuis 2015, sous le nouveau conseil d’administration, WS a lentement mais sûrement évolué dans une direction avec laquelle <b>nous ne pouvons plus être d’accord</b>. (*) Il est temps pour nous de suivre notre propre voie.<br/>
         <br/>
         Nous réfléchissons à la création d’<b>une nouvelle plateforme</b> dédiée à la communauté mondiale des voyageurs cyclotouristes et à ceux qui veulent les accueillir. Une plateforme qui soit à nouveau <b>basée sur la confiance et l’ouverture</b>, qui reflète les valeurs qui poussent les gens à ouvrir les portes de leurs maisons et à accueillir des étrangers voyageant à vélo. Un réseau qui permet de nouer des amitiés à vie, au-delà des frontières. Libre et transparent pour tous et pour toujours.<br/>
         <br/>
@@ -280,7 +280,7 @@
         @jstaffans, @rfay, @jeanfrancoisbeaulieu, @CyrilWendl, @kirbycool, @saemy, @siavash1986, @LaurentSouchet-Orange, @PattaFeuFeu, @sgelb, @dproctor, @Poussinou, @noSim, @mariha, @cioccasimone97, @jakobhanna, @nonno.<br/>
         Merci !</i>
     ]]></string>
-    <string name="moving_out_backstory_title">* Historique</string>
+    <string name="moving_out_backstory_title">(*) Historique</string>
     <string name="moving_out_backstory_body"><![CDATA[
         Au départ, Warmshowers était une liste de contacts ouverte à tous, composée de cyclistes désireux de partager leur amour du cyclotourisme et leur hospitalité.<br/>
         <br/>
