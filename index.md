@@ -12,10 +12,10 @@ Until we get something new working, we hope to meet you in the [Cyclists Circle 
 
 See you on the road!
 
-Yours,
+Yours,\
 Former WS Android volunteers
 
-*A last shoutout to all the people who contributed to this app in the past 9 years:
+*A last shoutout to all the people who contributed to this app in the past 9 years:\
 @jstaffans, @rfay, @jeanfrancoisbeaulieu, @CyrilWendl, @kirbycool, @saemy, @siavash1986, @LaurentSouchet-Orange, @PattaFeuFeu, @sgelb, @dproctor, @Poussinou, @noSim, @mariha, @cioccasimone97, @jakobhanna, @nonno.<br/>
 Thank you!*
 
@@ -45,3 +45,21 @@ So here we are, with the story of how a once welcoming and open platform has bec
 ### What else can I do?
 
 > Comming soon...
+
+
+---
+
+
+## Updates
+If we decide to built something new, we'll post an update here, on <https://warmshowers.bike>.
+
+You can also join our Facebook group ["Open Alternative to WarmShowers.org"](https://www.facebook.com/groups/243374777243989).
+
+## Help needed!
+We are a very small team at the moment. We are looking for people that share our
+vision and would like to contribute to the project.
+If you are experienced in setting up a non-profit organization, building
+community or are a developer that knows how to build a platform like ours,
+please contact us here: <https://gitter.im/we-love-bicycles/community>.
+
+We appreciate everyone who wants to help. 
