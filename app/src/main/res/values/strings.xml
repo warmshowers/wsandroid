@@ -270,11 +270,6 @@
     <string name="filter_diff_short_this_year">1y</string>
     <string name="filter_diff_short_any">&gt; 1y</string>
 
-    <string name="invalid_api_key">The server rejected the request. Please update the app.\n(%1$s)</string>
-    <string name="login_error_account_ip_temp_blocked">Too many login attempts. Your account is temporarily blocked. Please try again later.</string>
-
-    <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
-
     <string name="moving_out_title">Goodbye WarmShowers!</string>
     <string name="moving_out_subtitle">message from developers</string>
     <string name="moving_out_message"><![CDATA[
@@ -303,6 +298,7 @@
         @jstaffans, @rfay, @jeanfrancoisbeaulieu, @CyrilWendl, @kirbycool, @saemy, @siavash1986, @LaurentSouchet-Orange, @PattaFeuFeu, @sgelb, @dproctor, @Poussinou, @noSim, @mariha, @cioccasimone97, @jakobhanna, @nonno.<br/>
         Thank you!</i>
     ]]></string>
+
     <string name="moving_out_backstory_title">(*) Backstory</string>
     <string name="moving_out_backstory_body"><![CDATA[
         Warmshowers started life as an openly available contact list of cyclists committed to sharing their love of bicycle touring and their hospitality.<br/>
@@ -319,4 +315,12 @@
         <br/>
         See also: <a href="https://en.wikipedia.org/wiki/Warm_Showers#History">WarmShowers History</a>, <i>Wikipedia</i>
     ]]></string>
+
+    <string name="moving_out_what_to_do_title">What else can I do?</string>
+    <string name="moving_out_what_to_do_body">Coming soon…</string>
+
+    <string name="invalid_api_key">The server rejected the request. Please update the app.\n(%1$s)</string>
+    <string name="login_error_account_ip_temp_blocked">Too many login attempts. Your account is temporarily blocked. Please try again later.</string>
+
+    <string name="notification_channel_messages_label" translatable="false">@string/title_fragment_messages</string>
 </resources>

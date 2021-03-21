@@ -31,25 +31,35 @@ public class ActivityMovingOut extends AppCompatActivity {
         TextView backstoryBody = findViewById(R.id.moving_out_backstory_body);
         backstoryBody.setText(getFormattedText(getString(R.string.moving_out_backstory_body)));
         backstoryBody.setMovementMethod(LinkMovementMethod.getInstance());
+        makeExpandable(backstoryBody,
+                findViewById(R.id.moving_out_backstory_title),
+                findViewById(R.id.moving_out_backstory_head),
+                findViewById(R.id.moving_out_backstory_expand_collapse));
 
-        TextView backstoryTitle = findViewById(R.id.moving_out_backstory_title);
-        LinearLayout backstoryHead = findViewById(R.id.moving_out_backstory_head);
-        ImageButton backstoryExpand = findViewById(R.id.moving_out_backstory_expand_collapse);
-        View.OnClickListener backstoryOnClickListener =
-                new BackstoryOnClickListener(backstoryBody, backstoryExpand);
-        backstoryHead.setOnClickListener(backstoryOnClickListener);
-        backstoryTitle.setOnClickListener(backstoryOnClickListener);
-        backstoryExpand.setOnClickListener(backstoryOnClickListener);
+        TextView whatToDoBody = findViewById(R.id.moving_out_what_to_do_body);
+        whatToDoBody.setText(getFormattedText(getString(R.string.moving_out_what_to_do_body)));
+        whatToDoBody.setMovementMethod(LinkMovementMethod.getInstance());
+        makeExpandable(whatToDoBody,
+                findViewById(R.id.moving_out_what_to_do_title),
+                findViewById(R.id.moving_out_what_to_do_head),
+                findViewById(R.id.moving_out_what_to_do_expand_collapse));
     }
 
-    private static class BackstoryOnClickListener implements View.OnClickListener {
+    private void makeExpandable(TextView body, TextView title, LinearLayout head, ImageButton expand) {
+        View.OnClickListener onClickListener = new ExpandableViewOnClickListener(body, expand);
+        head.setOnClickListener(onClickListener);
+        title.setOnClickListener(onClickListener);
+        expand.setOnClickListener(onClickListener);
+    }
+
+    private static class ExpandableViewOnClickListener implements View.OnClickListener {
         private final View body;
         private final View expandIcon;
-        private final int backstoryBodyHeight;
+        private final int bodyHeight;
         private final int duration = 600;
         private boolean isExpanded = false;
 
-        BackstoryOnClickListener(View body, View expandIcon) {
+        ExpandableViewOnClickListener(View body, View expandIcon) {
             this.body = body;
             this.expandIcon = expandIcon;
 
@@ -61,7 +71,7 @@ public class ActivityMovingOut extends AppCompatActivity {
                     0,
                     View.MeasureSpec.UNSPECIFIED);
             body.measure(matchParentMeasureSpec, wrapContentMeasureSpec);
-            backstoryBodyHeight = body.getMeasuredHeight();
+            bodyHeight = body.getMeasuredHeight();
         }
 
         @Override
@@ -74,7 +84,7 @@ public class ActivityMovingOut extends AppCompatActivity {
                     protected void applyTransformation(float interpolatedTime, Transformation t) {
                         body.getLayoutParams().height = interpolatedTime == 1
                                 ? LinearLayout.LayoutParams.WRAP_CONTENT
-                                : (int)(backstoryBodyHeight * interpolatedTime);
+                                : (int)(bodyHeight * interpolatedTime);
                         body.requestLayout();
                     }
 
@@ -104,7 +114,7 @@ public class ActivityMovingOut extends AppCompatActivity {
                             body.setVisibility(View.GONE);
                         }else{
                             body.getLayoutParams().height =
-                                    (int)((1 - interpolatedTime) * backstoryBodyHeight);
+                                    (int)((1 - interpolatedTime) * bodyHeight);
                             body.requestLayout();
                         }
                     }

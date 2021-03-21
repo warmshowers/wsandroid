@@ -280,6 +280,7 @@
         @jstaffans, @rfay, @jeanfrancoisbeaulieu, @CyrilWendl, @kirbycool, @saemy, @siavash1986, @LaurentSouchet-Orange, @PattaFeuFeu, @sgelb, @dproctor, @Poussinou, @noSim, @mariha, @cioccasimone97, @jakobhanna, @nonno.<br/>
         Merci !</i>
     ]]></string>
+
     <string name="moving_out_backstory_title">(*) Historique</string>
     <string name="moving_out_backstory_body"><![CDATA[
         Au départ, Warmshowers était une liste de contacts ouverte à tous, composée de cyclistes désireux de partager leur amour du cyclotourisme et leur hospitalité.<br/>
@@ -296,6 +297,9 @@
         <br/>
         Voir aussi: <a href="https://en.wikipedia.org/wiki/Warm_Showers#History">WarmShowers History</a>, <i>Wikipedia</i>
     ]]></string>
+
+    <string name="moving_out_what_to_do_title">Que puis-je faire d’autre?</string>
+    <string name="moving_out_what_to_do_body">Bientôt…</string>
 
     <string name="invalid_api_key">Le serveur a rejeté la demande. STP mettre à jour l\'application.\n(%1$s)</string>
     <string name="login_error_account_ip_temp_blocked">Trop de tentatives de connexion. Votre compte est temporairement bloqué. Veuillez réessayer plus tard.</string>

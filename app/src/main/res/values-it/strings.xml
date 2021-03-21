@@ -258,9 +258,6 @@
     <string name="filter_diff_short_this_year">1y</string>
     <string name="filter_diff_short_any">&gt; 1y</string>
 
-    <string name="invalid_api_key">Il server ha rifiutato la richiesta. Aggiornare l\'app.\n(%1$s)</string>
-    <string name="login_error_account_ip_temp_blocked">Troppi tentativi di accesso. Il tuo account è temporaneamente bloccato. Riprova più tardi.</string>
-
     <string name="moving_out_title">Arrivederci WarmShowers!</string>
     <string name="moving_out_subtitle">messaggio dagli sviluppatori</string>
     <string name="moving_out_message"><![CDATA[
@@ -289,6 +286,7 @@
         @jstaffans, @rfay, @jeanfrancoisbeaulieu, @CyrilWendl, @kirbycool, @saemy, @siavash1986, @LaurentSouchet-Orange, @PattaFeuFeu, @sgelb, @dproctor, @Poussinou, @noSim, @mariha, @cioccasimone97, @jakobhanna, @nonno.<br/>
         Grazie!</i>
     ]]></string>
+
     <string name="moving_out_backstory_title">(*) Un po\' di storia</string>
     <string name="moving_out_backstory_body"><![CDATA[
         Warmshowers è nato come elenco di contatti apertamente disponibile di ciclisti impegnati a condividere il loro amore per il cicloturismo e la loro ospitalità.<br/>
@@ -305,4 +303,10 @@
         <br/>
         Vedi anche: <a href="https://en.wikipedia.org/wiki/Warm_Showers#History">WarmShowers History</a>, <i>Wikipedia</i>
     ]]></string>
+
+    <string name="moving_out_what_to_do_title">Cos\'altro posso fare?</string>
+    <string name="moving_out_what_to_do_body">Prossimamente…</string>
+
+    <string name="invalid_api_key">Il server ha rifiutato la richiesta. Aggiornare l\'app.\n(%1$s)</string>
+    <string name="login_error_account_ip_temp_blocked">Troppi tentativi di accesso. Il tuo account è temporaneamente bloccato. Riprova più tardi.</string>
 </resources>
