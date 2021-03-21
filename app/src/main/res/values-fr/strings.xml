@@ -257,7 +257,7 @@
     <string name="moving_out_message"><![CDATA[
         Cher membre de la communauté WS,<br/>
         <br/>
-        Nous sommes un groupe de cyclotouristes et de développeurs, anciens volontaires de WS.org. Nous avons créé cette application autant pour vous que pour nous-mêmes. Pendant des années, cette application a été l’application officielle de WS, à laquelle des milliers de personnes ont fait confiance.<br/>
+        Nous sommes un groupe de cyclotouristes et de développeurs, anciens volontaires de WarmShowers.org. Nous avons créé cette application autant pour vous que pour nous-mêmes. Pendant des années, cette application a été l’application officielle de WS, à laquelle des milliers de personnes ont fait confiance.<br/>
         <br/>
         En 2012, lorsque cette application a été créée, WarmShowers était une plateforme ouverte, gratuite et accueillante. Depuis 2015, sous le nouveau conseil d’administration, WS a lentement mais sûrement évolué dans une direction avec laquelle <b>nous ne pouvons plus être d’accord</b>. (*) Il est temps pour nous de suivre notre propre voie.<br/>
         <br/>
@@ -293,6 +293,8 @@
         En 2021, le conseil d\'administration de Warmshowers a finalement déclaré que les anciennes applications communautaires présentaient un risque pour la sécurité. Au lieu de les aider à se mettre à jour, il a retiré l\'accès à l\'application Android et bloqué les comptes des développeurs, favorisant l\'application payante construite par les sociétés de logiciels mentionnées auparavant avec un modèle d\'abonnement de 20 dollars par an.<br/>
         <br/>
         Nous voici donc face à l\'histoire d\'une plateforme autrefois accueillante et ouverte qui est devenue un service d\'abonnement fermé, excluant la communauté qu\'elle soutient.<br/>
+        <br/>
+        Voir aussi: <a href="https://en.wikipedia.org/wiki/Warm_Showers#History">WarmShowers History</a>, <i>Wikipedia</i>
     ]]></string>
 
     <string name="invalid_api_key">Le serveur a rejeté la demande. STP mettre à jour l\'application.\n(%1$s)</string>

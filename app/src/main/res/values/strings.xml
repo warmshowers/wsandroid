@@ -280,7 +280,7 @@
     <string name="moving_out_message"><![CDATA[
         Dear Fellow WS Community Member,<br/>
         <br/>
-        We are a group of bike tourers and developers, former WS.org volunteers. We created this app for you as much as for ourselves. For years, this was the official WS app, trusted by thousands of people.<br/>
+        We are a group of bike tourers and developers, former WarmShowers.org volunteers. We created this app for you as much as for ourselves. For years, this was the official WS app, trusted by thousands of people.<br/>
         <br/>
         Back in 2012, when this app was created, WarmShowers was an open, free and welcoming platform. Since 2015, under the new board, WS has been slowly but steadily moving in the direction that <b>we can’t agree with any more</b>. (*) It’s time for us to go our own way.<br/>
         <br/>
@@ -315,6 +315,8 @@
         <br/>
         In 2021, the Warmshowers board finally declared the old community driven apps a security hazard. Instead of helping them upgrade, it has withdrawn the Android app’s access and blocked the developers’ accounts, favouring the paid app built by the aforementioned software companies with a $20 a year subscription model.<br/>
         <br/>
-        So here we are, with the story of how a once welcoming and open platform has become a closed subscription service, locking out the very community it supports.
+        So here we are, with the story of how a once welcoming and open platform has become a closed subscription service, locking out the very community it supports.<br/>
+        <br/>
+        See also: <a href="https://en.wikipedia.org/wiki/Warm_Showers#History">WarmShowers History</a>, <i>Wikipedia</i>
     ]]></string>
 </resources>

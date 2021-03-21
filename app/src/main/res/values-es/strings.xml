@@ -251,7 +251,7 @@
     <string name="moving_out_message"><![CDATA[
         Queridos Miembros de la Comunidad WS,<br/>
         <br/>
-        Somos un grupo de ciclistas viajeros y desarrolladores, antiguamente voluntarios de WS.org. Nosotros creamos esta app tanto para ustedes como para nosotros. Por años, esta fue la app official de WS, confiada por miles de personas.<br/>
+        Somos un grupo de ciclistas viajeros y desarrolladores, antiguamente voluntarios de WarmShowers.org. Nosotros creamos esta app tanto para ustedes como para nosotros. Por años, esta fue la app official de WS, confiada por miles de personas.<br/>
         <br/>
         Allá por 2012, cuando esta app fue creada, WarmShowers era una plataforma abierta, gratuita y acojedora. Desde 2015, bajo la nueva junta directiva, WS fue lenta pero seguro moviéndose en la dirección con la cual ya <b>no podemos estar de acuerdo</b>. (*) Es tiempo de seguir nuestor propio camino.<br/>
         <br/>
@@ -287,6 +287,8 @@
         En 2021, la junta de Warmshowers finalmente declaró las antiguas apps propulsadas por la comunidad como riesgos de seguridad. En lugar de ayudarlos a actualizar, ha quitado los accesos de la app de Android y bloqueado las cuentas de los desarrolladores, favoreciendo la aplicación paga construida por la compañias anteriormente mencionadas, con un modelo de subscrpción de $20 anuales.<br/>
         <br/>
         Y aquí estamos, con la historia de como una plataforma anteriormente abierta y acojedora se ha convertido en un servicio de subscripción cerrado, bloqueando a la propia comunidad que ayuda.<br/>
+        <br/>
+        Véase también: <a href="https://en.wikipedia.org/wiki/Warm_Showers#History">WarmShowers History</a>, <i>Wikipedia</i>
     ]]></string>
 
     <string name="invalid_api_key">El servidor rechazó la solicitud. Por favor actualice la aplicación.\n(%1$s)</string>
