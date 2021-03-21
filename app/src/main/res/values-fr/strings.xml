@@ -252,6 +252,55 @@
     <string name="filter_diff_short_this_year">1 a.</string>
     <string name="filter_diff_short_any">&gt; 1 a.</string>
 
+    <string name="moving_out_title">Adieu WarmShowers!</string>
+    <string name="moving_out_subtitle">message des développeurs</string>
+    <string name="moving_out_message"><![CDATA[
+        Cher membre de la communauté WS,<br/>
+        <br/>
+        Nous sommes un groupe de cyclotouristes et de développeurs, anciens volontaires de WarmShowers.org. Nous avons créé cette application autant pour vous que pour nous-mêmes. Pendant des années, cette application a été l’application officielle de WS, à laquelle des milliers de personnes ont fait confiance.<br/>
+        <br/>
+        En 2012, lorsque cette application a été créée, WarmShowers était une plateforme ouverte, gratuite et accueillante. Depuis 2015, sous le nouveau conseil d’administration, WS a lentement mais sûrement évolué dans une direction avec laquelle <b>nous ne pouvons plus être d’accord</b>. (*) Il est temps pour nous de suivre notre propre voie.<br/>
+        <br/>
+        Nous réfléchissons à la création d’<b>une nouvelle plateforme</b> dédiée à la communauté mondiale des voyageurs cyclotouristes et à ceux qui veulent les accueillir. Une plateforme qui soit à nouveau <b>basée sur la confiance et l’ouverture</b>, qui reflète les valeurs qui poussent les gens à ouvrir les portes de leurs maisons et à accueillir des étrangers voyageant à vélo. Un réseau qui permet de nouer des amitiés à vie, au-delà des frontières. <b>Libre et transparent</b> pour tous et pour toujours.<br/>
+        <br/>
+        <b>Aidez-nous en <a href="https://warmshowers.github.io/wsandroid/survey">répondant à cette courte enquête</a></b>. Nous aimerions comprendre quels sont les aspects qui vous semblent importants pour une plateforme de cyclotourisme.<br/>
+        <br/>
+        En attendant que quelque chose de nouveau fonctionne, nous espérons vous rencontrer dans le <a href="https://www.trustroots.org/?circle=cyclists">Cercle des cyclistes sur trustroots.org</a>.<br/>
+        <br/>
+        A bientôt sur la route !<br/>
+        <br/>
+        Bien à vous,<br/>
+        Anciens bénévoles de WS Android<br/>
+        <br/>
+        <br/>
+        ----<br/>
+        <br/>
+        <br/>
+        <i>Un dernier coup de chapeau à toutes les personnes qui <a href="https://github.com/warmshowers/wsandroid">ont contribué à cette application</a> au cours des 9&nbsp;dernières années:<br/>
+        @jstaffans, @rfay, @jeanfrancoisbeaulieu, @CyrilWendl, @kirbycool, @saemy, @siavash1986, @LaurentSouchet-Orange, @PattaFeuFeu, @sgelb, @dproctor, @Poussinou, @noSim, @mariha, @cioccasimone97, @jakobhanna, @nonno.<br/>
+        Merci !</i>
+    ]]></string>
+
+    <string name="moving_out_backstory_title">(*) Historique</string>
+    <string name="moving_out_backstory_body"><![CDATA[
+        Au départ, Warmshowers était une liste de contacts ouverte à tous, composée de cyclistes désireux de partager leur amour du cyclotourisme et leur hospitalité.<br/>
+        <br/>
+        En 2001, cette liste a été mise en ligne par Randy Fay afin d\'étendre sa portée et d\'accueillir davantage de personnes dans la famille du cyclotourisme. Et pendant près de 15 ans, il a maintenu ce service avec une attitude ouverte et accueillante qui a fait de Warmshowers ce qu\'il est aujourd\'hui. Des bénévoles ont aidé à créer une application iPhone et, en 2012, une application Android afin que les cyclistes puissent bénéficier de Warmshowers en déplacement.<br/>
+        <br/>
+        En 2015, la Fondation Warmshowers a été créée pour aider à gérer le service en pleine croissance et assurer son avenir à la lumière de la retraite de Randy. Malheureusement, dès le départ, le conseil d\'administration n\'a pas partagé l\'attitude ouverte et inclusive des bénévoles qui rendaient Warmshowers si apprécié.<br/>
+        <br/>
+        Des décisions qui avaient été prises auparavant avec le soutien de la communauté ont été retirées du forum public. Les bénévoles qui avaient contribué à la croissance de Warmshowers ont été mis à l\'écart et n\'ont plus été en mesure de contribuer. Et les dons qui servaient à financer les coûts de fonctionnement ont été canalisés vers des sociétés privées de logiciels qui n\'ont pas publié ou fait de mises à jour significatives depuis plus de 5 ans.<br/>
+        <br/>
+        En 2021, le conseil d\'administration de Warmshowers a finalement déclaré que les anciennes applications communautaires présentaient un risque pour la sécurité. Au lieu de les aider à se mettre à jour, il a retiré l\'accès à l\'application Android et bloqué les comptes des développeurs, favorisant l\'application payante construite par les sociétés de logiciels mentionnées auparavant avec un modèle d\'abonnement de 20 dollars par an.<br/>
+        <br/>
+        Nous voici donc face à l\'histoire d\'une plateforme autrefois accueillante et ouverte qui est devenue un service d\'abonnement fermé, excluant la communauté qu\'elle soutient.<br/>
+        <br/>
+        Voir aussi: <a href="https://en.wikipedia.org/wiki/Warm_Showers#History">WarmShowers History</a>, <i>Wikipedia</i>
+    ]]></string>
+
+    <string name="moving_out_what_to_do_title">Que puis-je faire d’autre?</string>
+    <string name="moving_out_what_to_do_body">Bientôt…</string>
+
     <string name="invalid_api_key">Le serveur a rejeté la demande. STP mettre à jour l\'application.\n(%1$s)</string>
     <string name="login_error_account_ip_temp_blocked">Trop de tentatives de connexion. Votre compte est temporairement bloqué. Veuillez réessayer plus tard.</string>
 </resources>

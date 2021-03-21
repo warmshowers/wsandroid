@@ -260,6 +260,54 @@
     <string name="filter_diff_short_this_year">1 Jr.</string>
     <string name="filter_diff_short_any">&gt;1 Jr.</string>
 
+    <string name="moving_out_title">Auf Wiedersehen WarmShowers!</string>
+    <string name="moving_out_subtitle">Nachricht von den App-Entwicklern</string>
+    <string name="moving_out_message"><![CDATA[
+        Liebes WS Mitglied,<br/>
+        <br/>
+        Wir sind eine Gruppe von Fahrradreisenden und App-Entwicklern, ehemalige WarmShowers.org Freiwillige. Wir erstellten diese App für dich wie auch für uns. Während Jahren war dies die offizielle WS App, tausende von Personen vertrauten ihr.<br/>
+        <br/>
+        Im Jahre 2012, als diese App erstellt wurde, war WarmShowers eine offene, freie und willkommen heißende Platform. Seit 2015, unter einer neuen Verwaltung, hat sich WS langsam aber stetig in eine Richtung entwickelt, der wir <b>nicht mehr länger zustimmen können</b>. (*) Es ist an der Zeit für uns, unseren eigenen Weg zu gehen.<br/>
+        <br/>
+        Wir überlegen uns, eine <b>neue Plattform</b> für die weltweite Gemeinschaft der Fahrradreisenden und ihre Gastgeber zu erstellen. Eine, die wieder auf <b>Vertrauen und Offenheit</b> aufbaut, die Leute motiviert ihre Haustüren für Fremde zu öffnen, die die Welt per Fahrrad bereisen. Eine Plattform, die dabei hilft, lebenslange Freundschaften zu schließen, die keine Grenzen kennen. <b>Frei und transparent</b> für alle und für immer.<br/>
+        <br/>
+        Bitte <b>hilf uns</b>, indem du <a href="https://warmshowers.github.io/wsandroid/survey">diesen Fragebogen ausfüllst</a>. Wir würden gerne verstehen, welche Aspekte dir für eine Fahrradreise-Platform wichtig sind.<br/>
+        <br/>
+        Bis wir etwas Neues auf die Beine stellen können, hoffen wir, dich im <a href="https://www.trustroots.org/?circle=cyclists">Kreis der Fahrradreisenden auf trustroots.org</a> anzutreffen.<br/>
+        <br/>
+        Bis bald unterwegs!<br/>
+        <br/>
+        Alles Gute,<br/>
+        Die Ehemaligen WS Android Helfer<br/>
+        <br/>
+        <br/>
+        ----<br/>
+        <br/>
+        <br/>
+        <i>Ein letztes Dankeschön an alle, die in den letzten 9 Jahren bei <a href="https://github.com/warmshowers/wsandroid">dieser App mitgeholfen</a> haben:
+        @jstaffans, @rfay, @jeanfrancoisbeaulieu, @CyrilWendl, @kirbycool, @saemy, @siavash1986, @LaurentSouchet-Orange, @PattaFeuFeu, @sgelb, @dproctor, @Poussinou, @noSim, @mariha, @cioccasimone97, @jakobhanna, @nonno.<br/>
+        Danke!</i>
+    ]]></string>
+    <string name="moving_out_backstory_title">(*) Hintergrund</string>
+    <string name="moving_out_backstory_body"><![CDATA[
+        Warmshowers wurde als öffentlich zugängliche Kontaktliste von Fahrradfahrer*innen ins Leben gerufen, um die Faszination fürs Fahrradreisen und die Gastfreundschaft zu teilen.<br/>
+        <br/>
+        Im Jahre 2001 wurde diese Liste durch Randy Fay online gestellt, um deren Reichweite zu vergrößern und mehr Menschen in der Fahrradreise-Familie willkommen zu heißen. Und für fast 15 Jahre unterhielt er diese Plattform mit einer offenen und willkommen heißenden Art, welche Warmshowers zu dem gemacht hatte, was es heute ist. Freiwillige halfen mit, eine iPhone App und im Jahre 2012 eine Android App zu programmieren, damit Fahrradreisende auch unterwegs von Warmshowers profitieren können.<br/>
+        <br/>
+        Im Jahre 2015 wurde die Warmshowers Foundation gegründet. Sie sollte dabei helfen, das immer weiter wachsende Warmshowers zu betreuen und dessen Fortbestehen zu sichern - vor allem in anbetracht von Randy\'s Rücktritt. Leider teilte die Verwaltung der Foundation von Anfang an die offene und inklusive Gesinnung der Freiwilligen - welche Warmshowers so beliebt machte - nicht.<br/>
+        <br/>
+        Entscheidungen, welche früher gemeinschaftlich gemacht wurden, sind jetzt vom öffentlichen Forum entfernt worden. Freiwillige, welche beim Aufbau von Warmshowers geholfen haben, wurden ausgeschlossen, sodass sie nicht mehr länger mitwirken konnten. Und Spenden, die zuvor zum Betreiben der Plattform verwendet wurden, werden jetzt in private Software-Firmen investiert, welche in über 5 Jahren keine signifikanten Verbesserungen gemacht haben.<br/>
+        <br/>
+        Im 2021 hat die Warmshowers-Verwaltung schließlich die ehemaligen Apps der Freiwilligen als Sicherheitsbedrohung deklariert. Anstatt Hilfe zur Aktualisierung anzubieten, wurde der Android App der Zugriff zur Webseite entzogen und die Konten der Entwickler gesperrt, auch um die kostenpflichtige App der obengenannten Software-Firmen mit Abokosten von $20 pro Jahr zu Favorisieren.<br/>
+        <br/>
+        Das ist nun also die Geschichte, wie eine einst willkommen heißende und offene Plattform zu einem geschlossenen und kostenpflichtigen Dienst wurde, welcher die Gemeinschaft, die das Fundament von Warmshowers bildet, ausschließt.<br/>
+        <br/>
+        Siehe auch: <a href="https://en.wikipedia.org/wiki/Warm_Showers#History">WarmShowers History</a>, <i>Wikipedia</i>
+    ]]></string>
+
+    <string name="moving_out_what_to_do_title">Was kann ich sonst noch tun?</string>
+    <string name="moving_out_what_to_do_body">Kommt bald…</string>
+
     <string name="invalid_api_key">Der Server hat die Anfrage abgewiesen. Bitte aktualisiere die App.\n(%1$s)</string>
     <string name="login_error_account_ip_temp_blocked">Zu viele Loginversuche. Dieses Konto ist zur Zeit gesperrt. Bitte versuche es später noch einmal.</string>
 </resources>
