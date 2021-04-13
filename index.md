@@ -51,7 +51,7 @@ So here we are, with the story of how a once welcoming and open platform has bec
 
 
 ## Updates
-If we decide to built something new, we'll post an update here, on <https://warmshowers.bike>.
+If we decide to build something new, we'll post an update here, on <https://warmshowers.bike>.
 
 You can also join our Facebook group ["Open Alternative to WarmShowers.org"](https://www.facebook.com/groups/243374777243989).
 
