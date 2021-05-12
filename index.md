@@ -39,12 +39,12 @@ So here we are, with the story of how a once welcoming and open platform has bec
 
 ### (\*\*) Did you know?
 
-> Comming soonish...
+> Coming soonish...
 
 
 ### What else can I do?
 
-> Comming soon...
+> Coming soon...
 
 
 ---
