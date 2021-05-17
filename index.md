@@ -8,7 +8,7 @@ We are thinking about creating **a new platform** dedicated for the worldwide co
         
 Please **help us by [filling out this short survey](https://warmshowers.github.io/wsandroid/survey)**. We would like to understand which aspects are important to you for a bicycle touring platform.
 
-Until we get something new working, we hope to meet you in the [Cyclists Circle at trustroots.org](https://www.trustroots.org/?circle=cyclists).
+Until we get something new working, we hope to meet you in the [Cyclists Circle at trustroots.org](https://www.trustroots.org/?circle=cyclists) (focus on cultural exchange) or at [WelcomeToMyGarden.org](https://WelcomeToMyGarden.org) (focus on slow travelers).
 
 See you on the road!
 
