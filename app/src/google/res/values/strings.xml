@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="ga_tracking_id" translatable="false">UA-13228014-2</string>
-    <string name="prefs_ga_collect_stats_key" translatable="false">ga_collect_stats</string>
-    <string name="prefs_ga_collect_stats_title">Send anonymous statistics</string>
-    <string name="prefs_ga_collect_stats_summary_on">Sending statistics to Google Analytics helps the developers to understand usage and improve the app, but you can opt out</string>
-    <string name="prefs_ga_collect_stats_summary_off">Currently, your usage is not tracked in order to be sent to Google Analytics to help developers in their improvement endeavours</string>
-</resources>

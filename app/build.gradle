@@ -2,44 +2,15 @@ apply plugin: 'com.android.application'
 
 ext {
     useProduction = System.getenv("WS_USE_PRODUCTION") != null
-
-    // Credentials for the Warmshowers API.
-    wsApiUserId = System.getenv("WS_API_USER_ID")
-    wsApiKey = System.getenv("WS_API_KEY")
-    if (!wsApiKey) {
-        wsApiUserId = ""       // <---------------------------------- put your API userId here
-        wsApiKey = ""          // <---------------------------------- put your API key here
-    }
-
-    // File name for the keystore in PKCS12 format containing the client certificate and key for the
-    // development proxy server.
-    wsDevKeyStoreFile = System.getenv("WS_DEV_KEYSTORE")
-    if(!wsDevKeyStoreFile) {
-        wsDevKeyStoreFile = "" // <---------------------------------- put your client certificate bundle filename here
-    }
-    wsDevKeyStore = 'null'
-    if (wsDevKeyStoreFile) {
-        wsDevKeyStore = '"' + file(wsDevKeyStoreFile).bytes.encodeBase64() + '"'
-    }
 }
 
 repositories {
     google()
-    jcenter()
-    maven { url "https://jitpack.io" }
+    mavenCentral()
 }
 
-// This stanza will turn on checking for unchecked conversion and deprecation.
-//allprojects {
-//    gradle.projectsEvaluated {
-//        tasks.withType(JavaCompile) {
-//            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-//        }
-//    }
-//}
-
 android {
-    buildToolsVersion "29.0.2" // also update in .travis.yml
+    buildToolsVersion "30.0.2" // also update in .travis.yml
 
     signingConfigs {
         dev {
@@ -66,22 +37,12 @@ android {
     buildTypes {
         all {
             if (useProduction) {
-                buildConfigField 'String', 'WS_BASE_URL', '"https://www.warmshowers.org/"'
-                resValue 'string', 'account_type', 'org.warmshowers'
-                buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers"'
                 resValue 'string', 'app_name', 'Warmshowers'
                 manifestPlaceholders = [applicationIcon: '@mipmap/ic_launcher']
                 signingConfig signingConfigs.prod
             } else {
-                if (wsDevKeyStoreFile) {
-                    buildConfigField 'String', 'WS_BASE_URL', '"https://ws-dev.gorrion.ch/"'
-                } else {
-                    buildConfigField 'String', 'WS_BASE_URL', '"https://dev.warmshowers.org/"'
-                }
                 applicationIdSuffix '.dev'
                 versionNameSuffix '-dev'
-                resValue 'string', 'account_type', 'org.warmshowers.dev'
-                buildConfigField 'String', 'ACCOUNT_TYPE', '"org.warmshowers.dev"'
                 resValue 'string', 'app_name', 'Warmshowers (dev)'
                 manifestPlaceholders = [applicationIcon: '@mipmap/ic_launcher_dev']
                 signingConfig signingConfigs.dev
@@ -96,67 +57,17 @@ android {
             debuggable false
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
-                    'proguard-rules/dagger.pro',
-                    'proguard-rules/gson.pro',
-                    'proguard-rules/okhttp3.pro',
-                    'proguard-rules/retrofit2.pro'
-        }
-    }
-
-    defaultConfig {
-        if (wsDevKeyStoreFile) {
-            if (wsApiKey) {
-                throw new GradleException("Both WS_API_KEY and WS_DEV_KEYSTORE provided.");
-            }
-            if (useProduction) {
-                throw new GradleException("Both WS_USE_PRODUCTION and WS_DEV_KEYSTORE provided");
-            }
-        } else {
-            if (!wsApiUserId) {
-                throw new GradleException("No API userId specified! Add yours to app/build.gradle")
-            }
-            if (!wsApiKey) {
-                throw new GradleException("No API key specified! Add yours to app/build.gradle")
-            }
-        }
-
-        buildConfigField 'String', 'WS_DEV_KEYSTORE', wsDevKeyStore
-        buildConfigField 'String', 'WS_API_USER_ID', "\"$wsApiUserId\""
-        buildConfigField 'String', 'WS_API_KEY', "\"$wsApiKey\""
-    }
-    flavorDimensions "mode"
-    productFlavors {
-        floss {
-            dimension "mode"
-        }
-        google {
-            dimension "mode"
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
         }
     }
 
     lintOptions {
-        // FIXME(saemy): Make this an error for release builds on travis.
-        warning 'MissingTranslation'
+        error 'MissingTranslation'
     }
 
     dexOptions {
         // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
         preDexLibraries = isPreDexEnabled && !isTravisBuild
-    }
-
-    testOptions {
-        unitTests {
-            includeAndroidResources = true
-            all {
-                testLogging {
-                    if (isTravisBuild) {
-                        events "started", "passed", "skipped", "failed", "standardError"
-                        exceptionFormat "full"
-                    }
-                }
-            }
-        }
     }
 
     def versionMajor = 3
@@ -169,8 +80,8 @@ android {
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
 
         minSdkVersion 16
-        compileSdkVersion 29 // also update in .travis.yml
-        targetSdkVersion 29
+        compileSdkVersion 30 // also update in .travis.yml
+        targetSdkVersion 30
 
         vectorDrawables.useSupportLibrary = true
     }
@@ -182,76 +93,14 @@ android {
 }
 
 ext {
-    androidMaterialVersion = '1.1.0'
-    androidxVersion = '1.1.0'
-    androidxCardViewVersion = '1.0.0'
-    androidxConstraintLayoutVersion = '1.1.3'
-    androidxSwipeRefreshLayoutVersion = '1.0.0'
-    androidxTestVersion = '1.0.0'
-    assertjVersion = '3.13.2'
-    autoServiceVersion = '1.0-rc4'
-    bubbleSeekbarVersion = '3.20'
-    butterknifeVersion = '10.2.0'
-    daggerVersion = '2.24'
-    glideVersion = '4.9.0'
-    gsonVersion = '2.8.6'
-    jsonVersion = '20190722'
-    junitVersion = '4.12'
-    mockitoVersion = '2.28.2'
-    okHttpVersion = '3.12.0'
-    osmbonuspackVersion = '6.6.0'
-    osmdroidVersion = '6.1.6'
-    playServicesVersion = '17.0.0'
-    retrofitVersion = '2.6.1' // Dictates version of okhttp in their dependencies which clashes in tests.
-    robolectricVersion = '4.3'
-    rxAndroidVersion = '2.1.1'
-    rxJavaVersion = '2.2.12'
-    securekeysVersion = '2.2.0' // Adjust the version in the project's build.gradle, too.
+    androidMaterialVersion = '1.3.0'
+    androidSupportCompat = '28.0.0'
+    androidxAppcompatVersion = '1.3.0'
 }
 
 dependencies {
-    annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
-    annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
-    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
-    annotationProcessor "com.jakewharton:butterknife-compiler:$butterknifeVersion"
-    annotationProcessor "com.saantiaguilera.securekeys:annotation:$securekeysVersion"
-    annotationProcessor "com.saantiaguilera.securekeys:processor:$securekeysVersion"
-    implementation "androidx.appcompat:appcompat:$androidxVersion"
-    implementation "androidx.cardview:cardview:$androidxCardViewVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$androidxConstraintLayoutVersion"
-    implementation "androidx.preference:preference:$androidxVersion"
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$androidxSwipeRefreshLayoutVersion"
-    implementation "com.github.bumptech.glide:glide:$glideVersion"
-    implementation "com.github.MKergall:osmbonuspack:$osmbonuspackVersion"
+    implementation "androidx.appcompat:appcompat:$androidxAppcompatVersion"
+    implementation "androidx.appcompat:appcompat-resources:$androidxAppcompatVersion"
+    implementation "com.android.support:support-compat:$androidSupportCompat"
     implementation "com.google.android.material:material:$androidMaterialVersion"
-    implementation "com.google.code.gson:gson:$gsonVersion"
-    implementation "com.google.dagger:dagger:$daggerVersion"
-    implementation "com.google.dagger:dagger-android:$daggerVersion"
-    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
-    implementation "com.jakewharton:butterknife:$butterknifeVersion"
-    implementation "com.saantiaguilera.securekeys:core:$securekeysVersion"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    implementation "com.xw.repo:bubbleseekbar:$bubbleSeekbarVersion"
-    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
-    implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
-    implementation "org.osmdroid:osmdroid-android:$osmdroidVersion"
-
-    googleImplementation "com.google.android.gms:play-services-analytics:$playServicesVersion"
-
-    androidTestAnnotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
-    testAnnotationProcessor "com.google.auto.service:auto-service:$autoServiceVersion"
-    testAnnotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
-    testImplementation "androidx.test:core:$androidxTestVersion"
-    testImplementation "com.squareup.okhttp3:mockwebserver:$okHttpVersion"
-    testImplementation "junit:junit:$junitVersion"
-    testImplementation "org.assertj:assertj-core:$assertjVersion"
-    testImplementation "org.json:json:$jsonVersion"
-    testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "org.robolectric:robolectric:$robolectricVersion"
-    testImplementation "org.robolectric:shadows-supportv4:$robolectricVersion"
 }
-
-// Apply the securekeys plugin at the end
-apply plugin: 'saantiaguilera.securekeys'

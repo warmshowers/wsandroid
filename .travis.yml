@@ -2,8 +2,6 @@ language: android
 
 # Configure Travis CI to set the following environment variables for your builds:
 # - WS_USE_PRODUCTION
-# - WS_API_USER_ID
-# - WS_API_KEY
 # - WS_PROD_KEYSTORE_PASSWORD
 # - WS_PROD_KEYSTORE_KEY_ALIAS
 # - WS_PROD_KEYSTORE_KEY_PASSWORD
@@ -18,18 +16,15 @@ android:
     - tools
 
     # Build tools & SDK.
-    - build-tools-29.0.2
-    - android-29
+    - build-tools-30.0.2
+    - android-30
 
     # Additional components
-    - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
 
-install:
-  # Installs the NDK.
-  - echo y | sdkmanager "ndk-bundle"
-  - echo y | sdkmanager "cmake;3.10.2.4988404"
+before_install:
+  - yes | sdkmanager "platforms;android-30"
 
 before_script:
   # Decrypts the keystore (if this is not a PR build).
@@ -41,16 +36,6 @@ before_script:
          -in keystores/warmshowers.jks.enc -out "$HOME/warmshowers.jks" &&
        export WS_PROD_KEYSTORE_FILE="$HOME/warmshowers.jks";
      fi'
-
-  # Sets a dummy API key for builds for PRs from forks as encrypted variables
-  # are not available there.
-  - 'if [ "${TRAVIS_SECURE_ENV_VARS}" != "true" ] && [ -z "$WS_API_KEY" ]; then
-       export WS_API_KEY="dummy_api_key";
-       export WS_API_USER_ID="dummy_api_user_id";
-     fi'
-
-  # Sets the NDK path.
-  - export ANDROID_NDK_HOME="$ANDROID_HOME/ndk-bundle"
 
 before_cache:
   # Cleans up the cache.
@@ -65,10 +50,8 @@ cache:
     - "$HOME/.gradle/wrapper/"
 
 before_deploy:
-  - mv app/build/outputs/apk/floss/release/app-floss-release.apk wsandroid-${TRAVIS_TAG}-floss.apk
-  - mv app/build/outputs/apk/google/release/app-google-release.apk wsandroid-${TRAVIS_TAG}-google.apk
-  - mv app/build/outputs/mapping/flossRelease/mapping.txt wsandroid-${TRAVIS_TAG}-floss-mapping.txt
-  - mv app/build/outputs/mapping/googleRelease/mapping.txt wsandroid-${TRAVIS_TAG}-google-mapping.txt
+  - mv app/build/outputs/apk/release/app-release.apk wsandroid-${TRAVIS_TAG}-floss.apk
+  - mv app/build/outputs/mapping/release/mapping.txt wsandroid-${TRAVIS_TAG}-floss-mapping.txt
 
 deploy:
   # Deploys the release APK for tagged revisions to GitHub.
@@ -76,9 +59,7 @@ deploy:
   api_key: "$GITHUB_OAUTH_TOKEN"
   file:
     - "wsandroid-${TRAVIS_TAG}-floss.apk"
-    - "wsandroid-${TRAVIS_TAG}-google.apk"
     - "wsandroid-${TRAVIS_TAG}-floss-mapping.txt"
-    - "wsandroid-${TRAVIS_TAG}-google-mapping.txt"
   skip_cleanup: true
   on:
     tags: true

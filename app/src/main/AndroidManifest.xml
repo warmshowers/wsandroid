@@ -3,42 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="fi.bitrite.android.ws">
 
-    <!-- general usage -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <!-- osmdroid -->
-    <!-- ACCESS_FINE_LOCATION includes ACCESS_COARSE_LOCATION -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <!-- for offline maps and to cache on sdcard -->
-    <!-- WRITE_EXTERNAL_STORAGE includes READ_EXTERNAL_STORAGE -->
-    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
-
-    <!-- Account Manager -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission
-        android:name="android.permission.MANAGE_ACCOUNTS"
-        android:maxSdkVersion="22" />
-    <uses-permission
-        android:name="android.permission.USE_CREDENTIALS"
-        android:maxSdkVersion="22" />
-    <uses-permission
-        android:name="android.permission.AUTHENTICATE_ACCOUNTS"
-        android:maxSdkVersion="22" />
-
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
-    <uses-feature
-        android:name="android.hardware.location.gps"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.location.network"
-        android:required="false" />
-    <uses-feature
-        android:glEsVersion="0x00020000"
-        android:required="true" />
-
     <application
         android:name=".WSAndroidApplication"
         android:allowBackup="true"
@@ -46,38 +10,6 @@
         android:label="@string/app_name"
         android:theme="@style/wsAppTheme">
 
-        <!-- The authenticator service -->
-        <service
-            android:name=".auth.AuthenticationService"
-            android:exported="true"
-            android:permission="android.permission.GET_ACCOUNTS">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
-        <service
-            android:name=".AutoMessageReloadJobService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".AutoMessageReloadService"
-            android:exported="false" />
-
-        <receiver android:name=".BootCompletedIntentReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-            </intent-filter>
-        </receiver>
-
-        <activity
-            android:name=".ui.AuthenticatorActivity"
-            android:label="@string/app_name"
-            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.ActivityMovingOut"
             android:launchMode="singleTop">
@@ -86,10 +18,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="android.app.default_searchable"
-            android:value=".activity.ListSearchTabActivity" />
 
     </application>
 </manifest>
