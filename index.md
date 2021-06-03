@@ -8,7 +8,7 @@ We are thinking about creating **a new platform** dedicated for the worldwide co
         
 Please **help us by [filling out this short survey](https://warmshowers.github.io/wsandroid/survey)**. We would like to understand which aspects are important to you for a bicycle touring platform.
 
-Until we get something new working, we hope to meet you in the [Cyclists Circle at trustroots.org](https://www.trustroots.org/?circle=cyclists).
+Until we get something new working, we hope to meet you in the [Cyclists Circle at trustroots.org](https://www.trustroots.org/?circle=cyclists) (focus on cultural exchange) or at [WelcomeToMyGarden.org](https://WelcomeToMyGarden.org) (focus on slow travelers).
 
 See you on the road!
 
@@ -44,14 +44,14 @@ So here we are, with the story of how a once welcoming and open platform has bec
 
 ### What else can I do?
 
-> Comming soon...
+> Coming soon...
 
 
 ---
 
 
 ## Updates
-If we decide to built something new, we'll post an update here, on <https://warmshowers.bike>.
+If we decide to build something new, we'll post an update here, on <https://warmshowers.bike>.
 
 You can also join our Facebook group ["Open Alternative to WarmShowers.org"](https://www.facebook.com/groups/243374777243989).
 
