@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import fi.bitrite.android.ws.NotificationScheduler;
 import fi.bitrite.android.ws.R;
 
 /**
@@ -43,6 +44,9 @@ public class ActivityMovingOut extends AppCompatActivity {
                 findViewById(R.id.moving_out_what_to_do_title),
                 findViewById(R.id.moving_out_what_to_do_head),
                 findViewById(R.id.moving_out_what_to_do_expand_collapse));
+
+        // The user is looking at the app. No longer show any notifications after this.
+        new NotificationScheduler(this).disableNotifications();
     }
 
     private void makeExpandable(TextView body, TextView title, LinearLayout head, ImageButton expand) {

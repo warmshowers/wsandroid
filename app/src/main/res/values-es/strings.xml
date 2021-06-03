@@ -60,4 +60,7 @@
           <li>&nbsp;<a href="market://details?id=fi.bitrite.android.ws">Califica esta aplicación</a> para obtener más exposición.</li>
         </ul>
     ]]></string>
+
+    <string name="moving_out_notification_text_short">Un mensaje de los antiguos desarrolladores</string>
+    <string name="moving_out_notification_text_long">Lea lo que está sucediendo con Warmshowers.</string>
 </resources>
