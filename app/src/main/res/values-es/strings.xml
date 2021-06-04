@@ -47,5 +47,9 @@
     ]]></string>
 
     <string name="moving_out_what_to_do_title">¿Que más puedo hacer?</string>
-    <string name="moving_out_what_to_do_body">Pronto…</string>
+    <string name="moving_out_what_to_do_body"><![CDATA[
+        &#149;&nbsp;Informe a tus amigos de Warmshowers de esta situación escribiéndoles un mensaje y/o actualizando el texto de tu perfil.<br/>
+        &#149;&nbsp;<a href="https://es.warmshowers.org/contact">Comunícate con la administración de Warmshowers</a> y hazles saber lo que piensas de la dirección que están tomando.<br/>
+        &#149;&nbsp;<a href="market://details?id=fi.bitrite.android.ws">Califica esta aplicación</a> para obtener más exposición.<br/>
+    ]]></string>
 </resources>
