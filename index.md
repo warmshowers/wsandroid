@@ -39,7 +39,7 @@ So here we are, with the story of how a once welcoming and open platform has bec
 
 ### (\*\*) Did you know?
 
-> Coming soonish...
+[Warmshowers Uncensored](https://gitlab.com/-/snippets/2111860) tracks censorious actions taken by Warmshowers.
 
 
 ### What else can I do?
