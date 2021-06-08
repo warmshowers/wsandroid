@@ -41,6 +41,17 @@ public class NotificationWorker extends Worker {
             return Result.success();
         }
 
+        showNotification(context);
+        Log.d(TAG, "Notification shown");
+
+        return Result.success();
+    }
+
+    /**
+     * Shows the notification
+     * @param context
+     */
+    public static void showNotification(Context context) {
         Intent intent = new Intent(context, ActivityMovingOut.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent clickPendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
@@ -57,7 +68,8 @@ public class NotificationWorker extends Worker {
                         .setContentTitle(context.getString(R.string.moving_out_notification_title))
                         .setContentText(context.getString(R.string.moving_out_notification_text_short))
                         .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(context.getString(R.string.moving_out_notification_text_long)))
+                                .bigText(context.getString(R.string.moving_out_notification_text_short) + ".\n"
+                                         + context.getString(R.string.moving_out_notification_text_long)))
                         .setOnlyAlertOnce(true)
                         .setContentIntent(clickPendingIntent)
                         .setDeleteIntent(snoozePendingIntent)
@@ -65,9 +77,6 @@ public class NotificationWorker extends Worker {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(NOTIFICATION_ID, builder.build());
-        Log.d(TAG, "Notification shown");
-
-        return Result.success();
     }
 
     /**
