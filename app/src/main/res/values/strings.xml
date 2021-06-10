@@ -49,11 +49,15 @@
     <string name="moving_out_what_to_do_title">What else can I do?</string>
     <string name="moving_out_what_to_do_body"><![CDATA[
         <ul>
-          <li>Make your Warmshowers friends aware of this situation by writing them a message and/or updating your profile text.</li>
-          <li><a href="https://www.warmshowers.org/contact">Contact the Warmshowers board</a> to tell them how you feel about the direction they have taken.</li>
-          <li>Check for <a href="https://warmshowers.bike">updates from us</a> or join our Facebook group <a href="https://www.facebook.com/groups/243374777243989">Open Alternative to WarmShowers.org</a>.</li>
-          <li>Check out <a href="https://fedihospex.github.io>what we are working on right now</a> - a way towards the new platform dedicated for bicycle touring travelers and those who want to host them.</li>
-          <li><a href="market://details?id=fi.bitrite.android.ws">Rate this app</a> for it to get more attention.</li>
+          <li>&nbsp;Make your Warmshowers friends aware of this situation by writing them a message and/or updating your profile text.</li>
+          <br/>
+          <li>&nbsp;See <a href="https://fedihospex.github.io>what we are working on right now</a> - a project which is a way towards the new platform dedicated for bicycle touring travelers and those who want to host them.</li>
+          <br/>
+          <li>&nbsp;Join our Facebook group <a href="https://www.facebook.com/groups/243374777243989">Open Alternative to WarmShowers.org</a> or check for <a href="https://warmshowers.bike">updates from us</a>.</li>
+          <br/>
+          <li>&nbsp;<a href="https://www.warmshowers.org/contact">Contact the Warmshowers board</a> to tell them how you feel about the direction they have taken.</li>
+          <br/>
+          <li>&nbsp;<a href="market://details?id=fi.bitrite.android.ws">Rate this app</a> for it to get more attention.</li>
         </ul>
     ]]></string>
 </resources>
