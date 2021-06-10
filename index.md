@@ -1,14 +1,14 @@
 Dear Fellow WS Community Member,
         
-We are a group of bike tourers and developers, former [WS.org](https://warmshowers.org) volunteers. We created this app for you as much as for ourselves. For years, this was the official WS app, trusted by thousands of people.
+We are a group of bike tourers and developers, former [WarmShowers.org](https://warmshowers.org) volunteers. We created this app for you as much as for ourselves. For years, this was the official WS app, trusted by thousands of people.
         
 Back in 2012, when this app was created(\*), WarmShowers was an open, free and welcoming platform. Since 2015, under the new board, WS has been slowly but steadily moving in the direction that **we can’t agree with any more**(\*\*). It’s time for us to go our own way. 
         
-We are thinking about creating **a new platform** dedicated for the worldwide community of bicycle touring travelers and those who want to host them. One that is again **built on trust and openness**, that reflects values which drive people to open doors to their homes and welcome strangers traveling the world by bicycle. One that helps to build lifelong friendships which cross boundaries. Free and transparent for everyone forever.
+We are thinking about creating **a new platform** dedicated for the worldwide community of bicycle touring travelers and those who want to host them. One that is again **built on trust and openness**, that reflects values which drive people to open doors to their homes and welcome strangers traveling the world by bicycle. One that helps to build lifelong friendships which cross boundaries. **Free and transparent** for everyone forever.
         
 Please **help us by [filling out this short survey](https://warmshowers.github.io/wsandroid/survey)**. We would like to understand which aspects are important to you for a bicycle touring platform.
 
-Until we get something new working, we hope to meet you in the [Cyclists Circle at trustroots.org](https://www.trustroots.org/?circle=cyclists) (focus on cultural exchange) or at [WelcomeToMyGarden.org](https://WelcomeToMyGarden.org) (focus on slow travelers).
+Until we get something new working, we hope to meet you in the [Cyclists Circle at Trustroots.org](https://www.trustroots.org/?circle=cyclists) (focus on cultural exchange) or at [WelcomeToMyGarden.org](https://WelcomeToMyGarden.org) (focus on slow travelers).
 
 See you on the road!
 
