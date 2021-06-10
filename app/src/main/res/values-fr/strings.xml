@@ -48,8 +48,12 @@
 
     <string name="moving_out_what_to_do_title">Que puis-je faire d’autre?</string>
     <string name="moving_out_what_to_do_body"><![CDATA[
-        &#149;&nbsp;Sensibilise tes amis Warmshowers à cette situation en leur écrivant un message et/ou en mettant à jour ton texte de profil.<br/>
-        &#149;&nbsp;<a href="https://fr.warmshowers.org/contact">Contacte l\'administration de Warmshowers</a> et dis-leur ce que tu penses de la direction qu\'ils prennent.<br/>
-        &#149;&nbsp;<a href="market://details?id=fi.bitrite.android.ws">Évalue cette application</a> pour qu\'elle reçoive plus d\'attention.<br/>
+        <ul>
+          <li>Sensibilise tes amis Warmshowers à cette situation en leur écrivant un message et/ou en mettant à jour ton texte de profil.</li>
+          <li><a href="https://fr.warmshowers.org/contact">Contacte l\'administration de Warmshowers</a> et dis-leur ce que tu penses de la direction qu\'ils prennent.</li>
+          <li>Vérifie <a href="https://warmshowers.bike">les mises à jour de notre part</a> ou rejoigne notre groupe Facebook <a href="https://www.facebook.com/groups/243374777243989">Open Alternative to WarmShowers.org</a>.</li>
+          <li>Regarde ce sur <a href="https://fedihospex.github.io>quoi nous travaillons en ce moment</a> - une voie vers la nouvelle plateforme dédiée aux voyageurs cyclotouristes et à ceux qui souhaitent les accueillir.</li>
+          <li><a href="market://details?id=fi.bitrite.android.ws">Évalue cette application</a> pour qu\'elle reçoive plus d\'attention.</li>
+        </ul>
     ]]></string>
 </resources>
