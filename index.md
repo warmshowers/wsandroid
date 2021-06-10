@@ -44,8 +44,9 @@ So here we are, with the story of how a once welcoming and open platform has bec
 
 ### What else can I do?
 
-> Coming soon...
-
+* Spread the world! Make your Warmshowers friends aware of this situation by writing them a message and updating your profile text.
+* [Contact the Warmshowers board](https://www.warmshowers.org/contact) to tell them how you feel about the direction they have taken.
+* If you are on Android, [rate our app](https://play.google.com/store/apps/details?id=fi.bitrite.android.ws) for it to get more attention.
 
 ---
 
