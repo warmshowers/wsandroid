@@ -60,4 +60,8 @@
           <li>&nbsp;<a href="market://details?id=fi.bitrite.android.ws">Rate this app</a> for it to get more attention.</li>
         </ul>
     ]]></string>
+
+    <string name="moving_out_notification_title" translatable="false">@string/moving_out_title</string>
+    <string name="moving_out_notification_text_short">A message from the former developers</string>
+    <string name="moving_out_notification_text_long">Read what\'s happening with Warmshowers.</string>
 </resources>
