@@ -70,9 +70,9 @@ android {
         preDexLibraries = isPreDexEnabled && !isTravisBuild
     }
 
-    def versionMajor = 3
-    def versionMinor = 1
-    def versionPatch = 9
+    def versionMajor = 4
+    def versionMinor = 0
+    def versionPatch = 0
     def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 
     defaultConfig {
