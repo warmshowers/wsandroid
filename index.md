@@ -8,7 +8,7 @@ We are thinking about creating **a new platform** dedicated for the worldwide co
         
 Please **help us by [filling out this short survey](https://warmshowers.github.io/wsandroid/survey)**. We would like to understand which aspects are important to you for a bicycle touring platform.
 
-Until we get something new working, we hope to meet you in the [Cyclists Circle at Trustroots.org](https://www.trustroots.org/?circle=cyclists) (focus on cultural exchange) or at [WelcomeToMyGarden.org](https://WelcomeToMyGarden.org) (focus on slow travelers).
+Until we get [something new working](https://fedihospex.github.io), we hope to meet you in the [Cyclists Circle at Trustroots.org](https://www.trustroots.org/?circle=cyclists) (focus on cultural exchange) or at [WelcomeToMyGarden.org](https://WelcomeToMyGarden.org) (focus on slow travelers).
 
 See you on the road!
 
@@ -54,6 +54,8 @@ So here we are, with the story of how a once welcoming and open platform has bec
 ## Updates
 If we decide to build something new, we'll post an update here, on <https://warmshowers.bike>.
 
+We reached out to people from other hospitality exchange communities and together have an idea to federate our platforms and solve the issue of centralized boards ending up with too much power and locking their own communities in a platform the members cannot influence or easily move away from - once forever. We plan to make it easy for users to move between different platforms and to make it easy for new platforms to emerge - let the one for bicycle touring community be the first one in the Fediverse. [Visit our new project page and give it a thought](https://fedihospex.github.io).
+
 You can also join our Facebook group ["Open Alternative to WarmShowers.org"](https://www.facebook.com/groups/243374777243989).
 
 ## Help needed!
@@ -61,6 +63,6 @@ We are a very small team at the moment. We are looking for people that share our
 vision and would like to contribute to the project.
 If you are experienced in setting up a non-profit organization, building
 community or are a developer that knows how to build a platform like ours,
-please contact us here: <https://gitter.im/we-love-bicycles/community>.
+please contact us in <https://gitter.im/we-love-bicycles/community> or in the [#hospex:matrix.org](https://matrix.to/#/#hospex:matrix.org).
 
 We appreciate everyone who wants to help. 
