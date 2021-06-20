@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="moving_out_title">Adios WarmShowers!</string>
     <string name="moving_out_subtitle">mensaje de los desarrolladores</string>
@@ -54,6 +54,8 @@
           <li>&nbsp;Mira en lo <a href="https://fedihospex.github.io>que estamos trabajando en este momento</a>: un camino hacia la nueva plataforma dedicada a los viajeros en bicicleta y aquellos que quieren hospedarlos.</li>
           <br/>
           <li>&nbsp;Busca <a href="https://warmshowers.bike">actualizaciones nuestras</a> o únete a nuestro grupo de Facebook <a href="https://www.facebook.com/groups/243374777243989">Open Alternative to WarmShowers.org</a>.</li>
+          <br/>
+          <li>&nbsp;Consulta otras plataformas de intercambio de hostelería: <a href="https://cycleplanet.org/">CyclePlanet.org</a>, <a href="https://bewelcome.org">BeWelcome.org</a>, <a href="https://couchers.org/">Couchers.org</a>.</li>
           <br/>
           <li>&nbsp;<a href="https://es.warmshowers.org/contact">Comunícate con la administración de Warmshowers</a> y hazles saber lo que piensas de la dirección que están tomando.</li>
           <br/>
