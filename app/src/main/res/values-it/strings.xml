@@ -49,11 +49,13 @@
     <string name="moving_out_what_to_do_title">Cos\'altro posso fare?</string>
     <string name="moving_out_what_to_do_body"><![CDATA[
         <ul>
-          <li>&nbsp;Fai conoscere ai tuoi amici Warmshowers questa situazione scrivendo loro un messaggio e/o aggiornando il testo del tuo profilo.</li>
+          <li>&nbsp;Fai conoscere ai tuoi amici Warmshowers questa situazione scrivendo loro un messaggio e/o aggiornando il testo del tuo profilo. Puoi indirizzarli a <a href="https://warmshowers.bike">https://WarmShowers.bike</a>.</li>
           <br/>
           <li>&nbsp;Guarda a cosa stiamo lavorando in questo momento: <a href="https://fedihospex.github.io">una federazione di piattaforme di scambio di ospitalità</a>. Su questa base, speriamo di costruire una nuova applicazione di ospitalità per il cicloturismo di prossima generazione (e molti altri!).</li>
           <br/>
           <li>&nbsp;Controlla <a href="https://warmshowers.bike">gli aggiornamenti da noi</a> o unisciti al nostro gruppo Facebook <a href="https://www.facebook.com/groups/243374777243989">Open Alternative to WarmShowers.org</a>.</li>
+          <br/>
+          <li>&nbsp;Controlla altre piattaforme di scambio di ospitalità: <a href="https://bewelcome.org">BeWelcome.org</a>, <a href="https://couchers.org/">Couchers.org</a>, <a href="https://cycleplanet.org/">CyclePlanet.org</a>.</li>
           <br/>
           <li>&nbsp;<a href="https://it.warmshowers.org/contact">Contatta l\'amministrazione di Warmshowers</a> e fagli sapere cosa ne pensi della direzione che stanno prendendo.</li>
           <br/>
