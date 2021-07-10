@@ -6,9 +6,9 @@ Back in 2012, when this app was created(\*), WarmShowers was an open, free and w
         
 We are thinking about creating **a new platform** dedicated for the worldwide community of bicycle touring travelers and those who want to host them. One that is again **built on trust and openness**, that reflects values which drive people to open doors to their homes and welcome strangers traveling the world by bicycle. One that helps to build lifelong friendships which cross boundaries. **Free and transparent** for everyone forever.
         
-Please **help us by [filling out this short survey](https://warmshowers.github.io/wsandroid/survey)**. We would like to understand which aspects are important to you for a bicycle touring platform.
+Please **help us by filling out this [short survey](https://warmshowers.github.io/wsandroid/survey)**. We would like to understand which aspects are important to you for a bicycle touring platform.
 
-Until we get [something new working](https://fedihospex.github.io), we hope to meet you in the [Cyclists Circle at Trustroots.org](https://www.trustroots.org/?circle=cyclists) (focus on cultural exchange) or at [WelcomeToMyGarden.org](https://WelcomeToMyGarden.org) (focus on slow travelers).
+Until we get [something new](https://fedihospex.github.io) working, we hope to meet you in the [Cyclists Circle at Trustroots.org](https://www.trustroots.org/?circle=cyclists) (travellers' community - sharing, hosting and getting people together) or at [WelcomeToMyGarden.org](https://WelcomeToMyGarden.org) (a network of citizens offering free camping spots in their gardens to slow travellers).
 
 See you on the road!
 
@@ -21,8 +21,7 @@ Thank you!*
 
 ---
 
-### (\*) Backstory ...
-
+### \* Backstory ...
 
 Warmshowers started life as an openly available contact list of cyclists committed to sharing their love of bicycle touring and their hospitality.
 
@@ -37,14 +36,15 @@ In 2021, the Warmshowers board finally declared the old community driven apps a 
 So here we are, with the story of how a once welcoming and open platform has become a closed subscription service, locking out the very community it supports.
 
 
-### (\*\*) Did you know?
+### \*\* Did you know?
 
 [Warmshowers Uncensored](https://gitlab.com/-/snippets/2111860) tracks censorious actions taken by Warmshowers.
 
 
-### What else can I do?
+### \*\*\* What else can I do?
 
 * Spread the world! Make your Warmshowers friends aware of this situation by writing them a message and updating your profile text.
+* If you are on Facebook, join ["Open Alternative to WarmShowers.org"](https://www.facebook.com/groups/243374777243989) group.
 * [Contact the Warmshowers board](https://www.warmshowers.org/contact) to tell them how you feel about the direction they have taken.
 * If you are on Android, [rate our app](https://play.google.com/store/apps/details?id=fi.bitrite.android.ws) for it to get more attention.
 
@@ -52,13 +52,14 @@ So here we are, with the story of how a once welcoming and open platform has bec
 
 
 ## Updates
+
 If we decide to build something new, we'll post an update here, on <https://warmshowers.bike>.
 
-We reached out to people from other hospitality exchange communities and together have an idea to federate our platforms and solve the issue of centralized boards ending up with too much power and locking their own communities in a platform the members cannot influence or easily move away from - once forever. We plan to make it easy for users to move between different platforms and to make it easy for new platforms to emerge - let the one for bicycle touring community be the first one in the Fediverse. [Visit our new project page and give it a thought](https://fedihospex.github.io).
+Together with volunteers from other hospitality exchange communities we have an idea to federate our platforms and solve the issue of communities being trapped in a platform they can not influance or change - once forever. We plan to make it easy for users to move between different platforms and to make it easy for new platforms to emerge - let the one for bicycle touring community be the first one in the [Fediverse](https://en.wikipedia.org/wiki/Fediverse)! Visit our [new project page](https://fedihospex.github.io) and give us some feedback, support us or join the team.
 
-You can also join our Facebook group ["Open Alternative to WarmShowers.org"](https://www.facebook.com/groups/243374777243989).
 
 ## Help needed!
+
 We are a very small team at the moment. We are looking for people that share our
 vision and would like to contribute to the project.
 If you are experienced in setting up a non-profit organization, building
