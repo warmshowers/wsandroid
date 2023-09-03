@@ -8,7 +8,9 @@
      height="60">](https://play.google.com/store/apps/details?id=fi.bitrite.android.ws)
 
 ## This app is discontinued
-Head to https://warmshowers.github.io/wsandroid/ to learn why.
+Head to https://WarmShowers.bike to learn why.
+
+If you want to propose a change to that page, make a PR to [gh-pages](https://github.com/warmshowers/wsandroid/tree/gh-pages) branch.
 
 The code of the old app can be found in the [develop-old](https://github.com/warmshowers/wsandroid/tree/develop-old) branch.
 
