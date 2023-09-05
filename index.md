@@ -8,7 +8,7 @@ We are thinking about creating **a new platform** dedicated for the worldwide co
         
 Please **help us by filling out this [short survey](https://warmshowers.github.io/wsandroid/survey)**. We would like to understand which aspects are important to you for a bicycle touring platform.
 
-Until we get [something new](https://fedihospex.github.io) working, we hope to meet you in the [Cyclists Circle at Trustroots.org](https://www.trustroots.org/?circle=cyclists) (travellers' community - sharing, hosting and getting people together) or at [WelcomeToMyGarden.org](https://WelcomeToMyGarden.org) (a network of citizens offering free camping spots in their gardens to slow travellers).
+Until we get [something new](https://fedihospex.github.io) working, we hope to meet you in the [Cyclists Circle at Trustroots.org](https://www.trustroots.org/?circle=cyclists).
 
 See you on the road!
 
