@@ -1,11 +1,17 @@
+---
+announcement: "UPDATE: Welcome to <a href='https://sleepy.bike'><u>sleepy.bike</u></a> !!!"
+title: Goodbye WarmShowers!
+description: A message from the former Warmshowers Android developers
+---
+
 Dear Fellow WS Community Member,
-        
+
 We are a group of bike tourers and developers, former [WarmShowers.org](https://warmshowers.org) volunteers. We created this app for you as much as for ourselves. For years, this was the official WS app, trusted by thousands of people.
-        
-Back in 2012, when this app was created(\*), WarmShowers was an open, free and welcoming platform. Since 2015, under the new board, WS has been slowly but steadily moving in the direction that **we can’t agree with any more**(\*\*). It’s time for us to go our own way. 
-        
+
+Back in 2012, when this app was created(\*), WarmShowers was an open, free and welcoming platform. Since 2015, under the new board, WS has been slowly but steadily moving in the direction that **we can’t agree with any more**(\*\*). It’s time for us to go our own way.
+
 We are thinking about creating **a new platform** dedicated for the worldwide community of bicycle touring travelers and those who want to host them. One that is again **built on trust and openness**, that reflects values which drive people to open doors to their homes and welcome strangers traveling the world by bicycle. One that helps to build lifelong friendships which cross boundaries. **Free and transparent** for everyone forever.
-        
+
 Please **help us by filling out this [short survey](https://warmshowers.github.io/wsandroid/survey)**. We would like to understand which aspects are important to you for a bicycle touring platform.
 
 Until we get [something new](https://fedihospex.github.io) working, we hope to meet you in the [Cyclists Circle at Trustroots.org](https://www.trustroots.org/?circle=cyclists).
@@ -53,9 +59,9 @@ So here we are, with the story of how a once welcoming and open platform has bec
 
 ## Updates
 
-If we decide to build something new, we'll post an update here, on <https://warmshowers.bike>.
+[sleepy.bike](https://sleepy.bike) is a new home for the community of bicycle touring travellers and those who want to host them. It is decentralised in a way that users can store their data in a server (pod) of their choice and can manage access to it.  
 
-Together with volunteers from other hospitality exchange communities we have an idea to federate our platforms and solve the issue of communities being trapped in a platform they can not influance or change - once forever. We plan to make it easy for users to move between different platforms and to make it easy for new platforms to emerge - let the one for bicycle touring community be the first one in the [Fediverse](https://en.wikipedia.org/wiki/Fediverse)! Visit our [new project page](https://fedihospex.github.io) and give us some feedback, support us or join the team.
+Together with volunteers from other hospitality exchange communities we have an idea to federate our platforms and solve the issue of communities being trapped in a platform they can not influence or change - once forever. We plan to make it easy for users to move between different platforms and to make it easy for new platforms to emerge - let the one for bicycle touring community be the first one in the [Fediverse](https://en.wikipedia.org/wiki/Fediverse)! Visit our [new project page](https://openhospitality.network/) and give us some feedback, support us or join the team.
 
 
 ## Help needed!
@@ -64,6 +70,6 @@ We are a very small team at the moment. We are looking for people that share our
 vision and would like to contribute to the project.
 If you are experienced in setting up a non-profit organization, building
 community or are a developer that knows how to build a platform like ours,
-please contact us in <https://gitter.im/we-love-bicycles/community> or in the [#hospex:matrix.org](https://matrix.to/#/#hospex:matrix.org).
+please contact us in the [#ohn:matrix.org](https://matrix.to/#/#ohn:matrix.org).
 
 We appreciate everyone who wants to help. 
