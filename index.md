@@ -14,7 +14,7 @@ We are thinking about creating **a new platform** dedicated for the worldwide co
 
 Please **help us by filling out this [short survey](https://warmshowers.github.io/wsandroid/survey)**. We would like to understand which aspects are important to you for a bicycle touring platform.
 
-Until we get [something new](https://fedihospex.github.io) working, we hope to meet you in the [Cyclists Circle at Trustroots.org](https://www.trustroots.org/?circle=cyclists).
+Until we get [something new](https://sleepy.bike) working, we hope to meet you in the [Cyclists Circle at Trustroots.org](https://www.trustroots.org/?circle=cyclists).
 
 See you on the road!
 
@@ -50,7 +50,8 @@ So here we are, with the story of how a once welcoming and open platform has bec
 ### \*\*\* What else can I do?
 
 * Spread the world! Make your Warmshowers friends aware of this situation by writing them a message and updating your profile text.
-* If you are on Facebook, join ["Open Alternative to WarmShowers.org"](https://www.facebook.com/groups/243374777243989) group.
+* If you use Facebook, follow ["Sleepy Bike (Open Alternative to WarmShowers)"](https://www.facebook.com/SleepyBikeFanpage).
+* If you use Mastodon, follow ["sleepy.bike@floss.social"](https://floss.social/@sleepybike).
 * [Contact the Warmshowers board](https://www.warmshowers.org/contact) to tell them how you feel about the direction they have taken.
 * If you are on Android, [rate our app](https://play.google.com/store/apps/details?id=fi.bitrite.android.ws) for it to get more attention.
 
@@ -70,6 +71,6 @@ We are a very small team at the moment. We are looking for people that share our
 vision and would like to contribute to the project.
 If you are experienced in setting up a non-profit organization, building
 community or are a developer that knows how to build a platform like ours,
-please contact us in the [#ohn:matrix.org](https://matrix.to/#/#ohn:matrix.org).
+please contact us in the [#sleepy.bike-space:matrix.org](https://matrix.to/#/#sleepy.bike-space:matrix.org) or [#ohn:matrix.org](https://matrix.to/#/#ohn:matrix.org).
 
 We appreciate everyone who wants to help. 
