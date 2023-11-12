@@ -50,7 +50,7 @@ So here we are, with the story of how a once welcoming and open platform has bec
 ### \*\*\* What else can I do?
 
 * Spread the world! Make your Warmshowers friends aware of this situation by writing them a message and updating your profile text.
-* If you use Facebook, follow ["Sleepy Bike (Open Alternative to WarmShowers)"](https://www.facebook.com/SleepyBikeFanpage).
+* If you use Facebook, join ["Open Alternative to WarmShowers.org"](https://www.facebook.com/groups/243374777243989/) group and follow [sleepy.bike](https://www.facebook.com/SleepyBikeFanpage) page.
 * If you use Mastodon, follow ["sleepy.bike@floss.social"](https://floss.social/@sleepybike).
 * [Contact the Warmshowers board](https://www.warmshowers.org/contact) to tell them how you feel about the direction they have taken.
 * If you are on Android, [rate our app](https://play.google.com/store/apps/details?id=fi.bitrite.android.ws) for it to get more attention.
